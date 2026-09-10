@@ -8,3 +8,6 @@ bin/
 .vscode/
 .idea/
 Thumbs.db
+
+# Word owner-lock files, created while a .docx deliverable is open
+~$*
