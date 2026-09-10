@@ -127,8 +127,11 @@ const Tbl = (headers, rows, widths, caption, opts = {}) => {
   tableNo += 1;
   /* A short table split across a page break, or parted from its caption,
    * reads as two fragments. Bind the rows of a small one together; a long
-   * table is left to break, since forcing it whole would strand a page. */
-  const glue = rows.length <= 5;
+   * table is left to break, since forcing it whole would strand a page.
+   * opts.glue overrides that for a long table whose break would be worse
+   * than the gap: the module table landed one row onto page 7 and carried
+   * the other eleven to page 8. */
+  const glue = opts.glue !== undefined ? opts.glue : rows.length <= 5;
   const t = new Table({
     columnWidths: widths,
     width: { size: widths.reduce((a, b) => a + b, 0), type: WidthType.DXA },
@@ -300,20 +303,10 @@ children.push(new Table({
 children.push(new Paragraph({ children: [new PageBreak()] }));
 children.push(H1("1. Project Title"));
 
-children.push(PR([{ t: "MatrixLang: a dimension-aware optimizing compiler for a matrix language.", b: true }]));
-
-children.push(P(
-  "The title names both halves of the work. MatrixLang is the source language " +
-  "designed for this project, and the compiler for it is a complete implementation " +
-  "carried through every phase of translation, from lexical analysis to the " +
-  "execution of generated target code."));
-
-children.push(P(
-  "The qualifier dimension-aware identifies the distinguishing property. In " +
-  "MatrixLang a value's type is not matrix but Matrix<2x3>: the number of rows and " +
-  "columns forms part of the type, and the compiler reasons about shapes throughout " +
-  "translation. That decision is what separates both the semantic analysis and the " +
-  "optimizer from those of a conventional scalar compiler."));
+children.push(PR([{
+  t: "MatrixLang: A Dimension-Aware Optimizing Compiler for a Matrix Language",
+  b: true,
+}], { align: AlignmentType.CENTER, after: 60 }));
 
 /* ---------- 2. Abstract ---------- */
 children.push(H1("2. Abstract"));
@@ -335,11 +328,14 @@ children.push(P(
   "applied to a fixed point, target code generation for a stack-based virtual " +
   "machine, and execution of that code. Alongside common subexpression elimination, " +
   "copy propagation and dead code elimination, it implements matrix-specific " +
-  "algebraic simplifications that a general-purpose optimizer cannot perform. " +
-  "Rewriting A * I to A, or transpose(transpose(A)) to A, requires the compiler to " +
-  "know that a value is an identity matrix or a repeated transpose, and that " +
-  "knowledge exists only because shapes and constructors are tracked in the type " +
-  "system."));
+  "algebraic simplifications that a general-purpose optimizer cannot perform. These " +
+  "rest on two distinct analyses. Shape types decide semantic compatibility: that a " +
+  "value is Matrix<3x3> is what makes a product legal. Rewriting A * I to A needs " +
+  "more than the shape, because being three by three does not make a matrix an " +
+  "identity. A separate property analysis over the intermediate representation " +
+  "records which values are identity matrices, zero matrices or repeated transposes, " +
+  "propagating that information from the constructors and literals that establish " +
+  "it, and it is this property information that licenses the rewrites."));
 
 children.push(P(
   "Phase 1 delivers the language specification, the system design and a working " +
@@ -362,12 +358,16 @@ children.push(P(
   "Shape errors are the characteristic defect of matrix code. A matrix addition " +
   "whose operands differ in shape, or a product whose inner dimensions do not agree, " +
   "is the ordinary mistake rather than an unusual one. In the languages actually " +
-  "used for matrix work, these errors are found late. In C and Java a matrix is an " +
-  "array and its dimensions are ordinary integers, so nothing checks them and a " +
-  "wrong shape becomes an out-of-bounds access, a silently incorrect result, or a " +
-  "crash far removed from its cause. In Python with NumPy the check does occur, but " +
-  "at runtime, after the data has been loaded and earlier stages of the computation " +
-  "have run."));
+  "used for matrix work, these errors are found late."));
+
+children.push(P(
+  "In general-purpose languages such as C and Java, matrices are represented using " +
+  "arrays or library-defined structures. Matrix compatibility rules, such as whether " +
+  "two operands may be multiplied, are not built-in static semantic rules of the " +
+  "language, so those checks must be implemented explicitly by the program or the " +
+  "library, and are usually performed at runtime. In Python with NumPy the check is " +
+  "made by the library when the operation executes, after the data has been loaded " +
+  "and earlier stages of the computation have run."));
 
 children.push(P(
   "In both cases the information needed to catch the error is already present in the " +
@@ -382,12 +382,11 @@ children.push(PR([
   { t: "Problem statement. ", b: true },
   { t: "Matrix dimension errors are detectable at compile time from information the " +
        "source already contains, and are not detected at compile time. This project " +
-       "designs a language and builds a compiler that detect them, and that use the " +
-       "same shape information to perform optimizations unavailable to a compiler " +
-       "without it." },
+       "designs a language and builds a compiler that detects these errors and uses " +
+       "the same shape information to perform domain-specific optimizations." },
 ]));
 
-children.push(P("Two connected difficulties sit inside that problem."));
+children.push(P("Two difficulties follow from it."));
 
 children.push(BulletB("Inference. ",
   "A shape is declared only where a variable is introduced. Every intermediate " +
@@ -404,31 +403,28 @@ children.push(BulletB("Exploitation. ",
 children.push(H1("4. Motivation"));
 
 children.push(P(
-  "Three considerations motivate building this system as a compiler design project."));
+  "MatrixLang gives semantic analysis an additional domain-specific responsibility. " +
+  "Beyond name resolution and ordinary type checking, matrix shapes must be " +
+  "propagated through arbitrary expressions, the result shape of a product inferred " +
+  "from its operands, assignments checked for shape compatibility, and a diagnostic " +
+  "produced that identifies the rule of matrix algebra that was broken. The shapes " +
+  "are not drawn from a fixed set of type names, so the analyser computes them " +
+  "rather than comparing them."));
 
 children.push(P(
-  "The first is that it places substantial work in the semantic analyser. In a " +
-  "typical teaching language, semantic analysis reduces to checking that an integer " +
-  "is not assigned to a boolean, which is a comparison of two enumeration values. " +
-  "Here, type checking means propagating shapes through arbitrary expressions, " +
-  "inferring the result shape of a product from its operands, deciding whether an " +
-  "assignment is shape-compatible, and producing a diagnostic that identifies the " +
-  "rule of linear algebra that was broken."));
+  "The same information also enables domain-specific optimization. Constant folding " +
+  "and dead code elimination are substantially the same in every compiler, whereas " +
+  "the identity A * I = A is a fact about matrices. Exploiting it requires an " +
+  "analysis that tracks which values are identity matrices, zero matrices or " +
+  "repeated transposes, which has no counterpart in a scalar language and follows " +
+  "from the language design rather than being added to it."));
 
 children.push(P(
-  "The second is that it gives the optimizer work that a general optimizer cannot " +
-  "do. Constant folding and dead code elimination are substantially the same in " +
-  "every compiler. The identity A * I = A is a fact about matrices, and exploiting " +
-  "it requires the compiler to track which values are identity matrices, zero " +
-  "matrices or repeated transposes. That analysis has no counterpart in a scalar " +
-  "language, and it follows from the language design rather than being added to it."));
-
-children.push(P(
-  "The third is that the project exercises every phase of the syllabus as stages of " +
-  "one program rather than as separate exercises. A lexer, a parser, a symbol table, " +
-  "a semantic analyser, an intermediate representation, an optimizer, a code " +
-  "generator and an execution engine each consume the output of the last, so a " +
-  "defect at any stage becomes visible in the final result."));
+  "Finally, the project integrates the major compiler phases into a single " +
+  "implementation rather than a set of separate exercises. A lexer, a parser, a " +
+  "symbol table, a semantic analyser, an intermediate representation, an optimizer, " +
+  "a code generator and an execution engine each consume the output of the last, so " +
+  "a defect at any stage becomes visible in the final result."));
 
 /* ---------- 5. Objectives ---------- */
 children.push(H1("5. Objectives"));
@@ -445,7 +441,7 @@ children.push(P(
   "Implement semantic analysis that infers the shape of every expression and rejects every operation whose shapes do not combine, with a diagnostic naming both operands and the rule violated.",
   "Generate three-address code as an intermediate representation.",
   "Implement common subexpression elimination, copy propagation and dead code elimination.",
-  "Implement matrix-specific algebraic simplification covering A*I, I*A, A+0, A-0, A*1, A*0 and transpose(transpose(A)).",
+  "Implement matrix-specific algebraic simplification covering multiplication by an identity matrix, addition and subtraction of a zero matrix, scaling by the scalars one and zero, and transpose(transpose(A)).",
   "Generate target code for a matrix virtual machine and execute it, producing correct numerical results.",
   "Produce an optimization report quantifying the improvement, itemised by the transformation responsible.",
   "Validate the compiler with a test suite covering valid programs, every error class, and the equivalence of optimized and unoptimized execution.",
@@ -453,10 +449,10 @@ children.push(P(
 
 children.push(new Paragraph({ spacing: { after: 70 }, children: [] }));
 children.push(P(
-  "The final objective carries particular weight. An optimizer that produces fewer " +
-  "instructions has been shown to be smaller rather than correct. Demonstrating that " +
-  "optimized and unoptimized programs produce identical output is what distinguishes " +
-  "an optimization from a transformation that merely shortens the code."));
+  "An optimizer that produces fewer instructions has been shown to be smaller rather " +
+  "than correct. Objective 11 therefore requires that optimized and unoptimized " +
+  "programs produce identical output, which is what distinguishes an optimization " +
+  "from a transformation that merely shortens the code."));
 
 /* ---------- 6. Scope ---------- */
 children.push(H1("6. Scope"));
@@ -477,11 +473,22 @@ children.push(...Tbl(
   "The functionality MatrixLang provides."
 ));
 
-children.push(H2("6.2 Outside scope"));
-children.push(P(
-  "The exclusions below are design decisions with stated reasons rather than work " +
-  "left undone."));
+children.push(H2("6.2 Requirements"));
+children.push(...Tbl(
+  ["Category", "Requirement"],
+  [
+    ["Input", "A single MatrixLang source file, given as a command-line argument"],
+    ["Functional", "Classify tokens; parse to a syntax tree; infer and check shapes; generate, optimize and execute intermediate and target code"],
+    ["Output", "Token table, syntax tree, symbol table, diagnostics, three-address code, optimization report, target code and numerical results, each selectable"],
+    ["Diagnostic", "Report lexical, syntax, semantic and runtime errors in source order, naming operand shapes and the rule violated"],
+    ["Interface", "Exit status 0, 1 or 2; per-phase presets for demonstration"],
+    ["System", "Flex, Bison, GNU Make and a C11 compiler; no third-party libraries"],
+  ],
+  [1700, 7326],
+  "Functional, output and system requirements identified during analysis."
+));
 
+children.push(H2("6.3 Outside scope"));
 children.push(BulletB("Control flow. ",
   "There is no conditional and no loop. With straight-line code the entire program " +
   "forms a single basic block, which makes common subexpression elimination and " +
@@ -515,7 +522,7 @@ children.push(...Tbl(
   [
     ["Regular expressions, finite automata [1]", "Token specification in the Flex scanner"],
     ["Context-free grammars, LALR(1) parsing [1]", "Grammar design and conflict resolution in Bison"],
-    ["Syntax-directed translation", "Tree construction inside grammar semantic actions"],
+    ["Syntax-directed translation [1], [3]", "Tree construction inside grammar semantic actions"],
     ["Symbol table organisation", "Hash table with insertion-ordered storage for printing"],
     ["Type systems and type inference", "Shapes as types, inference through expressions"],
     ["Intermediate representations", "Three-address code with generated temporaries"],
@@ -524,7 +531,10 @@ children.push(...Tbl(
     ["Error recovery", "Statement-level recovery at the semicolon"],
   ],
   [3500, 5526],
-  "Syllabus topics and the components in which each is exercised."
+  "Syllabus topics and the components in which each is exercised.",
+  /* Glued for the same reason as the module table: unglued it put its heading,
+   * its header row and one entry at the foot of a page and carried the rest. */
+  { glue: true }
 ));
 
 children.push(H2("7.2 Existing systems examined"));
@@ -533,10 +543,10 @@ children.push(...Tbl(
   [
     ["NumPy (Python) [6]", "Checked at runtime, when the operation executes",
      "Errors surface late, after loading and partial computation"],
-    ["C, Java [9]", "Not checked; dimensions are ordinary integers",
-     "Errors become memory faults or silently wrong results"],
-    ["Idris, Agda [7]", "Dimensions in dependent types, checked statically",
-     "Fully general, but inaccessible to most programmers"],
+    ["C [9], Java [10]", "No built-in matrix compatibility rule; arrays or library types",
+     "Checks must be written by the program or library, usually at runtime"],
+    ["Idris [7]", "Dimensions in dependent types, checked statically",
+     "Supports expressive static dimension encodings, but requires dependent or type-level programming"],
     ["TVM and similar [8]", "Shape inference over computation graphs",
      "Operates on graphs rather than source text"],
   ],
@@ -547,10 +557,10 @@ children.push(...Tbl(
 children.push(P(
   "MatrixLang adopts the principle these systems share [6], [7], [8], that dimensions belong in " +
   "the type, and applies it within a small imperative language where it can be " +
-  "implemented completely and demonstrated end to end. It is deliberately less " +
-  "general than dependent typing and more static than NumPy, and that position is " +
-  "what makes it tractable within a single semester while still producing a result " +
-  "neither approach provides."));
+  "implemented completely and demonstrated end to end. This restricted design keeps " +
+  "the system small enough for an individual compiler project while still " +
+  "demonstrating static shape checking and domain-specific optimization from source " +
+  "text through to execution."));
 
 /* ---------- 8. Concepts ---------- */
 children.push(H1("8. Compiler Design Concepts Involved"));
@@ -578,7 +588,7 @@ children.push(...Tbl(
 ));
 
 children.push(P(
-  "Two entries require explanation. Poison typing means that once a subexpression " +
+  "Poison typing means that once a subexpression " +
   "has been reported as ill-shaped, its type becomes an error type that propagates " +
   "outward, so a single mistake produces one diagnostic rather than one at every " +
   "enclosing operator. Emitting diagnostics in source order matters because the " +
@@ -623,12 +633,30 @@ children.push(...Code([
 ]));
 
 children.push(P(
-  "The grammar is LALR(1) as written and is accepted by Bison with no shift/reduce " +
-  "or reduce/reduce conflicts. Ambiguity in the expression rules is resolved by " +
-  "declared precedence and associativity rather than by restructuring the grammar: " +
-  "addition and subtraction are left associative and bind least tightly, " +
-  "multiplication is left associative and binds more tightly, and unary negation is " +
-  "right associative and binds most tightly."));
+  "The specification is parsed with Bison using LALR(1). Written as above, the " +
+  "expression rules are ambiguous as a context-free grammar. That ambiguity is " +
+  "resolved by declared precedence and associativity rather than by restructuring " +
+  "the grammar into separate term and factor levels, after which Bison reports no " +
+  "unresolved shift/reduce or reduce/reduce conflicts. Addition and subtraction are " +
+  "left associative and bind least tightly, multiplication is left associative and " +
+  "binds more tightly, and unary negation is right associative and binds most " +
+  "tightly."));
+
+children.push(P(
+  "The algebraic identities the optimizer applies are stated in terms of these " +
+  "constructors rather than in terms of a bare literal zero. Because addition " +
+  "requires identical shapes, the zero that cancels is the zero matrix produced by " +
+  "zeros(r,c) and not the scalar 0, which the analyser rejects on the left or right " +
+  "of a matrix addition. Multiplication by a scalar is scaling and is therefore " +
+  "defined, so the scalar identities do apply to it."));
+
+children.push(...Code([
+  "A * identity(n)   ->  A          identity(n) * A   ->  A",
+  "A + zeros(r,c)    ->  A          A - zeros(r,c)    ->  A",
+  "A * 1             ->  A          1 * A             ->  A",
+  "A * 0             ->  zeros(rows(A), cols(A))",
+  "transpose(transpose(A))          ->  A",
+]));
 
 children.push(P(
   "The shape rules the semantic analyser enforces follow from the grammar. Addition " +
@@ -638,6 +666,17 @@ children.push(P(
   "a scalar it denotes scaling and preserves the other shape. Transpose exchanges " +
   "rows and columns. The constructors take compile-time constants and yield the " +
   "shape those constants name."));
+
+children.push(P(
+  "Four rules constrain what the grammar alone would admit. Matrix dimensions in a " +
+  "declaration must be positive integer constants, so matrix A[2.5,3]; and " +
+  "matrix B[0,4]; are rejected during semantic analysis even though NUMBER matches " +
+  "them. The arguments to identity, zeros and ones carry the same restriction. A " +
+  "matrix literal must be rectangular, so {{1,2},{3,4}} is well formed while " +
+  "{{1,2},{3}} is not. Assignment has value semantics: MatrixLang exposes no " +
+  "element-level mutation and no aliasing between matrix variables, which is what " +
+  "allows common subexpression elimination, copy propagation and dead code " +
+  "elimination to reason about a name without tracking writes through references."));
 
 children.push(H2("9.2 The compilation pipeline"));
 children.push(...Tbl(
@@ -684,6 +723,11 @@ children.push(...Tbl(
 ));
 
 /* ---------- 10. System Architecture ---------- */
+/* Section 10 is started on a fresh page. Gluing the module table (below)
+ * pushed the figure onto the next page and left the section heading and 10.1
+ * stranded at the foot of the previous one; breaking here keeps the heading,
+ * the figure, the module table and the design decisions on one page. */
+children.push(new Paragraph({ children: [new PageBreak()] }));
 children.push(H1("10. System Architecture"));
 
 children.push(H2("10.1 Data flow between modules"));
@@ -716,7 +760,7 @@ children.push(...Tbl(
   ],
   [2000, 7026],
   "The compiler's modules and the responsibility of each.",
-  { mono: [0] }
+  { mono: [0], glue: true }
 ));
 
 children.push(H2("10.3 Principal design decisions"));
@@ -803,6 +847,11 @@ children.push(P(
   "throughout: a warning describes something suspicious but legal and never alters " +
   "the exit status, so this program is accepted."));
 
+children.push(P(
+  "The prototype includes a limited declaration-use check so that the diagnostic " +
+  "collector can be demonstrated carrying messages from more than one pass. The full " +
+  "dimension-aware semantic analysis described in Section 9 remains Phase 2 work."));
+
 children.push(H2("12.2 A malformed program"));
 children.push(P(
   "The input contains two mistakes: a missing closing bracket on the first line, and " +
@@ -886,6 +935,10 @@ const REFS = [
 
   "ISO/IEC 9899:2011. Information technology, programming languages, C. " +
   "International Organization for Standardization, 2011.",
+
+  "Gosling, J., Joy, B., Steele, G., Bracha, G., Buckley, A., Smith, D., and " +
+  "Bierman, G. The Java Language Specification, Java SE 21 edition. Oracle America, " +
+  "2023.",
 ];
 
 REFS.forEach((r, i) => children.push(new Paragraph({

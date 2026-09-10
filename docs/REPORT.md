@@ -46,7 +46,7 @@ Three consequences follow:
    they were written, or state which rule was violated.
 3. **Optimization opportunities are lost.** `A * I = A` is a theorem of linear
    algebra, but a compiler that does not model matrices cannot use it. Neither
-   can it use `A + 0 = A` or `transpose(transpose(A)) = A`.
+   can it use `A + zeros(r,c) = A` or `transpose(transpose(A)) = A`.
 
 ---
 
@@ -76,9 +76,9 @@ All eleven were met. Detail: [phase1-design.md](phase1-design.md#5-objectives).
 
 | System | Shape checking | Limitation for this purpose |
 | --- | --- | --- |
-| C / Java | none | dimensions are ordinary integers |
+| C / Java | none built in | matrix compatibility is not a rule of the language, so the check must be written by the program or library |
 | NumPy | runtime | fails only when the operation executes |
-| Idris, Agda | compile time, dependent types | powerful, but inaccessible to most programmers |
+| Idris, Agda | compile time, dependent types | expressive, but requires dependent or type-level programming |
 | TVM and similar ML compilers | compile time, on computation graphs | operates on graphs, not on source text |
 
 MatrixLang takes the idea shared by the last two — dimensions belong in the type

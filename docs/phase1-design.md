@@ -92,8 +92,12 @@ because of the design.
    both operands and the rule.
 6. Generate three-address code.
 7. Implement common subexpression elimination and dead code elimination.
-8. Implement matrix-specific algebraic simplification: `A*I`, `I*A`, `A+0`,
-   `A-0`, `A*1`, `A*0`, `transpose(transpose(A))`.
+8. Implement matrix-specific algebraic simplification: `A*identity(n)`,
+   `identity(n)*A`, `A+zeros(r,c)`, `A-zeros(r,c)`, `A*1`, `A*0`,
+   `transpose(transpose(A))`. The zero that cancels under addition is the zero
+   matrix, not the scalar `0`: addition requires identical shapes, so `A+0` is
+   rejected by the analyser. The scalar identities apply to `*`, where a scalar
+   operand denotes scaling.
 9. Generate target code for a matrix virtual machine and execute it.
 10. Produce an optimization report quantifying the improvement.
 11. Validate with a test suite covering valid programs, every error class, and
@@ -146,8 +150,8 @@ because of the design.
 
 Existing systems considered: NumPy (runtime shape checking, the behaviour this
 project improves on); the dependent-type systems of Idris and Agda, where
-dimensions in types are standard but the languages are inaccessible to most
-programmers; and the shape inference in ML compilers such as TVM, which operates
+dimensions in types are standard, at the cost of requiring dependent or
+type-level programming; and the shape inference in ML compilers such as TVM, which operates
 on computation graphs rather than on source text. MatrixLang takes the idea
 those systems share — dimensions belong in the type — and applies it in a small
 imperative language where it can be implemented completely.

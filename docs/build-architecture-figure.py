@@ -110,6 +110,9 @@ for idx, t, s in [(0, "Token table", "tokens.c"),
     y = ys[idx] + 2
     box(RX1, y, RX2, y + 30, t, s, fill=WHITE)
     arrow(SX2, y + 15, RX1 - 1, y + 15)
+    if idx == 2:
+        # Semantic analysis populates the symbol table and queries it back.
+        arrow(RX1 - 1, y + 15, SX2 + 1, y + 15)
 
 # The shape rules are consulted by three separate stages. That is the single
 # most important structural fact in the design, so the box is drawn heavier.
@@ -129,6 +132,7 @@ LCHAN = 163
 
 box(LX1, 6, LX2, 30, "Driver", "main.c", fill=WHITE)
 arrow(LX2 + 1, 18, 244, 18)
+label(197, 12, "opens", anchor="mm")
 label((LX1 + LX2) / 2, 40, "flags, stage selection,", anchor="mm")
 label((LX1 + LX2) / 2, 51, "exit status", anchor="mm")
 
@@ -143,5 +147,8 @@ label((LX1 + LX2) / 2, DY + 44, "lexical, syntax, semantic", anchor="mm")
 label((LX1 + LX2) / 2, DY + 55, "and runtime errors,", anchor="mm")
 label((LX1 + LX2) / 2, DY + 66, "printed in source order", anchor="mm")
 
-img.resize((W, H), Image.LANCZOS).save(sys.argv[1], dpi=(300, 300))
+# Ship at the supersampled size rather than downsampling. Word places this at
+# about 6.2 inches wide, so 615 points would have been roughly 99 DPI and the
+# labels would soften in print. At 3x it is close to 300 DPI.
+img.save(sys.argv[1], dpi=(300, 300))
 print("wrote", sys.argv[1])
