@@ -6,13 +6,16 @@ const {
 const fs = require("fs");
 
 /* ------------------------------------------------------------------ *
- * MatrixLang -- Phase 1 deliverable document.
+ * MatrixLang -- Phase 1 submission document.
  *
- * Constraints from the brief: no coloured fonts, no page headers or
- * footers, no em dashes anywhere in the prose, and a finished length of
- * 10 to 12 pages. Hierarchy is therefore carried by size, weight and
- * spacing alone; the only fills are neutral greys behind code blocks and
- * table header rows, which leave every glyph black.
+ * Format follows the department's project-review convention: a cover
+ * carrying the title and the participant table, plain bold section
+ * headings with no rules, justified body text, and italic table
+ * captions below each table. Section 1 to 12 are the twelve Phase 1
+ * deliverables of section 8.3, in the order the manual lists them.
+ *
+ * Constraints: black text only, no page headers or footers, and no dash
+ * characters of any kind in the prose.
  *
  * Build:  node docs/build-phase1-docx.js docs/MatrixLang-Phase1.docx
  * ------------------------------------------------------------------ */
@@ -21,28 +24,29 @@ const BODY = "Times New Roman";
 const MONO = "Consolas";
 const BLACK = "000000";
 
-const PAGE_W = 11906;                 // A4 in DXA
-const MARGIN = 1300;
-const W = PAGE_W - 2 * MARGIN;        // 9306 usable
+const MARGIN = 1440;
+const W = 11906 - 2 * MARGIN;         // 9026 usable on A4
 
-const GREY_CODE = "F4F4F4";
-const GREY_HEAD = "E9E9E9";
-const RULE = "999999";
+const GREY_CODE = "F5F5F5";
+const GREY_HEAD = "EAEAEA";
+const RULE = "808080";
 
-const SZ = 21;                        // 10.5pt body
-const LINE = 264;
+const SZ = 21;
+const LINE = 259;
+
+let tableNo = 0;
 
 /* ---------- building blocks ---------- */
 
 const P = (text, opts = {}) => new Paragraph({
   alignment: opts.align || AlignmentType.JUSTIFIED,
-  spacing: { after: opts.after === undefined ? 120 : opts.after, line: LINE },
+  spacing: { after: opts.after === undefined ? 130 : opts.after, line: LINE },
   children: [new TextRun({ text, font: BODY, size: SZ, bold: !!opts.bold, italics: !!opts.italics, color: BLACK })],
 });
 
 const PR = (segments, opts = {}) => new Paragraph({
   alignment: opts.align || AlignmentType.JUSTIFIED,
-  spacing: { after: opts.after === undefined ? 120 : opts.after, line: LINE },
+  spacing: { after: opts.after === undefined ? 130 : opts.after, line: LINE },
   children: segments.map(s => new TextRun({
     text: s.t, font: s.mono ? MONO : BODY, size: s.mono ? SZ - 3 : SZ,
     bold: !!s.b, italics: !!s.i, color: BLACK,
@@ -51,15 +55,14 @@ const PR = (segments, opts = {}) => new Paragraph({
 
 const H1 = (text) => new Paragraph({
   heading: HeadingLevel.HEADING_1,
-  spacing: { before: 290, after: 125 },
+  spacing: { before: 320, after: 120 },
   keepNext: true, keepLines: true,
-  border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: RULE, space: 5 } },
-  children: [new TextRun({ text, font: BODY, size: 27, bold: true, color: BLACK })],
+  children: [new TextRun({ text, font: BODY, size: 24, bold: true, color: BLACK })],
 });
 
 const H2 = (text) => new Paragraph({
   heading: HeadingLevel.HEADING_2,
-  spacing: { before: 210, after: 95 },
+  spacing: { before: 220, after: 100 },
   keepNext: true, keepLines: true,
   children: [new TextRun({ text, font: BODY, size: 22, bold: true, color: BLACK })],
 });
@@ -67,14 +70,14 @@ const H2 = (text) => new Paragraph({
 const Bullet = (text) => new Paragraph({
   numbering: { reference: "bullets", level: 0 },
   alignment: AlignmentType.JUSTIFIED,
-  spacing: { after: 60, line: LINE },
+  spacing: { after: 70, line: LINE },
   children: [new TextRun({ text, font: BODY, size: SZ, color: BLACK })],
 });
 
 const BulletB = (lead, rest) => new Paragraph({
   numbering: { reference: "bullets", level: 0 },
   alignment: AlignmentType.JUSTIFIED,
-  spacing: { after: 60, line: LINE },
+  spacing: { after: 70, line: LINE },
   children: [
     new TextRun({ text: lead, font: BODY, size: SZ, bold: true, color: BLACK }),
     new TextRun({ text: rest, font: BODY, size: SZ, color: BLACK }),
@@ -84,20 +87,19 @@ const BulletB = (lead, rest) => new Paragraph({
 const Num = (text) => new Paragraph({
   numbering: { reference: "numbers", level: 0 },
   alignment: AlignmentType.JUSTIFIED,
-  spacing: { after: 55, line: LINE },
+  spacing: { after: 60, line: LINE },
   children: [new TextRun({ text, font: BODY, size: SZ, color: BLACK })],
 });
 
-/* Monospace block, held together across page breaks. */
-const Code = (lines, opts = {}) => lines.map((ln, i) => new Paragraph({
+const Code = (lines) => lines.map((ln, i) => new Paragraph({
   spacing: {
-    before: i === 0 ? 80 : 0,
-    after: i === lines.length - 1 ? (opts.after === undefined ? 120 : opts.after) : 0,
-    line: 208,
+    before: i === 0 ? 90 : 0,
+    after: i === lines.length - 1 ? 130 : 0,
+    line: 205,
   },
   keepLines: true,
   keepNext: i < lines.length - 1,
-  indent: { left: 150 },
+  indent: { left: 170 },
   shading: { type: ShadingType.CLEAR, fill: GREY_CODE, color: "auto" },
   children: [new TextRun({ text: ln === "" ? " " : ln, font: MONO, size: 17, color: BLACK })],
 }));
@@ -107,54 +109,98 @@ const cell = (text, width, opts = {}) => new TableCell({
   shading: opts.head ? { type: ShadingType.CLEAR, fill: GREY_HEAD, color: "auto" } : undefined,
   margins: { top: 58, bottom: 58, left: 105, right: 105 },
   children: [new Paragraph({
-    spacing: { after: 0, line: 225 },
+    alignment: opts.center ? AlignmentType.CENTER : AlignmentType.LEFT,
+    keepNext: !!opts.keepNext,
+    spacing: { after: 0, line: 232 },
     children: [new TextRun({
       text, font: opts.mono ? MONO : BODY,
-      size: opts.mono ? 17 : 19,
+      size: opts.mono ? 17 : 20,
       bold: !!opts.head, color: BLACK,
     })],
   })],
 });
 
-const Tbl = (headers, rows, widths, opts = {}) => new Table({
-  columnWidths: widths,
-  width: { size: widths.reduce((a, b) => a + b, 0), type: WidthType.DXA },
-  borders: {
-    top: { style: BorderStyle.SINGLE, size: 4, color: RULE },
-    bottom: { style: BorderStyle.SINGLE, size: 4, color: RULE },
-    left: { style: BorderStyle.SINGLE, size: 4, color: RULE },
-    right: { style: BorderStyle.SINGLE, size: 4, color: RULE },
-    insideHorizontal: { style: BorderStyle.SINGLE, size: 2, color: "C4C4C4" },
-    insideVertical: { style: BorderStyle.SINGLE, size: 2, color: "C4C4C4" },
-  },
-  rows: [
-    new TableRow({
-      tableHeader: true,
-      children: headers.map((h, i) => cell(h, widths[i], { head: true })),
-    }),
-    ...rows.map(r => new TableRow({
-      children: r.map((c, i) => cell(c, widths[i], { mono: (opts.mono || []).includes(i) })),
-    })),
-  ],
-});
+/* A table plus its italic caption, in the department's convention. */
+const Tbl = (headers, rows, widths, caption, opts = {}) => {
+  tableNo += 1;
+  /* A short table split across a page break, or parted from its caption,
+   * reads as two fragments. Bind the rows of a small one together; a long
+   * table is left to break, since forcing it whole would strand a page. */
+  const glue = rows.length <= 5;
+  const t = new Table({
+    columnWidths: widths,
+    width: { size: widths.reduce((a, b) => a + b, 0), type: WidthType.DXA },
+    borders: {
+      top: { style: BorderStyle.SINGLE, size: 4, color: RULE },
+      bottom: { style: BorderStyle.SINGLE, size: 4, color: RULE },
+      left: { style: BorderStyle.SINGLE, size: 4, color: RULE },
+      right: { style: BorderStyle.SINGLE, size: 4, color: RULE },
+      insideHorizontal: { style: BorderStyle.SINGLE, size: 2, color: "BFBFBF" },
+      insideVertical: { style: BorderStyle.SINGLE, size: 2, color: "BFBFBF" },
+    },
+    rows: [
+      new TableRow({
+        tableHeader: true,
+        children: headers.map((h, i) => cell(h, widths[i], {
+          head: true, keepNext: glue, center: (opts.center || []).includes(i),
+        })),
+      }),
+      ...rows.map(r => new TableRow({
+        children: r.map((c, i) => cell(c, widths[i], {
+          mono: (opts.mono || []).includes(i),
+          keepNext: glue,
+          center: (opts.center || []).includes(i),
+        })),
+      })),
+    ],
+  });
+  const cap = new Paragraph({
+    alignment: AlignmentType.CENTER,
+    spacing: { before: 70, after: 160, line: 225 },
+    children: [new TextRun({
+      text: "Table " + tableNo + ". " + caption,
+      font: BODY, size: 18, italics: true, color: BLACK,
+    })],
+  });
+  return [t, cap];
+};
 
 /* ================================================================== */
 
 const children = [];
 
-/* ---------- cover ---------- */
+/* ---------- cover ---------- *
+ *
+ * Proportions follow the department's review documents: the title block
+ * sits in the upper third, the review label and course sit below it, and
+ * the participant table is centred beneath both. Nothing is coloured and
+ * nothing is ruled.
+ */
 
-children.push(new Paragraph({ spacing: { after: 700 }, children: [] }));
+children.push(new Paragraph({ spacing: { after: 1900 }, children: [] }));
 
 children.push(new Paragraph({
   alignment: AlignmentType.CENTER,
-  spacing: { after: 120 },
-  children: [new TextRun({ text: "MATRIXLANG", font: BODY, size: 48, bold: true, characterSpacing: 60, color: BLACK })],
+  spacing: { after: 220 },
+  children: [new TextRun({
+    text: "MatrixLang",
+    font: BODY, size: 44, bold: true, characterSpacing: 20, color: BLACK,
+  })],
 }));
 
 children.push(new Paragraph({
   alignment: AlignmentType.CENTER,
-  spacing: { after: 260 },
+  spacing: { after: 160 },
+  children: [new TextRun({
+    text: "Checking Matrix Shapes Before They Are Computed",
+    font: BODY, size: 26, bold: true, color: BLACK,
+  })],
+}));
+
+children.push(new Paragraph({
+  alignment: AlignmentType.CENTER,
+  spacing: { after: 1250, line: 280 },
+  indent: { left: 900, right: 900 },
   children: [new TextRun({
     text: "A Dimension-Aware Optimizing Compiler for a Matrix Language",
     font: BODY, size: 24, color: BLACK,
@@ -163,96 +209,96 @@ children.push(new Paragraph({
 
 children.push(new Paragraph({
   alignment: AlignmentType.CENTER,
-  spacing: { after: 240 },
-  border: { top: { style: BorderStyle.SINGLE, size: 6, color: RULE, space: 8 } },
-  children: [],
-}));
-
-[
-  ["Compiler Design Laboratory", true, 22],
-  ["Phase 1: Problem Definition and Design", true, 22],
-].forEach(([t, b, sz]) => children.push(new Paragraph({
-  alignment: AlignmentType.CENTER,
-  spacing: { after: 95 },
-  children: [new TextRun({ text: t, font: BODY, size: sz, bold: b, color: BLACK })],
-})));
-
-children.push(new Paragraph({ spacing: { after: 220 }, children: [] }));
-
-children.push(new Paragraph({
-  alignment: AlignmentType.CENTER,
-  spacing: { after: 80 },
-  children: [new TextRun({ text: "A Aswanth Raj", font: BODY, size: 26, bold: true, color: BLACK })],
+  spacing: { after: 200 },
+  children: [new TextRun({
+    text: "Project Review 1: Problem Definition and Design",
+    font: BODY, size: 24, bold: true, color: BLACK,
+  })],
 }));
 
 children.push(new Paragraph({
   alignment: AlignmentType.CENTER,
-  spacing: { after: 80 },
-  children: [new TextRun({ text: "24BAI0044", font: BODY, size: 23, color: BLACK })],
+  spacing: { after: 700 },
+  children: [new TextRun({
+    text: "Compiler Design Laboratory",
+    font: BODY, size: 23, color: BLACK,
+  })],
 }));
 
-children.push(new Paragraph({
+/* Participant table: centred, a little narrower than the text column, with
+ * taller rows than a body table so it reads as part of the title block. */
+const coverCell = (text, width, opts = {}) => new TableCell({
+  width: { size: width, type: WidthType.DXA },
+  shading: opts.head ? { type: ShadingType.CLEAR, fill: GREY_HEAD, color: "auto" } : undefined,
+  margins: { top: 110, bottom: 110, left: 140, right: 140 },
+  children: [new Paragraph({
+    alignment: opts.left ? AlignmentType.LEFT : AlignmentType.CENTER,
+    spacing: { after: 0, line: 240 },
+    children: [new TextRun({ text, font: BODY, size: 21, bold: !!opts.head, color: BLACK })],
+  })],
+});
+
+children.push(new Table({
+  columnWidths: [2900, 2500, 2700],
+  width: { size: 8100, type: WidthType.DXA },
   alignment: AlignmentType.CENTER,
-  spacing: { after: 240 },
-  children: [new TextRun({ text: "Individual Project", font: BODY, size: 21, italics: true, color: BLACK })],
+  borders: {
+    top: { style: BorderStyle.SINGLE, size: 4, color: RULE },
+    bottom: { style: BorderStyle.SINGLE, size: 4, color: RULE },
+    left: { style: BorderStyle.SINGLE, size: 4, color: RULE },
+    right: { style: BorderStyle.SINGLE, size: 4, color: RULE },
+    insideHorizontal: { style: BorderStyle.SINGLE, size: 2, color: "BFBFBF" },
+    insideVertical: { style: BorderStyle.SINGLE, size: 2, color: "BFBFBF" },
+  },
+  rows: [
+    new TableRow({
+      tableHeader: true,
+      children: [
+        coverCell("Name", 2900, { head: true, left: true }),
+        coverCell("Registration Number", 2500, { head: true }),
+        coverCell("Programme", 2700, { head: true }),
+      ],
+    }),
+    new TableRow({
+      children: [
+        coverCell("A Aswanth Raj", 2900, { left: true }),
+        coverCell("24BAI0044", 2500),
+        coverCell("B.Tech CSE (AI & ML)", 2700),
+      ],
+    }),
+  ],
 }));
 
-children.push(new Paragraph({
-  alignment: AlignmentType.CENTER,
-  spacing: { after: 300 },
-  border: { top: { style: BorderStyle.SINGLE, size: 6, color: RULE, space: 8 } },
-  children: [],
-}));
-
-children.push(P(
-  "Section numbering follows the twelve Phase 1 deliverables listed in section 8.3 " +
-  "of the laboratory manual, in the order given there. Section 13 states the " +
-  "criteria for completion, and Appendix A carries the full language specification " +
-  "produced during the design activity.",
-  { align: AlignmentType.CENTER, after: 0 }));
-
-/* ---------- 1. Project title ---------- */
+/* ---------- 1. Project Title ---------- */
 children.push(new Paragraph({ children: [new PageBreak()] }));
-children.push(H1("1.  Project Title"));
+children.push(H1("1. Project Title"));
 
 children.push(PR([{ t: "MatrixLang: a dimension-aware optimizing compiler for a matrix language.", b: true }]));
 
 children.push(P(
-  "The name identifies both halves of the work. MatrixLang is the source language " +
+  "The title names both halves of the work. MatrixLang is the source language " +
   "designed for this project, and the compiler for it is a complete implementation " +
   "carried through every phase of translation, from lexical analysis to the " +
   "execution of generated target code."));
 
 children.push(P(
-  "“Dimension-aware” is the distinguishing property rather than a decorative " +
-  "adjective. In MatrixLang a value's type is not matrix but Matrix<2x3>: the number " +
-  "of rows and columns is part of the type, and the compiler reasons about shapes " +
-  "throughout translation. That single decision is what makes both the semantic " +
-  "analysis and the optimizer substantially different from a conventional scalar " +
-  "compiler."));
-
-children.push(Tbl(
-  ["Artefact", "Name"],
-  [
-    ["Source language, file extension", "MatrixLang, .ml"],
-    ["Compiler executable", "bin/matrixc"],
-    ["Target machine", "MatrixLang Virtual Machine (MVM), a stack machine"],
-    ["Build, Phase 1 demonstration", "make, then make demo1"],
-  ],
-  [2900, 6406], { mono: [1] }
-));
+  "The qualifier dimension-aware identifies the distinguishing property. In " +
+  "MatrixLang a value's type is not matrix but Matrix<2x3>: the number of rows and " +
+  "columns forms part of the type, and the compiler reasons about shapes throughout " +
+  "translation. That decision is what separates both the semantic analysis and the " +
+  "optimizer from those of a conventional scalar compiler."));
 
 /* ---------- 2. Abstract ---------- */
-children.push(H1("2.  Abstract"));
+children.push(H1("2. Abstract"));
 
 children.push(P(
-  "MatrixLang is a small programming language for matrix computation, together with " +
-  "a complete compiler for it. Its distinguishing feature is that matrix dimensions " +
+  "MatrixLang is a programming language for matrix computation together with a " +
+  "complete compiler for it. Its distinguishing feature is that matrix dimensions " +
   "form part of the type system. A value's type is not matrix but Matrix<2x3>, and " +
   "every operation is checked against the shape rules of linear algebra during " +
   "compilation. A program that attempts to multiply a 2x3 matrix by a 5x4 matrix is " +
   "rejected with a diagnostic naming both operand shapes and the rule violated, " +
-  "before a single element has been computed."));
+  "before any element has been computed."));
 
 children.push(P(
   "The compiler implements the full translation pipeline: lexical analysis with " +
@@ -260,17 +306,13 @@ children.push(P(
   "each name's shape, semantic analysis that infers and checks dimensions, " +
   "three-address code as an intermediate representation, four optimization passes " +
   "applied to a fixed point, target code generation for a stack-based virtual " +
-  "machine, and execution of that code."));
-
-children.push(P(
-  "Alongside the standard optimizations, namely common subexpression elimination, " +
-  "copy propagation and dead code elimination, the compiler implements a set of " +
-  "matrix-specific algebraic simplifications that a general-purpose optimizer cannot " +
-  "perform. Rewriting A * I to A, or transpose(transpose(A)) to A, requires the " +
-  "compiler to know that a particular value is an identity matrix or a repeated " +
-  "transpose. That knowledge exists only because shapes and constructors are tracked " +
-  "in the type system, which is what connects the language design to the optimizer " +
-  "and makes the two halves of the project a single idea rather than two."));
+  "machine, and execution of that code. Alongside common subexpression elimination, " +
+  "copy propagation and dead code elimination, it implements matrix-specific " +
+  "algebraic simplifications that a general-purpose optimizer cannot perform. " +
+  "Rewriting A * I to A, or transpose(transpose(A)) to A, requires the compiler to " +
+  "know that a value is an identity matrix or a repeated transpose, and that " +
+  "knowledge exists only because shapes and constructors are tracked in the type " +
+  "system."));
 
 children.push(P(
   "Phase 1 delivers the language specification, the system design and a working " +
@@ -278,98 +320,91 @@ children.push(P(
   "syntax verdict, establishing that the design is implementable before the semantic " +
   "and optimization work of the later phases begins."));
 
-/* ---------- 3. Problem statement ---------- */
-children.push(H1("3.  Problem Statement"));
+children.push(PR([
+  { t: "Keywords: ", b: true },
+  { t: "compiler design, type systems, shape inference, static analysis, code " +
+       "optimization, algebraic simplification, intermediate representation, " +
+       "virtual machines, matrix computation." },
+]));
+
+/* ---------- 3. Problem Statement ---------- */
+children.push(H1("3. Problem Statement"));
 
 children.push(P(
   "Shape errors are the characteristic defect of matrix code. A matrix addition " +
   "whose operands differ in shape, or a product whose inner dimensions do not agree, " +
-  "is not an unusual mistake but the ordinary one. In the languages actually used " +
-  "for matrix work, these errors are found late."));
-
-children.push(BulletB("In C or Java, ",
-  "a matrix is an array and its dimensions are ordinary integers. Nothing checks " +
-  "them. A wrong shape becomes an out-of-bounds access, a silently incorrect result, " +
-  "or a crash far removed from the mistake that caused it."));
-
-children.push(BulletB("In Python with NumPy, ",
-  "the check does happen, but at runtime, after the data has been loaded and earlier " +
-  "stages of the computation have run, possibly a long way into a job that must then " +
-  "be restarted."));
+  "is the ordinary mistake rather than an unusual one. In the languages actually " +
+  "used for matrix work, these errors are found late. In C and Java a matrix is an " +
+  "array and its dimensions are ordinary integers, so nothing checks them and a " +
+  "wrong shape becomes an out-of-bounds access, a silently incorrect result, or a " +
+  "crash far removed from its cause. In Python with NumPy the check does occur, but " +
+  "at runtime, after the data has been loaded and earlier stages of the computation " +
+  "have run."));
 
 children.push(P(
   "In both cases the information needed to catch the error is already present in the " +
-  "source text. If A is declared 2x3 and B is declared 5x4, then the impossibility " +
-  "of A * B is a property of the program, not of its input. It can be decided by " +
-  "reading the program. No mainstream language decides it."));
+  "source text. If A is declared 2x3 and B is declared 5x4, the impossibility of " +
+  "A * B is a property of the program rather than of its input, and can be decided " +
+  "by reading the program. No mainstream language decides it."));
 
 children.push(PR([
   { t: "Problem statement. ", b: true },
   { t: "Matrix dimension errors are detectable at compile time from information the " +
        "source already contains, and are not detected at compile time. This project " +
-       "builds a language and compiler that detect them." },
+       "designs a language and builds a compiler that detect them, and that use the " +
+       "same shape information to perform optimizations unavailable to a compiler " +
+       "without it." },
 ]));
 
-children.push(P(
-  "A second, narrower problem follows. Because conventional compilers do not track " +
-  "shapes, they cannot exploit the algebraic identities that shapes make available. " +
-  "An optimizer that knew a value were an identity matrix could delete the " +
-  "multiplication entirely; lacking that knowledge it must emit the full triple " +
-  "loop. The information that would enable the optimization is discarded by the type " +
-  "system before the optimizer ever runs."));
+children.push(P("Two connected difficulties sit inside that problem."));
+
+children.push(BulletB("Inference. ",
+  "A shape is declared only where a variable is introduced. Every intermediate " +
+  "result in an expression has a shape that must be derived, and a diagnostic is " +
+  "useful only if it can name the shapes of both operands and the rule they violate."));
+
+children.push(BulletB("Exploitation. ",
+  "Because conventional compilers discard shape information, they cannot use the " +
+  "algebraic identities it makes available. An optimizer that knew a value were an " +
+  "identity matrix could remove the multiplication entirely; lacking that knowledge " +
+  "it must emit the full triple loop."));
 
 /* ---------- 4. Motivation ---------- */
-children.push(H1("4.  Motivation"));
-
-children.push(PR([
-  { t: "It places real work in the semantic analyser. ", b: true },
-  { t: "In a typical teaching language, semantic analysis amounts to checking that " +
-       "an int is not assigned to a bool, a comparison of two enumeration values. In " +
-       "MatrixLang, type checking means propagating shapes through arbitrary " +
-       "expressions, inferring the result shape of a product from its operands, " +
-       "deciding whether an assignment is shape-compatible, and producing a " +
-       "diagnostic that explains which rule of linear algebra was broken. The phase " +
-       "carries genuine analytical weight instead of being a formality between " +
-       "parsing and code generation." },
-]));
-
-children.push(PR([
-  { t: "It gives the optimizer work a general optimizer cannot do. ", b: true },
-  { t: "Constant folding and dead code elimination are substantially the same in " +
-       "every compiler, and implementing them again demonstrates competence rather " +
-       "than insight. The identity A * I = A, by contrast, is a fact about matrices. " +
-       "Exploiting it requires the compiler to track which values are identity " +
-       "matrices, zero matrices or repeated transposes, an analysis with no " +
-       "counterpart in a scalar language. This is where the project's originality " +
-       "lies, and it follows directly from the language design rather than being " +
-       "added to it." },
-]));
-
-children.push(PR([
-  { t: "The resulting diagnostics are genuinely useful. ", b: true },
-  { t: "When shapes are known during compilation, the compiler can state exactly " +
-       "which rule was violated, what it expected and what it found. That is a " +
-       "substantial improvement over a runtime exception raised minutes into a " +
-       "computation, and it is achievable only because dimensions are carried in the " +
-       "type." },
-]));
-
-children.push(PR([
-  { t: "It exercises every phase of the syllabus honestly. ", b: true },
-  { t: "The project requires a lexer, a parser, a symbol table, a semantic analyser, " +
-       "an intermediate representation, an optimizer, a code generator and an " +
-       "execution engine, not as separate exercises but as stages of one program in " +
-       "which each consumes the output of the last. A defect in any stage is visible " +
-       "in the final result, which is stronger verification than inspecting each " +
-       "stage in isolation." },
-]));
-
-/* ---------- 5. Objectives ---------- */
-children.push(H1("5.  Objectives"));
+children.push(H1("4. Motivation"));
 
 children.push(P(
-  "Each objective is stated so that it can be demonstrated or measured. Together " +
-  "they are the criteria against which the finished project should be judged."));
+  "Three considerations motivate building this system as a compiler design project."));
+
+children.push(P(
+  "The first is that it places substantial work in the semantic analyser. In a " +
+  "typical teaching language, semantic analysis reduces to checking that an integer " +
+  "is not assigned to a boolean, which is a comparison of two enumeration values. " +
+  "Here, type checking means propagating shapes through arbitrary expressions, " +
+  "inferring the result shape of a product from its operands, deciding whether an " +
+  "assignment is shape-compatible, and producing a diagnostic that identifies the " +
+  "rule of linear algebra that was broken."));
+
+children.push(P(
+  "The second is that it gives the optimizer work that a general optimizer cannot " +
+  "do. Constant folding and dead code elimination are substantially the same in " +
+  "every compiler. The identity A * I = A is a fact about matrices, and exploiting " +
+  "it requires the compiler to track which values are identity matrices, zero " +
+  "matrices or repeated transposes. That analysis has no counterpart in a scalar " +
+  "language, and it follows from the language design rather than being added to it."));
+
+children.push(P(
+  "The third is that the project exercises every phase of the syllabus as stages of " +
+  "one program rather than as separate exercises. A lexer, a parser, a symbol table, " +
+  "a semantic analyser, an intermediate representation, an optimizer, a code " +
+  "generator and an execution engine each consume the output of the last, so a " +
+  "defect at any stage becomes visible in the final result."));
+
+/* ---------- 5. Objectives ---------- */
+children.push(H1("5. Objectives"));
+
+children.push(P(
+  "Each objective is stated so that it can be demonstrated or measured, and together " +
+  "they form the criteria against which the finished project is to be judged."));
 
 [
   "Design a language whose type system carries matrix dimensions, and specify its tokens, grammar and semantics completely.",
@@ -378,25 +413,25 @@ children.push(P(
   "Implement a symbol table recording each name's kind, shape, declaration position and usage counts.",
   "Implement semantic analysis that infers the shape of every expression and rejects every operation whose shapes do not combine, with a diagnostic naming both operands and the rule violated.",
   "Generate three-address code as an intermediate representation.",
-  "Implement common subexpression elimination and dead code elimination.",
+  "Implement common subexpression elimination, copy propagation and dead code elimination.",
   "Implement matrix-specific algebraic simplification covering A*I, I*A, A+0, A-0, A*1, A*0 and transpose(transpose(A)).",
   "Generate target code for a matrix virtual machine and execute it, producing correct numerical results.",
   "Produce an optimization report quantifying the improvement, itemised by the transformation responsible.",
   "Validate the compiler with a test suite covering valid programs, every error class, and the equivalence of optimized and unoptimized execution.",
 ].forEach(o => children.push(Num(o)));
 
-children.push(new Paragraph({ spacing: { after: 60 }, children: [] }));
+children.push(new Paragraph({ spacing: { after: 70 }, children: [] }));
 children.push(P(
-  "Objective 11 deserves emphasis. An optimizer that produces fewer instructions has " +
-  "been shown to be smaller, not correct. Demonstrating that optimized and " +
-  "unoptimized programs produce identical output is what distinguishes an " +
-  "optimization from a transformation that merely happens to shorten the code."));
+  "The final objective carries particular weight. An optimizer that produces fewer " +
+  "instructions has been shown to be smaller rather than correct. Demonstrating that " +
+  "optimized and unoptimized programs produce identical output is what distinguishes " +
+  "an optimization from a transformation that merely shortens the code."));
 
 /* ---------- 6. Scope ---------- */
-children.push(H1("6.  Scope"));
+children.push(H1("6. Scope"));
 
-children.push(H2("6.1  Within scope"));
-children.push(Tbl(
+children.push(H2("6.1 Within scope"));
+children.push(...Tbl(
   ["Area", "Included"],
   [
     ["Types", "scalar; matrix with dimensions fixed at compile time"],
@@ -404,55 +439,52 @@ children.push(Tbl(
     ["Constructors", "matrix literals, identity(n), zeros(r,c), ones(r,c)"],
     ["Statements", "declaration, assignment, print"],
     ["Compiler phases", "all phases, through to execution of generated code"],
-    ["Diagnostics", "lexical, syntax, semantic and runtime errors, in source order"],
+    ["Diagnostics", "lexical, syntax, semantic and runtime errors, reported in source order"],
     ["Optimizations", "algebraic simplification, CSE, copy propagation, dead code elimination"],
   ],
-  [2200, 7106]
+  [2100, 6926],
+  "The functionality MatrixLang provides."
 ));
 
-children.push(H2("6.2  Deliberately outside scope"));
+children.push(H2("6.2 Outside scope"));
 children.push(P(
-  "The exclusions below are design decisions with stated reasons, not work left " +
-  "undone. Each was considered and rejected."));
+  "The exclusions below are design decisions with stated reasons rather than work " +
+  "left undone."));
 
 children.push(BulletB("Control flow. ",
   "There is no conditional and no loop. With straight-line code the entire program " +
   "forms a single basic block, which makes common subexpression elimination and " +
-  "liveness analysis exact without a control-flow graph or iterative dataflow. The " +
-  "analytical interest of this project lies in dimension-aware semantics and matrix " +
-  "optimization, and control flow would add considerable bulk without contributing " +
-  "to either."));
+  "liveness analysis exact without a control-flow graph or iterative dataflow " +
+  "analysis. The analytical interest of the project lies in dimension-aware " +
+  "semantics and matrix optimization, to neither of which control flow contributes."));
 
 children.push(BulletB("Functions. ",
-  "Excluded for the same reason, with the additional consideration that shape " +
-  "polymorphism across function boundaries is a harder problem than the rest of the " +
-  "project combined."));
+  "Excluded for the same reason, and because shape polymorphism across function " +
+  "boundaries is a harder problem than the remainder of the project combined."));
 
 children.push(BulletB("Runtime-sized matrices. ",
   "Compile-time shapes are the premise of the design. A dimension read from input " +
-  "could not be checked during compilation, which would defeat the purpose of the " +
-  "language."));
+  "could not be checked during compilation."));
 
-children.push(BulletB("Strings, booleans and an integer/float distinction. ",
+children.push(BulletB("Strings, booleans and an integer to floating-point distinction. ",
   "Each would propagate through the type rules, the intermediate representation, the " +
-  "instruction set and the virtual machine, in exchange for no additional " +
-  "compiler-design content. Scalars are double precision throughout."));
+  "instruction set and the virtual machine without adding compiler-design content. " +
+  "Scalars are double precision throughout."));
 
 children.push(BulletB("Numerical performance. ",
-  "Matrix multiplication is the textbook triple loop. This is a compiler project, " +
-  "not a numerical linear algebra library, and an optimised kernel would demonstrate " +
-  "nothing about compilation."));
+  "Matrix multiplication uses the textbook triple loop. The project is a compiler, " +
+  "not a numerical linear algebra library."));
 
-/* ---------- 7. Background study ---------- */
-children.push(H1("7.  Background Study"));
+/* ---------- 7. Background Study ---------- */
+children.push(H1("7. Background Study"));
 
-children.push(H2("7.1  Theory studied and where it is applied"));
-children.push(Tbl(
+children.push(H2("7.1 Theory studied and its application"));
+children.push(...Tbl(
   ["Area studied", "Application in this project"],
   [
     ["Regular expressions, finite automata", "Token specification in the Flex scanner"],
     ["Context-free grammars, LALR(1) parsing", "Grammar design and conflict resolution in Bison"],
-    ["Syntax-directed translation", "AST construction inside grammar semantic actions"],
+    ["Syntax-directed translation", "Tree construction inside grammar semantic actions"],
     ["Symbol table organisation", "Hash table with insertion-ordered storage for printing"],
     ["Type systems and type inference", "Shapes as types, inference through expressions"],
     ["Intermediate representations", "Three-address code with generated temporaries"],
@@ -460,12 +492,13 @@ children.push(Tbl(
     ["Code generation for stack machines", "Instruction selection driven by inferred types"],
     ["Error recovery", "Statement-level recovery at the semicolon"],
   ],
-  [3500, 5806]
+  [3500, 5526],
+  "Syllabus topics and the components in which each is exercised."
 ));
 
-children.push(H2("7.2  Existing systems examined"));
-children.push(Tbl(
-  ["System", "How shapes are handled", "Consequence"],
+children.push(H2("7.2 Existing systems examined"));
+children.push(...Tbl(
+  ["System", "Treatment of shapes", "Consequence"],
   [
     ["NumPy (Python)", "Checked at runtime, when the operation executes",
      "Errors surface late, after loading and partial computation"],
@@ -474,216 +507,257 @@ children.push(Tbl(
     ["Idris, Agda", "Dimensions in dependent types, checked statically",
      "Fully general, but inaccessible to most programmers"],
     ["TVM and similar", "Shape inference over computation graphs",
-     "Operates on graphs, not source text; not a general language"],
+     "Operates on graphs rather than source text"],
   ],
-  [1900, 3500, 3906]
+  [1800, 3500, 3726],
+  "Where existing systems place the dimension check, and what it costs them."
 ));
 
 children.push(P(
-  "MatrixLang adopts the idea these systems share, that dimensions belong in the " +
-  "type, and applies it within a small imperative language where it can be " +
+  "MatrixLang adopts the principle these systems share, that dimensions belong in " +
+  "the type, and applies it within a small imperative language where it can be " +
   "implemented completely and demonstrated end to end. It is deliberately less " +
-  "general than dependent typing and deliberately more static than NumPy. That " +
-  "position is what makes it tractable as a single-semester project while still " +
-  "producing a result neither of those systems provides."));
+  "general than dependent typing and more static than NumPy, and that position is " +
+  "what makes it tractable within a single semester while still producing a result " +
+  "neither approach provides."));
 
 /* ---------- 8. Concepts ---------- */
-children.push(H1("8.  Compiler Design Concepts Involved"));
+children.push(H1("8. Compiler Design Concepts Involved"));
 
 children.push(P(
   "Every concept listed below is exercised by working code rather than described in " +
-  "documentation only."));
+  "documentation alone."));
 
-children.push(Tbl(
+children.push(...Tbl(
   ["Concept", "Realisation in MatrixLang"],
   [
-    ["Lexical analysis", "Flex scanner; token classes; line and column tracking; lexical errors"],
+    ["Lexical analysis", "Flex scanner; token classes; position tracking; lexical errors"],
     ["Syntax analysis", "Bison LALR(1) grammar; precedence and associativity; recovery at ';'"],
     ["Abstract syntax tree", "Uniform node type with a child vector; every node carries its type"],
     ["Symbol table", "Hash table with djb2 hashing; insertion, lookup, duplicate detection"],
-    ["Semantic analysis", "Shape inference; dimension checking; poison typing to stop cascades"],
+    ["Semantic analysis", "Shape inference; dimension checking; poison typing to contain cascades"],
     ["Intermediate code", "Three-address code with generated temporaries and interned operands"],
-    ["Code optimization", "Algebraic simplification, CSE, copy propagation, DCE, to a fixed point"],
+    ["Code optimization", "Algebraic simplification, CSE, copy propagation and dead code elimination"],
     ["Target code generation", "Instruction selection for a stack machine, driven by inferred shapes"],
-    ["Runtime, interpretation", "A virtual machine that executes the generated instruction stream"],
+    ["Interpretation", "A virtual machine that executes the generated instruction stream"],
     ["Error handling", "One collector for all four error classes, emitting in source order"],
   ],
-  [2400, 6906]
+  [2300, 6726],
+  "Each syllabus concept and the component that implements it."
 ));
 
 children.push(P(
-  "Two of these deserve a note. Poison typing means that once a subexpression has " +
-  "been reported as ill-shaped its type becomes an error type that propagates " +
-  "outward, so one mistake produces one diagnostic rather than one at every " +
+  "Two entries require explanation. Poison typing means that once a subexpression " +
+  "has been reported as ill-shaped, its type becomes an error type that propagates " +
+  "outward, so a single mistake produces one diagnostic rather than one at every " +
   "enclosing operator. Emitting diagnostics in source order matters because the " +
   "passes do not run in source order: a lexical error on line 6 and a syntax error " +
   "on line 7 are found by different passes, and a reader expects them in file order."));
 
-/* ---------- 9. Methodology ---------- */
-children.push(H1("9.  Proposed Methodology"));
+/* ---------- 9. Proposed Methodology ---------- */
+children.push(H1("9. Proposed Methodology"));
 
-children.push(H2("9.1  The compilation pipeline"));
+children.push(H2("9.1 Language specification"));
 children.push(P(
-  "Each stage consumes the output of the previous one, and each can be inspected " +
-  "individually from the command line, which is what makes the compiler " +
-  "demonstrable phase by phase."));
+  "The language was specified before any code was written, and the scanner and " +
+  "parser were implemented against that specification. Seven keywords are reserved: " +
+  "matrix, scalar, print, transpose, identity, zeros and ones. Identifiers are case " +
+  "sensitive and may not begin with a digit. Numeric literals admit an optional " +
+  "fractional part and exponent, and there is one numeric kind, double precision. " +
+  "Comments follow both C conventions and do not nest."));
 
-children.push(Tbl(
+children.push(...Code([
+  "program         -> stmt_list",
+  "stmt_list       -> stmt_list stmt | eps",
+  "stmt            -> declaration | assignment | print_statement | ';'",
+  "",
+  "declaration     -> 'matrix' IDENT '[' NUMBER ',' NUMBER ']' ';'",
+  "                 | 'matrix' IDENT '[' NUMBER ',' NUMBER ']' '=' expression ';'",
+  "                 | 'matrix' IDENT '=' expression ';'",
+  "                 | 'scalar' IDENT ';'  |  'scalar' IDENT '=' expression ';'",
+  "",
+  "assignment      -> IDENT '=' expression ';'",
+  "print_statement -> 'print' '(' expression ')' ';'",
+  "",
+  "expression      -> expression ('+' | '-' | '*') expression",
+  "                 | '-' expression",
+  "                 | ('transpose' | 'identity') '(' expression ')'",
+  "                 | ('zeros' | 'ones') '(' expression ',' expression ')'",
+  "                 | '(' expression ')'",
+  "                 | matrix_literal | NUMBER | IDENT",
+  "",
+  "matrix_literal  -> '{' row_list '}'      row_list -> row | row_list ',' row",
+  "row             -> '{' num_list '}'      num_list -> expression",
+  "                                                   | num_list ',' expression",
+]));
+
+children.push(P(
+  "The grammar is LALR(1) as written and is accepted by Bison with no shift/reduce " +
+  "or reduce/reduce conflicts. Ambiguity in the expression rules is resolved by " +
+  "declared precedence and associativity rather than by restructuring the grammar: " +
+  "addition and subtraction are left associative and bind least tightly, " +
+  "multiplication is left associative and binds more tightly, and unary negation is " +
+  "right associative and binds most tightly."));
+
+children.push(P(
+  "The shape rules the semantic analyser enforces follow from the grammar. Addition " +
+  "and subtraction require identical shapes and yield that shape. Multiplication " +
+  "requires that the columns of the left operand equal the rows of the right, and " +
+  "yields the rows of the left by the columns of the right; where either operand is " +
+  "a scalar it denotes scaling and preserves the other shape. Transpose exchanges " +
+  "rows and columns. The constructors take compile-time constants and yield the " +
+  "shape those constants name."));
+
+children.push(H2("9.2 The compilation pipeline"));
+children.push(...Tbl(
   ["Stage", "Technique or tool", "Produces"],
   [
     ["Lexical analysis", "Flex", "Token stream; lexical diagnostics"],
     ["Syntax analysis", "Bison, LALR(1)", "Abstract syntax tree; syntax diagnostics"],
-    ["Semantic analysis", "Symbol table, shape inference", "Typed AST; dimension diagnostics"],
-    ["Intermediate code", "Three-address code", "Linear IR with temporaries"],
-    ["Optimization", "Four passes to a fixed point", "Reduced IR; optimization report"],
-    ["Target code generation", "Instruction selection", "MVM instruction stream"],
+    ["Semantic analysis", "Symbol table, shape inference", "Typed tree; dimension diagnostics"],
+    ["Intermediate code", "Three-address code", "Linear representation with temporaries"],
+    ["Optimization", "Four passes to a fixed point", "Reduced code; optimization report"],
+    ["Target code generation", "Instruction selection", "Virtual machine instruction stream"],
     ["Execution", "Stack-machine interpreter", "Numerical output"],
   ],
-  [2200, 3200, 3906]
+  [2100, 3100, 3826],
+  "The seven stages of translation and the artefact each produces."
 ));
 
 children.push(P(
   "The optimizer applies its passes in a fixed order, namely algebraic " +
   "simplification, then common subexpression elimination, then copy propagation, " +
   "then dead code elimination, and repeats the sequence until nothing changes. The " +
-  "order is not arbitrary: simplification turns operations into copies, CSE turns " +
-  "repeated expressions into copies, copy propagation makes those copies unused, and " +
-  "dead code elimination removes them. A single pass is insufficient because " +
-  "deleting one instruction can expose another as dead."));
+  "order is not arbitrary. Simplification turns operations into copies, common " +
+  "subexpression elimination turns repeated expressions into copies, copy " +
+  "propagation renders those copies unused, and dead code elimination removes them. " +
+  "A single pass is insufficient because deleting one instruction can expose " +
+  "another as dead."));
 
-children.push(H2("9.2  Development methodology: three phases"));
+children.push(H2("9.3 Development plan"));
 children.push(P(
-  "Each phase ends at something that runs and can be demonstrated on its own, rather " +
-  "than at a partially built pipeline awaiting the next phase."));
+  "Development follows the three phases the laboratory manual defines. Each ends at " +
+  "an artefact that runs and can be demonstrated on its own rather than at a " +
+  "partially built pipeline awaiting the next phase."));
 
-children.push(Tbl(
-  ["Phase", "Content", "Demo"],
+children.push(...Tbl(
+  ["Phase", "Content", "Demonstration"],
   [
     ["Phase 1", "Problem definition, language specification, system design, front-end prototype", "make demo1"],
-    ["Phase 2", "Flex lexer, Bison parser, AST, symbol table with shapes, dimension checking, three-address code", "make demo2"],
-    ["Phase 3", "CSE, dead code elimination, matrix algebra, target code, execution, optimization report, testing", "make demo3"],
+    ["Phase 2", "Flex lexer, Bison parser, syntax tree, symbol table with shapes, dimension checking, three-address code", "make demo2"],
+    ["Phase 3", "Optimization passes, target code generation, execution, optimization report, testing", "make demo3"],
   ],
-  [1000, 6206, 2100], { mono: [2] }
+  [1000, 5926, 2100],
+  "The three review phases and the command that demonstrates each.",
+  { mono: [2] }
 ));
 
-children.push(P(
-  "The compiler also accepts --phase1, --phase2 and --phase3 as command-line " +
-  "presets, each selecting exactly the stages that phase is responsible for. This is " +
-  "a presentation convenience rather than three separate builds: one executable is " +
-  "produced, and the phase flags choose how much of its work to display."));
+/* ---------- 10. System Architecture ---------- */
+children.push(H1("10. System Architecture"));
 
-/* ---------- 10. Architecture ---------- */
-children.push(H1("10.  System Architecture"));
-
-children.push(H2("10.1  Data flow between modules"));
+children.push(H2("10.1 Data flow between modules"));
 
 children.push(...Code([
   "  source.ml",
   "      |",
-  "  matrix.l  --tokens-->  matrix.y  --AST-->  semantic.c",
-  "      |                      |                    |",
-  "  tokens.c                ast.c              symtab.c",
+  "  matrix.l  --tokens-->  matrix.y  --tree-->  semantic.c",
+  "      |                      |                     |",
+  "  tokens.c                ast.c               symtab.c",
   "  (token table)      (nodes, printer)   (names, shapes, uses)",
-  "                                                  |",
-  "                                              types.c   the shape rules,",
-  "                                                  |      in one place",
-  "                                               tac.c     three-address code",
-  "                                                  |",
-  "                                            optimize.c   four passes to a",
-  "                                                  |       fixed point",
-  "                                             codegen.c   MVM instructions",
-  "                                                  |",
-  "                                    vm.c  <-->  value.c",
-  "                                 (execution)  (matrix arithmetic)",
+  "                                                   |",
+  "                                               types.c    the shape rules,",
+  "                                                   |       in one place",
+  "                                                tac.c      three-address code",
+  "                                                   |",
+  "                                             optimize.c    four passes to a",
+  "                                                   |        fixed point",
+  "                                              codegen.c    machine instructions",
+  "                                                   |",
+  "                                     vm.c  <-->  value.c",
+  "                                  (execution)  (matrix arithmetic)",
   "",
   "  diag.c   every phase reports here; messages emerge in source order",
   "  main.c   the driver: flag parsing, stage selection, exit status",
 ]));
 
-children.push(H2("10.2  Module responsibilities"));
-children.push(Tbl(
+children.push(H2("10.2 Module responsibilities"));
+children.push(...Tbl(
   ["Module", "Responsibility"],
   [
     ["matrix.l", "Flex scanner; also records each token for the displayed table"],
-    ["matrix.y", "Bison grammar; builds the AST and does nothing else"],
+    ["matrix.y", "Bison grammar; constructs the syntax tree"],
     ["types.c", "The type lattice and every shape rule"],
     ["ast.c", "Node representation, tree printing, expression rendering"],
     ["symtab.c", "Names, shapes, declaration positions, usage counts"],
     ["semantic.c", "Name resolution, shape inference, dimension checking, diagnostics"],
     ["tac.c", "Three-address code generation"],
     ["optimize.c", "The four optimization passes, the report and the explanation"],
-    ["codegen.c", "Instruction selection for the MatrixLang VM"],
+    ["codegen.c", "Instruction selection for the virtual machine"],
     ["vm.c, value.c", "The stack machine, and the matrix arithmetic it performs"],
-    ["tokens.c, diag.c", "The recorded token stream; one sorted diagnostic collector"],
+    ["tokens.c, diag.c", "The recorded token stream; the sorted diagnostic collector"],
     ["util.c, main.c", "Allocation helpers; command-line interface and orchestration"],
   ],
-  [2100, 7206], { mono: [0] }
+  [2000, 7026],
+  "The compiler's modules and the responsibility of each.",
+  { mono: [0] }
 ));
 
-children.push(H2("10.3  The principal design decision"));
+children.push(H2("10.3 Principal design decisions"));
 children.push(P(
-  "Every shape rule is isolated in types.c rather than distributed through the " +
-  "analyser. Exactly one place in the compiler decides whether A * B is legal and " +
-  "what shape it produces, and the semantic analyser, the optimizer and the code " +
-  "generator all consult it rather than deriving shapes independently."));
-
-children.push(P(
-  "This has a practical consequence for review. The question “does this compiler " +
-  "implement the dimension rules of linear algebra correctly?” is answered by " +
-  "reading one short file rather than by checking three modules for agreement. It " +
-  "also removes a class of defect: the analyser and the code generator cannot " +
-  "disagree about whether a multiplication is a matrix product or a scalar scaling, " +
-  "because both ask the same function."));
+  "Every shape rule is isolated in a single module rather than distributed through " +
+  "the analyser. Exactly one place in the compiler decides whether A * B is legal " +
+  "and what shape it produces, and the semantic analyser, the optimizer and the code " +
+  "generator all consult it rather than deriving shapes independently. The question " +
+  "of whether the compiler implements the dimension rules correctly is therefore " +
+  "answered by reading one short file, and the analyser and the code generator " +
+  "cannot disagree about whether a multiplication denotes a matrix product or a " +
+  "scalar scaling, since both consult the same function."));
 
 children.push(P(
   "A second decision follows from the language design. Because MatrixLang has no " +
-  "control flow, a program compiles to a single basic block. There is therefore no " +
-  "control-flow graph anywhere in the compiler and no iterative dataflow analysis: " +
-  "local common subexpression elimination and a single backward liveness sweep are " +
-  "exact rather than conservative. A reader who expects the usual dataflow machinery " +
-  "should read its absence as a consequence of the language specification, not as an " +
-  "unfinished optimizer."));
+  "control flow, a program compiles to a single basic block, so there is no " +
+  "control-flow graph and no iterative dataflow analysis anywhere in the compiler. " +
+  "Local common subexpression elimination and a single backward liveness sweep are " +
+  "exact rather than conservative approximations, and the absence of the usual " +
+  "dataflow machinery is a consequence of the language specification."));
 
-/* ---------- 11. Technology stack ---------- */
-children.push(H1("11.  Technology Stack"));
+/* ---------- 11. Technology Stack ---------- */
+children.push(H1("11. Technology Stack"));
 
-children.push(Tbl(
-  ["Component", "Choice", "Reason"],
+children.push(...Tbl(
+  ["Component", "Choice", "Justification"],
   [
     ["Implementation language", "C (C11)", "The manual's first recommendation; integrates directly with Flex and Bison"],
     ["Lexical analyser generator", "Flex 2.6.4", "The standard tool named in the syllabus"],
-    ["Parser generator", "Bison 3.8.2", "LALR(1) handles the grammar as written, with no restructuring"],
+    ["Parser generator", "Bison 3.8.2", "LALR(1) handles the grammar as written, without restructuring"],
     ["Build system", "GNU Make", "One command from a clean tree to a working binary"],
-    ["Host compiler", "gcc 15.2 (mingw64)", "Built with -Wall -Wextra; a warning-free build is a standing requirement"],
-    ["Testing", "Shell script, 139 assertions", "Asserts exit status and output text together, so neither passes alone"],
-    ["Version control", "Git", "The deliverable for each phase is complete at its commit"],
+    ["Host compiler", "gcc 15.2 (mingw64)", "Compiled with -Wall -Wextra; a warning-free build is a standing requirement"],
+    ["Testing", "Shell script, 139 assertions", "Asserts exit status and output text together"],
+    ["Version control", "Git", "Each phase's deliverable is complete at its commit"],
   ],
-  [2500, 2200, 4606]
+  [2400, 2200, 4426],
+  "Tools selected for the project and the reason for each selection."
 ));
 
 children.push(P(
   "No third-party libraries are used. Everything beyond Flex, Bison and the C " +
   "standard library is written for this project, including the symbol table, the " +
   "intermediate representation, the optimizer, the code generator, the virtual " +
-  "machine and the matrix arithmetic."));
+  "machine and the matrix arithmetic. Development is on Windows with MSYS2, using " +
+  "mingw64 gcc together with MSYS2 builds of Flex, Bison and Make. The build has not " +
+  "been exercised on Linux or macOS, so portability is expected but is recorded as " +
+  "unverified rather than claimed."));
 
-children.push(P(
-  "The development environment is Windows with MSYS2, using mingw64 gcc together " +
-  "with MSYS2 builds of Flex, Bison and Make. The build has not been exercised on " +
-  "Linux or macOS, so portability is expected but is recorded as unverified rather " +
-  "than claimed."));
-
-/* ---------- 12. Prototype ---------- */
-children.push(H1("12.  Initial Prototype"));
+/* ---------- 12. Initial Prototype ---------- */
+children.push(H1("12. Initial Prototype"));
 
 children.push(P(
   "The Phase 1 prototype implements the front of the pipeline: source text in, a " +
   "classified token stream and a syntax verdict out. It establishes that the token " +
-  "specification and the grammar are implementable as designed, which is what Phase " +
-  "1 exists to demonstrate. Section banners are elided below; everything else is the " +
-  "compiler's actual output."));
+  "specification and the grammar are implementable as designed. Section banners are " +
+  "elided in the listings below; the remaining text is the compiler's actual output."));
 
-children.push(H2("12.1  Accepting a valid program"));
+children.push(H2("12.1 A valid program"));
 children.push(...Code([
   "$ ./bin/matrixc --phase1 examples/phase1/declare.ml",
   "",
@@ -694,11 +768,8 @@ children.push(...Code([
   "3     LBRACKET      [                 4:9",
   "4     NUMBER        2                 4:10",
   "5     COMMA         ,                 4:11",
-  "6     NUMBER        3                 4:12",
-  "7     RBRACKET      ]                 4:13",
-  "8     SEMICOLON     ;                 4:14",
   "",
-  "  ... tokens 9 to 16, the declaration of B, elided ...",
+  "  ... tokens 6 to 16 elided ...",
   "",
   "16 token(s).",
   "",
@@ -707,28 +778,24 @@ children.push(...Code([
   "0 error(s), 2 warning(s).",
   "",
   "Syntax: VALID",
-  "",
-  "examples/phase1/declare.ml: ACCEPTED (0 error(s), 2 warning(s))",
 ]));
 
 children.push(P(
-  "The token stream is grouped by source line, which makes the position column easy " +
-  "to follow. The two warnings illustrate a distinction the compiler maintains " +
-  "throughout: a warning describes something suspicious but legal, and never changes " +
-  "the exit status. This program is accepted."));
+  "The token stream is grouped by source line, which keeps the position column " +
+  "readable. The two warnings illustrate a distinction the compiler maintains " +
+  "throughout: a warning describes something suspicious but legal and never alters " +
+  "the exit status, so this program is accepted."));
 
-children.push(H2("12.2  Rejecting a malformed program"));
+children.push(H2("12.2 A malformed program"));
 children.push(P(
-  "The input has two mistakes: a missing closing bracket on line 1, and an " +
-  "identifier beginning with a digit on line 2."));
+  "The input contains two mistakes: a missing closing bracket on the first line, and " +
+  "an identifier beginning with a digit on the second."));
 
 children.push(...Code([
   "$ cat examples/phase1/bad.ml",
   "matrix A[2,3;",
   "matrix 4B[2,2];",
-]));
-
-children.push(...Code([
+  "",
   "$ ./bin/matrixc --phase1 examples/phase1/bad.ml",
   "",
   "  ... token table elided ...",
@@ -742,191 +809,42 @@ children.push(...Code([
   "3 error(s), 0 warning(s).",
   "",
   "Syntax: INVALID",
-  "",
-  "examples/phase1/bad.ml: REJECTED (3 error(s), 0 warning(s))",
 ]));
 
 children.push(P(
-  "Three properties are visible. All three diagnostics come from a single run: the " +
-  "parser recovers at the statement level, so a file with several mistakes yields " +
-  "several messages rather than only the first. They appear in source order despite " +
-  "being produced by different passes, the lexical error by the scanner and the " +
-  "other two by the parser, because every diagnostic is routed through one collector " +
-  "that sorts by position. Third, semantic analysis is skipped and the compiler says " +
-  "so, because analysing a tree that failed to parse reports errors caused by error " +
-  "recovery rather than by the source. The third error is a consequence of the " +
-  "second: once 4B is rejected as a name, its declaration cannot be parsed either."));
+  "All three diagnostics arise from a single run, because the parser recovers at the " +
+  "statement level. They appear in source order despite coming from different " +
+  "passes, the lexical error from the scanner and the other two from the parser, " +
+  "because every diagnostic is routed through one collector that sorts by position. " +
+  "Semantic analysis is skipped, and reported as skipped, since analysing a tree " +
+  "that failed to parse would report errors caused by recovery rather than by the " +
+  "source."));
 
-children.push(H2("12.3  Exit status"));
-children.push(Tbl(
+children.push(H2("12.3 Exit status"));
+children.push(P(
+  "The driver reports its verdict through the exit status as well as through printed " +
+  "output, so the prototype composes with scripts and with the test suite, which " +
+  "branches on the status as well as inspecting the text. Both demonstrations above " +
+  "are run together by the command make demo1."));
+
+children.push(...Tbl(
   ["Status", "Meaning"],
   [
     ["0", "The program is valid"],
     ["1", "At least one lexical, syntax or semantic error was reported"],
     ["2", "Usage error: no input file, unknown option, or unreadable file"],
   ],
-  [1100, 8206], { mono: [0] }
+  [1100, 7926],
+  "Exit status of the compiler driver.",
+  { mono: [0], center: [0] }
 ));
-
-children.push(P(
-  "The prototype therefore composes with scripts and with the test suite, which " +
-  "branches on exit status as well as inspecting output text. Both demonstrations " +
-  "above are run together by make demo1."));
-
-/* ---------- 13. Expected outcomes ---------- */
-children.push(H1("13.  Expected Outcomes"));
-
-children.push(P(
-  "The project is complete when the following hold. Each is stated so that it can be " +
-  "checked rather than asserted."));
-
-children.push(Bullet("A working compiler carrying a program from source text through to executed numerical output."));
-children.push(Bullet("Compile-time rejection of every dimension error, with diagnostics naming both operand shapes and the rule violated, and correct shape inference including the swapped shape produced by transpose."));
-children.push(Bullet("A measurable optimization result: a reduction in instruction count, itemised by the transformation that produced it and expressed as a percentage."));
-children.push(Bullet("Evidence that the optimizer preserves meaning and not merely size, by showing identical output with and without optimization."));
-children.push(Bullet("A test suite covering valid programs, every error class and the optimizer equivalence property, runnable by a single command."));
-children.push(Bullet("A build free of compiler warnings and grammar conflicts, and documentation covering each phase's deliverables as the manual defines them."));
-
-children.push(P(
-  "The fourth of these matters most and is the easiest to omit. Instruction counts " +
-  "falling is evidence that the optimizer did something, not that what it did was " +
-  "correct. Comparing the output of every example program with and without " +
-  "optimization, and requiring the results to be identical, is what turns the " +
-  "optimizer from a plausible transformation into a verified one."));
-
-/* ---------- Appendix A ---------- */
-children.push(H1("Appendix A.  Language Specification"));
-
-children.push(P(
-  "The specification produced during the design activity is reproduced here. It " +
-  "defines the tokens, keywords, operators, literals and grammar of MatrixLang, and " +
-  "is the document the lexer and parser were written against."));
-
-children.push(H2("A.1  Keywords, identifiers and literals"));
-children.push(...Code([
-  "keywords  matrix  scalar  print  transpose  identity  zeros  ones",
-  "",
-  "IDENT     -> (letter | '_') (letter | digit | '_')*",
-  "",
-  "NUMBER    -> digit+",
-  "           | digit+ '.' digit*   [exponent]",
-  "           | '.' digit+          [exponent]",
-  "           | digit+ exponent",
-  "exponent  -> ('e' | 'E') ['+' | '-'] digit+",
-  "",
-  "comments  // to the end of the line",
-  "          /* possibly spanning several lines */",
-]));
-
-children.push(P(
-  "All keywords are reserved. Identifiers are case sensitive and may not begin with " +
-  "a digit, so 12abc is a lexical error rather than a number followed by a name, " +
-  "which is deliberate so that the mistake is reported where it occurs. So 3, 2.5, " +
-  ".5, 4., 1e3 and 1.5E-2 are all valid numbers; there is one numeric kind and " +
-  "scalars are double precision. Block comments do not nest, and an unterminated one " +
-  "is a lexical error."));
-
-children.push(H2("A.2  Operators and punctuation"));
-children.push(Tbl(
-  ["Symbol", "Token", "Meaning"],
-  [
-    ["+", "PLUS", "Matrix or scalar addition"],
-    ["-", "MINUS", "Subtraction, and unary negation"],
-    ["*", "MULTIPLY", "Matrix product or scalar scaling, decided by the operand shapes"],
-    ["=", "ASSIGN", "Assignment and initialisation"],
-    ["[ ]", "LBRACKET RBRACKET", "Dimension specification in a declaration"],
-    ["( )", "LPAREN RPAREN", "Grouping and function-style constructors"],
-    ["{ }", "LBRACE RBRACE", "Matrix literals and their rows"],
-    [", ;", "COMMA SEMICOLON", "Separator and statement terminator"],
-  ],
-  [1000, 2600, 5706], { mono: [0, 1] }
-));
-
-children.push(P(
-  "Multiplication is the only operator whose meaning depends on the shapes of its " +
-  "operands. Whether a given * denotes a matrix product or a scalar scaling is " +
-  "decided during semantic analysis and recorded for the code generator, which is " +
-  "why instruction selection can distinguish MATMUL from MATSCALE without " +
-  "re-deriving the types. Precedence, from lowest: + and - (left associative), then " +
-  "* (left associative), then unary - (right associative)."));
-
-children.push(H2("A.3  Grammar"));
-children.push(P(
-  "The grammar is LALR(1) as written and is accepted by Bison with no shift/reduce " +
-  "or reduce/reduce conflicts. Ambiguity in the expression rules is resolved by " +
-  "declared precedence and associativity rather than by restructuring the grammar."));
-
-children.push(...Code([
-  "program         -> stmt_list",
-  "stmt_list       -> stmt_list stmt | eps",
-  "stmt            -> declaration | assignment | print_statement | ';'",
-  "",
-  "declaration     -> 'matrix' IDENT '[' NUMBER ',' NUMBER ']' ';'",
-  "                 | 'matrix' IDENT '[' NUMBER ',' NUMBER ']' '=' expression ';'",
-  "                 | 'matrix' IDENT '=' expression ';'",
-  "                 | 'scalar' IDENT ';'",
-  "                 | 'scalar' IDENT '=' expression ';'",
-  "",
-  "assignment      -> IDENT '=' expression ';'",
-  "print_statement -> 'print' '(' expression ')' ';'",
-  "",
-  "expression      -> expression '+' expression",
-  "                 | expression '-' expression",
-  "                 | expression '*' expression",
-  "                 | '-' expression",
-  "                 | 'transpose' '(' expression ')'",
-  "                 | 'identity'  '(' expression ')'",
-  "                 | 'zeros'     '(' expression ',' expression ')'",
-  "                 | 'ones'      '(' expression ',' expression ')'",
-  "                 | '(' expression ')'",
-  "                 | matrix_literal | NUMBER | IDENT",
-  "",
-  "matrix_literal  -> '{' row_list '}'",
-  "row_list        -> row | row_list ',' row",
-  "row             -> '{' num_list '}'",
-  "num_list        -> expression | num_list ',' expression",
-]));
-
-children.push(H2("A.4  Shape rules"));
-children.push(P(
-  "These are the rules the semantic analyser enforces, and they are the substance of " +
-  "the language."));
-
-children.push(Tbl(
-  ["Operation", "Condition", "Result shape"],
-  [
-    ["A + B, A - B", "A and B have identical shapes", "The shape of A"],
-    ["A * B", "columns(A) = rows(B)", "rows(A) x columns(B)"],
-    ["s * A, A * s", "s is a scalar", "The shape of A"],
-    ["s * t", "both are scalars", "Scalar"],
-    ["-A", "always", "The shape of A"],
-    ["transpose(A)", "always", "columns(A) x rows(A)"],
-    ["identity(n)", "n is a compile-time constant", "n x n"],
-    ["zeros(r,c), ones(r,c)", "r and c are compile-time constants", "r x c"],
-  ],
-  [2200, 3500, 3606], { mono: [0] }
-));
-
-children.push(P(
-  "A declaration is also an initialisation: matrix A[2,3]; declares A as a 2x3 " +
-  "matrix whose elements are zero. The language has no uninitialised state, which is " +
-  "why the compiler issues no use-before-initialisation warning. Such a warning " +
-  "could never be correct.", { after: 0 }));
 
 /* ================================================================== */
 
-/* Word puts no space after a table, so a following paragraph sits flush
- * against the border. Insert a thin spacer after each one. */
-for (let i = children.length - 1; i >= 0; i--) {
-  if (children[i] instanceof Table) {
-    children.splice(i + 1, 0, new Paragraph({ spacing: { after: 0, line: 110 }, children: [] }));
-  }
-}
-
 const doc = new Document({
   creator: "A Aswanth Raj (24BAI0044)",
-  title: "MatrixLang - Phase 1: Problem Definition and Design",
-  description: "Phase 1 deliverables for the Compiler Design Laboratory project.",
+  title: "MatrixLang - Project Review 1: Problem Definition and Design",
+  description: "Phase 1 submission for the Compiler Design Laboratory.",
   styles: {
     default: {
       document: { run: { font: BODY, size: SZ, color: BLACK } },
@@ -941,7 +859,7 @@ const doc = new Document({
         levels: [{
           level: 0, format: LevelFormat.BULLET, text: "•",
           alignment: AlignmentType.LEFT,
-          style: { paragraph: { indent: { left: 460, hanging: 240 } } },
+          style: { paragraph: { indent: { left: 480, hanging: 250 } } },
         }],
       },
       {
@@ -949,7 +867,7 @@ const doc = new Document({
         levels: [{
           level: 0, format: LevelFormat.DECIMAL, text: "%1.",
           alignment: AlignmentType.LEFT,
-          style: { paragraph: { indent: { left: 500, hanging: 280 } } },
+          style: { paragraph: { indent: { left: 520, hanging: 290 } } },
         }],
       },
     ],
