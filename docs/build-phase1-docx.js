@@ -1,9 +1,10 @@
 const {
   Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType,
   Table, TableRow, TableCell, WidthType, BorderStyle, ShadingType,
-  PageBreak, LevelFormat
+  PageBreak, LevelFormat, ImageRun
 } = require("docx");
 const fs = require("fs");
+const path = require("path");
 
 /* ------------------------------------------------------------------ *
  * MatrixLang -- Phase 1 submission document.
@@ -35,6 +36,7 @@ const SZ = 21;
 const LINE = 259;
 
 let tableNo = 0;
+let figNo = 0;
 
 /* ---------- building blocks ---------- */
 
@@ -165,6 +167,31 @@ const Tbl = (headers, rows, widths, caption, opts = {}) => {
   return [t, cap];
 };
 
+/* A figure plus its italic caption, matching the table convention. */
+const Fig = (file, w, h, caption) => {
+  figNo += 1;
+  return [
+    new Paragraph({
+      alignment: AlignmentType.CENTER,
+      spacing: { before: 90, after: 60 },
+      keepNext: true,
+      children: [new ImageRun({
+        type: "png",
+        data: fs.readFileSync(path.join(__dirname, file)),
+        transformation: { width: w, height: h },
+      })],
+    }),
+    new Paragraph({
+      alignment: AlignmentType.CENTER,
+      spacing: { before: 0, after: 170, line: 225 },
+      children: [new TextRun({
+        text: "Figure " + figNo + ". " + caption,
+        font: BODY, size: 18, italics: true, color: BLACK,
+      })],
+    }),
+  ];
+};
+
 /* ================================================================== */
 
 const children = [];
@@ -220,7 +247,7 @@ children.push(new Paragraph({
   alignment: AlignmentType.CENTER,
   spacing: { after: 700 },
   children: [new TextRun({
-    text: "Compiler Design Laboratory",
+    text: "BCSE307P  Compiler Design Lab",
     font: BODY, size: 23, color: BLACK,
   })],
 }));
@@ -317,8 +344,9 @@ children.push(P(
 children.push(P(
   "Phase 1 delivers the language specification, the system design and a working " +
   "prototype of the compiler front end that classifies a token stream and reports a " +
-  "syntax verdict, establishing that the design is implementable before the semantic " +
-  "and optimization work of the later phases begins."));
+  "syntax verdict, establishing that the design is implementable before the full " +
+  "semantic analysis and optimization stages planned for the later phases are " +
+  "implemented."));
 
 children.push(PR([
   { t: "Keywords: ", b: true },
@@ -345,7 +373,10 @@ children.push(P(
   "In both cases the information needed to catch the error is already present in the " +
   "source text. If A is declared 2x3 and B is declared 5x4, the impossibility of " +
   "A * B is a property of the program rather than of its input, and can be decided " +
-  "by reading the program. No mainstream language decides it."));
+  "by reading the program. Most mainstream general-purpose languages do not " +
+  "represent matrix dimensions as part of the type system, so shape compatibility is " +
+  "generally checked by libraries or at runtime rather than by the language's own " +
+  "compiler."));
 
 children.push(PR([
   { t: "Problem statement. ", b: true },
@@ -482,14 +513,14 @@ children.push(H2("7.1 Theory studied and its application"));
 children.push(...Tbl(
   ["Area studied", "Application in this project"],
   [
-    ["Regular expressions, finite automata", "Token specification in the Flex scanner"],
-    ["Context-free grammars, LALR(1) parsing", "Grammar design and conflict resolution in Bison"],
+    ["Regular expressions, finite automata [1]", "Token specification in the Flex scanner"],
+    ["Context-free grammars, LALR(1) parsing [1]", "Grammar design and conflict resolution in Bison"],
     ["Syntax-directed translation", "Tree construction inside grammar semantic actions"],
     ["Symbol table organisation", "Hash table with insertion-ordered storage for printing"],
     ["Type systems and type inference", "Shapes as types, inference through expressions"],
     ["Intermediate representations", "Three-address code with generated temporaries"],
-    ["Local optimization", "Available expressions, liveness, algebraic identities"],
-    ["Code generation for stack machines", "Instruction selection driven by inferred types"],
+    ["Local optimization [1], [2]", "Available expressions, liveness, algebraic identities"],
+    ["Code generation for stack machines [2]", "Instruction selection driven by inferred types"],
     ["Error recovery", "Statement-level recovery at the semicolon"],
   ],
   [3500, 5526],
@@ -500,13 +531,13 @@ children.push(H2("7.2 Existing systems examined"));
 children.push(...Tbl(
   ["System", "Treatment of shapes", "Consequence"],
   [
-    ["NumPy (Python)", "Checked at runtime, when the operation executes",
+    ["NumPy (Python) [6]", "Checked at runtime, when the operation executes",
      "Errors surface late, after loading and partial computation"],
-    ["C, Java", "Not checked; dimensions are ordinary integers",
+    ["C, Java [9]", "Not checked; dimensions are ordinary integers",
      "Errors become memory faults or silently wrong results"],
-    ["Idris, Agda", "Dimensions in dependent types, checked statically",
+    ["Idris, Agda [7]", "Dimensions in dependent types, checked statically",
      "Fully general, but inaccessible to most programmers"],
-    ["TVM and similar", "Shape inference over computation graphs",
+    ["TVM and similar [8]", "Shape inference over computation graphs",
      "Operates on graphs rather than source text"],
   ],
   [1800, 3500, 3726],
@@ -514,7 +545,7 @@ children.push(...Tbl(
 ));
 
 children.push(P(
-  "MatrixLang adopts the principle these systems share, that dimensions belong in " +
+  "MatrixLang adopts the principle these systems share [6], [7], [8], that dimensions belong in " +
   "the type, and applies it within a small imperative language where it can be " +
   "implemented completely and demonstrated end to end. It is deliberately less " +
   "general than dependent typing and more static than NumPy, and that position is " +
@@ -657,28 +688,14 @@ children.push(H1("10. System Architecture"));
 
 children.push(H2("10.1 Data flow between modules"));
 
-children.push(...Code([
-  "  source.ml",
-  "      |",
-  "  matrix.l  --tokens-->  matrix.y  --tree-->  semantic.c",
-  "      |                      |                     |",
-  "  tokens.c                ast.c               symtab.c",
-  "  (token table)      (nodes, printer)   (names, shapes, uses)",
-  "                                                   |",
-  "                                               types.c    the shape rules,",
-  "                                                   |       in one place",
-  "                                                tac.c      three-address code",
-  "                                                   |",
-  "                                             optimize.c    four passes to a",
-  "                                                   |        fixed point",
-  "                                              codegen.c    machine instructions",
-  "                                                   |",
-  "                                     vm.c  <-->  value.c",
-  "                                  (execution)  (matrix arithmetic)",
-  "",
-  "  diag.c   every phase reports here; messages emerge in source order",
-  "  main.c   the driver: flag parsing, stage selection, exit status",
-]));
+children.push(P(
+  "The compilation spine runs down the centre of Figure 1. What the compiler " +
+  "produces at each stage appears on the right, and the two components that observe " +
+  "or drive the whole pipeline appear on the left."));
+
+children.push(...Fig("architecture.png", 596, 388,
+  "Architecture of the MatrixLang compiler. The shape rules are drawn heavier " +
+  "because three separate stages consult them."));
 
 children.push(H2("10.2 Module responsibilities"));
 children.push(...Tbl(
@@ -727,9 +744,9 @@ children.push(H1("11. Technology Stack"));
 children.push(...Tbl(
   ["Component", "Choice", "Justification"],
   [
-    ["Implementation language", "C (C11)", "The manual's first recommendation; integrates directly with Flex and Bison"],
-    ["Lexical analyser generator", "Flex 2.6.4", "The standard tool named in the syllabus"],
-    ["Parser generator", "Bison 3.8.2", "LALR(1) handles the grammar as written, without restructuring"],
+    ["Implementation language", "C (C11) [9]", "The manual's first recommendation; integrates directly with Flex and Bison"],
+    ["Lexical analyser generator", "Flex 2.6.4 [5]", "The standard tool named in the syllabus"],
+    ["Parser generator", "Bison 3.8.2 [4]", "LALR(1) handles the grammar as written, without restructuring"],
     ["Build system", "GNU Make", "One command from a clean tree to a working binary"],
     ["Host compiler", "gcc 15.2 (mingw64)", "Compiled with -Wall -Wextra; a warning-free build is a standing requirement"],
     ["Testing", "Shell script, 139 assertions", "Asserts exit status and output text together"],
@@ -838,6 +855,45 @@ children.push(...Tbl(
   "Exit status of the compiler driver.",
   { mono: [0], center: [0] }
 ));
+
+/* ---------- References ---------- */
+children.push(H1("References"));
+
+const REFS = [
+  "Aho, A. V., Lam, M. S., Sethi, R., and Ullman, J. D. Compilers: Principles, " +
+  "Techniques, and Tools. 2nd edition, Pearson Addison Wesley, 2006.",
+
+  "Muchnick, S. S. Advanced Compiler Design and Implementation. Morgan Kaufmann, 1997.",
+
+  "Levine, J. flex & bison: Text Processing Tools. O'Reilly Media, 2009.",
+
+  "Free Software Foundation. Bison: The Yacc-compatible Parser Generator, version " +
+  "3.8.2. https://www.gnu.org/software/bison/manual/",
+
+  "The Flex Project. Lexical Analysis with Flex, version 2.6.4. " +
+  "https://westes.github.io/flex/manual/",
+
+  "Harris, C. R., Millman, K. J., van der Walt, S. J., et al. Array programming with " +
+  "NumPy. Nature, volume 585, pages 357 to 362, 2020.",
+
+  "Brady, E. Idris, a general-purpose dependently typed programming language: design " +
+  "and implementation. Journal of Functional Programming, volume 23, issue 5, pages " +
+  "552 to 593, 2013.",
+
+  "Chen, T., Moreau, T., Jiang, Z., et al. TVM: an automated end-to-end optimizing " +
+  "compiler for deep learning. Proceedings of the 13th USENIX Symposium on Operating " +
+  "Systems Design and Implementation (OSDI), pages 578 to 594, 2018.",
+
+  "ISO/IEC 9899:2011. Information technology, programming languages, C. " +
+  "International Organization for Standardization, 2011.",
+];
+
+REFS.forEach((r, i) => children.push(new Paragraph({
+  alignment: AlignmentType.LEFT,
+  spacing: { after: 85, line: LINE },
+  indent: { left: 520, hanging: 520 },
+  children: [new TextRun({ text: "[" + (i + 1) + "]   " + r, font: BODY, size: SZ, color: BLACK })],
+})));
 
 /* ================================================================== */
 
