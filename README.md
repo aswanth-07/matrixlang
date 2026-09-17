@@ -77,7 +77,7 @@ at all**.
 
 Missing tools: `pacman -S --needed flex bison make`.
 
-`make tools` prints the three resolved tool paths — run it first when a build
+`make toolchain` prints the three resolved tool paths — run it first when a build
 misbehaves. See [docs/design.md](docs/design.md#build-environment) for the other
 Windows trap (gcc's temporary directory).
 
@@ -175,7 +175,16 @@ examples/errors/   programs that must be rejected, each documenting why
 examples/optimize/ programs that exercise specific optimizations
 demos/             one script per project review
 tests/run_tests.sh the acceptance suite (make test)
+
+tools/             generators, each rebuilding one deliverable
+  build-architecture-figure.py   docs/figures/architecture.png
+  build-phase1-docx.js           the Phase 1 submission document
+  deckkit.py                     a minimal PowerPoint writer
+  build-deck.py                  the review presentation
+
 docs/              design, language reference, per-phase reports
+  figures/         generated figures
+  submission/      deliverables in the department's formats
 ```
 
 ---
@@ -190,6 +199,7 @@ docs/              design, language reference, per-phase reports
 | [docs/language-reference.md](docs/language-reference.md) | tokens, grammar, shape rules, every diagnostic, the VM instruction set |
 | [docs/design.md](docs/design.md) | why the code is shaped the way it is |
 | [docs/REPORT.md](docs/REPORT.md) | the final project report, in the chapter structure the lab manual specifies |
+| [docs/README.md](docs/README.md) | an index of the above, and how to regenerate the figures and deliverables |
 
 ---
 

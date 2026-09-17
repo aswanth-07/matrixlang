@@ -1,9 +1,23 @@
-# Git on Windows is converting line endings on checkout. A shell script that
-# comes back with CRLF fails at the shebang, so pin the text formats that care.
-*.sh   text eol=lf
-*.mc   text eol=lf
-*.l    text eol=lf
-*.y    text eol=lf
-*.c    text eol=lf
-*.h    text eol=lf
+# Git on Windows converts line endings on checkout. A shell script that comes
+# back with CRLF fails at its shebang, so pin the formats that care.
+*.sh     text eol=lf
+*.ml     text eol=lf
+*.l      text eol=lf
+*.y      text eol=lf
+*.c      text eol=lf
+*.h      text eol=lf
+*.py     text eol=lf
+*.js     text eol=lf
 Makefile text eol=lf
+
+# MatrixLang programs use .ml, which is also OCaml's extension. Without this,
+# GitHub reports the repository as majority OCaml and editors apply OCaml
+# highlighting to programs that are not OCaml. These are sample programs for
+# the language this repository implements, not library code.
+*.ml linguist-language=Text
+*.ml linguist-documentation
+
+# Binary deliverables: never diff or line-ending-convert these.
+*.docx binary
+*.pptx binary
+*.png  binary

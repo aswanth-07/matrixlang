@@ -46,14 +46,15 @@ GEN_OBJ  := $(BUILDDIR)/matrix.tab.o $(BUILDDIR)/lex.yy.o
 
 MATRIXC  := $(BINDIR)/matrixc
 
-.PHONY: all clean test dirs tools demo1 demo2 demo3
+.PHONY: all clean test dirs toolchain demo1 demo2 demo3 deck
 
 all: dirs $(MATRIXC)
 
 dirs:
 	@mkdir -p $(BUILDDIR) $(BINDIR)
 
-tools:
+# Named toolchain, not tools, so it is not mistaken for the tools/ directory.
+toolchain:
 	@echo "FLEX  = $(FLEX)"
 	@echo "BISON = $(BISON)"
 	@echo "CC    = $(CC)"
@@ -104,6 +105,15 @@ demo2: all
 
 demo3: all
 	@bash demos/phase3.sh
+
+# ---- deliverables -----------------------------------------------------------
+# The deck needs only the Python standard library, so it rebuilds anywhere.
+# The figure (Pillow) and the Phase 1 document (the docx npm package) have
+# dependencies that a marking machine may not have, which is why their outputs
+# are committed rather than generated on demand. See docs/README.md.
+
+deck:
+	python tools/build-deck.py docs/submission/MatrixLang-Deck.pptx
 
 # ---- housekeeping -----------------------------------------------------------
 

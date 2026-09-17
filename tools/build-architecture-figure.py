@@ -12,7 +12,7 @@ Routing rules that keep it readable:
   * the shape rules enter the spine below the centre line of a box, so they
     never collide with a right-lane arrow leaving the same box.
 
-    python docs/build-architecture-figure.py docs/architecture.png
+    python tools/build-architecture-figure.py docs/figures/architecture.png
 """
 
 import math
@@ -89,7 +89,7 @@ stages = [
 box(245, 6, 341, 30, "source.ml", fill=WHITE)
 arrow(CX, 30, CX, ys[0] - 1)
 
-for (t, s), y in zip(stages, ys):
+for (t, s), y in zip(stages, ys, strict=True):
     box(SX1, y, SX2, y + BH, t, s)
 
 edge = ["tokens", "syntax tree", "typed tree", "three-address code",

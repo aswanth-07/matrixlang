@@ -18,7 +18,7 @@ const path = require("path");
  * Constraints: black text only, no page headers or footers, and no dash
  * characters of any kind in the prose.
  *
- * Build:  node docs/build-phase1-docx.js docs/MatrixLang-Phase1.docx
+ * Build:  node tools/build-phase1-docx.js docs/submission/MatrixLang-Phase1.docx
  * ------------------------------------------------------------------ */
 
 const BODY = "Times New Roman";
@@ -180,7 +180,7 @@ const Fig = (file, w, h, caption) => {
       keepNext: true,
       children: [new ImageRun({
         type: "png",
-        data: fs.readFileSync(path.join(__dirname, file)),
+        data: fs.readFileSync(path.join(__dirname, "..", "docs", "figures", file)),
         transformation: { width: w, height: h },
       })],
     }),
