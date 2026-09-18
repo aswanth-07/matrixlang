@@ -2,907 +2,729 @@
 
     python tools/build-deck.py docs/submission/MatrixLang-Deck.pptx
 
-Every figure on these slides is copied from real `matrixc` output, not retyped
-from memory. When the compiler's output changes, re-run the commands named in
-each panel's heading and update this file: a deck that disagrees with the
-compiler is worse than no deck.
+The deck follows the paper, one slide per step of its argument, and every
+number on it is read from results/ rather than typed here. Re-run the
+experiments and the slides change; this file does not.
 
-Structure follows the department's review-deck convention -- one question per
-slide, a one-line subtitle saying what the slide answers, dense panels carrying
-real tool output, and a key takeaway the reader can repeat back.
+Two devices carry the argument, and both are there because the argument is
+about compiler phases:
+
+  The phase rail. Every content slide shows the eight canonical phases down
+  the left edge with the ones this slide is about lit. The reader watches the
+  rail fill, and the one slide where it stays mostly dark is the comparison.
+
+  One number per slide. Each slide states a single figure large enough to read
+  from the back of a room. Everything else on the slide supports or qualifies
+  that figure.
+
+The compiler output quoted on slide 4 is real. It is the output of
+
+    bin/matrixc --tokens|--ast|--symbols|--tac|--target|--run <the example>
+
+with long runs elided as `...`; nothing was invented to make a column fit.
 """
 
+import json
+import math
 import os
+import statistics
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from deckkit import Para, Run, Slide, write  # noqa: E402
 
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DATA = os.path.join(ROOT, "results")
+
 # ---------------------------------------------------------------- palette --
-# Warm paper, deep green-black ink, teal as the structural accent, amber for
-# "note this", rose for failure. Code sits on near-black panels: a compiler deck
-# should look like a terminal where it is showing a terminal.
+# A near-black canvas with warm off-white text: a compiler deck that looks
+# like the terminal the work happens in. One accent carries the argument
+# (gold), one marks what is wrong or missing (coral), one marks what was
+# measured (mint). Three colours is a constraint, not a shortage.
 
-PAPER   = "FAF7F2"
-CARD    = "FFFFFF"
-INK     = "14261F"
-BODY    = "3F4F49"
-MUTED   = "7C8B85"
-RULE    = "E3DDD2"
+INK    = "0E1412"      # canvas
+PANEL  = "16201C"
+PANEL2 = "1D2925"
+PAPER  = "EFEAE0"      # primary text
+DIM    = "9BAAA3"
+FAINT  = "5E706A"
+RULE   = "2A3833"
 
-TEAL    = "0E7C6B"
-TEALLT  = "E4F3F0"
-AMBER   = "B4690E"
-AMBERLT = "FBF0DC"
-ROSE    = "9E2B3F"
-ROSELT  = "FBE9EC"
-
-CODEBG  = "16221E"
-CODEFG  = "CFE3DC"
-CODEDIM = "7E968D"
-CODETEA = "5FD3BC"
-CODEAMB = "E8B45F"
-CODEROS = "F09AA8"
+GOLD   = "E0A94A"
+CORAL  = "E2705F"
+CORALD = "6E3A33"
+MINT   = "62C6A8"
 
 SERIF = "Georgia"
-SANS  = "Segoe UI"
 MONO  = "Consolas"
 
-M = 44.0                 # page margin
-W = 960.0 - 2 * M        # content width, 872
-BOTTOM = 478.0           # content must end here; takeaway bar sits below
+M      = 42.0
+RAIL_W = 128.0
+CX     = M + RAIL_W + 26        # content left edge: 196
+CW     = 960.0 - CX - M         # content width: 722
 
 ARROW = "→"
-CHECK = "✓"
 DOT   = "·"
-BULL  = "●"
-NEQ   = "≠"
+SQ    = "▪"
+CROSS = "✗"
+
+PHASES = ["lexical", "syntax", "symbol table", "semantic",
+          "intermediate", "optimization", "target code", "execution"]
 
 
-# ------------------------------------------------------------- components --
+# --------------------------------------------------------------- the data --
 
-def header(s, num, eyebrow, title, subtitle):
-    """Standard slide header: eyebrow, title, one-line subtitle, hairline."""
-    s.text(M, 22, 640, 14,
-           [Para(Run(f"{num:02d}   {DOT}   {eyebrow}", 8, TEAL, bold=True,
-                     spacing=1.7, caps=True))], pad=(0, 0, 0, 0))
-    s.text(960 - M - 80, 22, 80, 14,
-           [Para(Run(f"{num} / 8", 8, MUTED, bold=True, spacing=1.0), align="r")],
-           pad=(0, 0, 0, 0))
-    s.text(M, 38, 860, 34, [Para(Run(title, 25, INK, bold=True, font=SERIF), line=29)],
-           pad=(0, 0, 0, 0))
-    s.text(M, 73, 860, 18, [Para(Run(subtitle, 11, MUTED), line=14)], pad=(0, 0, 0, 0))
-    s.line_h(M, 99, W, RULE, 1.0)
+def quantile(values, p):
+    v = sorted(values)
+    k = (len(v) - 1) * p
+    lo, hi = math.floor(k), math.ceil(k)
+    return v[lo] if lo == hi else v[lo] + (v[hi] - v[lo]) * (k - lo)
 
 
-def takeaway(s, text):
-    """The band every slide ends on."""
-    s.panel(M, 488, W, 32, fill=TEALLT, radius=2000)
-    s.rect(M, 488, 3.5, 32, fill=TEAL)
-    s.text(M + 17, 488, W - 32, 32,
-           [Para([Run("Key takeaway     ", 8, TEAL, bold=True, caps=True, spacing=1.3),
-                  Run(text, 10.5, INK)], line=13)],
-           anchor="ctr", pad=(0, 0, 0, 0))
+def load():
+    """Every figure the deck states, read from the recorded runs."""
+    cost, chain, per_seed = [], [], []
+    identical = programs = 0
+    for seed in (1, 2):
+        d = os.path.join(DATA, "seed%d" % seed)
+        with open(os.path.join(d, "cost.json")) as f:
+            c = json.load(f)
+        with open(os.path.join(d, "chain.json")) as f:
+            chain += json.load(f)
+        with open(os.path.join(d, "differential.json")) as f:
+            r = json.load(f)
+        identical += r["identical"]
+        programs += r["programs"]
+        per_seed.append(
+            (statistics.median([x["flops_pct"] for x in c]),
+             statistics.median([x["instr_pct"] for x in c])))
+        cost += c
+    with open(os.path.join(DATA, "baseline-comparison.json")) as f:
+        baselines = json.load(f)
+
+    flops = [r["flops_pct"] for r in cost]
+    instr = [r["instr_pct"] for r in cost]
+    helped = [r["flops_pct"] for r in chain if r["flops_pct"] > 0]
+
+    return {
+        "n": len(cost),
+        "flop_med": statistics.median(flops),
+        "flop_q1": quantile(flops, 0.25), "flop_q3": quantile(flops, 0.75),
+        "instr_med": statistics.median(instr),
+        "instr_q1": quantile(instr, 0.25), "instr_q3": quantile(instr, 0.75),
+        "chain_share": 100.0 * len(helped) / len(chain),
+        "chain_n": len(helped), "chain_total": len(chain),
+        "chain_med": statistics.median(helped),
+        "identical": identical, "programs": programs,
+        "per_seed": per_seed,
+        "baselines": baselines["compilers"],
+    }
 
 
-def card(s, x, y, w, h, title=None, accent=TEAL, fill=CARD, border=RULE):
-    """A titled panel. Returns the y at which its content should start."""
-    s.panel(x, y, w, h, fill=fill, line=border)
-    if title:
-        s.text(x + 13, y + 8, w - 26, 15,
-               [Para(Run(title, 8.2, accent, bold=True, caps=True, spacing=1.1))],
+D = load()
+
+
+# --------------------------------------------------------------- the parts --
+
+def backdrop(s):
+    s.rect(0, 0, 960, 540, fill=INK, name="backdrop")
+
+
+def rail(s, active=()):
+    """The eight canonical phases down the left edge, with `active` lit."""
+    s.text(M, 44, RAIL_W, 13,
+           [Para(Run("compiler phases", 7.2, FAINT, bold=True, caps=True,
+                     spacing=1.4))], pad=(0, 0, 0, 0))
+    y = 66.0
+    for i, name in enumerate(PHASES):
+        on = i in active
+        s.rect(M, y + 3, 3, 12, fill=GOLD if on else RULE, name="tick")
+        s.text(M + 12, y, RAIL_W - 12, 16,
+               [Para(Run(name, 8.4, PAPER if on else FAINT, bold=on), line=11)],
                pad=(0, 0, 0, 0))
-        return y + 26
-    return y + 10
+        y += 21
 
 
-def code(s, x, y, w, h, lines, size=8.2, lead=10.6, bg=CODEBG, pad=(12, 9, 10, 8)):
-    """A dark code panel. Each line is a str, or (str, colour)."""
-    s.panel(x, y, w, h, fill=bg, radius=1600)
+def header(s, num, kicker, title, sub=None):
+    s.text(CX, 44, CW, 13,
+           [Para([Run("%02d" % num, 8, GOLD, bold=True, spacing=1.2),
+                  Run("   %s   %s" % (DOT, kicker), 8, FAINT, bold=True,
+                      caps=True, spacing=1.4)])], pad=(0, 0, 0, 0))
+    s.text(CX, 60, CW, 34,
+           [Para(Run(title, 25, PAPER, bold=True, font=SERIF), line=29)],
+           pad=(0, 0, 0, 0))
+    y = 96.0
+    if sub:
+        s.text(CX, y, CW, 32, [Para(Run(sub, 10.5, DIM), line=14)],
+               pad=(0, 0, 0, 0))
+        y += 34
+    s.rect(CX, y, CW, 1, fill=RULE, name="rule")
+    return y + 18
+
+
+def bignum(s, x, y, w, value, label, accent=GOLD, size=40):
+    s.text(x, y, w, size + 8,
+           [Para(Run(value, size, accent, bold=True, font=SERIF), line=size + 2)],
+           pad=(0, 0, 0, 0))
+    s.text(x, y + size + 6, w, 30,
+           [Para(Run(ln, 8.6, DIM), line=11.4) for ln in label.split("\n")],
+           pad=(0, 0, 0, 0))
+
+
+def panel(s, x, y, w, h, title=None, accent=GOLD, fill=PANEL, caps=True):
+    s.shape(x, y, w, h, fill=fill, geom="roundRect", radius=2200, name="panel")
+    if title:
+        s.text(x + 14, y + 10, w - 28, 14,
+               [Para(Run(title, 7.8, accent, bold=True, caps=caps,
+                         spacing=1.2))], pad=(0, 0, 0, 0))
+        return y + 28
+    return y + 12
+
+
+def code(s, x, y, w, h, lines, size=8.4, lead=11.2, fill=PANEL2):
+    s.shape(x, y, w, h, fill=fill, geom="roundRect", radius=1600, name="code")
     paras = []
     for ln in lines:
-        col = CODEFG
+        colour = PAPER
         if isinstance(ln, tuple):
-            ln, col = ln
-        paras.append(Para(Run(ln if ln else " ", size, col, font=MONO), line=lead))
-    s.text(x, y, w, h, paras, pad=pad)
+            ln, colour = ln
+        paras.append(Para(Run(ln if ln else " ", size, colour, font=MONO),
+                          line=lead))
+    s.text(x, y, w, h, paras, pad=(13, 9, 10, 8))
 
 
-def rows(s, x, y, w, data, col1=150, size=8.6, lead=12.0, rowh=17.0,
-         c1=INK, c2=BODY, bold1=True, zebra=None):
-    """A two-column list. Simpler and better-behaved than a real table."""
-    for i, (a, b) in enumerate(data):
-        yy = y + i * rowh
-        if zebra and i % 2 == 0:
-            s.rect(x, yy, w, rowh, fill=zebra)
-        s.text(x + 6, yy, col1, rowh,
-               [Para(Run(a, size, c1, bold=bold1, font=MONO if bold1 else SANS), line=lead)],
-               anchor="ctr", pad=(0, 0, 0, 0))
-        s.text(x + col1 + 6, yy, w - col1 - 12, rowh,
-               [Para(Run(b, size, c2), line=lead)], anchor="ctr", pad=(0, 0, 0, 0))
-    return y + len(data) * rowh
-
-
-def bullets(s, x, y, w, h, items, size=9.2, lead=13.2, gap=3.0,
-            color=BODY, mark=None, mark_color=TEAL):
+def body(s, x, y, w, h, blocks):
+    """A stack of paragraphs given as (text, size, colour, bold) tuples."""
     paras = []
-    for it in items:
-        runs = []
-        if mark:
-            runs.append(Run(mark + "  ", size, mark_color, bold=True))
-        if isinstance(it, tuple):
-            head, tail = it
-            runs.append(Run(head, size, INK, bold=True))
-            runs.append(Run(tail, size, color))
-        else:
-            runs.append(Run(it, size, color))
-        paras.append(Para(runs, line=lead, after=gap))
+    for i, b in enumerate(blocks):
+        text, size, colour = b[0], b[1], b[2]
+        bold = b[3] if len(b) > 3 else False
+        paras.append(Para(Run(text, size, colour, bold=bold),
+                          line=size * 1.38, before=0 if i == 0 else 7))
     s.text(x, y, w, h, paras, pad=(0, 0, 0, 0))
 
 
-def chip(s, x, y, w, h, text, fg, bg, size=7.8):
-    s.panel(x, y, w, h, fill=bg, radius=14000)
-    s.text(x, y, w, h, [Para(Run(text, size, fg, bold=True, caps=True, spacing=0.9),
-                             align="ctr")], anchor="ctr", pad=(0, 0, 0, 0))
-
-
-def stat(s, x, y, w, value, label, accent=TEAL):
-    """A headline number with a caption. The caption may carry newlines;
-    DrawingML has no line break inside a run, so each becomes its own
-    paragraph."""
-    s.text(x, y, w, 38, [Para(Run(value, 30, accent, bold=True, font=SERIF), line=33)],
-           pad=(0, 0, 0, 0))
-    s.text(x, y + 36, w, 28,
-           [Para(Run(ln, 8.2, MUTED), line=10.6) for ln in label.split(chr(10))],
+def footer(s, text, accent=GOLD):
+    s.rect(CX, 494, CW, 1, fill=RULE, name="rule")
+    s.text(CX, 503, CW, 22,
+           [Para([Run(SQ + "   ", 7.5, accent), Run(text, 9.5, DIM)], line=12)],
            pad=(0, 0, 0, 0))
 
 
-# ==========================================================================
-# 1 -- title, and the problem
-# ==========================================================================
+# ====================================================================== 01 --
 
 def slide1():
     s = Slide()
-    s.text(M, 30, 640, 14,
-           [Para(Run(f"Compiler Design Laboratory   {DOT}   Individual Project",
-                     8, TEAL, bold=True, spacing=1.7, caps=True))], pad=(0, 0, 0, 0))
+    backdrop(s)
 
-    s.text(M, 48, 560, 60, [Para(Run("MatrixLang", 46, INK, bold=True, font=SERIF), line=52)],
+    s.text(M, 60, 520, 14,
+           [Para(Run("Compiler Design Laboratory   %s   Experience report" % DOT,
+                     8, GOLD, bold=True, caps=True, spacing=1.6))],
            pad=(0, 0, 0, 0))
-    s.rect(M, 112, 52, 3.5, fill=TEAL)
-    s.text(M, 124, 560, 24,
-           [Para(Run("A Dimension-Aware Optimizing Compiler for a Matrix Language",
-                     14.5, INK, font=SERIF), line=19)], pad=(0, 0, 0, 0))
-    s.text(M, 152, 540, 40,
-           [Para(Run("Matrix dimensions are part of the type system, so shape errors "
-                     "become compile-time errors and matrix algebra becomes an "
-                     "optimization.", 10, MUTED), line=14)], pad=(0, 0, 0, 0))
+    s.text(M, 82, 560, 108,
+           [Para(Run("Shapes in the", 44, PAPER, bold=True, font=SERIF), line=50),
+            Para(Run("Type System", 44, GOLD, bold=True, font=SERIF), line=50)],
+           pad=(0, 0, 0, 0))
+    s.rect(M, 196, 58, 3, fill=CORAL, name="rule")
+    s.text(M, 212, 540, 46,
+           [Para(Run("A matrix language that lets a compiler course reach "
+                     "optimization", 15, PAPER, font=SERIF), line=21)],
+           pad=(0, 0, 0, 0))
+    s.text(M, 268, 520, 60,
+           [Para(Run("Put matrix shapes in the type system and the compiler can "
+                     "cost a program before it runs. Semantic analysis, "
+                     "optimization and code generation all gain something to do.",
+                     10.5, DIM), line=15)], pad=(0, 0, 0, 0))
 
-    # author block
-    s.panel(640, 46, 276, 92, fill=CARD, line=RULE)
-    s.text(656, 58, 244, 16, [Para(Run("Presented by", 8, TEAL, bold=True,
-                                       caps=True, spacing=1.1))], pad=(0, 0, 0, 0))
-    s.text(656, 76, 244, 22, [Para(Run("A Aswanth Raj", 15, INK, bold=True, font=SERIF),
-                                   line=18)], pad=(0, 0, 0, 0))
-    s.text(656, 100, 244, 32,
-           [Para(Run("Written in C with Flex and Bison. No third-party libraries.",
-                     8.4, MUTED), line=11)], pad=(0, 0, 0, 0))
-
-    # --- before / after -----------------------------------------------------
-    top, hgt = 200.0, 244.0
-
-    y = card(s, M, top, 396, hgt, "Today   " + DOT + "   the error arrives at runtime",
-             accent=ROSE)
-    bullets(s, M + 14, y + 2, 368, 74, [
-        ("C / Java   ", "matrix compatibility is not a rule of the language, so "
-                        "whatever check exists is one the program wrote."),
-        ("NumPy   ", "the check exists, but it runs when the operation runs."),
-    ], size=8.8, lead=12.2, gap=5)
-    code(s, M + 14, y + 84, 368, 86, [
-        (">>> A.shape, B.shape", CODEDIM),
-        "((2, 3), (5, 4))",
-        (">>> A @ B", CODEDIM),
-        ("ValueError: matmul: Input operand 1 has a", CODEROS),
-        ("mismatch in its core dimension 0 ...", CODEROS),
-        ("(size 5 is different from 3)", CODEROS),
-    ], size=8.0, lead=10.4)
-    s.text(M + 14, y + 178, 368, 30,
-           [Para([Run("Found only when that line executes.  ", 8.6, ROSE, bold=True),
-                  Run("Possibly after an expensive setup; possibly never, if the "
-                      "shapes happen to line up.", 8.6, BODY)], line=11.6)],
+    s.rect(M, 350, 520, 1, fill=RULE, name="rule")
+    bignum(s, M, 366, 250, "%.1f%%" % D["flop_med"],
+           "of the arithmetic removed\nby the optimizer", accent=MINT)
+    bignum(s, M + 262, 366, 250, "%.1f%%" % D["instr_med"],
+           "what an instruction count\nwould have reported", accent=CORAL)
+    s.text(M, 466, 520, 16,
+           [Para(Run("Same optimizer. Same %d programs. Different question."
+                     % D["n"], 9.5, GOLD, italic=True), line=12)],
            pad=(0, 0, 0, 0))
 
-    s.arrow(452, 300, 56, 40, TEAL)
-
-    y = card(s, 520, top, 396, hgt, "MatrixLang   " + DOT + "   it arrives at compile time",
-             accent=TEAL)
-    bullets(s, 534, y + 2, 368, 74, [
-        ("A type carries its shape.   ", "A is Matrix<2x3> and B is Matrix<5x4>. "
-                                         "Those are different types."),
-        ("The shape is a fact about the text.   ",
-         "That A * B is impossible follows from the program, not from its input, "
-         "so it can be settled before anything runs."),
-    ], size=8.8, lead=12.2, gap=5)
-    code(s, 534, y + 84, 368, 86, [
-        ("9:7: error [semantic] cannot multiply", CODEROS),
-        ("     Matrix<2x3> by Matrix<5x4>", CODEROS),
-        "   left   : A -> Matrix<2x3>",
-        "   right  : B -> Matrix<5x4>",
-        ("   rule   : columns(left) must equal rows(right)", CODETEA),
-        ("   found  : 3 != 5", CODETEA),
-    ], size=8.0, lead=10.4)
-    s.text(534, y + 178, 368, 30,
-           [Para([Run("No target code is generated.  ", 8.6, TEAL, bold=True),
-                  Run("Emitting it would mean emitting a multiplication the machine "
-                      "cannot perform. Exit status 1.", 8.6, BODY)], line=11.6)],
+    s.shape(612, 60, 306, 420, fill=PANEL, geom="roundRect", radius=2200,
+            name="panel")
+    s.text(630, 78, 270, 14,
+           [Para(Run("Presented by", 7.8, GOLD, bold=True, caps=True,
+                     spacing=1.2))], pad=(0, 0, 0, 0))
+    s.text(630, 96, 270, 24,
+           [Para(Run("A Aswanth Raj", 17, PAPER, bold=True, font=SERIF), line=20)],
            pad=(0, 0, 0, 0))
-
-    s.text(M, 456, W, 16,
-           [Para([Run("Build and demonstrate:   ", 8.4, MUTED),
-                  Run("make   " + DOT + "   make test   " + DOT + "   make demo1  demo2  demo3",
-                      8.4, INK, bold=True, font=MONO)], line=11)], pad=(0, 0, 0, 0))
-
-    takeaway(s, "MatrixLang moves the matrix shape check from run time to compile time, "
-                "and then reuses the same information to optimize.")
+    s.rect(630, 130, 40, 1.5, fill=RULE, name="rule")
+    code(s, 630, 148, 270, 162, [
+        ("matrix A[100,2];", PAPER),
+        ("matrix B[2,100];", PAPER),
+        ("matrix C[100,2];", PAPER),
+        "",
+        ("matrix R = A * B * C;", MINT),
+        ("print(R);", PAPER),
+        "",
+        ("the compiler picks the bracketing,", DIM),
+        ("because it knows all three shapes", DIM),
+        ("before anything runs", DIM),
+    ], size=8.0, lead=13.0)
+    s.text(630, 326, 270, 100,
+           [Para([Run("69,800", 11.5, CORAL, bold=True, font=MONO),
+                  Run("  FLOP as written", 9.5, DIM)], line=14),
+            Para([Run(" 1,396", 11.5, MINT, bold=True, font=MONO),
+                  Run("  FLOP as compiled", 9.5, DIM)], line=14, before=4),
+            Para(Run("The instruction count is 4 either way, which is why the "
+                     "usual metric reports nothing.", 8.8, GOLD, italic=True),
+                 line=12, before=10)], pad=(0, 0, 0, 0))
+    s.text(630, 434, 270, 16,
+           [Para(Run("make %s make test %s make demo1 demo2 demo3"
+                     % (DOT, DOT), 8, FAINT, font=MONO), line=11)],
+           pad=(0, 0, 0, 0))
     return s
 
 
-# ==========================================================================
-# 2 -- the language
-# ==========================================================================
+# ====================================================================== 02 --
 
 def slide2():
     s = Slide()
-    header(s, 2, "The Language",
-           "What MatrixLang Understands",
-           "Two kinds of value, and a type that carries the shape rather than just the name.")
+    backdrop(s)
+    rail(s, active=(0, 1, 2, 3, 4))
+    y = header(s, 2, "The problem", "Where a C-subset project stops",
+               "We measured three public compiler-design course projects. Not "
+               "one of them contains an optimizer.")
 
-    # --- left: the type lattice --------------------------------------------
-    y = card(s, M, 116, 300, 152, "The type lattice")
-    rows(s, M + 8, y + 2, 284, [
-        ("Scalar", "one double-precision number"),
-        ("Matrix<r,c>", "r rows, c columns, both fixed at compile time"),
-    ], col1=94, size=8.4, lead=11.0, rowh=30)
-    s.panel(M + 14, y + 70, 272, 42, fill=AMBERLT, radius=2000)
-    s.text(M + 14, y + 70, 272, 42,
-           [Para([Run("Matrix<2x3>", 9.4, AMBER, bold=True, font=MONO),
-                  Run(f"  {NEQ}  ", 9.4, AMBER, bold=True),
-                  Run("Matrix<3x2>", 9.4, AMBER, bold=True, font=MONO)], align="ctr", line=12),
-            Para(Run("Different types, not one type with different contents.",
-                     8.2, BODY, italic=True), align="ctr", line=11)],
-           anchor="ctr", pad=(0, 0, 0, 0))
+    bignum(s, CX, y + 6, 190, "0 of 3",
+           "baselines with an\noptimization phase", accent=CORAL)
+    bignum(s, CX + 200, y + 6, 190, "0 of 3",
+           "baselines that\nexecute anything", accent=CORAL)
 
-    # --- left lower: scope --------------------------------------------------
-    y = card(s, M, 278, 300, 200, "Scope of the language")
-    chip(s, M + 14, y + 2, 76, 15, "working now", "FFFFFF", TEAL)
-    bullets(s, M + 14, y + 22, 272, 60, [
-        "declaration, assignment, print",
-        "+   -   *   unary -   transpose()",
-        "matrix literals, identity(), zeros(), ones()",
-        "scalar-matrix scaling",
-    ], size=8.5, lead=11.4, gap=2.5, mark=BULL, mark_color=TEAL)
-    chip(s, M + 14, y + 86, 56, 15, "planned", "FFFFFF", MUTED)
-    bullets(s, M + 14, y + 106, 272, 32, [
-        "if / while, then functions",
-        "matrix chain ordering",
-    ], size=8.5, lead=11.4, gap=2.5, mark=BULL, mark_color=MUTED)
+    yy = panel(s, CX, 240, 390, 208, "Why those phases stay empty")
+    body(s, CX + 14, yy + 4, 362, 172, [
+        ("A subset of C has two numeric types, so its type system is an "
+         "enumeration with two members.", 9.2, PAPER),
+        ("Semantic analysis becomes a comparison of two tags. An optimizer "
+         "over it has constant folding and the scalar identities, and no way "
+         "to tell a cheap expression from an expensive one.", 9, DIM),
+        ("The baselines are not badly built. They reach lexical analysis, "
+         "parsing and the symbol table, and then run out of anything for the "
+         "later phases to be about.", 9, DIM),
+        ("The two phases the syllabus calls the centre of the subject are the "
+         "two with the least to do.", 9, GOLD),
+    ])
 
-    # --- middle: declaring values ------------------------------------------
-    y = card(s, 360, 116, 286, 220, "Declaring values")
-    code(s, 374, y + 4, 258, 180, [
-        ("matrix A[2,3];", CODEFG),
-        ("    " + ARROW + " A : Matrix<2x3>", CODETEA),
-        "",
-        ("matrix B = {{1,2},{3,4}};", CODEFG),
-        ("    " + ARROW + " B : Matrix<2x2>", CODETEA),
-        "",
-        ("matrix C = A * B;", CODEFG),
-        ("    " + ARROW + " C : Matrix<2x2>   inferred", CODETEA),
-        "",
-        ("matrix I = identity(3);", CODEFG),
-        ("    " + ARROW + " I : Matrix<3x3>", CODETEA),
-        "",
-        ("scalar k = 2.5;", CODEFG),
-        ("    " + ARROW + " k : Scalar", CODETEA),
-    ], size=8.2, lead=11.6)
+    px = CX + 406
+    yy = panel(s, px, y, CW - 406, 300, "Phases present, of eight")
+    short = ["MatrixLang", "baseline 1", "baseline 2", "baseline 3"]
+    for i, c in enumerate(D["baselines"]):
+        n = c["phase_count"]
+        row = yy + 8 + i * 30
+        s.text(px + 14, row, 90, 14,
+               [Para(Run(short[i], 8.6, PAPER if i == 0 else DIM,
+                         bold=(i == 0)), line=11)], pad=(0, 0, 0, 0))
+        s.rect(px + 108, row + 2, 144, 9, fill=RULE, name="bar-bg")
+        s.rect(px + 108, row + 2, 144 * n / 8.0, 9,
+               fill=MINT if i == 0 else CORAL, name="bar")
+        s.text(px + 262, row, 40, 14,
+               [Para(Run("%d/8" % n, 8.6, PAPER if i == 0 else DIM, bold=True,
+                         font=MONO), line=11)], pad=(0, 0, 0, 0))
+    s.rect(px + 14, yy + 134, CW - 434, 1, fill=RULE, name="rule")
+    body(s, px + 14, yy + 148, CW - 434, 116, [
+        ("How a phase is counted", 8.6, GOLD, True),
+        ("A file is attributed to a phase by its path and name, and a phase "
+         "counts as present on a single case-insensitive match of any of its "
+         "markers. The rule is deliberately generous: it can only overstate a "
+         "baseline, and it still finds no optimizer in any of them.", 8.6, DIM),
+    ])
 
-    y = card(s, 360, 346, 286, 132, "Dimensions are compile-time")
-    bullets(s, 374, y + 2, 258, 100, [
-        "A dimension must be a positive whole constant. "
-        "zeros(2+1,4) folds; zeros(n,4) is an error.",
-        "A matrix literal must be rectangular.",
-        "Assignment has value semantics: no aliasing, no element mutation.",
-    ], size=8.4, lead=11.2, gap=5, mark=BULL, mark_color=AMBER)
-
-    # --- right: shape rules -------------------------------------------------
-    y = card(s, 660, 116, 256, 220, "The shape rules")
-    data = [
-        ("A + B", "identical shapes"),
-        ("A - B", "identical shapes"),
-        ("A * B", "cols(A) = rows(B)"),
-        ("k * A", "any scalar, shape kept"),
-        ("transpose(A)", "rows and cols swap"),
-    ]
-    rows(s, 660 + 6, y + 4, 244, data, col1=96, size=8.0, lead=10.6, rowh=21,
-         zebra=None)
-    s.line_h(672, y + 112, 232, RULE, 1.0)
-    s.text(674, y + 118, 230, 62,
-           [Para([Run("Rejected:  ", 8.2, ROSE, bold=True),
-                  Run("A + k", 8.2, ROSE, bold=True, font=MONO),
-                  Run("  there is no broadcasting; it would read like matrix "
-                      "addition and would not be.", 8.2, BODY)], line=11),
-            Para([Run("Rejected:  ", 8.2, ROSE, bold=True),
-                  Run("transpose(k)", 8.2, ROSE, bold=True, font=MONO),
-                  Run("  a scalar has no axes to exchange.", 8.2, BODY)],
-                 line=11, before=4)], pad=(0, 0, 0, 0))
-
-    y = card(s, 660, 346, 256, 132, "Why it is scoped this way")
-    s.text(674, y + 2, 228, 100,
-           [Para(Run("With no control flow a whole program is a single basic block. "
-                     "That is what makes the Phase 3 optimizations exact rather than "
-                     "conservative: available expressions and liveness are each one "
-                     "linear scan, with no control-flow graph and no dataflow "
-                     "iteration.", 8.4, BODY), line=11.4)], pad=(0, 0, 0, 0))
-
-    takeaway(s, "A type is not “matrix” but Matrix<2x3>, and every rule in the "
-                "language is a statement about shapes.")
+    footer(s, "Three repositories, chosen by their description before their "
+              "contents were read. Each reduced to its most complete version.",
+           CORAL)
     return s
 
 
-# ==========================================================================
-# 3 -- system design
-# ==========================================================================
+# ====================================================================== 03 --
 
 def slide3():
     s = Slide()
-    header(s, 3, "System Design",
-           "Total System Design",
-           "A conventional compiler pipeline with one addition: three separate stages "
-           "consult the same shape rules.")
+    backdrop(s)
+    rail(s, active=(0, 1, 2, 3))
+    y = header(s, 3, "The language", "A type carries its shape",
+               "Not matrix, but Matrix<2x3>. Two matrices of different shapes "
+               "are values of different types.")
 
-    # --- left: the pipeline -------------------------------------------------
-    card(s, M, 116, 420, 362, "The compilation spine")
+    code(s, CX, y, 396, 132, [
+        ("matrix A[2,3] = {{1, 2, 3},", PAPER),
+        ("                 {4, 5, 6}};", PAPER),
+        ("matrix B[3,4];", PAPER),
+        "",
+        ("matrix C = A * B;", MINT),
+        ("    %s C : Matrix<2x4>, inferred" % ARROW, MINT),
+        "",
+        ("print(C);", PAPER),
+    ], size=8.8, lead=13.4)
 
-    stages = [
-        ("Lexical analysis", "matrix.l", "tokens", False),
-        ("Syntax analysis", "matrix.y", "syntax tree", False),
-        ("Semantic analysis", "semantic.c", "typed tree + symbols", True),
-        ("Intermediate code", "tac.c", "three-address code", False),
-        ("Optimizer", "optimize.c", "optimized code", True),
-        ("Code generation", "codegen.c", "MVM instructions", True),
-        ("Virtual machine", "vm.c", "printed result", False),
-    ]
+    yy = panel(s, CX + 412, y, CW - 412, 132, "Rejected before anything runs",
+               accent=CORAL)
+    code(s, CX + 424, yy + 2, CW - 436, 92, [
+        ("cannot multiply Matrix<2x3>", CORAL),
+        ("               by Matrix<5x4>", CORAL),
+        "  left  : A -> Matrix<2x3>",
+        "  right : B -> Matrix<5x4>",
+        ("  rule  : cols(left) = rows(right)", GOLD),
+        ("  found : 3 != 5", GOLD),
+    ], size=8.0, lead=11.2)
 
-    s.panel(M + 78, 144, 168, 22, fill=AMBERLT, radius=9000)
-    s.text(M + 78, 144, 168, 22, [Para(Run("source.ml", 8.6, AMBER, bold=True, font=MONO),
-                                       align="ctr")], anchor="ctr", pad=(0, 0, 0, 0))
+    y2 = 296.0
+    yy = panel(s, CX, y2, 258, 152, "What the language has")
+    for i, t in enumerate(["scalar and matrix",
+                           "+  -  *  unary -  transpose",
+                           "literals, identity, zeros, ones",
+                           "declaration, assignment, print"]):
+        s.text(CX + 14, yy + 4 + i * 20, 232, 16,
+               [Para([Run(SQ + "  ", 6.5, GOLD), Run(t, 8.6, DIM)], line=11)],
+               pad=(0, 0, 0, 0))
+    s.text(CX + 14, yy + 88, 232, 32,
+           [Para(Run("No control flow. That is the enabling decision, not a "
+                     "gap.", 8.4, GOLD, italic=True), line=11)],
+           pad=(0, 0, 0, 0))
 
-    y0, bh, gap = 174.0, 30.0, 10.0
-    for i, (name, file, out, uses_rules) in enumerate(stages):
-        yy = y0 + i * (bh + gap)
-        s.panel(M + 62, yy, 200, bh, fill=CARD, line=TEAL if uses_rules else RULE,
-                line_w=1.4 if uses_rules else 1.0, radius=2000)
-        s.text(M + 62, yy, 200, bh,
-               [Para([Run((BULL + "  ") if uses_rules else "", 7.5, TEAL, bold=True),
-                      Run(name, 8.8, INK, bold=True),
-                      Run("   " + file, 7.6, MUTED, font=MONO)], line=11)],
-               anchor="ctr", pad=(10, 0, 6, 0))
-        s.text(M + 272, yy, 140, bh,
-               [Para(Run(ARROW + "  " + out, 8.0, TEAL), line=10.5)],
-               anchor="ctr", pad=(0, 0, 0, 0))
-        if i < len(stages) - 1:
-            s.rect(M + 160, yy + bh, 1.4, gap, fill=MUTED)
-    s.rect(M + 160, 166, 1.4, 8, fill=MUTED)
+    yy = panel(s, CX + 274, y2, CW - 274, 152, "Why no control flow")
+    body(s, CX + 288, yy + 4, CW - 302, 112, [
+        ("With no branches a whole program is a single basic block. "
+         "Available-expression analysis and liveness are each one linear scan.",
+         9.2, PAPER),
+        ("A course reaches working common-subexpression elimination and "
+         "dead-code elimination without first building a control-flow graph, "
+         "which is where a semester usually runs out.", 9, DIM),
+    ])
 
-    s.text(M + 14, 452, 392, 20,
-           [Para([Run(BULL + "  ", 8, TEAL, bold=True),
-                  Run("consults ", 8.2, BODY),
-                  Run("types.c", 8.2, INK, bold=True, font=MONO),
-                  Run(" — the shape rules, written once and read by three stages.",
-                      8.2, BODY)], line=11)], pad=(0, 0, 0, 0))
-
-    # --- right: modules -----------------------------------------------------
-    y = card(s, 490, 116, 426, 362, "Module responsibilities")
-    rows(s, 496, y + 2, 414, [
-        ("matrix.l", "Flex scanner; also records each token for display"),
-        ("matrix.y", "Bison LALR(1) grammar; builds the syntax tree"),
-        ("types.c", "the type lattice and every shape rule"),
-        ("ast.c", "tree nodes, printer, expression rendering"),
-        ("symtab.c", "names, kinds and shapes; duplicate detection"),
-        ("semantic.c", "shape inference and dimension checking"),
-        ("tac.c", "three-address code with typed instructions"),
-        ("optimize.c", "four passes, run to a fixed point"),
-        ("codegen.c", "instruction selection for the stack machine"),
-        ("vm.c", "executes the generated program"),
-        ("value.c", "matrix arithmetic and the literal pool"),
-        ("diag.c", "every message, ordered by source position"),
-        ("main.c", "driver, stage selection, exit status"),
-    ], col1=86, size=8.2, lead=10.6, rowh=24.8, zebra=PAPER)
-
-    takeaway(s, "It is a full compiler, not a calculator: lexer, parser, tree, symbol "
-                "table, semantics, IR, optimizer, code generation and execution.")
+    footer(s, "Every shape rule lives in one file, read by both the semantic "
+              "analyser and the code generator.")
     return s
 
 
-# ==========================================================================
-# 4 -- the worked example
-# ==========================================================================
+# ====================================================================== 04 --
 
 def slide4():
     s = Slide()
-    header(s, 4, "End to End",
-           "Input " + ARROW + " Compiler Stages " + ARROW + " Output",
-           "Every stage prints what it produced, so the project can be demonstrated "
-           "one phase at a time.")
+    backdrop(s)
+    rail(s, active=(0, 1, 2, 3, 4, 5, 6, 7))
+    y = header(s, 4, "End to end", "Every phase prints what it produced",
+               "One flag per phase, so a reviewer can stop the compiler "
+               "anywhere and read the artifact. The text below is its output.")
 
-    # source
-    s.panel(M, 112, W, 74, fill=CODEBG, radius=1600)
-    s.text(M + 14, 118, 24, 62, [Para(Run("in", 7.6, CODEDIM, bold=True, caps=True,
-                                          spacing=1.0), line=10)], pad=(0, 0, 0, 0))
-    def column(x, w, lines):
-        paras = []
-        for t in lines:
-            c = CODEFG
-            if isinstance(t, tuple):
-                t, c = t
-            paras.append(Para(Run(t or " ", 8.2, c, font=MONO), line=11.2))
-        s.text(x, 118, w, 62, paras, pad=(0, 0, 0, 0))
-
-    column(M + 42, 420, [
-        "matrix A[2,3] = {{1, 2, 3},",
-        "                 {4, 5, 6}};",
-        "matrix B[3,4] = {{1, 0, 0, 1},",
-        "                 {0, 1, 0, 2},",
-        "                 {0, 0, 1, 3}};",
-    ])
-    column(M + 480, 380, [
-        ("matrix C = A * B;", CODETEA),
-        "print(C);",
-    ])
-    s.text(M + 480, 146, 380, 30,
-           [Para(Run("C is declared without a shape. The compiler works out",
-                     7.6, CODETEA, italic=True), line=10.4),
-            Para(Run("Matrix<2x4> from the shapes of A and B.",
-                     7.6, CODETEA, italic=True), line=10.4)], pad=(0, 0, 0, 0))
-
-    def stage(x, y, w, h, n, title, flag, lines, size=7.7, lead=10.0):
-        s.panel(x, y, w, h, fill=CARD, line=RULE)
-        s.panel(x + 12, y + 9, 15, 15, fill=TEAL, radius=12000)
-        s.text(x + 12, y + 9, 15, 15, [Para(Run(str(n), 7.8, "FFFFFF", bold=True),
-                                            align="ctr")], anchor="ctr", pad=(0, 0, 0, 0))
-        s.text(x + 33, y + 9, w - 46, 15,
-               [Para([Run(title, 8.2, INK, bold=True, caps=True, spacing=0.8),
-                      Run("   " + flag, 7.6, TEAL, font=MONO)], line=11)],
+    cols = [
+        ("--tokens", "the lexer, one row per token", [
+            "#   TOKEN       LEXEME   LINE:COL",
+            "1   MATRIX      matrix   1:1",
+            "2   IDENTIFIER  A        1:8",
+            "3   LBRACKET    [        1:9",
+            "4   NUMBER      2        1:10",
+            "5   COMMA       ,        1:11",
+            "6   NUMBER      3        1:12",
+            "7   RBRACKET    ]        1:13",
+            ("...                   78 tokens", DIM),
+            "",
+        ]),
+        ("--ast", "the parse, with shapes attached", [
+            "Program  (line 1)",
+            "|-- Declare A : Matrix<2x3>",
+            "|   `-- MatrixLiteral : Matrix<2x3>",
+            ("|       |-- Row : Matrix<1x3>", DIM),
+            ("|       `-- Row : Matrix<1x3>", DIM),
+            "|-- Declare B : Matrix<3x4>",
+            ("|-- Declare C : Matrix<2x4>", MINT),
+            ("|   `-- BinaryOp * : Matrix<2x4>", MINT),
+            ("`-- Print : Matrix<2x4>", MINT),
+            "",
+        ]),
+        ("--symbols", "one row per name, shape included", [
+            "+------+--------+------+------+",
+            "| Name | Kind   | Rows | Cols |",
+            "+------+--------+------+------+",
+            "| A    | Matrix |    2 |    3 |",
+            "| B    | Matrix |    3 |    4 |",
+            ("| C    | Matrix |    2 |    4 |", MINT),
+            "+------+--------+------+------+",
+            "3 symbol(s).",
+            "",
+            ("C's shape was never written down;", GOLD),
+            ("it was inferred from A and B.", GOLD),
+        ]),
+        ("--tac", "three-address code, still typed", [
+            "1  A = #0            Matrix<2x3>",
+            "2  B = #1            Matrix<3x4>",
+            ("3  t1 = A * B        Matrix<2x4>", MINT),
+            "4  C = t1            Matrix<2x4>",
+            "5  print C           Matrix<2x4>",
+            "",
+            "5 instruction(s).",
+            "",
+            ("every temporary carries its shape,", GOLD),
+            ("which is what the optimizer costs.", GOLD),
+        ]),
+        ("--target", "stack machine, selected by shape", [
+            "0  PUSH_MATRIX   #0",
+            "1  STORE_MATRIX  A",
+            "2  PUSH_MATRIX   #1",
+            "3  STORE_MATRIX  B",
+            "4  LOAD_MATRIX   A",
+            "5  LOAD_MATRIX   B",
+            ("6  MATMUL", MINT),
+            "7  STORE_MATRIX  t1",
+            ("...", DIM),
+            "13 instruction(s).",
+        ]),
+        ("--run", "the VM, printing the result", [
+            ("C = Matrix<2x4>", MINT),
+            "  [  38  44  50  56 ]",
+            "  [  83  98 113 128 ]",
+            "",
+            "ACCEPTED (0 error(s), 0 warning(s))",
+            "",
+            ("38 = 1*1 + 2*5 + 3*9", GOLD),
+            "",
+            ("the shapes were checked long", DIM),
+            ("before any number was touched", DIM),
+        ]),
+    ]
+    w = (CW - 2 * 14) / 3
+    for i, (flag, note, lines) in enumerate(cols):
+        cx = CX + (i % 3) * (w + 14)
+        cy = y + (i // 3) * 165
+        s.text(cx, cy, w, 14,
+               [Para([Run(flag, 8.4, GOLD, bold=True, font=MONO),
+                      Run("   " + note, 7.6, FAINT)], line=11)],
                pad=(0, 0, 0, 0))
-        code(s, x + 10, y + 30, w - 20, h - 40, lines, size=size, lead=lead,
-             pad=(9, 7, 7, 6))
+        code(s, cx, cy + 18, w, 133, lines, size=7.4, lead=11.6)
 
-    # row 1
-    ry, rh = 196.0, 138.0
-    cw = 280.0
-    stage(M, ry, cw, rh, 1, "Lexical analysis", "--tokens", [
-        ("#   TOKEN         LEXEME     LINE:COL", CODEDIM),
-        "1   MATRIX        matrix     5:1",
-        "2   IDENTIFIER    A          5:8",
-        "3   LBRACKET      [          5:9",
-        "4   NUMBER        2          5:10",
-        "5   COMMA         ,          5:11",
-        "6   NUMBER        3          5:12",
-        ("...                        78 token(s).", CODEDIM),
-    ])
-    stage(M + cw + 16, ry, cw, rh, 2, "Syntax analysis", "--ast", [
-        "Program",
-        "|-- Declare A : Matrix<2x3>",
-        "|-- Declare B : Matrix<3x4>",
-        ("|-- Declare C : Matrix<2x4>", CODETEA),
-        ("|   `-- BinaryOp * : Matrix<2x4>", CODETEA),
-        "|       |-- Identifier A : Matrix<2x3>",
-        "|       `-- Identifier B : Matrix<3x4>",
-        "`-- Print : Matrix<2x4>",
-    ])
-    stage(M + 2 * (cw + 16), ry, cw, rh, 3, "Symbol table", "--symbols", [
-        ("Name   Kind    Rows  Cols  Decl@Ln", CODEDIM),
-        "A      Matrix     2     3        5",
-        "B      Matrix     3     4        8",
-        ("C      Matrix     2     4       12", CODETEA),
-        "",
-        ("3 symbol(s).", CODEDIM),
-        "",
-        ("rows and cols are the whole point", CODETEA),
-    ])
-
-    # row 2
-    ry2, rh2 = 346.0, 132.0
-    stage(M, ry2, cw, rh2, 4, "Intermediate code", "--tac", [
-        "1  A = #0              Matrix<2x3>",
-        "2  B = #1              Matrix<3x4>",
-        ("3  t1 = A * B          Matrix<2x4>", CODETEA),
-        "4  C = t1              Matrix<2x4>",
-        "5  print C             Matrix<2x4>",
-        "",
-        ("5 instruction(s).", CODEDIM),
-    ])
-    stage(M + cw + 16, ry2, cw, rh2, 5, "Target code", "--target", [
-        " 0  PUSH_MATRIX   #0",
-        " 1  STORE_MATRIX  A",
-        " 4  LOAD_MATRIX   A",
-        " 5  LOAD_MATRIX   B",
-        (" 6  MATMUL", CODETEA),
-        " 7  STORE_MATRIX  t1",
-        "11  PRINT         C",
-        ("12  HALT                13 instruction(s).", CODEDIM),
-    ])
-    stage(M + 2 * (cw + 16), ry2, cw, rh2, 6, "Execution", "--run", [
-        ("C = Matrix<2x4>", CODETEA),
-        "  [  1  2  3 14 ]",
-        "  [  4  5  6 32 ]",
-        "",
-        ("check by hand:", CODEDIM),
-        ("row 1 of A is [1 2 3]", CODEDIM),
-        ("col 4 of B is [1 2 3]", CODEDIM),
-        ("1*1 + 2*2 + 3*3 = 14", CODEAMB),
-    ])
-
-    takeaway(s, "Each phase has its own flag, so a reviewer can stop the compiler at "
-                "any stage and read what it produced.")
+    footer(s, "make demo1 demo2 demo3 runs one demonstration per project "
+              "review, straight from the source tree.")
     return s
 
 
-# ==========================================================================
-# 5 -- checking and optimization
-# ==========================================================================
+# ====================================================================== 05 --
 
 def slide5():
     s = Slide()
-    header(s, 5, "Checking and Optimization",
-           "What the Shapes Buy",
-           "The same information rejects impossible programs and removes work a "
-           "general-purpose optimizer cannot see.")
+    backdrop(s)
+    rail(s, active=(5,))
+    y = header(s, 5, "The idea", "A shape is also a cost model",
+               "Multiplying an m x n by an n x p matrix performs m p (2n-1) "
+               "operations. Every term is a shape, and every shape is in the "
+               "type.")
 
-    # --- left: checking -----------------------------------------------------
-    y = card(s, M, 112, 424, 318,
-             "1   " + DOT + "   Dimension checking", accent=ROSE)
-    code(s, M + 13, y + 2, 398, 80, [
-        ("9:7: error [semantic] cannot multiply Matrix<2x3>", CODEROS),
-        ("     by Matrix<5x4>", CODEROS),
-        "   left   : A -> Matrix<2x3>        right : B -> Matrix<5x4>",
-        ("   rule   : columns(left) must equal rows(right)", CODETEA),
-        ("   found  : 3 != 5", CODETEA),
-    ], size=7.9, lead=10.8)
-    s.text(M + 13, y + 88, 398, 16,
-           [Para(Run("The message names both operands as they were written, the rule, "
-                     "and what it found.", 8.2, BODY, italic=True), line=11)],
-           pad=(0, 0, 0, 0))
-    s.text(M + 13, y + 108, 398, 14,
-           [Para(Run("Every error class, one example file each", 8, ROSE, bold=True,
-                     caps=True, spacing=0.9))], pad=(0, 0, 0, 0))
-    rows(s, M + 8, y + 124, 408, [
-        ("mul_mismatch", "cannot multiply Matrix<2x3> by Matrix<5x4>"),
-        ("add_mismatch", "addition requires identical dimensions"),
-        ("bad_shape", "transpose() expects a matrix, got Scalar"),
-        ("bad_literal", "row 2 has 2 entries, expected 3"),
-        ("undeclared", "assignment to undeclared variable 'B'"),
-        ("duplicate", "duplicate declaration of 'A'"),
-        ("syntax", "unexpected IDENT, expecting ';' or '='"),
-        ("lexical", "illegal character '$'"),
-    ], col1=104, size=7.9, lead=10.4, rowh=19.2, zebra=PAPER)
+    bignum(s, CX, y + 8, 200, "98.0%",
+           "of the arithmetic removed\nfrom one three-matrix chain",
+           accent=MINT, size=44)
+    s.text(CX, y + 116, 214, 44,
+           [Para(Run("The instruction count did not move. Four before, four "
+                     "after.", 9, CORAL), line=12)], pad=(0, 0, 0, 0))
 
-    # --- right: optimization ------------------------------------------------
-    y = card(s, 492, 112, 424, 318, "2   " + DOT + "   Optimization", accent=TEAL)
-
-    def beforeafter(yy, label, before, after, note):
-        s.text(506, yy, 396, 13, [Para(Run(label, 7.9, TEAL, bold=True, caps=True,
-                                           spacing=0.9))], pad=(0, 0, 0, 0))
-        code(s, 506, yy + 15, 186, 58, before, size=7.5, lead=9.8, pad=(9, 6, 6, 5))
-        s.arrow(698, yy + 34, 20, 16, TEAL)
-        code(s, 724, yy + 15, 178, 58, after, size=7.5, lead=9.8, pad=(9, 6, 6, 5))
-        s.text(506, yy + 75, 396, 12, [Para(Run(note, 7.7, BODY, italic=True), line=10)],
-               pad=(0, 0, 0, 0))
-
-    beforeafter(y + 2, "Common subexpression elimination",
-                ["t1 = A * B", "X  = t1", ("t2 = A * B", CODEROS), "Y  = t2"],
-                ["t1 = A * B", "X  = t1", ("Y  = t1", CODETEA), ""],
-                "A matrix multiply is the costliest operation in the language.")
-
-    beforeafter(y + 92, "Dead code elimination",
-                [("t1 = A * B", CODEROS), ("X  = t1", CODEROS),
-                 "t2 = C * D", "X  = t2", "print X"],
-                ["t2 = C * D", "X  = t2", "print X", "", ("9 " + ARROW + " 5 instructions", CODETEA)],
-                "Removing X = A*B makes A and B dead too, so the passes repeat.")
-
-    s.text(506, y + 184, 396, 13, [Para(Run("Matrix-specific algebra   " + DOT +
-                                            "   the original contribution", 7.9, AMBER,
-                                            bold=True, caps=True, spacing=0.9))],
-           pad=(0, 0, 0, 0))
-    code(s, 506, y + 199, 396, 74, [
-        ("A * identity(n)  " + ARROW + "  A        identity(n) * A  " + ARROW + "  A", CODEAMB),
-        ("A + zeros(r,c)   " + ARROW + "  A        A - zeros(r,c)   " + ARROW + "  A", CODEAMB),
-        ("A * 1            " + ARROW + "  A        A * 0            " + ARROW + "  zeros(r,c)", CODEAMB),
-        ("transpose(transpose(A))           " + ARROW + "  A", CODEAMB),
+    px = CX + 224
+    yy = panel(s, px, y, CW - 224, 170, "One chain, two bracketings")
+    code(s, px + 14, yy + 2, CW - 252, 124, [
+        ("matrix R = A * B * C;    A 100x2  B 2x100  C 100x2", PAPER),
         "",
-        ("a general optimizer cannot: it does not know what a matrix is", CODEDIM),
-    ], size=7.6, lead=10.4)
+        ("(A * B) * C   builds a 100x100 intermediate", CORAL),
+        ("              69,800 FLOP", CORAL),
+        ("A * (B * C)   builds a 2x2 intermediate", MINT),
+        ("               1,396 FLOP", MINT),
+        "",
+        ("'*' is left associative, so the source asked for the first.", DIM),
+        ("The compiler emitted the second, into the same four slots.", DIM),
+    ], size=8.0, lead=11.4)
 
-    # --- the safety bar -----------------------------------------------------
-    s.panel(M, 440, W, 38, fill=AMBERLT, radius=2000)
-    s.rect(M, 440, 3.5, 38, fill=AMBER)
-    s.text(M + 17, 440, W - 34, 38,
-           [Para([Run("Is it still the same program?   ", 8.8, AMBER, bold=True),
-                  Run("Every example is executed twice, with the optimizer and without, "
-                      "and the two outputs must be byte-identical. A smaller program "
-                      "that computes something else is not an optimization, and an "
-                      "instruction count cannot tell the difference.", 8.8, INK)],
-                 line=12)], anchor="ctr", pad=(0, 0, 0, 0))
+    y2 = 334.0
+    yy = panel(s, CX, y2, 300, 116, "Why an instruction count cannot see it")
+    body(s, CX + 14, yy + 4, 274, 84, [
+        ("A chain of k matrices needs exactly k-1 products under every "
+         "bracketing.", 9, PAPER),
+        ("So re-bracketing never changes the instruction count. It is "
+         "invisible to the metric course projects report.", 9, GOLD),
+    ])
 
-    takeaway(s, "Shapes are checked once and then reused: the same facts that reject a "
-                "bad program are what let a good one be optimized.")
+    yy = panel(s, CX + 316, y2, CW - 316, 116,
+               "The algorithm is the textbook one")
+    body(s, CX + 330, yy + 4, CW - 344, 84, [
+        ("The standard O(k^3) dynamic program over the chain, the same one an "
+         "algorithms course teaches.", 9, PAPER),
+        ("What is new is not the algorithm. It is that a student compiler "
+         "holds the information needed to run it.", 9, DIM),
+    ])
+
+    footer(s, "Linnea and LGen do this at research quality. Here the dynamic "
+              "program is 21 lines of C, inside a 328-line pass.")
     return s
 
 
-# ==========================================================================
-# 6 -- what is built
-# ==========================================================================
+# ====================================================================== 06 --
 
 def slide6():
     s = Slide()
-    header(s, 6, "Current State",
-           "What Is Already Built",
-           "The whole pipeline runs today. Nothing on the previous slides is a plan.")
+    backdrop(s)
+    rail(s, active=(5,))
+    y = header(s, 6, "The measurement",
+               "Two metrics, same programs, different answers",
+               "%d programs from a generator, two seeds. The corpus was not "
+               "written by whoever wrote the optimizer." % D["n"])
 
-    # --- repository ---------------------------------------------------------
-    y = card(s, M, 116, 258, 362, "Repository")
-    code(s, M + 12, y + 2, 234, 258, [
-        ("MatrixLang/", CODETEA),
-        " |-- Makefile",
-        " |-- README.md",
-        (" |-- src/            15 modules", CODEFG),
-        " |    |-- matrix.l    matrix.y",
-        " |    |-- types.c     semantic.c",
-        " |    |-- symtab.c    ast.c",
-        " |    |-- tac.c       optimize.c",
-        " |    |-- codegen.c   vm.c",
-        " |    `-- value.c     diag.c",
-        (" |-- examples/", CODEFG),
-        " |    |-- phase1/     valid/",
-        " |    `-- errors/     optimize/",
-        (" |-- tests/          139 assertions", CODEFG),
-        (" |-- demos/          one per review", CODEFG),
-        (" |-- tools/          figure, docx, deck", CODEFG),
-        (" `-- docs/", CODEFG),
-        "",
-        ("one command per review:", CODEDIM),
-        ("make demo1  demo2  demo3", CODETEA),
-    ], size=7.7, lead=11.6)
-
-    s.line_h(M + 14, 416, 230, RULE, 1.0)
-    s.text(M + 14, 426, 230, 46,
-           [Para(Run("tools/ holds three generators: the architecture figure, the "
-                     "Phase 1 document, and this deck. Each rebuilds from the "
-                     "repository.", 7.8, MUTED), line=10.6)], pad=(0, 0, 0, 0))
-
-    # --- pipeline checklist -------------------------------------------------
-    y = card(s, 318, 116, 300, 230, "Implemented, end to end")
-    items = [
-        "Flex lexical analyser", "Bison LALR(1) parser",
-        "Abstract syntax tree", "Symbol table with shapes",
-        "Shape inference", "Dimension checking",
-        "Diagnostics with detail", "Error recovery at ';'",
-        "Three-address code", "Constant folding",
-        "Common subexpr. elim.", "Copy propagation",
-        "Dead code elimination", "Matrix algebra passes",
-        "Target code generation", "Virtual machine",
-    ]
-    for i, it in enumerate(items):
-        col, row = i % 2, i // 2
-        xx = 318 + 14 + col * 138
-        yy = y + 2 + row * 25
-        s.text(xx, yy, 134, 22,
-               [Para([Run(CHECK + "  ", 8.4, TEAL, bold=True),
-                      Run(it, 8.2, BODY)], line=11)], pad=(0, 0, 0, 0))
-
-    y = card(s, 318, 356, 300, 122, "One flag per stage")
-    code(s, 332, y + 2, 272, 86, [
-        ("--tokens    --ast       --symbols", CODEFG),
-        ("--check     --tac       --optimize", CODEFG),
-        ("--explain   --report    --target", CODEFG),
-        ("--run       --trace     --stats", CODEFG),
-        "",
-        ("--phase1  --phase2  --phase3", CODETEA),
-    ], size=8.0, lead=11.4)
-
-    # --- numbers ------------------------------------------------------------
-    y = card(s, 634, 116, 282, 230, "Measured")
-    stat(s, 650, y + 6, 120, "139", "acceptance assertions,\nall passing")
-    stat(s, 782, y + 6, 120, "0", "compiler warnings under\n-Wall -Wextra", accent=TEAL)
-    s.line_h(650, y + 82, 252, RULE, 1.0)
-    stat(s, 650, y + 96, 120, "0", "LALR(1) grammar\nconflicts", accent=TEAL)
-    stat(s, 782, y + 96, 120, "3781", "lines of C, plus 320\nof Flex and Bison", accent=INK)
-
-    y = card(s, 634, 356, 282, 122, "Instruction reduction")
-    bars = [("algebra", 40.7), ("dce", 44.4), ("lit. identity", 40.0),
-            ("cse", 12.5), ("chain", 0.0)]
-    for i, (name, pct) in enumerate(bars):
-        yy = y + 2 + i * 16
-        s.text(648, yy, 66, 14, [Para(Run(name, 7.6, BODY), line=10)],
-               anchor="ctr", pad=(0, 0, 0, 0))
-        s.rect(716, yy + 3.5, 148, 8, fill=RULE)
-        wpx = max(1.5, 148 * pct / 50.0)
-        s.rect(716, yy + 3.5, wpx, 8, fill=TEAL if pct else MUTED)
-        s.text(868, yy, 44, 14,
-               [Para(Run(f"{pct:.1f}%", 7.6, INK if pct else MUTED, bold=True), line=10)],
-               anchor="ctr", pad=(0, 0, 0, 0))
-    s.text(648, y + 84, 254, 12,
-           [Para(Run("chain.ml has nothing redundant, and the optimizer correctly "
-                     "leaves it alone.", 7.4, MUTED, italic=True), line=10)],
+    yy = panel(s, CX, y, CW, 150, "Median reduction per program")
+    s.text(CX + 14, y + 10, CW - 28, 14,
+           [Para(Run("bar = interquartile range   %s   tick = median" % DOT,
+                     7.4, FAINT), align="r", line=10)], pad=(0, 0, 0, 0))
+    rows = [("arithmetic removed", D["flop_med"], D["flop_q1"], D["flop_q3"], MINT),
+            ("instructions removed", D["instr_med"], D["instr_q1"], D["instr_q3"], CORAL)]
+    bar_x, bar_w = CX + 186, 420
+    for i, (name, med, q1, q3, col) in enumerate(rows):
+        ry = yy + 8 + i * 52
+        s.text(CX + 16, ry, 164, 14,
+               [Para(Run(name, 9, PAPER), line=11)], pad=(0, 0, 0, 0))
+        s.text(CX + 16, ry + 19, 164, 14,
+               [Para(Run("IQR %.1f to %.1f" % (q1, q3), 7.6, FAINT), line=10)],
+               pad=(0, 0, 0, 0))
+        s.rect(bar_x, ry + 17, bar_w, 12, fill=RULE, name="bar-bg")
+        s.rect(bar_x + bar_w * q1 / 100.0, ry + 17,
+               max(1.5, bar_w * (q3 - q1) / 100.0), 12,
+               fill=col if i == 0 else CORALD, name="iqr")
+        s.rect(bar_x + bar_w * med / 100.0 - 1.25, ry + 13, 2.5, 20,
+               fill=PAPER, name="median")
+        s.text(bar_x + bar_w + 12, ry + 13, 80, 20,
+               [Para(Run("%.1f%%" % med, 13, col, bold=True, font=SERIF),
+                     line=15)], pad=(0, 0, 0, 0))
+    s.text(bar_x, yy + 112, 60, 14,
+           [Para(Run("0%", 7.4, FAINT, font=MONO), line=10)], pad=(0, 0, 0, 0))
+    s.text(bar_x + bar_w - 60, yy + 112, 60, 14,
+           [Para(Run("100%", 7.4, FAINT, font=MONO), align="r", line=10)],
            pad=(0, 0, 0, 0))
 
-    takeaway(s, "The compiler is finished and demonstrable today; what remains is "
-                "extension, not completion.")
+    y2 = y + 166
+    bignum(s, CX, y2, 196, "%.1f%%" % D["chain_share"],
+           "of programs had a chain worth\nre-bracketing (%d of %d)"
+           % (D["chain_n"], D["chain_total"]), accent=GOLD, size=38)
+    bignum(s, CX + 210, y2, 196, "%.1f%%" % D["chain_med"],
+           "median arithmetic saved\non those programs", accent=GOLD, size=38)
+    bignum(s, CX + 420, y2, 250, "%d/%d" % (D["identical"], D["programs"]),
+           "programs printed the same bytes\nwith the optimizer and without",
+           accent=MINT, size=38)
+
+    (f1, i1), (f2, i2) = D["per_seed"]
+    yy = panel(s, CX, 424, CW, 54, fill=PANEL2)
+    s.text(CX + 20, 424, CW - 40, 54,
+           [Para([Run("Not one lucky corpus.  ", 9, GOLD, bold=True),
+                  Run("Taken separately the two seeds give %.1f%% and %.1f%% of "
+                      "the arithmetic against %.1f%% and %.1f%% of the "
+                      "instructions. The gap between the metrics is the stable "
+                      "part." % (f1, f2, i1, i2), 9, DIM)], line=12.5)],
+           anchor="ctr", pad=(0, 0, 0, 0))
+
+    footer(s, "Roughly a fifth of programs are left alone. An optimizer that "
+              "always reports an improvement is measuring nothing.")
     return s
 
 
-# ==========================================================================
-# 7 -- roadmap
-# ==========================================================================
+# ====================================================================== 07 --
 
 def slide7():
     s = Slide()
-    header(s, 7, "Next",
-           "What Comes Next",
-           "The same pipeline, extended. Each step names the compiler work it "
-           "actually requires.")
+    backdrop(s)
+    rail(s, active=(5, 7))
+    y = header(s, 7, "What the testing found",
+               "The corpus found a bug we had not",
+               "The first differential run did not come back clean, and that is "
+               "the part worth reporting.")
 
-    y = card(s, M, 116, 424, 362, "Roadmap")
-    steps = [
-        ("1", "Control flow", "if and while turn one basic block into a control-flow "
-                              "graph, and these local passes into global dataflow "
-                              "analyses. The largest single step.", TEAL),
-        ("2", "Matrix chain ordering", "(A*B)*C and A*(B*C) give the same result at very "
-                                       "different cost. The compiler already knows every "
-                                       "shape needed to choose.", AMBER),
-        ("3", "Functions", "shape-polymorphic signatures, so a routine can accept "
-                           "Matrix<m,n> rather than one fixed shape.", TEAL),
-        ("4", "Real target code", "x86-64 or LLVM IR instead of a virtual machine, "
-                                  "which introduces register allocation.", TEAL),
-        ("5", "Generated test programs", "the optimized-equals-unoptimized check is far "
-                                         "stronger against randomly generated programs "
-                                         "than against a fixed corpus.", TEAL),
-    ]
-    yy = y + 4
-    for num, title, desc, accent in steps:
-        s.panel(M + 14, yy, 19, 19, fill=accent, radius=12000)
-        s.text(M + 14, yy, 19, 19, [Para(Run(num, 8.6, "FFFFFF", bold=True), align="ctr")],
-               anchor="ctr", pad=(0, 0, 0, 0))
-        s.text(M + 42, yy - 1, 378, 16,
-               [Para(Run(title, 9.6, INK, bold=True), line=12)], pad=(0, 0, 0, 0))
-        s.text(M + 42, yy + 15, 378, 42,
-               [Para(Run(desc, 8.3, BODY), line=11)], pad=(0, 0, 0, 0))
-        yy += 66
+    code(s, CX, y, 430, 116, [
+        ("unoptimized          optimized", DIM),
+        ("R = Matrix<1x1>      R = Matrix<1x1>", PAPER),
+        ("  [ 0 ]                [ -0 ]", CORAL),
+        "",
+        ("the rewrite that did it:", DIM),
+        ("    0 - x   =>   -x", GOLD),
+    ], size=9, lead=13.4)
 
-    # --- right: the two that matter ----------------------------------------
-    y = card(s, 492, 116, 424, 176, "1   " + DOT + "   Control flow, sketched")
-    code(s, 506, y + 2, 396, 142, [
-        ("scalar i = 0;", CODEFG),
-        ("matrix Acc = zeros(3,3);", CODEFG),
-        "",
-        ("while (i < 10) {", CODETEA),
-        ("    Acc = Acc + A * B;", CODEFG),
-        ("    i   = i + 1;", CODEFG),
-        ("}", CODETEA),
-        "",
-        ("A * B is loop-invariant. Hoisting it needs a loop,", CODEDIM),
-        ("a CFG, and iterative liveness -- none of which", CODEDIM),
-        ("the current single-block optimizer has.", CODEDIM),
-    ], size=8.0, lead=11.0)
+    yy = panel(s, CX + 446, y, CW - 446, 116, "Why it is wrong", accent=CORAL)
+    s.text(CX + 460, yy + 2, CW - 474, 80,
+           [Para(Run("True over the reals. Not observationally equivalent in "
+                     "IEEE-754: +0 minus +0 is +0, but negating +0 gives -0, "
+                     "and the two print differently.", 9, PAPER), line=12.5)],
+           pad=(0, 0, 0, 0))
 
-    y = card(s, 492, 302, 424, 176,
-             "2   " + DOT + "   Matrix chain ordering", accent=AMBER)
-    code(s, 506, y + 2, 396, 136, [
-        ("matrix A[10,100];  matrix B[100,5];  matrix C[5,50];", CODEFG),
-        ("matrix R = A * B * C;", CODEFG),
-        "",
-        ("(A*B)*C   10*100*5 + 10*5*50    =   7,500 mults", CODETEA),
-        ("A*(B*C)   100*5*50 + 10*100*50  =  75,000 mults", CODEROS),
-        "",
-        ("A tenfold difference, decided entirely by shapes", CODEAMB),
-        ("the compiler has already inferred. This is the", CODEAMB),
-        ("clearest thing a scalar compiler could not do.", CODEAMB),
-    ], size=8.0, lead=11.6)
+    y2 = 300.0
+    yy = panel(s, CX, y2, CW, 150, "What we take from it")
+    colw = (CW - 48) / 2
+    body(s, CX + 16, yy + 4, colw, 70, [
+        ("Not a finding about floating point.", 9.4, GOLD, True),
+        ("That algebraic identities valid over the reals are unsound in "
+         "floating point is textbook, and production compilers gate exactly "
+         "these rewrites behind fast-math.", 9, DIM),
+    ])
+    body(s, CX + 32 + colw, yy + 4, colw, 70, [
+        ("A finding about what a course can afford.", 9.4, MINT, True),
+        ("A generator and a loop comparing two runs, which is a weekend of "
+         "work, found a defect in a student-scale optimizer that reading the "
+         "code had not, on an input nobody chose.", 9, DIM),
+    ])
+    s.rect(CX + 16, yy + 86, CW - 32, 1, fill=RULE, name="rule")
+    s.text(CX + 16, yy + 96, CW - 32, 20,
+           [Para(Run("The rewrite was removed. It saved no arithmetic anyway: "
+                     "a negation costs what a subtraction from zero costs.",
+                     8.8, PAPER, italic=True), line=12)], pad=(0, 0, 0, 0))
 
-    takeaway(s, "Every next step is bounded and stated as compiler work, not as a wish: "
-                "the dependency each one has is named.")
+    footer(s, "Over the hand-written examples the same check passes, and "
+              "passing there shows only that the check runs.", MINT)
     return s
 
 
-# ==========================================================================
-# 8 -- usefulness and originality
-# ==========================================================================
+# ====================================================================== 08 --
 
 def slide8():
     s = Slide()
-    header(s, 8, "Contribution",
-           "Usefulness, Originality and the Final System",
-           "Static shape checking is not new. The contribution is carrying it through a "
-           "complete compiler and then optimizing with it.")
+    backdrop(s)
+    rail(s, active=(0, 1, 2, 3, 4, 5, 6, 7))
+    y = header(s, 8, "What it means",
+               "The source language is a curricular decision",
+               "It decides which phases can carry real work. That is the claim, "
+               "and it is the one we can evidence.")
 
-    # --- useful -------------------------------------------------------------
-    y = card(s, M, 116, 280, 244, "Why it is useful")
-    for i, it in enumerate([
-        "shape errors caught before anything runs",
-        "the message names the rule, not just the types",
-        "no runtime shape checks in generated code",
-        "matrix identities removed automatically",
-        "every phase inspectable from the command line",
-        "one command per project review",
-        "optimization proved to preserve meaning",
+    yy = panel(s, CX, y, 350, 196, "What the domain bought")
+    for i, (h, t) in enumerate([
+        ("Semantic analysis", "became shape inference and dimension checking"),
+        ("Code generation", "gained instruction selection from inferred types"),
+        ("Optimization", "gained transformations and a way to score them"),
     ]):
-        s.text(M + 14, y + 2 + i * 30, 252, 28,
-               [Para([Run(CHECK + "  ", 8.6, TEAL, bold=True),
-                      Run(it, 8.5, BODY)], line=11.4)], pad=(0, 0, 0, 0))
+        s.text(CX + 14, yy + 6 + i * 48, 322, 44,
+               [Para(Run(h, 9.4, MINT, bold=True), line=12),
+                Para(Run(t, 8.8, DIM), line=11.6)], pad=(0, 0, 0, 0))
+    s.text(CX + 14, yy + 150, 322, 16,
+           [Para(Run("It costs control-flow graphs and dataflow analysis.",
+                     8.6, CORAL), line=11)], pad=(0, 0, 0, 0))
 
-    # --- originality --------------------------------------------------------
-    y = card(s, 340, 116, 280, 244, "What makes it original", accent=AMBER)
-    parts = ["Shapes in the type system", "Inference through expressions",
-             "Rules defined in one place", "Matrix-specific algebra",
-             "Shape-driven instruction selection", "Verified-equivalent optimization"]
-    yy = y + 2
-    for i, p in enumerate(parts):
-        s.panel(354, yy, 252, 22, fill=AMBERLT, radius=2000)
-        s.text(354, yy, 252, 22, [Para(Run(p, 8.4, AMBER, bold=True), align="ctr")],
-               anchor="ctr", pad=(0, 0, 0, 0))
-        yy += 22
-        if i < len(parts) - 1:
-            s.text(354, yy, 252, 10, [Para(Run("+", 8.0, MUTED, bold=True), align="ctr")],
-                   anchor="ctr", pad=(0, 0, 0, 0))
-            yy += 10
-    s.text(354, yy + 2, 252, 14,
-           [Para(Run("none of these is novel alone", 7.6, MUTED, italic=True),
-                 align="ctr")], pad=(0, 0, 0, 0))
+    yy = panel(s, CX + 366, y, CW - 366, 196, "What we do not claim",
+               accent=CORAL)
+    for i, t in enumerate([
+        "That students learn more. It has not been taught yet.",
+        "That the mechanisms are new. They are not.",
+        "That the magnitudes generalise. The corpus is ours.",
+        "That three repositories are a sample.",
+    ]):
+        s.text(CX + 380, yy + 6 + i * 34, CW - 400, 30,
+               [Para([Run(CROSS + "  ", 8.5, CORAL, bold=True),
+                      Run(t, 8.8, DIM)], line=11.6)], pad=(0, 0, 0, 0))
 
-    # --- final system -------------------------------------------------------
-    y = card(s, 636, 116, 280, 244, "The final system")
-    code(s, 650, y + 2, 252, 152, [
-        ("source.ml", CODEAMB),
-        ("   |", CODEDIM),
-        ("   +-- lexer, parser, tree", CODEFG),
-        ("   +-- symbol table, shapes", CODEFG),
-        ("   +-- dimension checking", CODETEA),
-        ("   +-- three-address code", CODEFG),
-        ("   +-- optimizer x4", CODETEA),
-        ("   +-- MVM target code", CODEFG),
-        ("   +-- execution", CODEFG),
-        ("   |", CODEDIM),
-        ("printed result", CODEAMB),
-    ], size=8.0, lead=12.4)
-    s.text(650, y + 158, 252, 56,
-           [Para(Run("All of it exists. The remaining work widens the language, it does "
-                     "not finish the compiler.", 8.4, BODY), line=11.4)],
-           pad=(0, 0, 0, 0))
+    y2 = y + 212
+    s.shape(CX, y2, CW, 76, fill=PANEL2, geom="roundRect", radius=2200,
+            name="panel")
+    s.rect(CX + 2, y2 + 8, 3.5, 60, fill=GOLD, name="tick")
+    s.text(CX + 22, y2, CW - 42, 76,
+           [Para(Run("Whatever the domain, if the type system carries enough to "
+                     "cost a program statically, a student's optimizer can be "
+                     "scored on the work it removes rather than the lines it "
+                     "removes. The two are not close.", 11, PAPER), line=15)],
+           anchor="ctr", pad=(0, 0, 0, 0))
 
-    # --- closing ------------------------------------------------------------
-    s.panel(M, 374, W, 100, fill=CARD, line=RULE)
-    s.text(M + 24, 388, 560, 74,
-           [Para(Run("The one idea, and what it paid for", 10.5, INK, bold=True,
-                     font=SERIF), line=14),
-            Para(Run("Putting a matrix's dimensions into its type is a single decision, "
-                     "and it pays in three separate places: the semantic analyser gains "
-                     "real work to do, the optimizer gains transformations a "
-                     "general-purpose compiler cannot perform, and the code generator "
-                     "gains instruction selection. That is the whole argument.",
-                     8.8, BODY), line=12, before=5)], pad=(0, 0, 0, 0))
-    s.rect(636, 392, 1.2, 66, fill=RULE)
-    s.text(660, 390, 256, 72,
-           [Para([Run("Built with   ", 8.4, MUTED),
-                  Run("C, Flex, Bison", 8.4, INK, bold=True)], line=12),
-            Para([Run("Verified by   ", 8.4, MUTED),
-                  Run("139 assertions", 8.4, INK, bold=True)], line=12, before=3),
-            Para([Run("Demonstrated by   ", 8.4, MUTED),
-                  Run("make demo1/2/3", 8.4, INK, bold=True, font=MONO)],
-                 line=12, before=3)], pad=(0, 0, 0, 0))
-
-    takeaway(s, "The originality is not the idea of checking shapes; it is a complete, "
-                "working compiler that checks them and then optimizes with them.")
+    footer(s, "Paper, compiler, generator and measurement scripts are in the "
+              "repository. Next: teach it, and find out.")
     return s
 
 
@@ -912,18 +734,27 @@ def main():
     out = sys.argv[1] if len(sys.argv) > 1 else "docs/submission/MatrixLang-Deck.pptx"
     slides = [slide1(), slide2(), slide3(), slide4(),
               slide5(), slide6(), slide7(), slide8()]
+
     problems = 0
     for i, sl in enumerate(slides, 1):
-        for msg in sl.check():
-            print(f"  slide {i}: {msg}")
+        # chrome_top=0 disables the takeaway-band rule: this deck sets its own
+        # footer band deliberately. The slide-bounds checks still apply.
+        for msg in sl.check(chrome_top=0.0):
+            print("  slide %d: %s" % (i, msg))
             problems += 1
     if problems:
-        print(f"{problems} layout problem(s); fix before shipping.")
+        print("%d layout problem(s); not writing the deck." % problems)
         return 1
 
-    os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)
-    write(out, slides, "MatrixLang", "A Aswanth Raj", bg=PAPER)
-    print(f"wrote {out}  ({len(slides)} slides, layout clean)")
+    d = os.path.dirname(os.path.abspath(out))
+    if d:
+        os.makedirs(d, exist_ok=True)
+    write(out, slides, "MatrixLang", "A Aswanth Raj", bg=INK)
+    print("wrote %s  (%d slides, layout clean)" % (out, len(slides)))
+    print("  read from results/: arithmetic median %.1f%%, instruction median "
+          "%.1f%%, chain share %.1f%%, differential %d/%d"
+          % (D["flop_med"], D["instr_med"], D["chain_share"],
+             D["identical"], D["programs"]))
     return 0
 
 

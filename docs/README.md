@@ -10,6 +10,7 @@ Which document answers which question.
 | [phase2-implementation.md](phase2-implementation.md) | Review 2 deliverable: each frontend module, what it does, and its real output. |
 | [phase3-optimization.md](phase3-optimization.md) | Review 3 deliverable: the optimizer passes, measured results, target code, the VM, testing and limitations. |
 | [REPORT.md](REPORT.md) | The final project report, in the eleven-chapter structure the lab manual specifies. Cross-references the three phase documents rather than repeating them. |
+| [../paper/matrixlang.pdf](../paper/matrixlang.pdf) | The paper: the argument the project makes, the evidence for it, and what it does not claim. Source in `paper/matrixlang.tex`, built by `make paper`. |
 
 ## Directories
 
@@ -26,8 +27,15 @@ a poor time to discover that a generator needs a toolchain you no longer have.
 ```bash
 python tools/build-architecture-figure.py docs/figures/architecture.png
 node   tools/build-phase1-docx.js          docs/submission/MatrixLang-Phase1.docx
-python tools/build-deck.py                 docs/submission/MatrixLang-Deck.pptx
+make deck      # docs/submission/MatrixLang-Deck.pptx
+make web       # demo/data.js, for the web demonstration
+make measure   # results/, which the deck, the demo and the paper all read
 ```
 
 The figure script needs Pillow; the document script needs the `docx` npm
-package; the deck script needs only the Python standard library.
+package; the deck and demo generators need only the Python standard library.
+`tools/plot_reduction.py`, which draws the paper's one figure, needs matplotlib.
+
+Nothing in the deck, the demo or the paper carries a figure that was typed in.
+Each is read from `results/` or captured from `bin/matrixc` when it is built, so
+re-running `make measure` is the only thing that can change any of them.

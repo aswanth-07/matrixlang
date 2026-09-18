@@ -11,3 +11,24 @@ Thumbs.db
 
 # Word owner-lock files, created while a .docx deliverable is open
 ~$*
+
+# Python bytecode from the generators in tools/
+__pycache__/
+*.pyc
+
+# The paper. `paper/matrixlang.tex` is the submission source and is committed,
+# together with the PDF built from it. `paper/main.tex` is the working draft it
+# is generated from: same text, plus one comment per stated figure binding it to
+# the measurement it reports. Those comments are drafting apparatus, so the draft
+# stays local. `make paper` regenerates both.
+paper/main.tex
+tools/strip_anchors.py
+
+# LaTeX build products. The PDF is committed; the intermediates are not.
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.fls
+paper/*.fdb_latexmk
+paper/*.synctex.gz
+paper/build.log

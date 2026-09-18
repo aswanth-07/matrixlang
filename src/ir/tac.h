@@ -86,4 +86,8 @@ Type tac_operand_type(const char *name);
 
 const char *tac_intern(const char *s);
 
+/* Mints a fresh temporary of a given shape. Exposed because chain reordering
+ * builds products that did not exist in the original instruction stream. */
+const char *tac_new_temp(Type t);
+
 #endif /* MATRIXLANG_TAC_H */

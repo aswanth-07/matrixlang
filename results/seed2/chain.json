@@ -1,0 +1,1402 @@
+[
+ {
+  "program": "g0000.ml",
+  "chains_reordered": 2,
+  "flops_before": 12751136,
+  "flops_after": 5104674,
+  "flops_pct": 59.96690804646739
+ },
+ {
+  "program": "g0001.ml",
+  "chains_reordered": 1,
+  "flops_before": 513069,
+  "flops_after": 507129,
+  "flops_pct": 1.1577390175590418
+ },
+ {
+  "program": "g0002.ml",
+  "chains_reordered": 2,
+  "flops_before": 64335,
+  "flops_after": 47040,
+  "flops_pct": 26.882723245511773
+ },
+ {
+  "program": "g0003.ml",
+  "chains_reordered": 0,
+  "flops_before": 15488,
+  "flops_after": 15488,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0004.ml",
+  "chains_reordered": 1,
+  "flops_before": 110331,
+  "flops_after": 34211,
+  "flops_pct": 68.99239560957483
+ },
+ {
+  "program": "g0005.ml",
+  "chains_reordered": 1,
+  "flops_before": 274936,
+  "flops_after": 37696,
+  "flops_pct": 86.28917275293159
+ },
+ {
+  "program": "g0006.ml",
+  "chains_reordered": 0,
+  "flops_before": 18449,
+  "flops_after": 18449,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0007.ml",
+  "chains_reordered": 3,
+  "flops_before": 1367,
+  "flops_after": 830,
+  "flops_pct": 39.28310168251646
+ },
+ {
+  "program": "g0008.ml",
+  "chains_reordered": 2,
+  "flops_before": 297744,
+  "flops_after": 81657,
+  "flops_pct": 72.57476221183299
+ },
+ {
+  "program": "g0009.ml",
+  "chains_reordered": 3,
+  "flops_before": 8022,
+  "flops_after": 2280,
+  "flops_pct": 71.57816005983545
+ },
+ {
+  "program": "g0010.ml",
+  "chains_reordered": 1,
+  "flops_before": 397594,
+  "flops_after": 387289,
+  "flops_pct": 2.591839917101365
+ },
+ {
+  "program": "g0011.ml",
+  "chains_reordered": 0,
+  "flops_before": 238900,
+  "flops_after": 238900,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0012.ml",
+  "chains_reordered": 0,
+  "flops_before": 119504,
+  "flops_after": 119504,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0013.ml",
+  "chains_reordered": 3,
+  "flops_before": 609200,
+  "flops_after": 42686,
+  "flops_pct": 92.99310571240972
+ },
+ {
+  "program": "g0014.ml",
+  "chains_reordered": 1,
+  "flops_before": 26537,
+  "flops_after": 20837,
+  "flops_pct": 21.479443795455403
+ },
+ {
+  "program": "g0015.ml",
+  "chains_reordered": 3,
+  "flops_before": 11264,
+  "flops_after": 1076,
+  "flops_pct": 90.44744318181819
+ },
+ {
+  "program": "g0016.ml",
+  "chains_reordered": 1,
+  "flops_before": 84860,
+  "flops_after": 5210,
+  "flops_pct": 93.86047607824652
+ },
+ {
+  "program": "g0017.ml",
+  "chains_reordered": 1,
+  "flops_before": 92127,
+  "flops_after": 6987,
+  "flops_pct": 92.41590413233905
+ },
+ {
+  "program": "g0018.ml",
+  "chains_reordered": 1,
+  "flops_before": 4203800,
+  "flops_after": 412760,
+  "flops_pct": 90.18126457015082
+ },
+ {
+  "program": "g0019.ml",
+  "chains_reordered": 0,
+  "flops_before": 5904,
+  "flops_after": 5904,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0020.ml",
+  "chains_reordered": 1,
+  "flops_before": 306500,
+  "flops_after": 303506,
+  "flops_pct": 0.9768352365415987
+ },
+ {
+  "program": "g0021.ml",
+  "chains_reordered": 0,
+  "flops_before": 1845,
+  "flops_after": 1845,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0022.ml",
+  "chains_reordered": 1,
+  "flops_before": 569380,
+  "flops_after": 24460,
+  "flops_pct": 95.70409919561628
+ },
+ {
+  "program": "g0023.ml",
+  "chains_reordered": 0,
+  "flops_before": 69241,
+  "flops_after": 69241,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0024.ml",
+  "chains_reordered": 1,
+  "flops_before": 743489,
+  "flops_after": 228485,
+  "flops_pct": 69.26854331402347
+ },
+ {
+  "program": "g0025.ml",
+  "chains_reordered": 2,
+  "flops_before": 67240,
+  "flops_after": 35533,
+  "flops_pct": 47.15496728138013
+ },
+ {
+  "program": "g0026.ml",
+  "chains_reordered": 2,
+  "flops_before": 69322,
+  "flops_after": 68398,
+  "flops_pct": 1.3329101872421454
+ },
+ {
+  "program": "g0027.ml",
+  "chains_reordered": 0,
+  "flops_before": 717640,
+  "flops_after": 717640,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0028.ml",
+  "chains_reordered": 2,
+  "flops_before": 3117379,
+  "flops_after": 2608549,
+  "flops_pct": 16.322365679630227
+ },
+ {
+  "program": "g0029.ml",
+  "chains_reordered": 2,
+  "flops_before": 2450320,
+  "flops_after": 1645324,
+  "flops_pct": 32.85268862842404
+ },
+ {
+  "program": "g0030.ml",
+  "chains_reordered": 0,
+  "flops_before": 800,
+  "flops_after": 800,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0031.ml",
+  "chains_reordered": 2,
+  "flops_before": 737090,
+  "flops_after": 199350,
+  "flops_pct": 72.95445603657626
+ },
+ {
+  "program": "g0032.ml",
+  "chains_reordered": 3,
+  "flops_before": 2933880,
+  "flops_after": 234275,
+  "flops_pct": 92.01484041610428
+ },
+ {
+  "program": "g0033.ml",
+  "chains_reordered": 2,
+  "flops_before": 760,
+  "flops_after": 748,
+  "flops_pct": 1.5789473684210527
+ },
+ {
+  "program": "g0034.ml",
+  "chains_reordered": 0,
+  "flops_before": 270,
+  "flops_after": 270,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0035.ml",
+  "chains_reordered": 1,
+  "flops_before": 33348,
+  "flops_after": 32898,
+  "flops_pct": 1.3494062612450521
+ },
+ {
+  "program": "g0036.ml",
+  "chains_reordered": 2,
+  "flops_before": 12129330,
+  "flops_after": 1742928,
+  "flops_pct": 85.63046763506311
+ },
+ {
+  "program": "g0037.ml",
+  "chains_reordered": 1,
+  "flops_before": 2897844,
+  "flops_after": 1229744,
+  "flops_pct": 57.56348512894414
+ },
+ {
+  "program": "g0038.ml",
+  "chains_reordered": 0,
+  "flops_before": 608200,
+  "flops_after": 608200,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0039.ml",
+  "chains_reordered": 2,
+  "flops_before": 23102728,
+  "flops_after": 20782120,
+  "flops_pct": 10.04473584245116
+ },
+ {
+  "program": "g0040.ml",
+  "chains_reordered": 2,
+  "flops_before": 68643645,
+  "flops_after": 37905165,
+  "flops_pct": 44.779789884409546
+ },
+ {
+  "program": "g0041.ml",
+  "chains_reordered": 1,
+  "flops_before": 5780240,
+  "flops_after": 5631740,
+  "flops_pct": 2.5690974769213737
+ },
+ {
+  "program": "g0042.ml",
+  "chains_reordered": 1,
+  "flops_before": 265792,
+  "flops_after": 119152,
+  "flops_pct": 55.17096075126415
+ },
+ {
+  "program": "g0043.ml",
+  "chains_reordered": 3,
+  "flops_before": 28264080,
+  "flops_after": 14170170,
+  "flops_pct": 49.86509378688427
+ },
+ {
+  "program": "g0044.ml",
+  "chains_reordered": 1,
+  "flops_before": 22662,
+  "flops_after": 19674,
+  "flops_pct": 13.18506751389992
+ },
+ {
+  "program": "g0045.ml",
+  "chains_reordered": 1,
+  "flops_before": 7122400,
+  "flops_after": 633760,
+  "flops_pct": 91.10187577221161
+ },
+ {
+  "program": "g0046.ml",
+  "chains_reordered": 4,
+  "flops_before": 937240,
+  "flops_after": 332080,
+  "flops_pct": 64.56830694379241
+ },
+ {
+  "program": "g0047.ml",
+  "chains_reordered": 1,
+  "flops_before": 1720224,
+  "flops_after": 1685304,
+  "flops_pct": 2.0299681901891846
+ },
+ {
+  "program": "g0048.ml",
+  "chains_reordered": 0,
+  "flops_before": 260676,
+  "flops_after": 260676,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0049.ml",
+  "chains_reordered": 2,
+  "flops_before": 16372,
+  "flops_after": 10138,
+  "flops_pct": 38.07720498411923
+ },
+ {
+  "program": "g0050.ml",
+  "chains_reordered": 1,
+  "flops_before": 1548721,
+  "flops_after": 1370737,
+  "flops_pct": 11.492321728703878
+ },
+ {
+  "program": "g0051.ml",
+  "chains_reordered": 1,
+  "flops_before": 17061,
+  "flops_after": 9753,
+  "flops_pct": 42.8345349041674
+ },
+ {
+  "program": "g0052.ml",
+  "chains_reordered": 1,
+  "flops_before": 13960,
+  "flops_after": 13195,
+  "flops_pct": 5.479942693409742
+ },
+ {
+  "program": "g0053.ml",
+  "chains_reordered": 3,
+  "flops_before": 921892,
+  "flops_after": 213292,
+  "flops_pct": 76.86366732762623
+ },
+ {
+  "program": "g0054.ml",
+  "chains_reordered": 0,
+  "flops_before": 7064,
+  "flops_after": 7064,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0055.ml",
+  "chains_reordered": 4,
+  "flops_before": 3822820,
+  "flops_after": 723353,
+  "flops_pct": 81.07802616916308
+ },
+ {
+  "program": "g0056.ml",
+  "chains_reordered": 2,
+  "flops_before": 1074060,
+  "flops_after": 114700,
+  "flops_pct": 89.32089454965272
+ },
+ {
+  "program": "g0057.ml",
+  "chains_reordered": 1,
+  "flops_before": 2539524,
+  "flops_after": 1136772,
+  "flops_pct": 55.236808157749245
+ },
+ {
+  "program": "g0058.ml",
+  "chains_reordered": 1,
+  "flops_before": 2046216,
+  "flops_after": 1031240,
+  "flops_pct": 49.60258350047111
+ },
+ {
+  "program": "g0059.ml",
+  "chains_reordered": 2,
+  "flops_before": 1352528,
+  "flops_after": 160784,
+  "flops_pct": 88.11233482781873
+ },
+ {
+  "program": "g0060.ml",
+  "chains_reordered": 4,
+  "flops_before": 311532,
+  "flops_after": 32853,
+  "flops_pct": 89.45437386849505
+ },
+ {
+  "program": "g0061.ml",
+  "chains_reordered": 1,
+  "flops_before": 273001,
+  "flops_after": 132601,
+  "flops_pct": 51.42838304621595
+ },
+ {
+  "program": "g0062.ml",
+  "chains_reordered": 2,
+  "flops_before": 34360,
+  "flops_after": 10600,
+  "flops_pct": 69.15017462165308
+ },
+ {
+  "program": "g0063.ml",
+  "chains_reordered": 2,
+  "flops_before": 221730,
+  "flops_after": 123996,
+  "flops_pct": 44.07793262075497
+ },
+ {
+  "program": "g0064.ml",
+  "chains_reordered": 1,
+  "flops_before": 19648,
+  "flops_after": 7993,
+  "flops_pct": 59.31901465798045
+ },
+ {
+  "program": "g0065.ml",
+  "chains_reordered": 0,
+  "flops_before": 327224,
+  "flops_after": 327224,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0066.ml",
+  "chains_reordered": 2,
+  "flops_before": 65186,
+  "flops_after": 45642,
+  "flops_pct": 29.98189795354831
+ },
+ {
+  "program": "g0067.ml",
+  "chains_reordered": 2,
+  "flops_before": 236734,
+  "flops_after": 114364,
+  "flops_pct": 51.69092736995953
+ },
+ {
+  "program": "g0068.ml",
+  "chains_reordered": 2,
+  "flops_before": 628800,
+  "flops_after": 8611,
+  "flops_pct": 98.63056615776081
+ },
+ {
+  "program": "g0069.ml",
+  "chains_reordered": 0,
+  "flops_before": 86197,
+  "flops_after": 86197,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0070.ml",
+  "chains_reordered": 3,
+  "flops_before": 22936,
+  "flops_after": 3388,
+  "flops_pct": 85.22846180676666
+ },
+ {
+  "program": "g0071.ml",
+  "chains_reordered": 4,
+  "flops_before": 343307,
+  "flops_after": 100115,
+  "flops_pct": 70.83805456923395
+ },
+ {
+  "program": "g0072.ml",
+  "chains_reordered": 3,
+  "flops_before": 315010,
+  "flops_after": 56810,
+  "flops_pct": 81.96565188406717
+ },
+ {
+  "program": "g0073.ml",
+  "chains_reordered": 3,
+  "flops_before": 5916018,
+  "flops_after": 163726,
+  "flops_pct": 97.23249658807664
+ },
+ {
+  "program": "g0074.ml",
+  "chains_reordered": 1,
+  "flops_before": 37660,
+  "flops_after": 24400,
+  "flops_pct": 35.209771640998405
+ },
+ {
+  "program": "g0075.ml",
+  "chains_reordered": 1,
+  "flops_before": 4249168,
+  "flops_after": 251312,
+  "flops_pct": 94.0856186434615
+ },
+ {
+  "program": "g0076.ml",
+  "chains_reordered": 3,
+  "flops_before": 3687640,
+  "flops_after": 1663975,
+  "flops_pct": 54.87696738293326
+ },
+ {
+  "program": "g0077.ml",
+  "chains_reordered": 1,
+  "flops_before": 159072,
+  "flops_after": 63297,
+  "flops_pct": 60.2085847917924
+ },
+ {
+  "program": "g0078.ml",
+  "chains_reordered": 3,
+  "flops_before": 1347569,
+  "flops_after": 615441,
+  "flops_pct": 54.32953711461157
+ },
+ {
+  "program": "g0079.ml",
+  "chains_reordered": 2,
+  "flops_before": 3969500,
+  "flops_after": 3512570,
+  "flops_pct": 11.51102153923668
+ },
+ {
+  "program": "g0080.ml",
+  "chains_reordered": 0,
+  "flops_before": 1600,
+  "flops_after": 1600,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0081.ml",
+  "chains_reordered": 1,
+  "flops_before": 79828513,
+  "flops_after": 79801549,
+  "flops_pct": 0.03377740482276051
+ },
+ {
+  "program": "g0082.ml",
+  "chains_reordered": 1,
+  "flops_before": 99840,
+  "flops_after": 83928,
+  "flops_pct": 15.9375
+ },
+ {
+  "program": "g0083.ml",
+  "chains_reordered": 1,
+  "flops_before": 61516,
+  "flops_after": 18436,
+  "flops_pct": 70.03056115482151
+ },
+ {
+  "program": "g0084.ml",
+  "chains_reordered": 0,
+  "flops_before": 364020,
+  "flops_after": 364020,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0085.ml",
+  "chains_reordered": 2,
+  "flops_before": 65446,
+  "flops_after": 60292,
+  "flops_pct": 7.8751948171011215
+ },
+ {
+  "program": "g0086.ml",
+  "chains_reordered": 3,
+  "flops_before": 53326080,
+  "flops_after": 8319600,
+  "flops_pct": 84.39862821343702
+ },
+ {
+  "program": "g0087.ml",
+  "chains_reordered": 0,
+  "flops_before": 12188,
+  "flops_after": 12188,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0088.ml",
+  "chains_reordered": 0,
+  "flops_before": 77488,
+  "flops_after": 77488,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0089.ml",
+  "chains_reordered": 1,
+  "flops_before": 513020,
+  "flops_after": 291260,
+  "flops_pct": 43.2263849362598
+ },
+ {
+  "program": "g0090.ml",
+  "chains_reordered": 1,
+  "flops_before": 1586,
+  "flops_after": 1010,
+  "flops_pct": 36.31778058007566
+ },
+ {
+  "program": "g0091.ml",
+  "chains_reordered": 1,
+  "flops_before": 15172,
+  "flops_after": 9131,
+  "flops_pct": 39.816767730029
+ },
+ {
+  "program": "g0092.ml",
+  "chains_reordered": 2,
+  "flops_before": 2881731,
+  "flops_after": 2804376,
+  "flops_pct": 2.684324109363435
+ },
+ {
+  "program": "g0093.ml",
+  "chains_reordered": 2,
+  "flops_before": 2273370,
+  "flops_after": 276010,
+  "flops_pct": 87.8589934766448
+ },
+ {
+  "program": "g0094.ml",
+  "chains_reordered": 1,
+  "flops_before": 534429,
+  "flops_after": 26757,
+  "flops_pct": 94.99334804061905
+ },
+ {
+  "program": "g0095.ml",
+  "chains_reordered": 2,
+  "flops_before": 110506,
+  "flops_after": 87268,
+  "flops_pct": 21.028722422311912
+ },
+ {
+  "program": "g0096.ml",
+  "chains_reordered": 2,
+  "flops_before": 100884,
+  "flops_after": 16184,
+  "flops_pct": 83.95781293366639
+ },
+ {
+  "program": "g0097.ml",
+  "chains_reordered": 0,
+  "flops_before": 8580,
+  "flops_after": 8580,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0098.ml",
+  "chains_reordered": 0,
+  "flops_before": 939753,
+  "flops_after": 939753,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0099.ml",
+  "chains_reordered": 1,
+  "flops_before": 23825,
+  "flops_after": 21764,
+  "flops_pct": 8.650577124868835
+ },
+ {
+  "program": "g0100.ml",
+  "chains_reordered": 2,
+  "flops_before": 20657,
+  "flops_after": 19542,
+  "flops_pct": 5.397686014426102
+ },
+ {
+  "program": "g0101.ml",
+  "chains_reordered": 2,
+  "flops_before": 699968,
+  "flops_after": 9451,
+  "flops_pct": 98.64979541921916
+ },
+ {
+  "program": "g0102.ml",
+  "chains_reordered": 1,
+  "flops_before": 487032,
+  "flops_after": 84228,
+  "flops_pct": 82.70585916325827
+ },
+ {
+  "program": "g0103.ml",
+  "chains_reordered": 1,
+  "flops_before": 519302,
+  "flops_after": 211205,
+  "flops_pct": 59.32906093178921
+ },
+ {
+  "program": "g0104.ml",
+  "chains_reordered": 2,
+  "flops_before": 187139,
+  "flops_after": 16218,
+  "flops_pct": 91.33371451167314
+ },
+ {
+  "program": "g0105.ml",
+  "chains_reordered": 3,
+  "flops_before": 238538,
+  "flops_after": 53786,
+  "flops_pct": 77.45181061298409
+ },
+ {
+  "program": "g0106.ml",
+  "chains_reordered": 2,
+  "flops_before": 392456,
+  "flops_after": 38432,
+  "flops_pct": 90.20730986403571
+ },
+ {
+  "program": "g0107.ml",
+  "chains_reordered": 1,
+  "flops_before": 2124,
+  "flops_after": 1689,
+  "flops_pct": 20.480225988700564
+ },
+ {
+  "program": "g0108.ml",
+  "chains_reordered": 3,
+  "flops_before": 84515,
+  "flops_after": 17921,
+  "flops_pct": 78.79548009229131
+ },
+ {
+  "program": "g0109.ml",
+  "chains_reordered": 2,
+  "flops_before": 1551137,
+  "flops_after": 346547,
+  "flops_pct": 77.65851759064479
+ },
+ {
+  "program": "g0110.ml",
+  "chains_reordered": 2,
+  "flops_before": 102031,
+  "flops_after": 16165,
+  "flops_pct": 84.15677588183983
+ },
+ {
+  "program": "g0111.ml",
+  "chains_reordered": 0,
+  "flops_before": 1200,
+  "flops_after": 1200,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0112.ml",
+  "chains_reordered": 0,
+  "flops_before": 4591844,
+  "flops_after": 4591844,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0113.ml",
+  "chains_reordered": 1,
+  "flops_before": 64244,
+  "flops_after": 62172,
+  "flops_pct": 3.2252039100927714
+ },
+ {
+  "program": "g0114.ml",
+  "chains_reordered": 1,
+  "flops_before": 174064,
+  "flops_after": 108064,
+  "flops_pct": 37.917087967644086
+ },
+ {
+  "program": "g0115.ml",
+  "chains_reordered": 1,
+  "flops_before": 211065,
+  "flops_after": 19005,
+  "flops_pct": 90.99566484258403
+ },
+ {
+  "program": "g0116.ml",
+  "chains_reordered": 0,
+  "flops_before": 154455,
+  "flops_after": 154455,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0117.ml",
+  "chains_reordered": 3,
+  "flops_before": 1115110,
+  "flops_after": 611950,
+  "flops_pct": 45.122005900763156
+ },
+ {
+  "program": "g0118.ml",
+  "chains_reordered": 2,
+  "flops_before": 1330566,
+  "flops_after": 114198,
+  "flops_pct": 91.41733668228409
+ },
+ {
+  "program": "g0119.ml",
+  "chains_reordered": 1,
+  "flops_before": 11464,
+  "flops_after": 11419,
+  "flops_pct": 0.392533147243545
+ },
+ {
+  "program": "g0120.ml",
+  "chains_reordered": 3,
+  "flops_before": 2327385,
+  "flops_after": 395128,
+  "flops_pct": 83.02266277388571
+ },
+ {
+  "program": "g0121.ml",
+  "chains_reordered": 0,
+  "flops_before": 401827,
+  "flops_after": 401827,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0122.ml",
+  "chains_reordered": 1,
+  "flops_before": 258048,
+  "flops_after": 12884,
+  "flops_pct": 95.0071304563492
+ },
+ {
+  "program": "g0123.ml",
+  "chains_reordered": 1,
+  "flops_before": 951080,
+  "flops_after": 125384,
+  "flops_pct": 86.81667157336922
+ },
+ {
+  "program": "g0124.ml",
+  "chains_reordered": 2,
+  "flops_before": 1020,
+  "flops_after": 535,
+  "flops_pct": 47.549019607843135
+ },
+ {
+  "program": "g0125.ml",
+  "chains_reordered": 3,
+  "flops_before": 723098,
+  "flops_after": 20508,
+  "flops_pct": 97.16386990421769
+ },
+ {
+  "program": "g0126.ml",
+  "chains_reordered": 1,
+  "flops_before": 5142,
+  "flops_after": 1938,
+  "flops_pct": 62.31038506417736
+ },
+ {
+  "program": "g0127.ml",
+  "chains_reordered": 1,
+  "flops_before": 14980872,
+  "flops_after": 12686472,
+  "flops_pct": 15.315530364320582
+ },
+ {
+  "program": "g0128.ml",
+  "chains_reordered": 0,
+  "flops_before": 23052,
+  "flops_after": 23052,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0129.ml",
+  "chains_reordered": 3,
+  "flops_before": 1458401,
+  "flops_after": 362085,
+  "flops_pct": 75.17246628327874
+ },
+ {
+  "program": "g0130.ml",
+  "chains_reordered": 2,
+  "flops_before": 28210,
+  "flops_after": 2577,
+  "flops_pct": 90.8649415101028
+ },
+ {
+  "program": "g0131.ml",
+  "chains_reordered": 1,
+  "flops_before": 1345296,
+  "flops_after": 693696,
+  "flops_pct": 48.43543725693082
+ },
+ {
+  "program": "g0132.ml",
+  "chains_reordered": 1,
+  "flops_before": 3920,
+  "flops_after": 2504,
+  "flops_pct": 36.12244897959184
+ },
+ {
+  "program": "g0133.ml",
+  "chains_reordered": 3,
+  "flops_before": 30000,
+  "flops_after": 28677,
+  "flops_pct": 4.41
+ },
+ {
+  "program": "g0134.ml",
+  "chains_reordered": 1,
+  "flops_before": 35755,
+  "flops_after": 35651,
+  "flops_pct": 0.2908684100125857
+ },
+ {
+  "program": "g0135.ml",
+  "chains_reordered": 1,
+  "flops_before": 1079184,
+  "flops_after": 134304,
+  "flops_pct": 87.55504158697683
+ },
+ {
+  "program": "g0136.ml",
+  "chains_reordered": 2,
+  "flops_before": 319864,
+  "flops_after": 102604,
+  "flops_pct": 67.92261711227272
+ },
+ {
+  "program": "g0137.ml",
+  "chains_reordered": 0,
+  "flops_before": 689916,
+  "flops_after": 689916,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0138.ml",
+  "chains_reordered": 1,
+  "flops_before": 74960,
+  "flops_after": 73808,
+  "flops_pct": 1.536819637139808
+ },
+ {
+  "program": "g0139.ml",
+  "chains_reordered": 1,
+  "flops_before": 366849,
+  "flops_after": 279009,
+  "flops_pct": 23.944456711071858
+ },
+ {
+  "program": "g0140.ml",
+  "chains_reordered": 2,
+  "flops_before": 387640,
+  "flops_after": 26262,
+  "flops_pct": 93.22515736250129
+ },
+ {
+  "program": "g0141.ml",
+  "chains_reordered": 2,
+  "flops_before": 286136,
+  "flops_after": 147895,
+  "flops_pct": 48.31303995302933
+ },
+ {
+  "program": "g0142.ml",
+  "chains_reordered": 2,
+  "flops_before": 296128,
+  "flops_after": 177072,
+  "flops_pct": 40.20423600605144
+ },
+ {
+  "program": "g0143.ml",
+  "chains_reordered": 2,
+  "flops_before": 714096,
+  "flops_after": 160975,
+  "flops_pct": 77.4575127153772
+ },
+ {
+  "program": "g0144.ml",
+  "chains_reordered": 2,
+  "flops_before": 19568,
+  "flops_after": 4116,
+  "flops_pct": 78.96565821749796
+ },
+ {
+  "program": "g0145.ml",
+  "chains_reordered": 1,
+  "flops_before": 4766,
+  "flops_after": 3059,
+  "flops_pct": 35.81619806966009
+ },
+ {
+  "program": "g0146.ml",
+  "chains_reordered": 2,
+  "flops_before": 53060,
+  "flops_after": 32072,
+  "flops_pct": 39.55522050508858
+ },
+ {
+  "program": "g0147.ml",
+  "chains_reordered": 0,
+  "flops_before": 1288100,
+  "flops_after": 1288100,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0148.ml",
+  "chains_reordered": 1,
+  "flops_before": 46135,
+  "flops_after": 14320,
+  "flops_pct": 68.96065893573208
+ },
+ {
+  "program": "g0149.ml",
+  "chains_reordered": 2,
+  "flops_before": 8474560,
+  "flops_after": 325120,
+  "flops_pct": 96.16357663406714
+ },
+ {
+  "program": "g0150.ml",
+  "chains_reordered": 2,
+  "flops_before": 70440,
+  "flops_after": 12885,
+  "flops_pct": 81.70783645655878
+ },
+ {
+  "program": "g0151.ml",
+  "chains_reordered": 1,
+  "flops_before": 981841,
+  "flops_after": 963841,
+  "flops_pct": 1.833290726298861
+ },
+ {
+  "program": "g0152.ml",
+  "chains_reordered": 3,
+  "flops_before": 210252,
+  "flops_after": 41634,
+  "flops_pct": 80.19804805661778
+ },
+ {
+  "program": "g0153.ml",
+  "chains_reordered": 1,
+  "flops_before": 29786,
+  "flops_after": 11566,
+  "flops_pct": 61.16967702947694
+ },
+ {
+  "program": "g0154.ml",
+  "chains_reordered": 2,
+  "flops_before": 1890069,
+  "flops_after": 1807314,
+  "flops_pct": 4.378411581799394
+ },
+ {
+  "program": "g0155.ml",
+  "chains_reordered": 2,
+  "flops_before": 1926000,
+  "flops_after": 87880,
+  "flops_pct": 95.43717549325027
+ },
+ {
+  "program": "g0156.ml",
+  "chains_reordered": 2,
+  "flops_before": 282414,
+  "flops_after": 4556,
+  "flops_pct": 98.3867655286211
+ },
+ {
+  "program": "g0157.ml",
+  "chains_reordered": 1,
+  "flops_before": 1304621,
+  "flops_after": 1303541,
+  "flops_pct": 0.08278266255103972
+ },
+ {
+  "program": "g0158.ml",
+  "chains_reordered": 2,
+  "flops_before": 117374,
+  "flops_after": 31352,
+  "flops_pct": 73.28880331248828
+ },
+ {
+  "program": "g0159.ml",
+  "chains_reordered": 1,
+  "flops_before": 49731,
+  "flops_after": 7026,
+  "flops_pct": 85.87199131326537
+ },
+ {
+  "program": "g0160.ml",
+  "chains_reordered": 0,
+  "flops_before": 204577,
+  "flops_after": 204577,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0161.ml",
+  "chains_reordered": 0,
+  "flops_before": 1699848,
+  "flops_after": 1699848,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0162.ml",
+  "chains_reordered": 1,
+  "flops_before": 1207740,
+  "flops_after": 1148340,
+  "flops_pct": 4.918277112623578
+ },
+ {
+  "program": "g0163.ml",
+  "chains_reordered": 2,
+  "flops_before": 4035360,
+  "flops_after": 624896,
+  "flops_pct": 84.51449189167757
+ },
+ {
+  "program": "g0164.ml",
+  "chains_reordered": 2,
+  "flops_before": 762840,
+  "flops_after": 22012,
+  "flops_pct": 97.1144669917676
+ },
+ {
+  "program": "g0165.ml",
+  "chains_reordered": 2,
+  "flops_before": 4072,
+  "flops_after": 1884,
+  "flops_pct": 53.7328094302554
+ },
+ {
+  "program": "g0166.ml",
+  "chains_reordered": 1,
+  "flops_before": 2215431,
+  "flops_after": 673023,
+  "flops_pct": 69.62112564101523
+ },
+ {
+  "program": "g0167.ml",
+  "chains_reordered": 1,
+  "flops_before": 275339,
+  "flops_after": 50459,
+  "flops_pct": 81.67386385510225
+ },
+ {
+  "program": "g0168.ml",
+  "chains_reordered": 2,
+  "flops_before": 116510,
+  "flops_after": 33712,
+  "flops_pct": 71.06514462277916
+ },
+ {
+  "program": "g0169.ml",
+  "chains_reordered": 0,
+  "flops_before": 529,
+  "flops_after": 529,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0170.ml",
+  "chains_reordered": 0,
+  "flops_before": 51409,
+  "flops_after": 51409,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0171.ml",
+  "chains_reordered": 1,
+  "flops_before": 491664,
+  "flops_after": 56605,
+  "flops_pct": 88.48705620098278
+ },
+ {
+  "program": "g0172.ml",
+  "chains_reordered": 0,
+  "flops_before": 7072,
+  "flops_after": 7072,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0173.ml",
+  "chains_reordered": 0,
+  "flops_before": 6543,
+  "flops_after": 6543,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0174.ml",
+  "chains_reordered": 2,
+  "flops_before": 56095,
+  "flops_after": 10891,
+  "flops_pct": 80.58472234602014
+ },
+ {
+  "program": "g0175.ml",
+  "chains_reordered": 2,
+  "flops_before": 3686560,
+  "flops_after": 1978000,
+  "flops_pct": 46.345644720281236
+ },
+ {
+  "program": "g0176.ml",
+  "chains_reordered": 3,
+  "flops_before": 1209190,
+  "flops_after": 207310,
+  "flops_pct": 82.85546522878953
+ },
+ {
+  "program": "g0177.ml",
+  "chains_reordered": 1,
+  "flops_before": 314448,
+  "flops_after": 136464,
+  "flops_pct": 56.602045489238286
+ },
+ {
+  "program": "g0178.ml",
+  "chains_reordered": 0,
+  "flops_before": 29530,
+  "flops_after": 29530,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0179.ml",
+  "chains_reordered": 1,
+  "flops_before": 214013,
+  "flops_after": 151517,
+  "flops_pct": 29.201964366650625
+ },
+ {
+  "program": "g0180.ml",
+  "chains_reordered": 2,
+  "flops_before": 394008,
+  "flops_after": 75846,
+  "flops_pct": 80.75013705305476
+ },
+ {
+  "program": "g0181.ml",
+  "chains_reordered": 1,
+  "flops_before": 21336,
+  "flops_after": 18351,
+  "flops_pct": 13.990438695163105
+ },
+ {
+  "program": "g0182.ml",
+  "chains_reordered": 0,
+  "flops_before": 746040,
+  "flops_after": 746040,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0183.ml",
+  "chains_reordered": 2,
+  "flops_before": 1055,
+  "flops_after": 633,
+  "flops_pct": 40.0
+ },
+ {
+  "program": "g0184.ml",
+  "chains_reordered": 1,
+  "flops_before": 42640,
+  "flops_after": 42208,
+  "flops_pct": 1.0131332082551594
+ },
+ {
+  "program": "g0185.ml",
+  "chains_reordered": 2,
+  "flops_before": 139633,
+  "flops_after": 33193,
+  "flops_pct": 76.22839873095901
+ },
+ {
+  "program": "g0186.ml",
+  "chains_reordered": 2,
+  "flops_before": 12261003,
+  "flops_after": 564903,
+  "flops_pct": 95.3926852476914
+ },
+ {
+  "program": "g0187.ml",
+  "chains_reordered": 0,
+  "flops_before": 122770,
+  "flops_after": 122770,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0188.ml",
+  "chains_reordered": 2,
+  "flops_before": 43720,
+  "flops_after": 5470,
+  "flops_pct": 87.48856358645929
+ },
+ {
+  "program": "g0189.ml",
+  "chains_reordered": 0,
+  "flops_before": 135500,
+  "flops_after": 135500,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0190.ml",
+  "chains_reordered": 2,
+  "flops_before": 2470560,
+  "flops_after": 1379616,
+  "flops_pct": 44.157761802992034
+ },
+ {
+  "program": "g0191.ml",
+  "chains_reordered": 1,
+  "flops_before": 9914,
+  "flops_after": 9059,
+  "flops_pct": 8.624167843453701
+ },
+ {
+  "program": "g0192.ml",
+  "chains_reordered": 0,
+  "flops_before": 1082,
+  "flops_after": 1082,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0193.ml",
+  "chains_reordered": 1,
+  "flops_before": 888108,
+  "flops_after": 250044,
+  "flops_pct": 71.84531611020282
+ },
+ {
+  "program": "g0194.ml",
+  "chains_reordered": 1,
+  "flops_before": 271420,
+  "flops_after": 40900,
+  "flops_pct": 84.93110308746591
+ },
+ {
+  "program": "g0195.ml",
+  "chains_reordered": 0,
+  "flops_before": 587220,
+  "flops_after": 587220,
+  "flops_pct": 0.0
+ },
+ {
+  "program": "g0196.ml",
+  "chains_reordered": 2,
+  "flops_before": 38702,
+  "flops_after": 36392,
+  "flops_pct": 5.968683788951475
+ },
+ {
+  "program": "g0197.ml",
+  "chains_reordered": 2,
+  "flops_before": 1346504,
+  "flops_after": 216734,
+  "flops_pct": 83.90394681337746
+ },
+ {
+  "program": "g0198.ml",
+  "chains_reordered": 1,
+  "flops_before": 395260,
+  "flops_after": 31180,
+  "flops_pct": 92.11152153013207
+ },
+ {
+  "program": "g0199.ml",
+  "chains_reordered": 2,
+  "flops_before": 24181,
+  "flops_after": 6747,
+  "flops_pct": 72.0979281253877
+ }
+]

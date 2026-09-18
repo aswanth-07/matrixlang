@@ -101,7 +101,7 @@ static Tac *emit(TacOp op, const char *dst, const char *a1, const char *a2,
     return t;
 }
 
-static const char *new_temp(Type t)
+const char *tac_new_temp(Type t)
 {
     char buf[32];
     const char *name;
@@ -243,7 +243,7 @@ static const char *gen_binop(Node *n)
 {
     const char *a = gen_expr(n->kids[0]);
     const char *b = gen_expr(n->kids[1]);
-    const char *dst = new_temp(n->type);
+    const char *dst = tac_new_temp(n->type);
     TacOp op;
 
     if      (strcmp(n->name, "+") == 0) op = TAC_ADD;
@@ -276,20 +276,20 @@ static const char *gen_expr(Node *n)
 
     case N_NEG: {
         const char *a = gen_expr(n->kids[0]);
-        const char *dst = new_temp(n->type);
+        const char *dst = tac_new_temp(n->type);
         emit(TAC_NEG, dst, a, NULL, n->type, n->line);
         return dst;
     }
 
     case N_TRANSPOSE: {
         const char *a = gen_expr(n->kids[0]);
-        const char *dst = new_temp(n->type);
+        const char *dst = tac_new_temp(n->type);
         emit(TAC_TRANS, dst, a, NULL, n->type, n->line);
         return dst;
     }
 
     case N_IDENTITY: {
-        const char *dst = new_temp(n->type);
+        const char *dst = tac_new_temp(n->type);
         Tac *t = emit(TAC_IDENTITY, dst, NULL, NULL, n->type, n->line);
         t->i1 = n->d1;
         t->i2 = n->d2;
@@ -298,7 +298,7 @@ static const char *gen_expr(Node *n)
 
     case N_ZEROS:
     case N_ONES: {
-        const char *dst = new_temp(n->type);
+        const char *dst = tac_new_temp(n->type);
         Tac *t = emit(n->kind == N_ZEROS ? TAC_ZEROS : TAC_ONES,
                       dst, NULL, NULL, n->type, n->line);
         t->i1 = n->d1;

@@ -34,6 +34,17 @@ typedef struct {
     int double_transpose;   /* transpose(transpose(A)) collapsed */
 
     int rounds;             /* how many times the sequence repeated */
+
+    int chains;             /* matrix product chains re-bracketed */
+
+    /* Arithmetic, in scalar floating-point operations, before and after.
+     * This is the measure that matters: instruction counts cannot distinguish
+     * removing a 2x2 addition from removing a 100x100 product, and they are
+     * easy to flatter by choosing the example. Arithmetic cost is fixed by the
+     * shapes, which the type system already carries. */
+    long long flops_before;
+    long long flops_after;
+    long long flops_chain;  /* of which, attributable to chain re-bracketing */
 } OptStats;
 
 /* Which passes to run. Individually selectable so a demonstration can show one
@@ -42,7 +53,8 @@ typedef struct {
 #define OPT_CSE        0x02
 #define OPT_COPYPROP   0x04
 #define OPT_DCE        0x08
-#define OPT_ALL        0x0F
+#define OPT_CHAIN      0x10
+#define OPT_ALL        0x1F
 
 void optimize_run(int passes);
 

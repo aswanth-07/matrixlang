@@ -152,9 +152,9 @@ class Slide:
             sp.append('<a:ln><a:noFill/></a:ln>')
 
         sp.append('</p:spPr><p:txBody>')
-        l, t, r, b = pad
+        pl, pt, pr, pb = pad
         sp.append(f'<a:bodyPr wrap="{"square" if wrap else "none"}" '
-                  f'lIns="{emu(l)}" tIns="{emu(t)}" rIns="{emu(r)}" bIns="{emu(b)}" '
+                  f'lIns="{emu(pl)}" tIns="{emu(pt)}" rIns="{emu(pr)}" bIns="{emu(pb)}" '
                   f'anchor="{anchor}"><a:noAutofit/></a:bodyPr><a:lstStyle/>')
         if paras:
             sp.append("".join(p.xml() for p in paras))

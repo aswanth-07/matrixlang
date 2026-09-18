@@ -20,6 +20,7 @@
 #include "ast.h"
 #include "codegen.h"
 #include "diag.h"
+#include "cost.h"
 #include "optimize.h"
 #include "semantic.h"
 #include "symtab.h"
@@ -64,10 +65,16 @@ static void usage(FILE *out, const char *prog)
         "  --run           execute the target code\n"
         "  --trace         trace execution instruction by instruction\n"
         "\n"
-        "Optimizer selection (default: all four, with --optimize):\n"
-        "  --opt-algebraic --opt-cse --opt-copyprop --opt-dce\n"
+        "Optimizer selection (default: all five, with --optimize):\n"
+        "  --opt-algebraic  algebraic simplification over matrix properties\n"
+        "  --opt-cse        common subexpression elimination\n"
+        "  --opt-copyprop   copy propagation\n"
+        "  --opt-dce        dead code elimination\n"
+        "  --opt-chain      matrix chain ordering, chosen by arithmetic cost\n"
         "\n"
         "Other:\n"
+        "  --cost          arithmetic cost, in scalar operations, before and\n"
+        "                  after the optimizer\n"
         "  --stats         counts for tokens, AST, symbols and instructions\n"
         "  -q, --quiet     no stage output; exit status only\n"
         "  -h, --help      this message\n"
@@ -82,10 +89,11 @@ int main(int argc, char **argv)
 
     int want_tokens = 0, want_ast = 0, want_symbols = 0, want_check = 0;
     int want_tac = 0, want_opt = 0, want_explain = 0, want_report = 0;
-    int want_target = 0, want_run = 0, want_trace = 0, want_stats = 0;
+    int want_target = 0, want_run = 0, want_trace = 0, want_stats = 0, want_cost = 0;
     int quiet = 0, chose = 0, phase1_only = 0;
     int passes = 0;
     int i, status;
+    long long cost_before = 0;
 
     for (i = 1; i < argc; i++) {
         const char *a = argv[i];
@@ -120,6 +128,8 @@ int main(int argc, char **argv)
         else if (!strcmp(a, "--opt-cse"))       { passes |= OPT_CSE;       want_opt = chose = 1; }
         else if (!strcmp(a, "--opt-copyprop"))  { passes |= OPT_COPYPROP;  want_opt = chose = 1; }
         else if (!strcmp(a, "--opt-dce"))       { passes |= OPT_DCE;       want_opt = chose = 1; }
+        else if (!strcmp(a, "--opt-chain"))     { passes |= OPT_CHAIN;     want_opt = chose = 1; }
+        else if (!strcmp(a, "--cost"))          { want_cost = 1; }
 
         else if (!strcmp(a, "-q") || !strcmp(a, "--quiet")) quiet = 1;
 
@@ -221,6 +231,10 @@ int main(int argc, char **argv)
                             : "PHASE 2  --  INTERMEDIATE CODE (three-address code)"),
             tac_print(stdout, NULL);
 
+        /* Captured before the optimizer runs, so --cost without --optimize
+         * reports what the program as written would perform. */
+        cost_before = cost_total();
+
         if (want_opt) {
             optimize_run(passes);
 
@@ -235,6 +249,21 @@ int main(int argc, char **argv)
             if (!quiet && want_report) {
                 printf("\n");
                 optimize_report(stdout);
+            }
+        }
+
+        if (!quiet && want_cost) {
+            banner("ARITHMETIC COST (computed from the shapes, before running)");
+            if (want_opt) {
+                cost_report(stdout, cost_before, cost_total());
+            } else {
+                char b[32];
+                long long c = cost_total();
+                cost_format(c, b, sizeof b);
+                printf("  This program performs %lld scalar floating-point "
+                       "operations  (%s).\n", c, b);
+                printf("  Every term is fixed by a shape the type system "
+                       "already carries.\n");
             }
         }
 

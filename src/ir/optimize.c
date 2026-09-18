@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "chain.h"
+#include "cost.h"
 #include "tac.h"
 #include "util.h"
 #include "value.h"
@@ -36,6 +38,7 @@ static void logf_(const char *fmt, ...)
 void optimize_free(void)
 {
     int i;
+    chain_reset();
     for (i = 0; i < nlog; i++) free(log_lines[i]);
     free(log_lines);
     log_lines = NULL;
@@ -231,16 +234,23 @@ static int pass_algebraic(void)
                       before, t->dst, kept);
                 stats.zero_ops++;
                 changed = 1;
-            } else if (t->op == TAC_SUB && (pa == P_ZERO_MAT || pa == P_SCALAR_ZERO)) {
-                /* 0 - x is -x: still one instruction, but a cheaper one. */
-                t->op = TAC_NEG;
-                t->a1 = t->a2;
-                t->a2 = NULL;
-                logf_("zero operand     : %-28s -> %s = -%s  (0 - x = -x)",
-                      before, t->dst, t->a1);
-                stats.zero_ops++;
-                changed = 1;
             }
+            /* There is deliberately no `0 - x => -x` rule here, although it is
+             * the obvious companion to the three above and this pass used to
+             * have it.
+             *
+             * It is valid over the reals and not observationally equivalent in
+             * IEEE-754: +0 - +0 evaluates to +0, while negating +0 gives -0,
+             * and the two print differently. Differential testing over 200
+             * generated programs found exactly one disagreement between
+             * optimized and unoptimized execution, and this rewrite was the
+             * cause of it.
+             *
+             * The rule could be kept by restricting it to operands that cannot
+             * be zero, but nothing in the language establishes that, and the
+             * rewrite saves no arithmetic -- a negation costs the same as a
+             * subtraction from zero. Removing it costs nothing and makes the
+             * equivalence property hold. */
             break;
 
         case TAC_MUL:
@@ -580,6 +590,18 @@ void optimize_run(int passes)
     int round;
 
     stats.original = tac_live_count();
+    stats.flops_before = cost_total();
+
+    /* Chain re-bracketing runs first and once. It never changes the number of
+     * instructions -- a chain of k operands needs k-1 products however it is
+     * bracketed -- so it cannot feed the instruction-shrinking passes, and
+     * running it inside their fixed-point loop would only repeat work. Running
+     * it first does matter: it decides the shapes of the intermediate results,
+     * and the passes that follow reason about those shapes. */
+    if (passes & OPT_CHAIN) {
+        stats.chains = chain_reorder();
+        stats.flops_chain = chain_flops_saved();
+    }
 
     /* Ten is a ceiling, not a target: each round only runs because the previous
      * one changed something, and the passes shrink the program monotonically,
@@ -597,13 +619,18 @@ void optimize_run(int passes)
     }
 
     stats.optimized = tac_live_count();
+    stats.flops_after = cost_total();
 }
 
 void optimize_explain(FILE *out)
 {
     int i;
 
-    if (nlog == 0) {
+    /* Chain re-bracketing is reported first because it runs first, and because
+     * it is the transformation an instruction count cannot see at all. */
+    chain_explain(out);
+
+    if (nlog == 0 && stats.chains == 0) {
         fprintf(out, "No transformation applied: the program was already "
                      "in its simplest form.\n");
         return;
@@ -633,11 +660,16 @@ void optimize_report(FILE *out)
     fprintf(out, "    Dead instructions removed : %6d\n", stats.dead);
     fprintf(out, "\n");
     fprintf(out, "  Matrix-specific optimizations\n");
+    fprintf(out, "    Product chains reordered  : %6d\n", stats.chains);
     fprintf(out, "    Identity operations       : %6d\n", stats.identity_ops);
     fprintf(out, "    Zero-matrix operations    : %6d\n", stats.zero_ops);
     fprintf(out, "    Double transposes         : %6d\n", stats.double_transpose);
     fprintf(out, "\n");
     fprintf(out, "  Passes to fixed point       : %6d\n", stats.rounds);
     fprintf(out, "  Instruction reduction       : %5.1f%%\n", reduction);
+    fprintf(out, "\n");
+    fprintf(out, "  Arithmetic cost, in scalar floating-point operations.\n");
+    fprintf(out, "  Instructions count lines; this counts work.\n\n");
+    cost_report(out, stats.flops_before, stats.flops_after);
     fprintf(out, "==================================================\n");
 }

@@ -1,0 +1,190 @@
+{
+ "method": "Compare MatrixLang against public C-subset teaching compilers, phase by phase.\n\nThe curricular claim this project makes -- that the choice of source language\ndecides which compiler phases can carry real content -- is a comparative claim,\nand a comparative claim needs a comparison. This measures one.\n\nMethod, stated so a reader can disagree with it:\n\n  * Baselines are public repositories that present themselves as compiler-design\n    course projects for a subset of C, built with Lex and Yacc. They were chosen\n    by searching for that description, not by inspecting their contents first.\n  * Each repository is reduced to its most complete version. Several are\n    organised as incremental parts; only the last part is measured, because the\n    earlier ones are the same compiler with less of it.\n  * A file is attributed to a phase by its path and name, using the rules in\n    PHASE_RULES below. Where a repository mixes phases inside one Yacc file --\n    which every baseline does -- the whole file is attributed to `syntax`, and\n    the phase-presence table rather than the line counts carries the argument.\n  * A phase counts as present when a marker for it is found. The markers are\n    listed in MARKERS and are searched case-insensitively across every source\n    file. This is generous to the baselines: a single mention counts.\n\nLine counts across differently-organised repositories are weak evidence and are\nreported as context. Phase presence is the measurement.\n\n    python tools/compare_baselines.py --baselines <dir> --out <file.json>",
+ "compilers": [
+  {
+   "name": "MatrixLang",
+   "files": 31,
+   "lines": 4731,
+   "lines_per_phase": {
+    "semantic": 825,
+    "backend": 895,
+    "syntax": 499,
+    "lexical": 217,
+    "ir": 1734,
+    "other": 315,
+    "support": 246
+   },
+   "phases_present": {
+    "lexical analysis": {
+     "present": true,
+     "matched": "\\byylex\\b"
+    },
+    "syntax analysis": {
+     "present": true,
+     "matched": "\\byyparse\\b"
+    },
+    "symbol table": {
+     "present": true,
+     "matched": "symbol\\s*table"
+    },
+    "semantic analysis": {
+     "present": true,
+     "matched": "semantic"
+    },
+    "intermediate code": {
+     "present": true,
+     "matched": "intermediate\\s*code"
+    },
+    "code optimization": {
+     "present": true,
+     "matched": "optimi[sz]"
+    },
+    "target code generation": {
+     "present": true,
+     "matched": "\\bcodegen\\b"
+    },
+    "execution": {
+     "present": true,
+     "matched": "virtual\\s*machine"
+    }
+   },
+   "phase_count": 8
+  },
+  {
+   "name": "Shree987_Mini-C-Compiler",
+   "files": 18,
+   "lines": 1729,
+   "lines_per_phase": {
+    "ir": 254,
+    "syntax": 778,
+    "lexical": 697
+   },
+   "phases_present": {
+    "lexical analysis": {
+     "present": true,
+     "matched": "\\byylex\\b"
+    },
+    "syntax analysis": {
+     "present": true,
+     "matched": "\\byyparse\\b"
+    },
+    "symbol table": {
+     "present": true,
+     "matched": "symbol\\s*table"
+    },
+    "semantic analysis": {
+     "present": true,
+     "matched": "undeclared"
+    },
+    "intermediate code": {
+     "present": false,
+     "matched": null
+    },
+    "code optimization": {
+     "present": false,
+     "matched": null
+    },
+    "target code generation": {
+     "present": true,
+     "matched": "\\bcodegen\\b"
+    },
+    "execution": {
+     "present": false,
+     "matched": null
+    }
+   },
+   "phase_count": 5
+  },
+  {
+   "name": "cherry247_CompilerConstruction-Mini-C-compiler",
+   "files": 6,
+   "lines": 645,
+   "lines_per_phase": {
+    "other": 79,
+    "lexical": 55,
+    "syntax": 511
+   },
+   "phases_present": {
+    "lexical analysis": {
+     "present": true,
+     "matched": "\\byylex\\b"
+    },
+    "syntax analysis": {
+     "present": true,
+     "matched": "\\byyparse\\b"
+    },
+    "symbol table": {
+     "present": false,
+     "matched": null
+    },
+    "semantic analysis": {
+     "present": false,
+     "matched": null
+    },
+    "intermediate code": {
+     "present": true,
+     "matched": "\\bicg\\b"
+    },
+    "code optimization": {
+     "present": false,
+     "matched": null
+    },
+    "target code generation": {
+     "present": false,
+     "matched": null
+    },
+    "execution": {
+     "present": false,
+     "matched": null
+    }
+   },
+   "phase_count": 3
+  },
+  {
+   "name": "kaushiksk_mini-c-compiler",
+   "files": 5,
+   "lines": 1364,
+   "lines_per_phase": {
+    "lexical": 96,
+    "syntax": 860,
+    "semantic": 353,
+    "other": 55
+   },
+   "phases_present": {
+    "lexical analysis": {
+     "present": true,
+     "matched": "%%"
+    },
+    "syntax analysis": {
+     "present": true,
+     "matched": "\\byyparse\\b"
+    },
+    "symbol table": {
+     "present": true,
+     "matched": "symbol\\s*table"
+    },
+    "semantic analysis": {
+     "present": true,
+     "matched": "redeclar"
+    },
+    "intermediate code": {
+     "present": true,
+     "matched": "\\bicg\\b"
+    },
+    "code optimization": {
+     "present": false,
+     "matched": null
+    },
+    "target code generation": {
+     "present": true,
+     "matched": "code\\s*gener"
+    },
+    "execution": {
+     "present": false,
+     "matched": null
+    }
+   },
+   "phase_count": 6
+  }
+ ]
+}
