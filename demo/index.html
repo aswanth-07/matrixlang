@@ -18,20 +18,25 @@
 
 <style>
 :root {
-  --ink:      #0e1412;
-  --panel:    #16201c;
-  --panel-2:  #1d2925;
-  --rule:     #2a3833;
-  --rule-hi:  #3b4f48;
-  --paper:    #efeae0;
-  --dim:      #9baaa3;
-  --faint:    #6d807a;
-  --gold:     #e0a94a;
-  --gold-dim: #6b5326;
-  --coral:    #e2705f;
-  --coral-dim:#6e3a33;
-  --mint:     #62c6a8;
-  --mint-dim: #2b5a4c;
+  /* Pure black, with a terminal palette. Contrast against the three grounds
+     this page uses -- canvas, panel, code -- is measured, and the lowest tone
+     that ever carries text is --faint at 6.3 : 1 on the canvas. */
+  --ink:      #000000;   /* canvas                                          */
+  --panel:    #0d0d0d;   /* a barely raised ground                          */
+  --panel-2:  #121212;   /* code; code needs a ground                       */
+  --rule:     #242424;   /* hairlines only, never text                      */
+  --rule-hi:  #3a3a3a;
+  --paper:    #ffffff;   /* 21.0 : 1   headings, key figures                */
+  --dim:      #c9c9c9;   /* 12.7 : 1   body                                 */
+  --faint:    #8c8c8c;   /*  6.3 : 1   captions, labels, the floor          */
+  --gold:     #4ade80;   /* 12.1 : 1   the accent: ours, measured, correct  */
+  --gold-dim: #16351f;
+  --coral:    #ef4444;   /*  5.6 : 1   absent, wrong, rejected              */
+  --coral-dim:#4a1f1f;
+  --mint:     #4ade80;   /* the same family; kept as a name the CSS uses    */
+  --mint-dim: #16351f;
+  --violet:   #a78bfa;   /*  7.7 : 1   a second series                      */
+  --blue:     #6e9bff;   /*  7.8 : 1   links                                */
 
   --serif: "Spectral", Georgia, "Times New Roman", serif;
   --sans:  "Archivo", "Segoe UI", system-ui, sans-serif;
@@ -53,8 +58,8 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-a { color: var(--gold); text-decoration: none; border-bottom: 1px solid var(--gold-dim); }
-a:hover { border-bottom-color: var(--gold); }
+a { color: var(--blue); text-decoration: none; border-bottom: 1px solid #23375e; }
+a:hover { border-bottom-color: var(--blue); }
 :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 
 h1, h2, h3 { font-family: var(--serif); font-weight: 600; text-wrap: balance; margin: 0; }
@@ -301,8 +306,10 @@ html { scroll-behavior: smooth; }
     </nav>
 
     <footer>
-      A Aswanth Raj<br>
-      Compiler Design Laboratory<br><br>
+      <b style="color:var(--dim);font-weight:600">A Aswanth Raj</b><br>
+      24BAI0044<br>
+      BCSE307P &mdash; Compiler Design Lab<br>
+      Supervisor: Dr. Ranjithkumar S<br><br>
       <span class="eyebrow">In the repository</span><br>
       <code>paper/matrixlang.pdf</code><br>
       <code>docs/submission/</code><br>
@@ -845,7 +852,7 @@ R = Matrix&lt;1x1&gt;      R = Matrix&lt;1x1&gt;
     [pct(M.instr.median), "var(--coral)",
      "median instructions removed, same programs (IQR " + M.instr.q1.toFixed(1)
        + " to " + M.instr.q3.toFixed(1) + ")"],
-    [pct(M.chain.sharePct), "var(--gold)",
+    [pct(M.chain.sharePct), "var(--violet)",
      "of programs had a chain worth re-bracketing (" + M.chain.helped
        + " of " + M.chain.total + ")"],
     [M.differential.identical + "/" + M.differential.programs, "var(--mint)",
@@ -879,18 +886,18 @@ R = Matrix&lt;1x1&gt;      R = Matrix&lt;1x1&gt;
     var t;
     for (t = 0; t <= 100; t += 25) {
       s.push('<line x1="' + x(t) + '" y1="' + y(0) + '" x2="' + x(t) + '" y2="'
-           + y(100) + '" stroke="#2a3833" stroke-width="1"/>');
+           + y(100) + '" stroke="#242424" stroke-width="1"/>');
       s.push('<line x1="' + x(0) + '" y1="' + y(t) + '" x2="' + x(100)
-           + '" y2="' + y(t) + '" stroke="#2a3833" stroke-width="1"/>');
+           + '" y2="' + y(t) + '" stroke="#242424" stroke-width="1"/>');
       s.push('<text x="' + x(t) + '" y="' + (y(0) + 17)
-           + '" fill="#6d807a" font-size="10" font-family="JetBrains Mono, monospace" '
+           + '" fill="#8c8c8c" font-size="10" font-family="JetBrains Mono, monospace" '
            + 'text-anchor="middle">' + t + "%</text>");
       s.push('<text x="' + (x(0) - 8) + '" y="' + (y(t) + 3.5)
-           + '" fill="#6d807a" font-size="10" font-family="JetBrains Mono, monospace" '
+           + '" fill="#8c8c8c" font-size="10" font-family="JetBrains Mono, monospace" '
            + 'text-anchor="end">' + t + "%</text>");
     }
 
-    [cdf(M.flopsAll, "#62c6a8"), cdf(M.instrAll, "#e2705f")].forEach(function (c) {
+    [cdf(M.flopsAll, "#4ade80"), cdf(M.instrAll, "#ef4444")].forEach(function (c) {
       var d = c.pts.map(function (p, i) {
         return (i ? "L" : "M") + x(p[0]).toFixed(1) + " " + y(p[1]).toFixed(1);
       }).join(" ");
@@ -899,10 +906,10 @@ R = Matrix&lt;1x1&gt;      R = Matrix&lt;1x1&gt;
     });
 
     s.push('<text x="' + (L + iw / 2) + '" y="' + (H - 6)
-         + '" fill="#6d807a" font-size="10.5" font-family="Archivo, sans-serif" '
+         + '" fill="#8c8c8c" font-size="10.5" font-family="Archivo, sans-serif" '
          + 'text-anchor="middle">reduction on one program</text>');
     s.push('<text transform="translate(12,' + (T + ih / 2) + ') rotate(-90)" '
-         + 'fill="#6d807a" font-size="10.5" font-family="Archivo, sans-serif" '
+         + 'fill="#8c8c8c" font-size="10.5" font-family="Archivo, sans-serif" '
          + 'text-anchor="middle">programs at or below</text>');
     s.push("</svg>");
     el("chart-cdf").innerHTML = s.join("");
@@ -917,35 +924,35 @@ R = Matrix&lt;1x1&gt;      R = Matrix&lt;1x1&gt;
            + 'arithmetic against instructions.">'];
 
     var rows = [
-      ["arithmetic removed", M.flops, "#62c6a8"],
-      ["instructions removed", M.instr, "#e2705f"]
+      ["arithmetic removed", M.flops, "#4ade80"],
+      ["instructions removed", M.instr, "#ef4444"]
     ];
     rows.forEach(function (r, i) {
       var top = T + i * (ih / 2) + 14;
-      s.push('<text x="' + L + '" y="' + top + '" fill="#efeae0" font-size="11.5" '
+      s.push('<text x="' + L + '" y="' + top + '" fill="#ffffff" font-size="11.5" '
            + 'font-family="Archivo, sans-serif">' + r[0] + "</text>");
       s.push('<rect x="' + x(0) + '" y="' + (top + 12) + '" width="' + iw
-           + '" height="14" rx="3" fill="#2a3833"/>');
+           + '" height="14" rx="3" fill="#242424"/>');
       s.push('<rect x="' + x(r[1].q1) + '" y="' + (top + 12) + '" width="'
            + Math.max(2, x(r[1].q3) - x(r[1].q1)) + '" height="14" rx="3" fill="'
            + r[2] + '" opacity="' + (i ? 0.55 : 1) + '"/>');
       s.push('<rect x="' + (x(r[1].median) - 1.4) + '" y="' + (top + 8)
-           + '" width="2.8" height="22" fill="#efeae0"/>');
+           + '" width="2.8" height="22" fill="#ffffff"/>');
       s.push('<text x="' + (W - R + 10) + '" y="' + (top + 24)
            + '" fill="' + r[2] + '" font-size="15" font-weight="700" '
            + 'font-family="Spectral, Georgia, serif">' + pct(r[1].median) + "</text>");
       s.push('<text x="' + L + '" y="' + (top + 44)
-           + '" fill="#6d807a" font-size="10" font-family="JetBrains Mono, monospace">'
+           + '" fill="#8c8c8c" font-size="10" font-family="JetBrains Mono, monospace">'
            + "IQR " + r[1].q1.toFixed(1) + " to " + r[1].q3.toFixed(1) + "</text>");
     });
 
     s.push('<text x="' + x(0) + '" y="' + (H - 12)
-         + '" fill="#6d807a" font-size="10" font-family="JetBrains Mono, monospace">0%</text>');
+         + '" fill="#8c8c8c" font-size="10" font-family="JetBrains Mono, monospace">0%</text>');
     s.push('<text x="' + x(100) + '" y="' + (H - 12)
-         + '" fill="#6d807a" font-size="10" font-family="JetBrains Mono, monospace" '
+         + '" fill="#8c8c8c" font-size="10" font-family="JetBrains Mono, monospace" '
          + 'text-anchor="end">100%</text>');
     s.push('<text x="' + L + '" y="' + (T - 10)
-         + '" fill="#6d807a" font-size="10" font-family="Archivo, sans-serif">'
+         + '" fill="#8c8c8c" font-size="10" font-family="Archivo, sans-serif">'
          + "bar = interquartile range, tick = median</text>");
     s.push("</svg>");
     el("chart-box").innerHTML = s.join("");
