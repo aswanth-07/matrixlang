@@ -42,6 +42,7 @@ from deckkit import Para, Run, Slide, write  # noqa: E402
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, "results")
 REPO = "github.com/aswanth-07/matrixlang"
+REPO_URL = "https://" + REPO
 
 # ---------------------------------------------------------------- palette --
 # Contrast ratios are against the three grounds this deck uses: the black
@@ -255,7 +256,7 @@ def slide_title():
 
     s.rect(M + 16, 442, CW - 32, 1, fill=LINE, name="rule")
     s.text(M + 16, 456, 500, 18,
-           [Para(Run(REPO, 10, BLUE, font=MONO), line=13)], pad=(0, 0, 0, 0))
+           [Para(Run(REPO, 10, BLUE, font=MONO, link=REPO_URL), line=13)], pad=(0, 0, 0, 0))
     s.text(M + 16, 456, CW - 32, 18,
            [Para(Run("School of Computer Science and Engineering, VIT Vellore",
                      9, MUTED), align="r", line=13)], pad=(0, 0, 0, 0))
@@ -714,7 +715,8 @@ def slide_meaning():
            [Para(Run("Paper, compiler, generator, measurements and demo",
                      9.4, MUTED), line=12)], pad=(0, 0, 0, 0))
     s.text(M, 482, CW, 18,
-           [Para(Run(REPO, 9.6, BLUE, font=MONO), align="r", line=12)],
+           [Para(Run(REPO, 9.6, BLUE, font=MONO, link=REPO_URL),
+                 align="r", line=12)],
            pad=(0, 0, 0, 0))
     return s
 

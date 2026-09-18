@@ -34,7 +34,8 @@ class Run:
     """One stretch of uniformly styled text."""
 
     def __init__(self, text, size=11.0, color="000000", bold=False,
-                 italic=False, font="Segoe UI", spacing=None, caps=False):
+                 italic=False, font="Segoe UI", spacing=None, caps=False,
+                 link=None, underline=None):
         self.text = text
         self.size = size
         self.color = color
@@ -43,6 +44,13 @@ class Run:
         self.font = font
         self.spacing = spacing      # letter spacing, in points
         self.caps = caps
+        self.link = link            # an external URL, or None
+        # Underline, for ordinary runs. It does not reach a hyperlink:
+        # PowerPoint draws its own underline under any run carrying an
+        # hlinkClick and ignores u="none" there. That is the right default
+        # anyway, since an underline is what tells a reader a link is live.
+        self.underline = underline
+        self.rel = None             # filled in by the slide that serialises it
 
     def xml(self) -> str:
         attrs = ['lang="en-US"', f'sz="{int(self.size * 100)}"', 'dirty="0"']
@@ -54,12 +62,18 @@ class Run:
             attrs.append(f'spc="{int(self.spacing * 100)}"')
         if self.caps:
             attrs.append('cap="all"')
+        if self.underline is not None:
+            attrs.append(f'u="{"sng" if self.underline else "none"}"')
+        # hlinkClick is last inside rPr: the schema fixes that order, and
+        # PowerPoint refuses to open the file when it is anywhere else.
+        hlink = f'<a:hlinkClick r:id="{self.rel}"/>' if self.rel else ""
         # A space-only run still needs to occupy width, so preserve it.
         return (
             f'<a:r><a:rPr {" ".join(attrs)}>'
             f'<a:solidFill><a:srgbClr val="{self.color}"/></a:solidFill>'
             f'<a:latin typeface="{esc(self.font)}"/>'
             f'<a:cs typeface="{esc(self.font)}"/>'
+            f'{hlink}'
             f'</a:rPr><a:t>{esc(self.text)}</a:t></a:r>'
         )
 
@@ -112,10 +126,23 @@ class Slide:
         self._shapes = []
         self._id = 1
         self.boxes = []          # (x, y, w, h, name) for the layout check
+        self.links = []          # (relationship id, url), in the order seen
+        self._link_ids = {}      # url -> relationship id, so one url is one rel
 
     def _next_id(self) -> int:
         self._id += 1
         return self._id
+
+    def _link_rel(self, url: str) -> str:
+        """The relationship id for a URL on this slide, allocating on first use.
+
+        Ids live in the slide's own .rels part, so they only have to be unique
+        within it. rId1 is the layout, so hyperlinks start after it.
+        """
+        if url not in self._link_ids:
+            self._link_ids[url] = f"rId{len(self._link_ids) + 2}"
+            self.links.append((self._link_ids[url], url))
+        return self._link_ids[url]
 
     # -- primitives --------------------------------------------------------
 
@@ -157,6 +184,10 @@ class Slide:
                   f'lIns="{emu(pl)}" tIns="{emu(pt)}" rIns="{emu(pr)}" bIns="{emu(pb)}" '
                   f'anchor="{anchor}"><a:noAutofit/></a:bodyPr><a:lstStyle/>')
         if paras:
+            for para in paras:
+                for run in para.runs:
+                    if getattr(run, "link", None):
+                        run.rel = self._link_rel(run.link)
             sp.append("".join(p.xml() for p in paras))
         else:
             sp.append('<a:p><a:endParaRPr lang="en-US"/></a:p>')
@@ -232,12 +263,12 @@ _THEME = f'''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <a:theme xmlns:a="{_NS_A}" name="MatrixLang">
 <a:themeElements>
 <a:clrScheme name="MatrixLang">
-<a:dk1><a:srgbClr val="14261F"/></a:dk1><a:lt1><a:srgbClr val="FFFFFF"/></a:lt1>
-<a:dk2><a:srgbClr val="3F4F49"/></a:dk2><a:lt2><a:srgbClr val="FAF7F2"/></a:lt2>
-<a:accent1><a:srgbClr val="0E7C6B"/></a:accent1><a:accent2><a:srgbClr val="B4690E"/></a:accent2>
-<a:accent3><a:srgbClr val="9E2B3F"/></a:accent3><a:accent4><a:srgbClr val="7C8B85"/></a:accent4>
-<a:accent5><a:srgbClr val="E3DDD2"/></a:accent5><a:accent6><a:srgbClr val="16221E"/></a:accent6>
-<a:hlink><a:srgbClr val="0E7C6B"/></a:hlink><a:folHlink><a:srgbClr val="7C8B85"/></a:folHlink>
+<a:dk1><a:srgbClr val="000000"/></a:dk1><a:lt1><a:srgbClr val="FFFFFF"/></a:lt1>
+<a:dk2><a:srgbClr val="121212"/></a:dk2><a:lt2><a:srgbClr val="C9C9C9"/></a:lt2>
+<a:accent1><a:srgbClr val="4ADE80"/></a:accent1><a:accent2><a:srgbClr val="EF4444"/></a:accent2>
+<a:accent3><a:srgbClr val="A78BFA"/></a:accent3><a:accent4><a:srgbClr val="8C8C8C"/></a:accent4>
+<a:accent5><a:srgbClr val="242424"/></a:accent5><a:accent6><a:srgbClr val="0D0D0D"/></a:accent6>
+<a:hlink><a:srgbClr val="6E9BFF"/></a:hlink><a:folHlink><a:srgbClr val="6E9BFF"/></a:folHlink>
 </a:clrScheme>
 <a:fontScheme name="MatrixLang">
 <a:majorFont><a:latin typeface="Georgia"/><a:ea typeface=""/><a:cs typeface=""/></a:majorFont>
@@ -369,11 +400,17 @@ def write(path: str, slides, title: str, author: str, bg: str = "FAF7F2") -> Non
     z.writestr("ppt/theme/theme1.xml", _THEME)
 
     for i, s in enumerate(slides, 1):
-        z.writestr(f"ppt/slides/slide{i}.xml", s.xml())
+        body = s.xml()          # allocates the hyperlink relationship ids
+        z.writestr(f"ppt/slides/slide{i}.xml", body)
+        hlinks = "".join(
+            f'<Relationship Id="{rid}" Type="{_NS_R}/hyperlink" '
+            f'Target="{esc(url)}" TargetMode="External"/>'
+            for rid, url in s.links)
         z.writestr(f"ppt/slides/_rels/slide{i}.xml.rels",
             '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
             '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
             f'<Relationship Id="rId1" Type="{_NS_R}/slideLayout" Target="../slideLayouts/slideLayout1.xml"/>'
+            + hlinks +
             '</Relationships>')
 
     z.writestr("ppt/presProps.xml",
