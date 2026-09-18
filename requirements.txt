@@ -1,0 +1,15 @@
+# Python dependencies for the generators in tools/.
+#
+# The compiler needs none of this: it is C, built by make, with flex and bison.
+# Everything below is for regenerating a deliverable.
+#
+#   make measure   run_experiments.py, gen_programs.py   standard library
+#   make web       build-demo.py                         standard library
+#   make deck      build-deck.py, deckkit.py             standard library
+#   make measure   plot_reduction.py                     matplotlib
+#   (figure)       build-architecture-figure.py          Pillow
+#
+# So a reader who only wants to reproduce the measurements needs nothing here.
+
+matplotlib>=3.5
+Pillow>=9.0

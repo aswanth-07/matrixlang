@@ -9,9 +9,9 @@ experiments and the slides change; this file does not.
 Two devices carry the argument, and both are there because the argument is
 about compiler phases:
 
-  The phase rail. Every content slide shows the eight canonical phases down
-  the left edge with the ones this slide is about lit. The reader watches the
-  rail fill, and the one slide where it stays mostly dark is the comparison.
+  The phase rail. Every content slide lists the eight canonical phases down the
+  left edge and marks the ones this slide is about. The reader watches the marks
+  accumulate, and the one slide where almost nothing is marked is the comparison.
 
   One number per slide. Each slide states a single figure large enough to read
   from the back of a room. Everything else on the slide supports or qualifies
@@ -22,6 +22,11 @@ The compiler output quoted on slide 4 is real. It is the output of
     bin/matrixc --tokens|--ast|--symbols|--tac|--target|--run <the example>
 
 with long runs elided as `...`; nothing was invented to make a column fit.
+
+Every mark on these slides is drawn. There are no glyph bullets, no dingbats and
+no emoji: a square is a rectangle, a negation is a bar, and the phase marks are
+rules. A typeface substitution on the presenting machine therefore cannot turn a
+bullet into a box.
 """
 
 import json
@@ -36,25 +41,31 @@ from deckkit import Para, Run, Slide, write  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, "results")
+REPO = "github.com/aswanth-07/matrixlang"
 
 # ---------------------------------------------------------------- palette --
 # A near-black canvas with warm off-white text: a compiler deck that looks
 # like the terminal the work happens in. One accent carries the argument
 # (gold), one marks what is wrong or missing (coral), one marks what was
 # measured (mint). Three colours is a constraint, not a shortage.
+#
+# Every tone that carries text clears 4.5:1 on all three grounds. QUIET was
+# #5E706A and read 2.87:1 on the code ground, below the floor for text of any
+# size; it is lifted to the same hue at higher lightness rather than replaced,
+# so the family still reads as one.
 
 INK    = "0E1412"      # canvas
 PANEL  = "16201C"
-PANEL2 = "1D2925"
-PAPER  = "EFEAE0"      # primary text
-DIM    = "9BAAA3"
-FAINT  = "5E706A"
-RULE   = "2A3833"
+PANEL2 = "1D2925"      # code ground, the darkest surface text sits on
+PAPER  = "EFEAE0"      # primary text            15.5 : 1 on canvas
+DIM    = "9BAAA3"      # secondary text           7.7 : 1
+QUIET  = "7D928B"      # tertiary text            5.6 : 1  (4.6 : 1 on code)
+RULE   = "2A3833"      # hairlines, never text
 
-GOLD   = "E0A94A"
-CORAL  = "E2705F"
-CORALD = "6E3A33"
-MINT   = "62C6A8"
+GOLD   = "E0A94A"      # the argument             8.8 : 1
+CORAL  = "E2705F"      # wrong, missing, absent   6.0 : 1
+CORALD = "6E3A33"      # coral at rest, fills only
+MINT   = "62C6A8"      # measured                 9.0 : 1
 
 SERIF = "Georgia"
 MONO  = "Consolas"
@@ -63,11 +74,6 @@ M      = 42.0
 RAIL_W = 128.0
 CX     = M + RAIL_W + 26        # content left edge: 196
 CW     = 960.0 - CX - M         # content width: 722
-
-ARROW = "→"
-DOT   = "·"
-SQ    = "▪"
-CROSS = "✗"
 
 PHASES = ["lexical", "syntax", "symbol table", "semantic",
           "intermediate", "optimization", "target code", "execution"]
@@ -125,49 +131,70 @@ def load():
 D = load()
 
 
-# --------------------------------------------------------------- the parts --
+# ------------------------------------------------------------ drawn marks --
 
 def backdrop(s):
     s.rect(0, 0, 960, 540, fill=INK, name="backdrop")
 
 
+def bullet(s, x, y, colour=GOLD, size=3.0):
+    """A square, drawn. Not a glyph."""
+    s.rect(x, y, size, size, fill=colour, name="bullet")
+
+
+def negation(s, x, y, colour=CORAL, w=8.0):
+    """A bar, drawn. Reads as 'not' without borrowing a dingbat."""
+    s.rect(x, y, w, 1.6, fill=colour, name="negation")
+
+
 def rail(s, active=()):
-    """The eight canonical phases down the left edge, with `active` lit."""
+    """The eight canonical phases, with the ones this slide is about marked.
+
+    Only the marked phases carry a rule. An unmarked phase is the absence of
+    one, which is both quieter and one fewer low-contrast element to justify.
+    """
     s.text(M, 44, RAIL_W, 13,
-           [Para(Run("compiler phases", 7.2, FAINT, bold=True, caps=True,
+           [Para(Run("compiler phases", 7.2, QUIET, bold=True, caps=True,
                      spacing=1.4))], pad=(0, 0, 0, 0))
     y = 66.0
     for i, name in enumerate(PHASES):
         on = i in active
-        s.rect(M, y + 3, 3, 12, fill=GOLD if on else RULE, name="tick")
+        if on:
+            s.rect(M, y + 3, 3, 12, fill=GOLD, name="phase-mark")
         s.text(M + 12, y, RAIL_W - 12, 16,
-               [Para(Run(name, 8.4, PAPER if on else FAINT, bold=on), line=11)],
+               [Para(Run(name, 8.4, PAPER if on else QUIET, bold=on), line=11)],
                pad=(0, 0, 0, 0))
         y += 21
 
 
-def header(s, num, kicker, title, sub=None):
-    s.text(CX, 44, CW, 13,
-           [Para([Run("%02d" % num, 8, GOLD, bold=True, spacing=1.2),
-                  Run("   %s   %s" % (DOT, kicker), 8, FAINT, bold=True,
-                      caps=True, spacing=1.4)])], pad=(0, 0, 0, 0))
-    s.text(CX, 60, CW, 34,
-           [Para(Run(title, 25, PAPER, bold=True, font=SERIF), line=29)],
+def folio(s, num):
+    """The slide number, in the place a page number goes: the foot of the
+    rail. It is not a label above the heading."""
+    s.rect(M, 470, 22, 1, fill=RULE, name="rule")
+    s.text(M, 478, RAIL_W, 14,
+           [Para(Run("%02d" % num, 8, QUIET, font=MONO, spacing=0.8))],
            pad=(0, 0, 0, 0))
-    y = 96.0
+
+
+def header(s, title, sub=None):
+    """A heading speaks for itself. There is no kicker above it."""
+    s.text(CX, 48, CW, 38,
+           [Para(Run(title, 26, PAPER, bold=True, font=SERIF), line=30)],
+           pad=(0, 0, 0, 0))
+    y = 88.0
     if sub:
-        s.text(CX, y, CW, 32, [Para(Run(sub, 10.5, DIM), line=14)],
+        s.text(CX, y, CW, 34, [Para(Run(sub, 10.5, DIM), line=14)],
                pad=(0, 0, 0, 0))
-        y += 34
+        y += 36
     s.rect(CX, y, CW, 1, fill=RULE, name="rule")
-    return y + 18
+    return y + 20
 
 
 def bignum(s, x, y, w, value, label, accent=GOLD, size=40):
     s.text(x, y, w, size + 8,
            [Para(Run(value, size, accent, bold=True, font=SERIF), line=size + 2)],
            pad=(0, 0, 0, 0))
-    s.text(x, y + size + 6, w, 30,
+    s.text(x, y + size + 6, w, 32,
            [Para(Run(ln, 8.6, DIM), line=11.4) for ln in label.split("\n")],
            pad=(0, 0, 0, 0))
 
@@ -175,11 +202,11 @@ def bignum(s, x, y, w, value, label, accent=GOLD, size=40):
 def panel(s, x, y, w, h, title=None, accent=GOLD, fill=PANEL, caps=True):
     s.shape(x, y, w, h, fill=fill, geom="roundRect", radius=2200, name="panel")
     if title:
-        s.text(x + 14, y + 10, w - 28, 14,
+        s.text(x + 14, y + 12, w - 28, 14,
                [Para(Run(title, 7.8, accent, bold=True, caps=caps,
                          spacing=1.2))], pad=(0, 0, 0, 0))
-        return y + 28
-    return y + 12
+        return y + 32
+    return y + 14
 
 
 def code(s, x, y, w, h, lines, size=8.4, lead=11.2, fill=PANEL2):
@@ -201,15 +228,20 @@ def body(s, x, y, w, h, blocks):
         text, size, colour = b[0], b[1], b[2]
         bold = b[3] if len(b) > 3 else False
         paras.append(Para(Run(text, size, colour, bold=bold),
-                          line=size * 1.38, before=0 if i == 0 else 7))
+                          line=size * 1.38, before=0 if i == 0 else 8))
     s.text(x, y, w, h, paras, pad=(0, 0, 0, 0))
 
 
-def footer(s, text, accent=GOLD):
+def footer(s, text, accent=GOLD, link=None):
     s.rect(CX, 494, CW, 1, fill=RULE, name="rule")
-    s.text(CX, 503, CW, 22,
-           [Para([Run(SQ + "   ", 7.5, accent), Run(text, 9.5, DIM)], line=12)],
-           pad=(0, 0, 0, 0))
+    bullet(s, CX, 508, accent, 3.0)
+    w = CW - 14 if link is None else CW - 14 - 176
+    s.text(CX + 14, 502, w, 22,
+           [Para(Run(text, 9.5, DIM), line=12)], pad=(0, 0, 0, 0))
+    if link:
+        s.text(CX + CW - 176, 502, 176, 22,
+               [Para(Run(REPO, 8.6, QUIET, font=MONO), align="r", line=12)],
+               pad=(0, 0, 0, 0))
 
 
 # ====================================================================== 01 --
@@ -218,45 +250,39 @@ def slide1():
     s = Slide()
     backdrop(s)
 
-    s.text(M, 60, 520, 14,
-           [Para(Run("Compiler Design Laboratory   %s   Experience report" % DOT,
-                     8, GOLD, bold=True, caps=True, spacing=1.6))],
+    s.text(M, 76, 560, 112,
+           [Para(Run("Shapes in the", 44, PAPER, bold=True, font=SERIF), line=52),
+            Para(Run("Type System", 44, GOLD, bold=True, font=SERIF), line=52)],
            pad=(0, 0, 0, 0))
-    s.text(M, 82, 560, 108,
-           [Para(Run("Shapes in the", 44, PAPER, bold=True, font=SERIF), line=50),
-            Para(Run("Type System", 44, GOLD, bold=True, font=SERIF), line=50)],
-           pad=(0, 0, 0, 0))
-    s.rect(M, 196, 58, 3, fill=CORAL, name="rule")
-    s.text(M, 212, 540, 46,
+    s.rect(M, 200, 58, 3, fill=CORAL, name="rule")
+    s.text(M, 218, 540, 48,
            [Para(Run("A matrix language that lets a compiler course reach "
                      "optimization", 15, PAPER, font=SERIF), line=21)],
            pad=(0, 0, 0, 0))
-    s.text(M, 268, 520, 60,
+    s.text(M, 274, 520, 62,
            [Para(Run("Put matrix shapes in the type system and the compiler can "
                      "cost a program before it runs. Semantic analysis, "
                      "optimization and code generation all gain something to do.",
                      10.5, DIM), line=15)], pad=(0, 0, 0, 0))
 
-    s.rect(M, 350, 520, 1, fill=RULE, name="rule")
-    bignum(s, M, 366, 250, "%.1f%%" % D["flop_med"],
+    s.rect(M, 356, 520, 1, fill=RULE, name="rule")
+    bignum(s, M, 372, 250, "%.1f%%" % D["flop_med"],
            "of the arithmetic removed\nby the optimizer", accent=MINT)
-    bignum(s, M + 262, 366, 250, "%.1f%%" % D["instr_med"],
+    bignum(s, M + 262, 372, 250, "%.1f%%" % D["instr_med"],
            "what an instruction count\nwould have reported", accent=CORAL)
-    s.text(M, 466, 520, 16,
+    s.text(M, 472, 520, 16,
            [Para(Run("Same optimizer. Same %d programs. Different question."
                      % D["n"], 9.5, GOLD, italic=True), line=12)],
            pad=(0, 0, 0, 0))
 
     s.shape(612, 60, 306, 420, fill=PANEL, geom="roundRect", radius=2200,
             name="panel")
-    s.text(630, 78, 270, 14,
-           [Para(Run("Presented by", 7.8, GOLD, bold=True, caps=True,
-                     spacing=1.2))], pad=(0, 0, 0, 0))
-    s.text(630, 96, 270, 24,
-           [Para(Run("A Aswanth Raj", 17, PAPER, bold=True, font=SERIF), line=20)],
+    s.text(630, 80, 270, 40,
+           [Para(Run("A Aswanth Raj", 17, PAPER, bold=True, font=SERIF), line=21),
+            Para(Run("Compiler Design Laboratory", 9, DIM), line=13)],
            pad=(0, 0, 0, 0))
-    s.rect(630, 130, 40, 1.5, fill=RULE, name="rule")
-    code(s, 630, 148, 270, 162, [
+    s.rect(630, 132, 40, 1.5, fill=RULE, name="rule")
+    code(s, 630, 150, 270, 162, [
         ("matrix A[100,2];", PAPER),
         ("matrix B[2,100];", PAPER),
         ("matrix C[100,2];", PAPER),
@@ -268,7 +294,7 @@ def slide1():
         ("because it knows all three shapes", DIM),
         ("before anything runs", DIM),
     ], size=8.0, lead=13.0)
-    s.text(630, 326, 270, 100,
+    s.text(630, 328, 270, 100,
            [Para([Run("69,800", 11.5, CORAL, bold=True, font=MONO),
                   Run("  FLOP as written", 9.5, DIM)], line=14),
             Para([Run(" 1,396", 11.5, MINT, bold=True, font=MONO),
@@ -276,10 +302,9 @@ def slide1():
             Para(Run("The instruction count is 4 either way, which is why the "
                      "usual metric reports nothing.", 8.8, GOLD, italic=True),
                  line=12, before=10)], pad=(0, 0, 0, 0))
-    s.text(630, 434, 270, 16,
-           [Para(Run("make %s make test %s make demo1 demo2 demo3"
-                     % (DOT, DOT), 8, FAINT, font=MONO), line=11)],
-           pad=(0, 0, 0, 0))
+    s.rect(630, 436, 270, 1, fill=RULE, name="rule")
+    s.text(630, 446, 270, 18,
+           [Para(Run(REPO, 8.6, PAPER, font=MONO), line=12)], pad=(0, 0, 0, 0))
     return s
 
 
@@ -289,17 +314,19 @@ def slide2():
     s = Slide()
     backdrop(s)
     rail(s, active=(0, 1, 2, 3, 4))
-    y = header(s, 2, "The problem", "Where a C-subset project stops",
+    folio(s, 2)
+    y = header(s, "Where a C-subset project stops",
                "We measured three public compiler-design course projects. Not "
-               "one of them contains an optimizer.")
+               "one of them contains an optimizer, and not one executes "
+               "anything.")
 
-    bignum(s, CX, y + 6, 190, "0 of 3",
-           "baselines with an\noptimization phase", accent=CORAL)
-    bignum(s, CX + 200, y + 6, 190, "0 of 3",
-           "baselines that\nexecute anything", accent=CORAL)
+    bignum(s, CX, y + 4, 300, "0 of 3",
+           "baselines that reach the optimization phase,\n"
+           "on a search generous enough to overstate them",
+           accent=CORAL, size=46)
 
-    yy = panel(s, CX, 240, 390, 208, "Why those phases stay empty")
-    body(s, CX + 14, yy + 4, 362, 172, [
+    yy = panel(s, CX, 248, 390, 206, "Why those phases stay empty")
+    body(s, CX + 14, yy + 4, 362, 166, [
         ("A subset of C has two numeric types, so its type system is an "
          "enumeration with two members.", 9.2, PAPER),
         ("Semantic analysis becomes a comparison of two tags. An optimizer "
@@ -313,7 +340,7 @@ def slide2():
     ])
 
     px = CX + 406
-    yy = panel(s, px, y, CW - 406, 300, "Phases present, of eight")
+    yy = panel(s, px, y, CW - 406, 310, "Phases present, of eight")
     short = ["MatrixLang", "baseline 1", "baseline 2", "baseline 3"]
     for i, c in enumerate(D["baselines"]):
         n = c["phase_count"]
@@ -327,8 +354,8 @@ def slide2():
         s.text(px + 262, row, 40, 14,
                [Para(Run("%d/8" % n, 8.6, PAPER if i == 0 else DIM, bold=True,
                          font=MONO), line=11)], pad=(0, 0, 0, 0))
-    s.rect(px + 14, yy + 134, CW - 434, 1, fill=RULE, name="rule")
-    body(s, px + 14, yy + 148, CW - 434, 116, [
+    s.rect(px + 14, yy + 138, CW - 434, 1, fill=RULE, name="rule")
+    body(s, px + 14, yy + 154, CW - 434, 120, [
         ("How a phase is counted", 8.6, GOLD, True),
         ("A file is attributed to a phase by its path and name, and a phase "
          "counts as present on a single case-insensitive match of any of its "
@@ -348,22 +375,23 @@ def slide3():
     s = Slide()
     backdrop(s)
     rail(s, active=(0, 1, 2, 3))
-    y = header(s, 3, "The language", "A type carries its shape",
+    folio(s, 3)
+    y = header(s, "A type carries its shape",
                "Not matrix, but Matrix<2x3>. Two matrices of different shapes "
                "are values of different types.")
 
-    code(s, CX, y, 396, 132, [
+    code(s, CX, y, 396, 140, [
         ("matrix A[2,3] = {{1, 2, 3},", PAPER),
         ("                 {4, 5, 6}};", PAPER),
         ("matrix B[3,4];", PAPER),
         "",
         ("matrix C = A * B;", MINT),
-        ("    %s C : Matrix<2x4>, inferred" % ARROW, MINT),
+        ("    -> C : Matrix<2x4>, inferred", MINT),
         "",
         ("print(C);", PAPER),
     ], size=8.8, lead=13.4)
 
-    yy = panel(s, CX + 412, y, CW - 412, 132, "Rejected before anything runs",
+    yy = panel(s, CX + 412, y, CW - 412, 140, "Rejected before anything runs",
                accent=CORAL)
     code(s, CX + 424, yy + 2, CW - 436, 92, [
         ("cannot multiply Matrix<2x3>", CORAL),
@@ -374,28 +402,31 @@ def slide3():
         ("  found : 3 != 5", GOLD),
     ], size=8.0, lead=11.2)
 
-    y2 = 296.0
-    yy = panel(s, CX, y2, 258, 152, "What the language has")
+    y2 = 302.0
+    yy = panel(s, CX, y2, 258, 158, "What the language has")
     for i, t in enumerate(["scalar and matrix",
                            "+  -  *  unary -  transpose",
                            "literals, identity, zeros, ones",
                            "declaration, assignment, print"]):
-        s.text(CX + 14, yy + 4 + i * 20, 232, 16,
-               [Para([Run(SQ + "  ", 6.5, GOLD), Run(t, 8.6, DIM)], line=11)],
-               pad=(0, 0, 0, 0))
-    s.text(CX + 14, yy + 88, 232, 32,
+        row = yy + 4 + i * 20
+        bullet(s, CX + 14, row + 5)
+        s.text(CX + 24, row, 222, 16,
+               [Para(Run(t, 8.6, DIM), line=11)], pad=(0, 0, 0, 0))
+    s.text(CX + 14, yy + 90, 232, 32,
            [Para(Run("No control flow. That is the enabling decision, not a "
                      "gap.", 8.4, GOLD, italic=True), line=11)],
            pad=(0, 0, 0, 0))
 
-    yy = panel(s, CX + 274, y2, CW - 274, 152, "Why no control flow")
-    body(s, CX + 288, yy + 4, CW - 302, 112, [
+    yy = panel(s, CX + 274, y2, CW - 274, 158, "Why no control flow")
+    body(s, CX + 288, yy + 4, CW - 302, 122, [
         ("With no branches a whole program is a single basic block. "
          "Available-expression analysis and liveness are each one linear scan.",
          9.2, PAPER),
         ("A course reaches working common-subexpression elimination and "
          "dead-code elimination without first building a control-flow graph, "
          "which is where a semester usually runs out.", 9, DIM),
+        ("The cost is real and we do not pretend otherwise: this project "
+         "teaches no dataflow analysis at all.", 9, CORAL),
     ])
 
     footer(s, "Every shape rule lives in one file, read by both the semantic "
@@ -409,7 +440,8 @@ def slide4():
     s = Slide()
     backdrop(s)
     rail(s, active=(0, 1, 2, 3, 4, 5, 6, 7))
-    y = header(s, 4, "End to end", "Every phase prints what it produced",
+    folio(s, 4)
+    y = header(s, "Every phase prints what it produced",
                "One flag per phase, so a reviewer can stop the compiler "
                "anywhere and read the artifact. The text below is its output.")
 
@@ -494,7 +526,7 @@ def slide4():
         cy = y + (i // 3) * 165
         s.text(cx, cy, w, 14,
                [Para([Run(flag, 8.4, GOLD, bold=True, font=MONO),
-                      Run("   " + note, 7.6, FAINT)], line=11)],
+                      Run("   " + note, 7.6, QUIET)], line=11)],
                pad=(0, 0, 0, 0))
         code(s, cx, cy + 18, w, 133, lines, size=7.4, lead=11.6)
 
@@ -509,12 +541,13 @@ def slide5():
     s = Slide()
     backdrop(s)
     rail(s, active=(5,))
-    y = header(s, 5, "The idea", "A shape is also a cost model",
+    folio(s, 5)
+    y = header(s, "A shape is also a cost model",
                "Multiplying an m x n by an n x p matrix performs m p (2n-1) "
                "operations. Every term is a shape, and every shape is in the "
                "type.")
 
-    bignum(s, CX, y + 8, 200, "98.0%",
+    bignum(s, CX, y + 6, 200, "98.0%",
            "of the arithmetic removed\nfrom one three-matrix chain",
            accent=MINT, size=44)
     s.text(CX, y + 116, 214, 44,
@@ -522,7 +555,7 @@ def slide5():
                      "after.", 9, CORAL), line=12)], pad=(0, 0, 0, 0))
 
     px = CX + 224
-    yy = panel(s, px, y, CW - 224, 170, "One chain, two bracketings")
+    yy = panel(s, px, y, CW - 224, 172, "One chain, two bracketings")
     code(s, px + 14, yy + 2, CW - 252, 124, [
         ("matrix R = A * B * C;    A 100x2  B 2x100  C 100x2", PAPER),
         "",
@@ -535,18 +568,18 @@ def slide5():
         ("The compiler emitted the second, into the same four slots.", DIM),
     ], size=8.0, lead=11.4)
 
-    y2 = 334.0
-    yy = panel(s, CX, y2, 300, 116, "Why an instruction count cannot see it")
-    body(s, CX + 14, yy + 4, 274, 84, [
+    y2 = 328.0
+    yy = panel(s, CX, y2, 300, 132, "Why an instruction count cannot see it")
+    body(s, CX + 14, yy + 4, 274, 96, [
         ("A chain of k matrices needs exactly k-1 products under every "
          "bracketing.", 9, PAPER),
         ("So re-bracketing never changes the instruction count. It is "
          "invisible to the metric course projects report.", 9, GOLD),
     ])
 
-    yy = panel(s, CX + 316, y2, CW - 316, 116,
+    yy = panel(s, CX + 316, y2, CW - 316, 132,
                "The algorithm is the textbook one")
-    body(s, CX + 330, yy + 4, CW - 344, 84, [
+    body(s, CX + 330, yy + 4, CW - 344, 96, [
         ("The standard O(k^3) dynamic program over the chain, the same one an "
          "algorithms course teaches.", 9, PAPER),
         ("What is new is not the algorithm. It is that a student compiler "
@@ -564,15 +597,15 @@ def slide6():
     s = Slide()
     backdrop(s)
     rail(s, active=(5,))
-    y = header(s, 6, "The measurement",
-               "Two metrics, same programs, different answers",
+    folio(s, 6)
+    y = header(s, "Two metrics, same programs, different answers",
                "%d programs from a generator, two seeds. The corpus was not "
                "written by whoever wrote the optimizer." % D["n"])
 
-    yy = panel(s, CX, y, CW, 150, "Median reduction per program")
-    s.text(CX + 14, y + 10, CW - 28, 14,
-           [Para(Run("bar = interquartile range   %s   tick = median" % DOT,
-                     7.4, FAINT), align="r", line=10)], pad=(0, 0, 0, 0))
+    yy = panel(s, CX, y, CW, 152, "Median reduction per program")
+    s.text(CX + 14, y + 12, CW - 28, 14,
+           [Para(Run("bar = interquartile range     tick = median",
+                     7.4, QUIET), align="r", line=10)], pad=(0, 0, 0, 0))
     rows = [("arithmetic removed", D["flop_med"], D["flop_q1"], D["flop_q3"], MINT),
             ("instructions removed", D["instr_med"], D["instr_q1"], D["instr_q3"], CORAL)]
     bar_x, bar_w = CX + 186, 420
@@ -581,7 +614,7 @@ def slide6():
         s.text(CX + 16, ry, 164, 14,
                [Para(Run(name, 9, PAPER), line=11)], pad=(0, 0, 0, 0))
         s.text(CX + 16, ry + 19, 164, 14,
-               [Para(Run("IQR %.1f to %.1f" % (q1, q3), 7.6, FAINT), line=10)],
+               [Para(Run("IQR %.1f to %.1f" % (q1, q3), 7.6, QUIET), line=10)],
                pad=(0, 0, 0, 0))
         s.rect(bar_x, ry + 17, bar_w, 12, fill=RULE, name="bar-bg")
         s.rect(bar_x + bar_w * q1 / 100.0, ry + 17,
@@ -592,13 +625,13 @@ def slide6():
         s.text(bar_x + bar_w + 12, ry + 13, 80, 20,
                [Para(Run("%.1f%%" % med, 13, col, bold=True, font=SERIF),
                      line=15)], pad=(0, 0, 0, 0))
-    s.text(bar_x, yy + 112, 60, 14,
-           [Para(Run("0%", 7.4, FAINT, font=MONO), line=10)], pad=(0, 0, 0, 0))
-    s.text(bar_x + bar_w - 60, yy + 112, 60, 14,
-           [Para(Run("100%", 7.4, FAINT, font=MONO), align="r", line=10)],
+    s.text(bar_x, yy + 104, 60, 14,
+           [Para(Run("0%", 7.4, QUIET, font=MONO), line=10)], pad=(0, 0, 0, 0))
+    s.text(bar_x + bar_w - 60, yy + 104, 60, 14,
+           [Para(Run("100%", 7.4, QUIET, font=MONO), align="r", line=10)],
            pad=(0, 0, 0, 0))
 
-    y2 = y + 166
+    y2 = y + 172
     bignum(s, CX, y2, 196, "%.1f%%" % D["chain_share"],
            "of programs had a chain worth\nre-bracketing (%d of %d)"
            % (D["chain_n"], D["chain_total"]), accent=GOLD, size=38)
@@ -609,7 +642,8 @@ def slide6():
            accent=MINT, size=38)
 
     (f1, i1), (f2, i2) = D["per_seed"]
-    yy = panel(s, CX, 424, CW, 54, fill=PANEL2)
+    s.shape(CX, 424, CW, 54, fill=PANEL2, geom="roundRect", radius=2200,
+            name="panel")
     s.text(CX + 20, 424, CW - 40, 54,
            [Para([Run("Not one lucky corpus.  ", 9, GOLD, bold=True),
                   Run("Taken separately the two seeds give %.1f%% and %.1f%% of "
@@ -629,12 +663,12 @@ def slide7():
     s = Slide()
     backdrop(s)
     rail(s, active=(5, 7))
-    y = header(s, 7, "What the testing found",
-               "The corpus found a bug we had not",
+    folio(s, 7)
+    y = header(s, "The corpus found a bug we had not",
                "The first differential run did not come back clean, and that is "
                "the part worth reporting.")
 
-    code(s, CX, y, 430, 116, [
+    code(s, CX, y, 430, 126, [
         ("unoptimized          optimized", DIM),
         ("R = Matrix<1x1>      R = Matrix<1x1>", PAPER),
         ("  [ 0 ]                [ -0 ]", CORAL),
@@ -643,15 +677,15 @@ def slide7():
         ("    0 - x   =>   -x", GOLD),
     ], size=9, lead=13.4)
 
-    yy = panel(s, CX + 446, y, CW - 446, 116, "Why it is wrong", accent=CORAL)
-    s.text(CX + 460, yy + 2, CW - 474, 80,
+    yy = panel(s, CX + 446, y, CW - 446, 126, "Why it is wrong", accent=CORAL)
+    s.text(CX + 460, yy + 2, CW - 474, 88,
            [Para(Run("True over the reals. Not observationally equivalent in "
                      "IEEE-754: +0 minus +0 is +0, but negating +0 gives -0, "
                      "and the two print differently.", 9, PAPER), line=12.5)],
            pad=(0, 0, 0, 0))
 
-    y2 = 300.0
-    yy = panel(s, CX, y2, CW, 150, "What we take from it")
+    y2 = 296.0
+    yy = panel(s, CX, y2, CW, 164, "What we take from it")
     colw = (CW - 48) / 2
     body(s, CX + 16, yy + 4, colw, 70, [
         ("Not a finding about floating point.", 9.4, GOLD, True),
@@ -665,8 +699,8 @@ def slide7():
          "work, found a defect in a student-scale optimizer that reading the "
          "code had not, on an input nobody chose.", 9, DIM),
     ])
-    s.rect(CX + 16, yy + 86, CW - 32, 1, fill=RULE, name="rule")
-    s.text(CX + 16, yy + 96, CW - 32, 20,
+    s.rect(CX + 16, yy + 92, CW - 32, 1, fill=RULE, name="rule")
+    s.text(CX + 16, yy + 104, CW - 32, 20,
            [Para(Run("The rewrite was removed. It saved no arithmetic anyway: "
                      "a negation costs what a subtraction from zero costs.",
                      8.8, PAPER, italic=True), line=12)], pad=(0, 0, 0, 0))
@@ -682,8 +716,8 @@ def slide8():
     s = Slide()
     backdrop(s)
     rail(s, active=(0, 1, 2, 3, 4, 5, 6, 7))
-    y = header(s, 8, "What it means",
-               "The source language is a curricular decision",
+    folio(s, 8)
+    y = header(s, "The source language is a curricular decision",
                "It decides which phases can carry real work. That is the claim, "
                "and it is the one we can evidence.")
 
@@ -693,7 +727,7 @@ def slide8():
         ("Code generation", "gained instruction selection from inferred types"),
         ("Optimization", "gained transformations and a way to score them"),
     ]):
-        s.text(CX + 14, yy + 6 + i * 48, 322, 44,
+        s.text(CX + 14, yy + 4 + i * 46, 322, 42,
                [Para(Run(h, 9.4, MINT, bold=True), line=12),
                 Para(Run(t, 8.8, DIM), line=11.6)], pad=(0, 0, 0, 0))
     s.text(CX + 14, yy + 150, 322, 16,
@@ -708,23 +742,23 @@ def slide8():
         "That the magnitudes generalise. The corpus is ours.",
         "That three repositories are a sample.",
     ]):
-        s.text(CX + 380, yy + 6 + i * 34, CW - 400, 30,
-               [Para([Run(CROSS + "  ", 8.5, CORAL, bold=True),
-                      Run(t, 8.8, DIM)], line=11.6)], pad=(0, 0, 0, 0))
+        row = yy + 6 + i * 34
+        negation(s, CX + 380, row + 6)
+        s.text(CX + 394, row, CW - 414, 28,
+               [Para(Run(t, 8.8, DIM), line=11.6)], pad=(0, 0, 0, 0))
 
-    y2 = y + 212
-    s.shape(CX, y2, CW, 76, fill=PANEL2, geom="roundRect", radius=2200,
-            name="panel")
-    s.rect(CX + 2, y2 + 8, 3.5, 60, fill=GOLD, name="tick")
-    s.text(CX + 22, y2, CW - 42, 76,
+    # The closing statement is the last thing said. It gets the bare canvas and
+    # the space around it, not a card with a stripe down its side.
+    s.rect(CX, 368, 92, 2, fill=GOLD, name="rule")
+    s.text(CX, 388, CW - 40, 84,
            [Para(Run("Whatever the domain, if the type system carries enough to "
                      "cost a program statically, a student's optimizer can be "
                      "scored on the work it removes rather than the lines it "
-                     "removes. The two are not close.", 11, PAPER), line=15)],
-           anchor="ctr", pad=(0, 0, 0, 0))
+                     "removes. The two are not close.", 13, PAPER, font=SERIF),
+                 line=18)], pad=(0, 0, 0, 0))
 
-    footer(s, "Paper, compiler, generator and measurement scripts are in the "
-              "repository. Next: teach it, and find out.")
+    footer(s, "Paper, compiler, generator, measurements and demo:",
+           link=REPO)
     return s
 
 

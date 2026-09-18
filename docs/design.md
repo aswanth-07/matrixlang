@@ -113,7 +113,7 @@ explanation blocks that make shape errors readable.
 
 `ast_expr_text()` turns a subtree back into readable text so a message can say
 `left : A * B` rather than `left operand`. Small feature, large difference in
-how actionable an error is.
+how much a reader can do with an error.
 
 ### Interned IR operands
 

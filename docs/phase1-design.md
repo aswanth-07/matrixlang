@@ -15,8 +15,8 @@ Demonstration: `make demo1`
 ## 2. Abstract
 
 MatrixLang is a small programming language for matrix computation, together
-with a complete compiler for it. Its distinguishing feature is that matrix
-dimensions are part of the type system: a value's type is not `matrix` but
+with a complete compiler for it. What distinguishes it is that matrix
+dimensions belong to the type system. A value's type is not `matrix` but
 `Matrix<2x3>`, and every operation is checked against the shape rules of linear
 algebra during compilation. A program that would multiply a 2x3 matrix by a 5x4
 matrix is rejected with an explanation, before a single element has been

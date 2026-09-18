@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+title: "MatrixLang: a dimension-aware optimizing compiler"
+message: "If you refer to this work, please cite the paper."
+type: software
+authors:
+  - family-names: "Aswanth Raj"
+    given-names: "A"
+repository-code: "https://github.com/aswanth-07/matrixlang"
+license: MIT
+abstract: >-
+  A compiler for a small matrix language whose types carry matrix shapes.
+  Because every shape is known at compile time, the compiler can compute the
+  arithmetic cost of a program before running it and choose the bracketing of a
+  matrix product chain. The repository carries the compiler, a program
+  generator, the recorded measurements over 400 generated programs, the paper
+  and a web demonstration.
+keywords:
+  - compiler construction
+  - computing education
+  - domain-specific languages
+  - type systems
+  - code optimization
+preferred-citation:
+  type: article
+  title: "Shapes in the Type System: A Matrix Language That Lets a Compiler Course Reach Optimization"
+  authors:
+    - family-names: "Aswanth Raj"
+      given-names: "A"
+  year: 2026
