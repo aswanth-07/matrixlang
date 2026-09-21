@@ -137,8 +137,17 @@ paper:
 	cd paper && pdflatex -interaction=nonstopmode -halt-on-error matrixlang.tex
 	cd paper && rm -f *.aux *.log *.out
 
+# The demonstration page has three generated inputs. build-demo.py captures
+# the compiler's output per phase and reads the measurements; build-grammar.py
+# reads the grammar and the LALR automaton out of `bison --report=all`, so the
+# page parses with bison's own table; check-demo-engines.py compares the
+# page's own scanner and parser against bin/matrixc over every example and
+# exits non-zero on a disagreement, which is what stops a drifting page from
+# being published.
 web: all
 	python tools/build-demo.py
+	python tools/build-grammar.py
+	python tools/check-demo-engines.py
 
 serve: web
 	@echo "http://127.0.0.1:8731/"
@@ -148,6 +157,8 @@ serve: web
 
 test: all
 	@bash tests/run_tests.sh
+	@echo
+	@python tools/check-demo-engines.py --optional
 
 clean:
 	rm -rf $(BUILDDIR) $(BINDIR)

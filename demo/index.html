@@ -1,289 +1,32 @@
 <title>Shapes in the Type System</title>
 
-<!-- MatrixLang research demo.
+<!-- MatrixLang -- the demonstration page.
 
      Deliberately single-theme: this page shares its visual identity with the
      project's paper figures and slide deck, so it commits to the dark ground
      and paints every colour explicitly rather than tracking the host theme.
 
-     Nothing on this page is typed by hand. The compiler output comes from
-     bin/matrixc via tools/build-demo.py, and the measurement figures come from
-     results/. The one exception is the cost explorer, which re-implements the
-     compiler's cost model in JavaScript so it can run as you type; the
-     formulae there are the same ones in src/ir/cost.c and src/ir/chain.c, and
-     the page says so where it matters. -->
+     Almost nothing here is typed by hand.
+
+       demo/data.js       phase output captured from bin/matrixc, and the
+                          measurement figures, read from results/
+       demo/grammar.js    the grammar and the LALR automaton, read out of
+                          `bison --report=all` over src/frontend/matrix.y
+       demo/agreement.js  the result of checking this page's own scanner and
+                          parser against bin/matrixc
+
+     Two things are re-implementations, and the page says so where they
+     appear: demo/lexer.js and demo/parser.js, which exist so the page can
+     answer for text the reader types, and the cost explorer, which runs the
+     formulae of src/ir/cost.c and src/ir/chain.c in JavaScript so it can
+     respond as you drag. -->
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;1,400&amp;family=Archivo:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
-
-<style>
-:root {
-  /* Pure black, with a terminal palette. Contrast against the three grounds
-     this page uses -- canvas, panel, code -- is measured, and the lowest tone
-     that ever carries text is --faint at 6.3 : 1 on the canvas. */
-  --ink:      #000000;   /* canvas                                          */
-  --panel:    #0d0d0d;   /* a barely raised ground                          */
-  --panel-2:  #121212;   /* code; code needs a ground                       */
-  --rule:     #242424;   /* hairlines only, never text                      */
-  --rule-hi:  #3a3a3a;
-  --paper:    #ffffff;   /* 21.0 : 1   headings, key figures                */
-  --dim:      #c9c9c9;   /* 12.7 : 1   body                                 */
-  --faint:    #8c8c8c;   /*  6.3 : 1   captions, labels, the floor          */
-  --gold:     #4ade80;   /* 12.1 : 1   the accent: ours, measured, correct  */
-  --gold-dim: #16351f;
-  --coral:    #ef4444;   /*  5.6 : 1   absent, wrong, rejected              */
-  --coral-dim:#4a1f1f;
-  --mint:     #4ade80;   /* the same family; kept as a name the CSS uses    */
-  --mint-dim: #16351f;
-  --violet:   #a78bfa;   /*  7.7 : 1   a second series                      */
-  --blue:     #6e9bff;   /*  7.8 : 1   links                                */
-
-  --serif: "Spectral", Georgia, "Times New Roman", serif;
-  --sans:  "Archivo", "Segoe UI", system-ui, sans-serif;
-  --mono:  "JetBrains Mono", "Consolas", ui-monospace, monospace;
-
-  --rail: 232px;
-  color-scheme: dark;
-}
-
-* { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  background: var(--ink);
-  color: var(--paper);
-  font-family: var(--sans);
-  font-size: 15px;
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-}
-
-a { color: var(--blue); text-decoration: none; border-bottom: 1px solid #23375e; }
-a:hover { border-bottom-color: var(--blue); }
-:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-
-h1, h2, h3 { font-family: var(--serif); font-weight: 600; text-wrap: balance; margin: 0; }
-p { margin: 0; }
-
-.shell { display: flex; align-items: flex-start; min-height: 100%; }
-
-/* ---------------------------------------------------------------- rail -- */
-
-.rail {
-  width: var(--rail);
-  flex: 0 0 var(--rail);
-  position: sticky;
-  top: env(safe-area-inset-top, 0px);
-  height: 100vh;
-  padding: 34px 20px 24px 28px;
-  border-right: 1px solid var(--rule);
-  background: var(--ink);
-  display: flex;
-  flex-direction: column;
-  gap: 26px;
-  overflow-y: auto;
-}
-.rail .mark {
-  font-family: var(--serif);
-  font-size: 19px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  line-height: 1.25;
-}
-.rail .mark span { color: var(--gold); display: block; }
-.rail .sub { font-size: 11.5px; color: var(--faint); line-height: 1.45; margin-top: 8px; }
-
-.eyebrow {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--faint);
-}
-
-nav ol { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; }
-nav a {
-  display: flex; gap: 10px; align-items: baseline;
-  padding: 6px 0; font-size: 13px; color: var(--dim);
-  border: 0; border-left: 2px solid var(--rule); padding-left: 12px;
-}
-nav a .n { font-family: var(--mono); font-size: 10.5px; color: var(--faint); }
-nav a:hover { color: var(--paper); border-left-color: var(--rule-hi); }
-nav a.on { color: var(--paper); border-left-color: var(--gold); font-weight: 500; }
-nav a.on .n { color: var(--gold); }
-
-.rail footer { margin-top: auto; font-size: 11.5px; color: var(--faint); line-height: 1.65; }
-.rail footer a { font-size: 11.5px; }
-
-/* ---------------------------------------------------------------- main -- */
-
-main { flex: 1 1 auto; min-width: 0; padding-block: 0 96px; }
-section { padding: 72px 44px 0; max-width: 1120px; scroll-margin-top: 24px; }
-section > .head { max-width: 60ch; }
-section h2 { font-size: 30px; line-height: 1.16; margin: 10px 0 12px; }
-section .lede { color: var(--dim); font-size: 15.5px; }
-
-.rule { height: 1px; background: var(--rule); margin: 26px 0; }
-
-/* -------------------------------------------------------------- hero --- */
-
-#thesis { padding-top: 64px; }
-#thesis h1 {
-  font-size: clamp(38px, 5.4vw, 60px);
-  line-height: 1.02;
-  letter-spacing: -0.02em;
-  margin: 14px 0 0;
-}
-#thesis h1 em { font-style: normal; color: var(--gold); display: block; }
-#thesis .tagline {
-  font-family: var(--serif); font-size: clamp(17px, 2.1vw, 21px);
-  margin-top: 20px; max-width: 30ch; line-height: 1.34;
-}
-#thesis .stem { color: var(--dim); max-width: 56ch; margin-top: 18px; }
-.hero-grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: 44px; align-items: start; }
-
-.pair { display: flex; gap: 40px; flex-wrap: wrap; margin-top: 34px; }
-.figure .v {
-  font-family: var(--serif); font-weight: 700; font-size: 46px; line-height: 1;
-  letter-spacing: -0.02em; font-variant-numeric: tabular-nums;
-}
-.figure .k { font-size: 12.5px; color: var(--dim); margin-top: 9px; line-height: 1.45; max-width: 21ch; }
-.v.mint { color: var(--mint); } .v.coral { color: var(--coral); } .v.gold { color: var(--gold); }
-
-.note { font-family: var(--serif); font-style: italic; color: var(--gold); font-size: 14px; margin-top: 24px; }
-
-/* ------------------------------------------------------------- panels -- */
-
-.panel { background: var(--panel); border-radius: 10px; padding: 20px 22px; }
-.panel.flat { background: none; border: 1px solid var(--rule); }
-.panel h3 { font-family: var(--sans); font-size: 10px; font-weight: 600; letter-spacing: 0.13em;
-            text-transform: uppercase; color: var(--gold); margin-bottom: 14px; }
-.panel h3.coral { color: var(--coral); }
-.panel h3.mint  { color: var(--mint); }
-
-pre {
-  font-family: var(--mono); font-size: 12px; line-height: 1.62; margin: 0;
-  background: var(--panel-2); border-radius: 8px; padding: 14px 16px;
-  overflow-x: auto; color: var(--paper); white-space: pre; tab-size: 4;
-}
-pre.plain { background: none; padding: 0; }
-code { font-family: var(--mono); font-size: 0.92em; }
-
-/* ------------------------------------------------------- phase stepper - */
-
-.stepper { display: flex; flex-wrap: wrap; gap: 4px; margin: 4px 0 18px; }
-.stepper button {
-  font: inherit; font-size: 11.5px; color: var(--dim);
-  background: none; border: 0; border-top: 2px solid var(--rule);
-  padding: 9px 12px 7px; cursor: pointer; white-space: nowrap;
-}
-.stepper button:hover { color: var(--paper); border-top-color: var(--rule-hi); }
-.stepper button[aria-selected="true"] { color: var(--paper); border-top-color: var(--gold); font-weight: 500; }
-.stepper button .i { font-family: var(--mono); font-size: 9.5px; color: var(--faint); margin-right: 6px; }
-.stepper button[aria-selected="true"] .i { color: var(--gold); }
-.stepper button[disabled] { color: var(--rule-hi); cursor: not-allowed; }
-.stepper button[disabled]:hover { color: var(--rule-hi); border-top-color: var(--rule); }
-
-.chooser { display: flex; flex-wrap: wrap; gap: 8px; }
-.chooser button {
-  font: inherit; font-size: 12.5px; color: var(--dim);
-  background: var(--panel); border: 1px solid var(--rule); border-radius: 7px;
-  padding: 8px 13px; cursor: pointer;
-}
-.chooser button:hover { color: var(--paper); border-color: var(--rule-hi); }
-.chooser button[aria-pressed="true"] { color: var(--ink); background: var(--gold); border-color: var(--gold); font-weight: 600; }
-
-.pipe { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: 26px; align-items: start; }
-.badge {
-  display: inline-block; font-family: var(--mono); font-size: 10.5px;
-  padding: 3px 9px; border-radius: 999px; letter-spacing: 0.03em;
-}
-.badge.ok   { color: var(--mint);  background: var(--mint-dim); }
-.badge.bad  { color: var(--coral); background: var(--coral-dim); }
-.cmd { font-family: var(--mono); font-size: 11px; color: var(--faint); margin-bottom: 10px; }
-
-/* --------------------------------------------------------- explorer ---- */
-
-.explorer { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 26px; align-items: start; }
-.dims { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 4px 0 16px; }
-.dims input {
-  font-family: var(--mono); font-size: 13px; width: 58px; text-align: center;
-  background: var(--panel-2); color: var(--paper);
-  border: 1px solid var(--rule); border-radius: 6px; padding: 7px 4px;
-}
-.dims input:focus { border-color: var(--gold); outline: none; }
-.dims .x { color: var(--faint); font-family: var(--mono); font-size: 11px; }
-.mini { font: inherit; font-size: 12px; color: var(--dim); background: none;
-        border: 1px solid var(--rule); border-radius: 6px; padding: 5px 11px; cursor: pointer; }
-.mini:hover { color: var(--paper); border-color: var(--rule-hi); }
-.mini[disabled] { color: var(--rule-hi); cursor: not-allowed; }
-
-.shapes { font-family: var(--mono); font-size: 11.5px; color: var(--dim); line-height: 1.9; }
-.shapes b { color: var(--paper); font-weight: 500; }
-
-.outcome { display: flex; flex-direction: column; gap: 16px; }
-.outcome .row { display: grid; grid-template-columns: 1fr; gap: 7px; }
-.outcome .lab { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap; }
-.outcome .who { font-size: 12.5px; color: var(--dim); }
-.outcome .who b { color: var(--paper); font-weight: 600; }
-.outcome .amt { font-family: var(--mono); font-size: 15px; font-variant-numeric: tabular-nums; }
-.track { height: 12px; border-radius: 3px; background: var(--rule); overflow: hidden; }
-.track i { display: block; height: 100%; border-radius: 3px; }
-.bracket { font-family: var(--mono); font-size: 13px; color: var(--paper); word-break: break-word; }
-
-.verdict { border-left: 3px solid var(--gold); padding: 12px 0 12px 16px; font-size: 13.5px; color: var(--dim); }
-.verdict b { color: var(--paper); font-weight: 600; }
-
-/* ---------------------------------------------------------- evidence --- */
-
-.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 18px; }
-.tile { border-top: 2px solid var(--rule); padding-top: 14px; }
-.tile .v { font-family: var(--serif); font-weight: 700; font-size: 34px; line-height: 1; font-variant-numeric: tabular-nums; }
-.tile .k { font-size: 12px; color: var(--dim); margin-top: 8px; line-height: 1.45; }
-
-.charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
-svg { display: block; width: 100%; height: auto; }
-.legend { display: flex; gap: 18px; flex-wrap: wrap; font-size: 11.5px; color: var(--dim); margin-top: 10px; }
-.legend i { display: inline-block; width: 16px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 7px; }
-
-table { border-collapse: collapse; width: 100%; font-size: 13px; }
-th, td { text-align: left; padding: 9px 12px 9px 0; border-bottom: 1px solid var(--rule); }
-th { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--faint); font-weight: 600; }
-td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; padding-right: 0; }
-tr.me td { color: var(--paper); }
-tr.me td:first-child { font-weight: 600; }
-td .meter { height: 8px; border-radius: 2px; background: var(--rule); min-width: 90px; }
-td .meter i { display: block; height: 100%; border-radius: 2px; }
-
-.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 26px; }
-ul.plain { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 11px; }
-ul.plain li { display: flex; gap: 10px; font-size: 13.5px; color: var(--dim); line-height: 1.5; }
-ul.plain li span { color: var(--coral); font-family: var(--mono); font-size: 12px; flex: 0 0 auto; }
-ul.plain.yes li span { color: var(--mint); }
-
-.closing { border-left: 3px solid var(--gold); background: var(--panel-2); border-radius: 0 10px 10px 0;
-           padding: 22px 26px; font-family: var(--serif); font-size: 17px; line-height: 1.5; max-width: 70ch; }
-
-@media (max-width: 900px) {
-  .shell { display: block; }
-  .rail {
-    position: static; width: auto; height: auto; flex: none;
-    border-right: 0; border-bottom: 1px solid var(--rule);
-    padding: 24px 16px 16px; gap: 16px;
-  }
-  .rail footer { display: none; }
-  nav ol { flex-direction: row; overflow-x: auto; gap: 4px; padding-bottom: 4px; }
-  nav a { border-left: 0; border-bottom: 2px solid var(--rule); padding: 5px 10px; white-space: nowrap; }
-  nav a.on { border-left: 0; border-bottom-color: var(--gold); }
-  section { padding: 48px 16px 0; }
-  .hero-grid, .pipe, .explorer { grid-template-columns: minmax(0, 1fr); gap: 22px; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  * { scroll-behavior: auto !important; transition: none !important; }
-}
-html { scroll-behavior: smooth; }
-</style>
+<link rel="stylesheet" href="style.css">
 
 <div class="shell">
 
@@ -298,10 +41,11 @@ html { scroll-behavior: smooth; }
       <div class="eyebrow">On this page</div>
       <ol>
         <li><a href="#thesis" class="on"><span class="n">01</span>The claim</a></li>
-        <li><a href="#pipeline"><span class="n">02</span>Walk the compiler</a></li>
-        <li><a href="#explorer"><span class="n">03</span>Cost model, live</a></li>
-        <li><a href="#evidence"><span class="n">04</span>What we measured</a></li>
-        <li><a href="#limits"><span class="n">05</span>What we do not claim</a></li>
+        <li><a href="#machine"><span class="n">02</span>flex and bison, live</a></li>
+        <li><a href="#pipeline"><span class="n">03</span>Walk the compiler</a></li>
+        <li><a href="#explorer"><span class="n">04</span>Cost model, live</a></li>
+        <li><a href="#evidence"><span class="n">05</span>What we measured</a></li>
+        <li><a href="#limits"><span class="n">06</span>What we do not claim</a></li>
       </ol>
     </nav>
 
@@ -370,10 +114,242 @@ print(R);</pre>
       </div>
     </section>
 
-    <!-- ============================================= 02 walk the compiler -->
+    <!-- ============================ 02 flex and bison, one step at a time -->
+    <section id="machine">
+      <div class="head">
+        <div class="eyebrow">02 &middot; flex and bison, one step at a time</div>
+        <h2>Watch the front end run</h2>
+        <p class="lede">Edit the program, then step through it. The scanner is
+          <code>matrix.l</code>'s rules in <code>matrix.l</code>'s order; the
+          parser is driven by the LALR table
+          <code id="bison-version">bison</code> built from
+          <code>src/frontend/matrix.y</code>, read out of
+          <code>--report=all</code> at build time. The state numbers below are
+          the state numbers the compiler walks.</p>
+      </div>
+
+      <div class="rule"></div>
+
+      <div class="machine" id="machine-app">
+
+        <div class="mbar">
+          <div class="chooser" id="prog-chooser" role="group"
+               aria-label="Choose a program"></div>
+          <button class="toggle" id="presenter" type="button"
+                  aria-pressed="false"
+                  title="Larger type, for a projector">Presenter</button>
+        </div>
+
+        <div class="mbody" style="padding-bottom:4px">
+          <p class="lede" id="prog-note"
+             style="font-size:13px; margin-bottom:14px; max-width:78ch"></p>
+          <div class="duo">
+            <div class="card">
+              <h4>Source <span class="hint">edit it, everything follows</span></h4>
+              <textarea class="editor" id="src" spellcheck="false"
+                        aria-label="MatrixLang source"></textarea>
+            </div>
+            <div class="card">
+              <h4>What the front end makes of it</h4>
+              <div id="verdict-box"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="transport" id="transport">
+          <div class="keys">
+            <button id="t-first" type="button" title="First step (Home)">&#9198;</button>
+            <button id="t-prev" type="button" title="Back one step (left arrow)">&#9664;</button>
+            <button id="t-play" class="go" type="button" title="Play or pause (space)">&#9654; Play</button>
+            <button id="t-next" type="button" title="Forward one step (right arrow)">&#9654;</button>
+            <button id="t-last" type="button" title="Last step (End)">&#9197;</button>
+          </div>
+          <div class="counter" id="t-count"></div>
+          <div class="scrub">
+            <label for="t-speed">Speed</label>
+            <input type="range" id="t-speed" min="60" max="960" value="580" step="20">
+          </div>
+        </div>
+        <div class="progress"><i id="t-bar"></i></div>
+
+        <div class="mtabs" id="mtabs" role="tablist" aria-label="Front-end view"></div>
+
+        <!-- ------------------------------------------------------ scanner -->
+        <div class="mbody" id="pane-scan">
+          <div class="duo">
+            <div class="stak">
+              <div class="card">
+                <h4>The cursor <span class="hint" id="scan-where"></span></h4>
+                <div class="film" id="scan-film"></div>
+              </div>
+              <div class="card">
+                <h4>What flex does with the match</h4>
+                <div class="act" id="scan-act"></div>
+              </div>
+            </div>
+            <div class="stak">
+              <div class="card">
+                <h4>Rules that match here <span class="hint">longest wins</span></h4>
+                <div class="cands" id="scan-cands"></div>
+                <p style="font-size:12px; color:var(--faint); margin-top:13px; line-height:1.6">
+                  flex tries every rule at the cursor and keeps the longest
+                  match; a tie goes to whichever rule comes first in
+                  <code>matrix.l</code>. That single sentence is why
+                  <code>matrix</code> is a keyword and <code>matrixx</code> is
+                  not: on <code>matrix</code> the keyword rule and the
+                  identifier rule both match six characters and the keyword
+                  rule is earlier, while on <code>matrixx</code> the identifier
+                  rule matches seven and wins outright.</p>
+              </div>
+              <div class="card">
+                <h4>Token stream <span class="hint">as <code>--tokens</code> prints it</span></h4>
+                <div class="stream" id="scan-stream"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ------------------------------------------------------- parser -->
+        <div class="mbody" id="pane-parse">
+          <div class="duo">
+            <div class="stak">
+              <div class="card">
+                <h4>Lookahead <span class="hint" id="parse-look"></span></h4>
+                <div class="queue" id="parse-queue"></div>
+                <p style="font-size:12px; color:var(--faint); margin-top:12px; line-height:1.6">
+                  One token. That is the whole of what an LALR(1) parser is
+                  allowed to see beyond what it has already read, and every
+                  decision below is taken on it.</p>
+              </div>
+              <div class="card">
+                <h4>In the source</h4>
+                <div class="film" id="parse-film"></div>
+              </div>
+            </div>
+
+            <div class="stak">
+              <div class="card">
+                <h4>The stack <span class="hint" id="parse-depth"></span></h4>
+                <div class="stack" id="parse-stack"></div>
+              </div>
+              <div class="card">
+                <h4>The action</h4>
+                <div class="act" id="parse-act"></div>
+              </div>
+              <div class="card">
+                <h4><span id="parse-state">state</span>
+                  <span class="hint">its items, then its row of the table</span></h4>
+                <div class="items" id="parse-items"></div>
+                <div class="rule" style="margin:12px 0"></div>
+                <div class="rows" id="parse-rows"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:16px">
+            <h4>The tree the reductions build
+              <span class="hint" id="parse-nodes"></span></h4>
+            <div class="treepane" id="parse-forest"></div>
+          </div>
+
+          <div class="card" style="margin-top:16px">
+            <h4>Every step so far <span class="hint">click one to jump back</span></h4>
+            <div class="log" id="parse-log"></div>
+          </div>
+        </div>
+
+        <!-- ---------------------------------------------------- automaton -->
+        <div class="mbody" id="pane-auto">
+          <div class="facts">
+            <div class="fact">
+              <div class="v" id="fact-states">&nbsp;</div>
+              <div class="k">LALR states bison built from this grammar</div>
+            </div>
+            <div class="fact">
+              <div class="v" id="fact-rules">&nbsp;</div>
+              <div class="k">rules, counting the <code>$accept</code> bison adds</div>
+            </div>
+            <div class="fact">
+              <div class="v mint" id="fact-conflicts">&nbsp;</div>
+              <div class="k">conflicts left unresolved</div>
+            </div>
+            <div class="fact">
+              <div class="v" style="color:var(--violet)" id="fact-resolved">&nbsp;</div>
+              <div class="k">conflicts the precedence declarations settled</div>
+            </div>
+          </div>
+
+          <p class="lede" style="font-size:13px; max-width:80ch; margin-bottom:18px">
+            The expression grammar is ambiguous as written:
+            <code>expr: expr '+' expr</code> and
+            <code>expr: expr '*' expr</code> say nothing about which binds
+            tighter. Bison finds the conflicts, and the three precedence lines
+            decide every one of them. Those are the states to look at.</p>
+
+          <div class="picker">
+            <button class="mini" id="auto-prev" type="button">&larr; state</button>
+            <input type="number" id="auto-n" min="0" value="0" aria-label="State number">
+            <button class="mini" id="auto-next" type="button">state &rarr;</button>
+            <button class="mini" id="auto-here" type="button">jump to where the parser is</button>
+          </div>
+
+          <div class="duo">
+            <div class="card">
+              <h4>Item set <span class="hint">the dot is how far it has read</span></h4>
+              <div class="items" id="auto-items"></div>
+            </div>
+            <div class="stak">
+              <div class="card">
+                <h4>Actions and gotos</h4>
+                <div class="rows" id="auto-rows"></div>
+              </div>
+              <div class="card">
+                <h4>Conflicts settled here</h4>
+                <div id="auto-resolved"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ------------------------------------------------------ grammar -->
+        <div class="mbody" id="pane-gram">
+          <p class="lede" style="font-size:13px; max-width:80ch" id="agreement"></p>
+          <p style="font-size:12px; color:var(--faint); margin:10px 0 20px; line-height:1.6; max-width:80ch">
+            The page has to scan and parse in the browser to answer for text
+            you type, so those two engines are the one part of this
+            demonstration that is a re-implementation rather than a capture.
+            They are checked against <code>bin/matrixc</code> over every
+            program in <code>examples/</code> at build time, token for token
+            and diagnostic for diagnostic, and the build fails on a
+            disagreement. Everything in the next section is the compiler's own
+            output.</p>
+
+          <div class="duo">
+            <div class="card">
+              <h4>The grammar, as bison numbered it</h4>
+              <div class="gram" id="gram-rules"></div>
+            </div>
+            <div class="stak">
+              <div class="card">
+                <h4>Precedence <span class="hint">from matrix.y</span></h4>
+                <div class="gram" id="gram-prec"></div>
+              </div>
+              <div class="card">
+                <h4>The scanner's rules, in <code>matrix.l</code> order</h4>
+                <div class="gram" id="gram-flex"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ============================================= 03 walk the compiler -->
     <section id="pipeline">
       <div class="head">
-        <div class="eyebrow">02 &middot; Every phase, with its output</div>
+        <div class="eyebrow">03 &middot; Every phase, with its output</div>
         <h2>Walk the compiler</h2>
         <p class="lede">One flag per phase, so you can stop the compiler
           anywhere and read what it produced. Everything below is real
@@ -401,10 +377,10 @@ print(R);</pre>
       </div>
     </section>
 
-    <!-- ============================================ 03 the cost model ---- -->
+    <!-- ================================================ 04 the cost model -->
     <section id="explorer">
       <div class="head">
-        <div class="eyebrow">03 &middot; The idea, running</div>
+        <div class="eyebrow">04 &middot; The idea, running</div>
         <h2>A shape is also a cost model</h2>
         <p class="lede">Multiplying an <code>m x n</code> matrix by an
           <code>n x p</code> one performs <code>m p (2n-1)</code> scalar
@@ -473,10 +449,10 @@ print(R);</pre>
       </div>
     </section>
 
-    <!-- =============================================== 04 what we measured -->
+    <!-- =============================================== 05 what we measured -->
     <section id="evidence">
       <div class="head">
-        <div class="eyebrow">04 &middot; The measurement</div>
+        <div class="eyebrow">05 &middot; The measurement</div>
         <h2>Two metrics, same programs, different answers</h2>
         <p class="lede" id="ev-lede"></p>
       </div>
@@ -541,10 +517,10 @@ R = Matrix&lt;1x1&gt;      R = Matrix&lt;1x1&gt;
       </div>
     </section>
 
-    <!-- ============================================== 05 what we do not -- -->
+    <!-- =============================================== 06 what we do not -- -->
     <section id="limits">
       <div class="head">
-        <div class="eyebrow">05 &middot; Scope</div>
+        <div class="eyebrow">06 &middot; Scope</div>
         <h2>What the domain bought, and what it did not</h2>
         <p class="lede">The claim is that the source language is a curricular
           decision: it decides which phases can carry real work. That is the
@@ -599,395 +575,8 @@ R = Matrix&lt;1x1&gt;      R = Matrix&lt;1x1&gt;
 </div>
 
 <script src="data.js"></script>
-<script>
-(function () {
-  "use strict";
-
-  var D = window.MATRIXLANG;
-  if (!D) { return; }
-  var M = D.measurement;
-
-  var PHASES = [
-    ["lexical",  "lexical"],
-    ["syntax",   "syntax"],
-    ["symbols",  "symbol table"],
-    ["semantic", "semantic"],
-    ["tac",      "intermediate"],
-    ["optimize", "optimization"],
-    ["target",   "target code"],
-    ["execute",  "execution"]
-  ];
-
-  function el(id) { return document.getElementById(id); }
-  function pct(x) { return x.toFixed(1) + "%"; }
-  function commas(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
-
-  // ------------------------------------------------------------- hero ----
-  el("hero-flop").textContent = pct(M.flops.median);
-  el("hero-instr").textContent = pct(M.instr.median);
-  el("hero-note").textContent =
-    "Same optimizer. The same " + M.n + " programs. A different question.";
-
-  // --------------------------------------------------------- pipeline ----
-  var progIdx = 1, stageIdx = 5;   // open on the chain, at the optimizer
-
-  var choice = el("prog-choice");
-  D.programs.forEach(function (p, i) {
-    var b = document.createElement("button");
-    b.type = "button";
-    b.textContent = p.name;
-    b.setAttribute("aria-pressed", String(i === progIdx));
-    b.addEventListener("click", function () { progIdx = i; drawPipeline(); });
-    choice.appendChild(b);
-  });
-
-  var tabs = el("stage-tabs");
-  PHASES.forEach(function (ph, i) {
-    var b = document.createElement("button");
-    b.type = "button";
-    b.setAttribute("role", "tab");
-    b.innerHTML = '<span class="i">' + (i + 1) + "</span>" + ph[1];
-    b.addEventListener("click", function () {
-      if (b.disabled) { return; }
-      stageIdx = i;
-      drawPipeline();
-    });
-    tabs.appendChild(b);
-  });
-
-  function drawPipeline() {
-    var p = D.programs[progIdx];
-
-    Array.prototype.forEach.call(choice.children, function (b, i) {
-      b.setAttribute("aria-pressed", String(i === progIdx));
-    });
-    el("prog-blurb").textContent = p.blurb;
-    el("prog-source").textContent = p.source;
-    el("prog-file").textContent = p.file;
-
-    // A rejected program produces no code, so the later phases have nothing
-    // to show. Mark them rather than showing an empty panel.
-    var rejected = p.stages.semantic.status !== 0;
-    Array.prototype.forEach.call(tabs.children, function (b, i) {
-      var dead = rejected && i > 3;
-      b.disabled = dead;
-      b.setAttribute("aria-selected", String(i === stageIdx && !dead));
-    });
-    if (rejected && stageIdx > 3) { stageIdx = 3; drawPipeline(); return; }
-
-    var st = p.stages[PHASES[stageIdx][0]];
-    el("stage-cmd").textContent = "$ " + st.command;
-    el("stage-out").textContent = st.text;
-
-    var note = st.elided
-      ? st.elided + " line(s) of this phase's output are elided above to keep the page short."
-      : "";
-    if (rejected && stageIdx === 3) {
-      note = "The compiler stops here. Nothing downstream of semantic "
-           + "analysis runs, so there is no intermediate code, no target code "
-           + "and nothing to execute." + (note ? " " + note : "");
-    }
-    el("stage-note").textContent = note;
-  }
-  drawPipeline();
-
-  // -------------------------------------------------------- explorer ----
-  // The compiler's cost model, in JavaScript. cost_matmul is the same
-  // formula as src/ir/cost.c; solve() is the same dynamic program as
-  // src/ir/chain.c.
-  var dims = [100, 2, 100, 2];
-
-  function matmulCost(m, n, p) { return m * p * (2 * n - 1); }
-
-  function leftToRight(d) {
-    var total = 0;
-    for (var i = 1; i < d.length - 1; i++) {
-      total += matmulCost(d[0], d[i], d[i + 1]);
-    }
-    return total;
-  }
-
-  function solve(d) {
-    var k = d.length - 1, i, j, s, len;
-    var cost = [], split = [];
-    for (i = 0; i < k; i++) {
-      cost.push(new Array(k).fill(0));
-      split.push(new Array(k).fill(0));
-    }
-    for (len = 2; len <= k; len++) {
-      for (i = 0; i + len - 1 < k; i++) {
-        j = i + len - 1;
-        cost[i][j] = Infinity;
-        for (s = i; s < j; s++) {
-          var q = cost[i][s] + cost[s + 1][j] + matmulCost(d[i], d[s + 1], d[j + 1]);
-          if (q < cost[i][j]) { cost[i][j] = q; split[i][j] = s; }
-        }
-      }
-    }
-    return { cost: cost, split: split };
-  }
-
-  function name(i) { return String.fromCharCode(65 + i); }
-
-  function render(split, i, j) {
-    if (i === j) { return name(i); }
-    var s = split[i][j];
-    return "(" + render(split, i, s) + " * " + render(split, s + 1, j) + ")";
-  }
-
-  function renderLeft(k) {
-    var out = name(0);
-    for (var i = 1; i < k; i++) { out = "(" + out + " * " + name(i) + ")"; }
-    return out;
-  }
-
-  function buildDims() {
-    var box = el("dims");
-    box.innerHTML = "";
-    dims.forEach(function (v, i) {
-      var inp = document.createElement("input");
-      inp.type = "number";
-      inp.min = "1";
-      inp.max = "5000";
-      inp.step = "1";
-      inp.value = String(v);
-      inp.id = "dim-" + i;
-      inp.setAttribute("aria-label", "Dimension " + (i + 1));
-      inp.addEventListener("input", function () {
-        var n = Math.max(1, Math.min(5000, parseInt(inp.value, 10) || 1));
-        dims[i] = n;
-        compute();
-      });
-      box.appendChild(inp);
-      if (i < dims.length - 1) {
-        var x = document.createElement("span");
-        x.className = "x";
-        x.textContent = "x";
-        box.appendChild(x);
-      }
-    });
-    el("add").disabled = dims.length > 6;
-    el("drop").disabled = dims.length < 3;
-  }
-
-  function compute() {
-    var k = dims.length - 1;
-    var lr = leftToRight(dims);
-    var r = solve(dims);
-    var best = k === 1 ? 0 : r.cost[0][k - 1];
-    var top = Math.max(lr, best, 1);
-
-    var lines = [];
-    for (var i = 0; i < k; i++) {
-      lines.push("<b>" + name(i) + "</b> " + dims[i] + "x" + dims[i + 1]);
-    }
-    el("shapes").innerHTML = lines.join("<br>");
-
-    el("lr-cost").textContent = commas(lr) + " FLOP";
-    el("opt-cost").textContent = commas(best) + " FLOP";
-    el("lr-bracket").textContent = renderLeft(k);
-    el("opt-bracket").textContent = k === 1 ? name(0) : render(r.split, 0, k - 1);
-    el("lr-bar").style.width = (100 * lr / top) + "%";
-    el("opt-bar").style.width = (100 * best / top) + "%";
-
-    var saved = lr - best;
-    var share = lr > 0 ? 100 * saved / lr : 0;
-    var v = el("verdict");
-    if (saved > 0) {
-      v.innerHTML = "The compiler re-brackets and removes <b>" + commas(saved)
-        + " FLOP</b>, which is <b>" + share.toFixed(1) + "%</b> of the "
-        + "arithmetic. Both bracketings emit <b>" + (k - 1)
-        + "</b> product" + (k === 2 ? "" : "s") + ", so the instruction count "
-        + "does not move and a course project reporting instructions would "
-        + "record no change at all.";
-      v.style.borderLeftColor = "var(--mint)";
-    } else {
-      v.innerHTML = "Left to right is already the cheapest bracketing for "
-        + "these shapes, so the compiler leaves the expression alone. About a "
-        + "fifth of generated programs land here, and an optimizer that always "
-        + "claimed an improvement would be measuring nothing.";
-      v.style.borderLeftColor = "var(--gold)";
-    }
-  }
-
-  el("add").addEventListener("click", function () {
-    if (dims.length > 6) { return; }
-    dims.push(dims[dims.length - 1] === 2 ? 100 : 2);
-    buildDims(); compute();
-  });
-  el("drop").addEventListener("click", function () {
-    if (dims.length < 3) { return; }
-    dims.pop();
-    buildDims(); compute();
-  });
-
-  [
-    ["The paper's example", [100, 2, 100, 2]],
-    ["Already optimal", [10, 100, 5, 50]],
-    ["A five-matrix chain", [40, 20, 300, 10, 250, 15]]
-  ].forEach(function (preset) {
-    var b = document.createElement("button");
-    b.type = "button";
-    b.textContent = preset[0];
-    b.addEventListener("click", function () {
-      dims = preset[1].slice();
-      buildDims(); compute();
-    });
-    el("presets").appendChild(b);
-  });
-
-  buildDims();
-  compute();
-
-  // -------------------------------------------------------- evidence ----
-  el("ev-lede").textContent =
-    M.n + " programs from a generator, across two seeds. The corpus was not "
-    + "written by whoever wrote the optimizer, which is the point: a corpus "
-    + "the author chose can only show that the optimizer runs.";
-
-  var tiles = [
-    [pct(M.flops.median), "var(--mint)",
-     "median arithmetic removed per program (IQR " + M.flops.q1.toFixed(1)
-       + " to " + M.flops.q3.toFixed(1) + ")"],
-    [pct(M.instr.median), "var(--coral)",
-     "median instructions removed, same programs (IQR " + M.instr.q1.toFixed(1)
-       + " to " + M.instr.q3.toFixed(1) + ")"],
-    [pct(M.chain.sharePct), "var(--violet)",
-     "of programs had a chain worth re-bracketing (" + M.chain.helped
-       + " of " + M.chain.total + ")"],
-    [M.differential.identical + "/" + M.differential.programs, "var(--mint)",
-     "programs printed identical bytes with the optimizer and without"]
-  ];
-  el("tiles").innerHTML = tiles.map(function (t) {
-    return '<div class="tile"><div class="v" style="color:' + t[1] + '">'
-         + t[0] + '</div><div class="k">' + t[2] + "</div></div>";
-  }).join("");
-
-  // ---- cumulative distribution -------------------------------------------
-  function cdf(values, colour) {
-    var n = values.length, pts = [], i;
-    var step = Math.max(1, Math.round(n / 120));
-    for (i = 0; i < n; i += step) {
-      pts.push([values[i], 100 * i / (n - 1)]);
-    }
-    pts.push([values[n - 1], 100]);
-    return { pts: pts, colour: colour };
-  }
-
-  function drawCdf() {
-    var W = 460, H = 260, L = 46, R = 14, T = 14, B = 40;
-    var iw = W - L - R, ih = H - T - B;
-    var x = function (v) { return L + iw * v / 100; };
-    var y = function (v) { return T + ih - ih * v / 100; };
-    var s = ['<svg viewBox="0 0 ' + W + " " + H + '" role="img" '
-           + 'aria-label="Cumulative distribution of reduction per program, '
-           + 'arithmetic against instructions.">'];
-
-    var t;
-    for (t = 0; t <= 100; t += 25) {
-      s.push('<line x1="' + x(t) + '" y1="' + y(0) + '" x2="' + x(t) + '" y2="'
-           + y(100) + '" stroke="#242424" stroke-width="1"/>');
-      s.push('<line x1="' + x(0) + '" y1="' + y(t) + '" x2="' + x(100)
-           + '" y2="' + y(t) + '" stroke="#242424" stroke-width="1"/>');
-      s.push('<text x="' + x(t) + '" y="' + (y(0) + 17)
-           + '" fill="#8c8c8c" font-size="10" font-family="JetBrains Mono, monospace" '
-           + 'text-anchor="middle">' + t + "%</text>");
-      s.push('<text x="' + (x(0) - 8) + '" y="' + (y(t) + 3.5)
-           + '" fill="#8c8c8c" font-size="10" font-family="JetBrains Mono, monospace" '
-           + 'text-anchor="end">' + t + "%</text>");
-    }
-
-    [cdf(M.flopsAll, "#4ade80"), cdf(M.instrAll, "#ef4444")].forEach(function (c) {
-      var d = c.pts.map(function (p, i) {
-        return (i ? "L" : "M") + x(p[0]).toFixed(1) + " " + y(p[1]).toFixed(1);
-      }).join(" ");
-      s.push('<path d="' + d + '" fill="none" stroke="' + c.colour
-           + '" stroke-width="2.2" stroke-linejoin="round"/>');
-    });
-
-    s.push('<text x="' + (L + iw / 2) + '" y="' + (H - 6)
-         + '" fill="#8c8c8c" font-size="10.5" font-family="Archivo, sans-serif" '
-         + 'text-anchor="middle">reduction on one program</text>');
-    s.push('<text transform="translate(12,' + (T + ih / 2) + ') rotate(-90)" '
-         + 'fill="#8c8c8c" font-size="10.5" font-family="Archivo, sans-serif" '
-         + 'text-anchor="middle">programs at or below</text>');
-    s.push("</svg>");
-    el("chart-cdf").innerHTML = s.join("");
-  }
-
-  function drawBox() {
-    var W = 460, H = 260, L = 16, R = 62, T = 30, B = 40;
-    var iw = W - L - R, ih = H - T - B;
-    var x = function (v) { return L + iw * v / 100; };
-    var s = ['<svg viewBox="0 0 ' + W + " " + H + '" role="img" '
-           + 'aria-label="Median and interquartile range of reduction, '
-           + 'arithmetic against instructions.">'];
-
-    var rows = [
-      ["arithmetic removed", M.flops, "#4ade80"],
-      ["instructions removed", M.instr, "#ef4444"]
-    ];
-    rows.forEach(function (r, i) {
-      var top = T + i * (ih / 2) + 14;
-      s.push('<text x="' + L + '" y="' + top + '" fill="#ffffff" font-size="11.5" '
-           + 'font-family="Archivo, sans-serif">' + r[0] + "</text>");
-      s.push('<rect x="' + x(0) + '" y="' + (top + 12) + '" width="' + iw
-           + '" height="14" rx="3" fill="#242424"/>');
-      s.push('<rect x="' + x(r[1].q1) + '" y="' + (top + 12) + '" width="'
-           + Math.max(2, x(r[1].q3) - x(r[1].q1)) + '" height="14" rx="3" fill="'
-           + r[2] + '" opacity="' + (i ? 0.55 : 1) + '"/>');
-      s.push('<rect x="' + (x(r[1].median) - 1.4) + '" y="' + (top + 8)
-           + '" width="2.8" height="22" fill="#ffffff"/>');
-      s.push('<text x="' + (W - R + 10) + '" y="' + (top + 24)
-           + '" fill="' + r[2] + '" font-size="15" font-weight="700" '
-           + 'font-family="Spectral, Georgia, serif">' + pct(r[1].median) + "</text>");
-      s.push('<text x="' + L + '" y="' + (top + 44)
-           + '" fill="#8c8c8c" font-size="10" font-family="JetBrains Mono, monospace">'
-           + "IQR " + r[1].q1.toFixed(1) + " to " + r[1].q3.toFixed(1) + "</text>");
-    });
-
-    s.push('<text x="' + x(0) + '" y="' + (H - 12)
-         + '" fill="#8c8c8c" font-size="10" font-family="JetBrains Mono, monospace">0%</text>');
-    s.push('<text x="' + x(100) + '" y="' + (H - 12)
-         + '" fill="#8c8c8c" font-size="10" font-family="JetBrains Mono, monospace" '
-         + 'text-anchor="end">100%</text>');
-    s.push('<text x="' + L + '" y="' + (T - 10)
-         + '" fill="#8c8c8c" font-size="10" font-family="Archivo, sans-serif">'
-         + "bar = interquartile range, tick = median</text>");
-    s.push("</svg>");
-    el("chart-box").innerHTML = s.join("");
-  }
-
-  drawCdf();
-  drawBox();
-
-  // ---- baselines ----------------------------------------------------------
-  var LABEL = ["MatrixLang", "baseline 1", "baseline 2", "baseline 3"];
-  el("baseline-rows").innerHTML = D.baselines.map(function (b, i) {
-    var colour = i === 0 ? "var(--mint)" : "var(--coral)";
-    return "<tr" + (i === 0 ? ' class="me"' : "") + "><td>" + LABEL[i]
-         + '</td><td><div class="meter"><i style="width:'
-         + (100 * b.phases / 8) + "%; background:" + colour
-         + '"></i></div></td><td class="num">' + b.phases + " / 8</td></tr>";
-  }).join("");
-
-  // ---- rail highlighting --------------------------------------------------
-  var links = Array.prototype.slice.call(document.querySelectorAll("nav a"));
-  var sections = links.map(function (a) {
-    return document.getElementById(a.getAttribute("href").slice(1));
-  });
-  if (window.IntersectionObserver) {
-    var seen = {};
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) { seen[e.target.id] = e.isIntersecting; });
-      for (var i = 0; i < sections.length; i++) {
-        if (seen[sections[i].id]) {
-          links.forEach(function (a, j) { a.classList.toggle("on", j === i); });
-          break;
-        }
-      }
-    }, { rootMargin: "-10% 0px -70% 0px" });
-    sections.forEach(function (s) { io.observe(s); });
-  }
-}());
-</script>
+<script src="grammar.js"></script>
+<script src="agreement.js"></script>
+<script src="lexer.js"></script>
+<script src="parser.js"></script>
+<script src="app.js"></script>

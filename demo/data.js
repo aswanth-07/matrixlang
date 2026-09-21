@@ -200,6 +200,50 @@ window.MATRIXLANG = {
    }
   }
  ],
+ "machine": [
+  {
+   "id": "declare",
+   "name": "Two declarations",
+   "blurb": "Sixteen tokens and a complete parse. Short enough to walk from the first shift to accept without losing anybody.",
+   "file": "examples/phase1/declare.ml",
+   "source": "matrix A[2,3];\nmatrix B[3,4];\n"
+  },
+  {
+   "id": "precedence",
+   "name": "Precedence, decided",
+   "blurb": "A + B * C. The grammar does not say which binds tighter; the parser reaches a shift/reduce conflict and %left decides it. Watch for the note that appears when it does.",
+   "file": "examples/phase1/precedence.ml",
+   "source": "matrix A[2,2];\nmatrix B[2,2];\nmatrix C[2,2];\n\nmatrix R = A + B * C;\n\nprint(R);\n"
+  },
+  {
+   "id": "multiply",
+   "name": "The headline example",
+   "blurb": "Matrix literals, nested rows, and an inferred shape. The reductions build the literal row by row.",
+   "file": "examples/valid/multiply.ml",
+   "source": "matrix A[2,3] = {{1, 2, 3},\n                 {4, 5, 6}};\n\nmatrix B[3,4] = {{1, 0, 0, 1},\n                 {0, 1, 0, 2},\n                 {0, 0, 1, 3}};\n\nmatrix C = A * B;      // shape inferred: Matrix<2x4>\n\nprint(C);\n"
+  },
+  {
+   "id": "chain_order",
+   "name": "A chain worth re-bracketing",
+   "blurb": "The program the rest of this page is about, through the front end.",
+   "file": "examples/optimize/chain_order.ml",
+   "source": "matrix A[100,2];\nmatrix B[2,100];\nmatrix C[100,2];\n\nmatrix R = A * B * C;\n\nprint(R);\n"
+  },
+  {
+   "id": "syntax",
+   "name": "Three syntax errors",
+   "blurb": "The parser reports, pops to a state that can shift the error token, discards input to the next semicolon, and carries on. That is `stmt: error ';'` doing its work.",
+   "file": "examples/errors/syntax.ml",
+   "source": "matrix A[2,3]\n\nA = ;\nmatrix B[2 3];\nprint(A;\n"
+  },
+  {
+   "id": "lexical",
+   "name": "Characters the scanner refuses",
+   "blurb": "An illegal character and an identifier beginning with a digit. The scanner reports both and returns no token, so the parser sees a gap where they were.",
+   "file": "examples/errors/lexical.ml",
+   "source": "matrix A[2,2];\n\nA = A $ A;      // '$' is not a MatrixLang character\nA = 12abc * A;  // an identifier may not begin with a digit\n"
+  }
+ ],
  "measurement": {
   "n": 400,
   "flops": {

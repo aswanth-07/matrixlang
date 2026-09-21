@@ -55,6 +55,35 @@ PROGRAMS = [
     },
 ]
 
+# The programs the front-end demonstration offers, smallest first. These are
+# scanned and parsed in the browser rather than captured, so the list is
+# chosen for what each one shows a viewer rather than for what the compiler
+# prints: the first is short enough to walk end to end, the second is where
+# the precedence declarations decide the parse, and the last two are where the
+# scanner and the parser each have to report and carry on.
+MACHINE = [
+    ("examples/phase1/declare.ml", "Two declarations",
+     "Sixteen tokens and a complete parse. Short enough to walk from the "
+     "first shift to accept without losing anybody."),
+    ("examples/phase1/precedence.ml", "Precedence, decided",
+     "A + B * C. The grammar does not say which binds tighter; the parser "
+     "reaches a shift/reduce conflict and %left decides it. Watch for the "
+     "note that appears when it does."),
+    ("examples/valid/multiply.ml", "The headline example",
+     "Matrix literals, nested rows, and an inferred shape. The reductions "
+     "build the literal row by row."),
+    ("examples/optimize/chain_order.ml", "A chain worth re-bracketing",
+     "The program the rest of this page is about, through the front end."),
+    ("examples/errors/syntax.ml", "Three syntax errors",
+     "The parser reports, pops to a state that can shift the error token, "
+     "discards input to the next semicolon, and carries on. That is "
+     "`stmt: error ';'` doing its work."),
+    ("examples/errors/lexical.ml", "Characters the scanner refuses",
+     "An illegal character and an identifier beginning with a digit. The "
+     "scanner reports both and returns no token, so the parser sees a gap "
+     "where they were."),
+]
+
 STAGES = [
     ("lexical", "--tokens", "Token stream"),
     ("syntax", "--ast", "Abstract syntax tree"),
@@ -150,6 +179,20 @@ def main():
         })
         print("captured %s (%d stages)" % (spec["id"], len(stages)))
 
+    machine = []
+    for path, name, blurb in MACHINE:
+        with open(os.path.join(ROOT, path)) as f:
+            source = f.read()
+        # Both comment forms open an example file, and the page explains each
+        # program in its own words beside the code.
+        source = re.sub(r"^\s*/\*.*?\*/\s*", "", source, flags=re.S)
+        source = re.sub(r"^\s*(//[^\n]*\n)+\s*", "", source)
+        source = source.strip() + "\n"
+        machine.append({"id": os.path.basename(path)[:-3], "name": name,
+                        "blurb": blurb, "file": path, "source": source})
+    print("collected %d program(s) for the front-end demonstration"
+          % len(machine))
+
     cost, chain = [], []
     identical = total = 0
     seeds = []
@@ -178,6 +221,7 @@ def main():
 
     payload = {
         "programs": programs,
+        "machine": machine,
         "measurement": {
             "n": len(cost),
             "flops": percentiles([r["flops_pct"] for r in cost]),

@@ -84,6 +84,17 @@ expect_contains "Syntax: VALID"
 # Comments must never reach the parser.
 expect_absent  "COMMENT"
 
+section "Phase 1 -- precedence decides the parse, not the grammar"
+
+# expr: expr '+' expr and expr: expr '*' expr are ambiguous together; the
+# %left declarations resolve every conflict bison finds. The tree that
+# resolution produces is observable in the three-address code: B * C has to be
+# computed before the addition, and it has to be computed first.
+run_case "precedence.ml --tac" 0 "$MATRIXC" --tac examples/phase1/precedence.ml
+expect_contains "t1 = B * C"
+expect_contains "t2 = A + t1"
+expect_contains "ACCEPTED"
+
 section "Phase 1 -- malformed input is rejected"
 
 run_case "bad.ml --phase1" 1 "$MATRIXC" --phase1 examples/phase1/bad.ml

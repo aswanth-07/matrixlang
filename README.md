@@ -64,7 +64,7 @@ paper, a measured evaluation and a web demonstration.
 | **3** | Algebra, CSE, copy propagation, DCE, chain ordering, target code, VM | `make demo3` |
 
 Build is warning-free under `-Wall -Wextra`, the grammar has no LALR(1)
-conflicts, and the test suite is 141 assertions, all passing.
+conflicts, and the test suite is 145 assertions, all passing.
 
 ---
 
@@ -202,16 +202,65 @@ tools/                generators, each rebuilding one deliverable
   plot_reduction.py           the paper's figure
   strip_anchors.py            the paper's submission source
   build-demo.py               demo/data.js
+  build-grammar.py            demo/grammar.js, from bison's own report
+  check-demo-engines.py       the demo's scanner and parser against matrixc
+  demo-engines.js             runs those two outside the page, for the check
   deckkit.py                  a minimal PowerPoint writer
   build-deck.py               the review presentation
   build-architecture-figure.py, build-phase1-docx.js
 
 results/              the recorded measurements, per program, both seeds
 paper/                matrixlang.tex, matrixlang.pdf, figures
-demo/                 the web demonstration (index.html + generated data.js)
+demo/                 the web demonstration
+  index.html, style.css, app.js   the page
+  lexer.js, parser.js             flex's rules and bison's table, in the browser
+  data.js, grammar.js, agreement.js   generated; do not edit
 docs/                 design, language reference, per-phase reports
   submission/         deliverables in the department's formats
 ```
+
+---
+
+## The demonstration page
+
+```bash
+make serve      # http://127.0.0.1:8731/
+```
+
+The page opens from `file://` too, so it can be presented from a laptop with
+nothing running.
+
+Its centrepiece steps through the front end over a program you can edit,
+forwards and backwards, with the space bar and the arrow keys:
+
+**Scanner.** At every position it shows each `matrix.l` rule that matches and
+how many characters it matched, then the winner. Longest match wins and a tie
+goes to the earlier rule, which is the whole reason `matrix` is a keyword and
+`matrixx` is an identifier — and you can watch it decide.
+
+**Parser.** The stack with its state numbers, the one token of lookahead, the
+action taken, the item set of the current state and the row of the table it
+came from, and the tree assembling itself as the reductions fire. Where the
+grammar was ambiguous, it names the conflict and the `%left` line that settled
+it. On a program with syntax errors it shows recovery: pop until a state can
+shift the `error` token, shift it, discard input to the next semicolon, and
+carry on — which is `stmt: error ';'` doing its work, three times in one file.
+
+**Automaton** and **Grammar** browse all 86 LALR states and the numbered
+grammar, including the twelve conflicts the three precedence declarations
+resolved and which declaration resolved each.
+
+The tables are not a teaching model of bison. `tools/build-grammar.py` reads
+them out of `bison --report=all` over `src/frontend/matrix.y`, so the state
+numbers the page shows are the state numbers `matrixc` walks.
+
+The page has to scan and parse in the browser to answer for text you type, so
+`demo/lexer.js` and `demo/parser.js` are the one part of the demonstration
+that is a re-implementation rather than a capture.
+`tools/check-demo-engines.py` runs both against `bin/matrixc` over every
+program in `examples/` — 1,179 tokens and 10 frontend diagnostics, compared
+one at a time — and `make web` fails on a disagreement. Everything else the
+page shows is the compiler's own output, captured at build time.
 
 ---
 
@@ -225,7 +274,7 @@ measurement.
 make measure    # regenerate results/ and the paper's figure
 make paper      # paper/matrixlang.tex and paper/matrixlang.pdf
 make deck       # docs/submission/MatrixLang-Deck.pptx
-make web        # demo/data.js
+make web        # demo/data.js, demo/grammar.js, and the engine check
 make serve      # build the demo and serve it at 127.0.0.1:8731
 ```
 
