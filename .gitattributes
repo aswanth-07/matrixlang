@@ -1,5 +1,7 @@
-# Git on Windows converts line endings on checkout. A shell script that comes
-# back with CRLF fails at its shebang, so pin the formats that care.
+# Pin text bytes for source and raw-data SHA-256 reproducibility on checkout.
+* text=auto eol=lf
+
+# Shell scripts also require LF at their shebang.
 *.sh     text eol=lf
 *.ml     text eol=lf
 *.l      text eol=lf
@@ -21,3 +23,4 @@ Makefile text eol=lf
 *.docx binary
 *.pptx binary
 *.png  binary
+*.pdf  binary

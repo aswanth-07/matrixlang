@@ -81,7 +81,8 @@ decl
     : KW_MATRIX IDENT '[' NUMBER ',' NUMBER ']' ';'
                                 { $$ = node_named(N_DECL, @2.first_line,
                                                   @2.first_column, $2);
-                                  $$->decl_type = type_matrix((int)$4, (int)$6);
+                                  $$->decl_type = type_matrix(-1, -1);
+                                  $$->decl_rows = $4; $$->decl_cols = $6;
                                   $$->has_dims  = 1;
                                   free($2); }
 
@@ -89,7 +90,8 @@ decl
     | KW_MATRIX IDENT '[' NUMBER ',' NUMBER ']' '=' expr ';'
                                 { $$ = node_named(N_DECL, @2.first_line,
                                                   @2.first_column, $2);
-                                  $$->decl_type = type_matrix((int)$4, (int)$6);
+                                  $$->decl_type = type_matrix(-1, -1);
+                                  $$->decl_rows = $4; $$->decl_cols = $6;
                                   $$->has_dims  = 1;
                                   node_add($$, $9);
                                   free($2); }

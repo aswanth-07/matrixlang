@@ -806,21 +806,12 @@ window.MATRIXLANG_GRAMMAR = {
     {
      "rule": 9,
      "dot": 0,
-     "lookahead": [
-      "' NUMBER '",
-      "' NUMBER '",
-      "' '"
-     ]
+     "lookahead": []
     },
     {
      "rule": 10,
      "dot": 0,
-     "lookahead": [
-      "' NUMBER '",
-      "' NUMBER '",
-      "' '",
-      "' expr '"
-     ]
+     "lookahead": []
     },
     {
      "rule": 11,
@@ -947,21 +938,12 @@ window.MATRIXLANG_GRAMMAR = {
     {
      "rule": 9,
      "dot": 1,
-     "lookahead": [
-      "' NUMBER '",
-      "' NUMBER '",
-      "' '"
-     ]
+     "lookahead": []
     },
     {
      "rule": 10,
      "dot": 1,
-     "lookahead": [
-      "' NUMBER '",
-      "' NUMBER '",
-      "' '",
-      "' expr '"
-     ]
+     "lookahead": []
     },
     {
      "rule": 11,
@@ -1249,21 +1231,12 @@ window.MATRIXLANG_GRAMMAR = {
     {
      "rule": 9,
      "dot": 2,
-     "lookahead": [
-      "' NUMBER '",
-      "' NUMBER '",
-      "' '"
-     ]
+     "lookahead": []
     },
     {
      "rule": 10,
      "dot": 2,
-     "lookahead": [
-      "' NUMBER '",
-      "' NUMBER '",
-      "' '",
-      "' expr '"
-     ]
+     "lookahead": []
     },
     {
      "rule": 11,
@@ -1886,21 +1859,12 @@ window.MATRIXLANG_GRAMMAR = {
     {
      "rule": 9,
      "dot": 3,
-     "lookahead": [
-      "' . NUMBER '",
-      "' NUMBER '",
-      "' '"
-     ]
+     "lookahead": []
     },
     {
      "rule": 10,
      "dot": 3,
-     "lookahead": [
-      "' . NUMBER '",
-      "' NUMBER '",
-      "' '",
-      "' expr '"
-     ]
+     "lookahead": []
     }
    ],
    "actions": {
@@ -3349,22 +3313,13 @@ window.MATRIXLANG_GRAMMAR = {
    "items": [
     {
      "rule": 9,
-     "dot": 3,
-     "lookahead": [
-      "' NUMBER . '",
-      "' NUMBER '",
-      "' '"
-     ]
+     "dot": 4,
+     "lookahead": []
     },
     {
      "rule": 10,
-     "dot": 3,
-     "lookahead": [
-      "' NUMBER . '",
-      "' NUMBER '",
-      "' '",
-      "' expr '"
-     ]
+     "dot": 4,
+     "lookahead": []
     }
    ],
    "actions": {
@@ -3998,22 +3953,13 @@ window.MATRIXLANG_GRAMMAR = {
    "items": [
     {
      "rule": 9,
-     "dot": 3,
-     "lookahead": [
-      "' NUMBER '",
-      "' . NUMBER '",
-      "' '"
-     ]
+     "dot": 5,
+     "lookahead": []
     },
     {
      "rule": 10,
-     "dot": 3,
-     "lookahead": [
-      "' NUMBER '",
-      "' . NUMBER '",
-      "' '",
-      "' expr '"
-     ]
+     "dot": 5,
+     "lookahead": []
     }
    ],
    "actions": {
@@ -4507,22 +4453,13 @@ window.MATRIXLANG_GRAMMAR = {
    "items": [
     {
      "rule": 9,
-     "dot": 3,
-     "lookahead": [
-      "' NUMBER '",
-      "' NUMBER . '",
-      "' '"
-     ]
+     "dot": 6,
+     "lookahead": []
     },
     {
      "rule": 10,
-     "dot": 3,
-     "lookahead": [
-      "' NUMBER '",
-      "' NUMBER . '",
-      "' '",
-      "' expr '"
-     ]
+     "dot": 6,
+     "lookahead": []
     }
    ],
    "actions": {
@@ -4680,22 +4617,13 @@ window.MATRIXLANG_GRAMMAR = {
    "items": [
     {
      "rule": 9,
-     "dot": 3,
-     "lookahead": [
-      "' NUMBER '",
-      "' NUMBER '",
-      "' . '"
-     ]
+     "dot": 7,
+     "lookahead": []
     },
     {
      "rule": 10,
-     "dot": 3,
-     "lookahead": [
-      "' NUMBER '",
-      "' NUMBER '",
-      "' . '",
-      "' expr '"
-     ]
+     "dot": 7,
+     "lookahead": []
     }
    ],
    "actions": {
@@ -4751,12 +4679,8 @@ window.MATRIXLANG_GRAMMAR = {
    "items": [
     {
      "rule": 9,
-     "dot": 3,
-     "lookahead": [
-      "' NUMBER '",
-      "' NUMBER '",
-      "' '"
-     ]
+     "dot": 8,
+     "lookahead": []
     }
    ],
    "actions": {},
@@ -4772,13 +4696,8 @@ window.MATRIXLANG_GRAMMAR = {
    "items": [
     {
      "rule": 10,
-     "dot": 3,
-     "lookahead": [
-      "' NUMBER '",
-      "' NUMBER '",
-      "' '",
-      "' . expr '"
-     ]
+     "dot": 8,
+     "lookahead": []
     },
     {
      "rule": 16,
@@ -4896,13 +4815,8 @@ window.MATRIXLANG_GRAMMAR = {
    "items": [
     {
      "rule": 10,
-     "dot": 3,
-     "lookahead": [
-      "' NUMBER '",
-      "' NUMBER '",
-      "' '",
-      "' expr . '"
-     ]
+     "dot": 9,
+     "lookahead": []
     },
     {
      "rule": 16,
@@ -4947,13 +4861,8 @@ window.MATRIXLANG_GRAMMAR = {
    "items": [
     {
      "rule": 10,
-     "dot": 3,
-     "lookahead": [
-      "' NUMBER '",
-      "' NUMBER '",
-      "' '",
-      "' expr '"
-     ]
+     "dot": 10,
+     "lookahead": []
     }
    ],
    "actions": {},

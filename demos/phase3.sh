@@ -45,7 +45,7 @@ echo "    matrix is. MatrixLang tracks which values are identity matrices, which
 echo "    are all zeros, and which came from a transpose."
 echo
 cat examples/optimize/algebra.ml
-$MATRIXC --tac --optimize --explain --report examples/optimize/algebra.ml \
+$MATRIXC --fp-algebraic --tac --optimize --explain --report examples/optimize/algebra.ml \
     | sed -n '/OPTIMIZED INTERMEDIATE/,$p'
 
 pause
@@ -65,8 +65,8 @@ echo "    byte for byte. A smaller program that computes something else would"
 echo "    not be an optimization."
 echo
 for f in examples/valid/*.ml examples/optimize/*.ml; do
-    a=$("$MATRIXC" -q --run "$f" 2>&1)
-    b=$("$MATRIXC" -q --optimize --run "$f" 2>&1)
+    a=$("$MATRIXC" -q --exact-output --run "$f" 2>&1)
+    b=$("$MATRIXC" -q --exact-output --optimize --run "$f" 2>&1)
     if [ "$a" == "$b" ]; then
         printf '    identical output   %s\n' "$f"
     else

@@ -15,20 +15,20 @@ Demonstration: `make demo2`
 
 | Module | File | Lines |
 | --- | --- | --- |
-| Lexical analyser | `src/matrix.l` | 119 |
-| Parser and AST construction | `src/matrix.y` | 201 |
-| AST representation and printer | `src/ast.c` | 206 |
-| Symbol table | `src/symtab.c` | 178 |
-| Shape rules | `src/types.c` | 108 |
-| Semantic analysis | `src/semantic.c` | 469 |
-| Three-address code | `src/tac.c` | 376 |
-| Diagnostics | `src/diag.c` | 133 |
+| Lexical analyser | `src/frontend/matrix.l` | 119 |
+| Parser and AST construction | `src/frontend/matrix.y` | 201 |
+| AST representation and printer | `src/frontend/ast.c` | 206 |
+| Symbol table | `src/analysis/symtab.c` | 178 |
+| Shape rules | `src/analysis/types.c` | 108 |
+| Semantic analysis | `src/analysis/semantic.c` | 469 |
+| Three-address code | `src/ir/tac.c` | 376 |
+| Diagnostics | `src/support/diag.c` | 133 |
 
 ---
 
 ## 1. Lexical analysis
 
-`src/matrix.l`, generated with Flex.
+`src/frontend/matrix.l`, generated with Flex.
 
 Recognises keywords, identifiers, numeric literals (including decimals and
 exponents), all operators, brackets, braces, separators, and both comment
@@ -45,7 +45,7 @@ operator that failed.
 **The token table.** Bison pulls tokens one at a time and discards each once it
 is shifted, so after the parse there is no stream left to display. Scanning the
 file twice would report every lexical error twice. Instead the scanner appends
-each token to `src/tokens.c` on its way out, so the token table is a byproduct
+each token to `src/frontend/tokens.c` on its way out, so the token table is a byproduct
 of the parse rather than separate work.
 
 ```
@@ -56,7 +56,7 @@ $ ./bin/matrixc --tokens examples/valid/multiply.ml
 
 ## 2. Syntax analysis
 
-`src/matrix.y`, generated with Bison as an LALR(1) parser. **No conflicts** —
+`src/frontend/matrix.y`, generated with Bison as an LALR(1) parser. **No conflicts** —
 the build runs `bison -Wcounterexamples`, which would explain any it found.
 
 The parser builds an AST and does nothing else: no name resolution, no shape
@@ -145,7 +145,7 @@ information that every check consults actually lives.
 
 ## 5. Semantic analysis — the centrepiece
 
-`src/semantic.c`, with the shape rules isolated in `src/types.c`.
+`src/analysis/semantic.c`, with the shape rules isolated in `src/analysis/types.c`.
 
 The pass walks the AST, populates the symbol table, annotates every expression
 node with the shape it produces, and rejects operations whose shapes do not
@@ -185,7 +185,7 @@ Addition:
 ```
 
 The detail block names both operands *as they were written*, the rule, and what
-was actually found. `src/ast.c` renders an expression back into source text for
+was actually found. `src/frontend/ast.c` renders an expression back into source text for
 this, so the message says `left : A * B` rather than `left operand`.
 
 ### Other checks
@@ -206,7 +206,7 @@ One mistake should produce one message.
 
 ## 6. Three-address code
 
-`src/tac.c`. Operands are strings in the textbook style, and their spelling
+`src/ir/tac.c`. Operands are strings in the textbook style, and their spelling
 distinguishes them:
 
 ```

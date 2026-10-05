@@ -44,9 +44,10 @@ BINDIR   := bin
 PHASES   := frontend analysis ir backend support
 INCLUDES := -I$(SRCDIR) $(addprefix -I$(SRCDIR)/,$(PHASES)) -I$(BUILDDIR)
 
-CFLAGS  ?= -std=c11 -Wall -Wextra -O2 $(INCLUDES)
+CFLAGS  ?= -std=c11 -Wall -Wextra -O2 -ffp-contract=off $(INCLUDES)
 LDFLAGS ?=
 LDLIBS  ?= -lm
+PYTHON  ?= python
 
 # Every hand-written .c under src/, whichever phase it lives in.
 CORE_SRC := $(wildcard $(SRCDIR)/*.c) $(foreach p,$(PHASES),$(wildcard $(SRCDIR)/$(p)/*.c))
@@ -55,7 +56,7 @@ GEN_OBJ  := $(BUILDDIR)/matrix.tab.o $(BUILDDIR)/lex.yy.o
 
 MATRIXC  := $(BINDIR)/matrixc
 
-.PHONY: all clean test dirs toolchain demo1 demo2 demo3 deck web serve measure paper
+.PHONY: all clean test dirs toolchain demo1 demo2 demo3 deck web serve measure research analyze paper verify-research
 
 all: dirs $(MATRIXC)
 
@@ -114,28 +115,33 @@ demo3: all
 
 # ---- deliverables -----------------------------------------------------------
 
-# Every figure in the deck, the paper's figure and the web demo is read
-# from results/ rather than typed in, so `make measure` is the only thing
-# that can change any of them.
+# The deck and web demonstration use the two development seeds. The research
+# paper uses the separate protocol and generated displays from `make research`.
 
 measure: all
-	python tools/run_experiments.py --out results/seed1 --seed 1
-	python tools/run_experiments.py --out results/seed2 --seed 2
-	python tools/plot_reduction.py --data results --out paper/figures/reduction.pdf
+	"$(PYTHON)" tools/run_experiments.py --out results/seed1 --seed 1
+	"$(PYTHON)" tools/run_experiments.py --out results/seed2 --seed 2
+	"$(PYTHON)" tools/plot_reduction.py --data results --out paper/figures/reduction.pdf
 
 deck:
-	python tools/build-deck.py docs/submission/MatrixLang-Deck.pptx
+	"$(PYTHON)" tools/build-deck.py docs/submission/MatrixLang-Deck.pptx
 
-# paper/matrixlang.tex is the paper; the PDF is built from it. The author
-# keeps a local working draft with one annotation per stated figure, tying
-# it to the measurement it reports; when that draft is present its
-# annotations are stripped into matrixlang.tex first. A clone has only the
-# paper, and this target rebuilds its PDF.
+# The public manuscript is always the build input.
 paper:
-	@if [ -f tools/strip_anchors.py ]; then python tools/strip_anchors.py paper/main.tex paper/matrixlang.tex; fi
 	cd paper && pdflatex -interaction=nonstopmode -halt-on-error matrixlang.tex
 	cd paper && pdflatex -interaction=nonstopmode -halt-on-error matrixlang.tex
-	cd paper && rm -f *.aux *.log *.out
+	cd paper && pdflatex -interaction=nonstopmode -halt-on-error anonymous.tex
+	cd paper && pdflatex -interaction=nonstopmode -halt-on-error anonymous.tex
+
+research: all
+	"$(PYTHON)" tools/evaluate_research.py
+	"$(PYTHON)" tools/analyze_research.py
+
+analyze:
+	"$(PYTHON)" tools/analyze_research.py
+
+verify-research: all
+	"$(PYTHON)" tools/verify_research.py
 
 # The demonstration page has three generated inputs. build-demo.py captures
 # the compiler's output per phase and reads the measurements; build-grammar.py
@@ -145,20 +151,21 @@ paper:
 # exits non-zero on a disagreement, which is what stops a drifting page from
 # being published.
 web: all
-	python tools/build-demo.py
-	python tools/build-grammar.py
-	python tools/check-demo-engines.py
+	"$(PYTHON)" tools/build-demo.py
+	"$(PYTHON)" tools/build-grammar.py
+	"$(PYTHON)" tools/check-demo-engines.py
 
 serve: web
 	@echo "http://127.0.0.1:8731/"
-	python -m http.server 8731 --directory demo --bind 127.0.0.1
+	"$(PYTHON)" -m http.server 8731 --directory demo --bind 127.0.0.1
 
 # ---- housekeeping -----------------------------------------------------------
 
 test: all
 	@bash tests/run_tests.sh
+	@"$(PYTHON)" tools/check_numerics.py --out build/numerics-check.json
 	@echo
-	@python tools/check-demo-engines.py --optional
+	@"$(PYTHON)" tools/check-demo-engines.py --optional
 
 clean:
 	rm -rf $(BUILDDIR) $(BINDIR)

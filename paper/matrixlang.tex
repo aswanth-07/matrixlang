@@ -1,571 +1,779 @@
-%% MatrixLang: the paper, as submitted.
-%%
-%% Generated from the working draft by tools/strip_anchors.py,
-%% which removes the draft's measurement-binding comments and
-%% nothing else. Edit the draft, not this file.
-%% MatrixLang: experience report.
-%%
-%% Class: acmart, sigconf. Obtain the official template from
-%%   https://www.acm.org/publications/proceedings-template
-%% This file references the class; it does not reproduce it.
-%%
-%% Build:  latexmk -pdf main.tex
-%% For a double-blind venue, add `anonymous` to the class options.
-
-\documentclass[sigconf,nonacm]{acmart}
-
+% Research manuscript for author review, October 2026.
+% Official ACM acmart SIGPLAN format; see venue.md for the verified call.
+\ifdefined\AnonymousDraft
+  \documentclass[sigplan,review,anonymous,nonacm]{acmart}
+\else
+  \documentclass[sigplan,review,nonacm]{acmart}
+\fi
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{listings}
-
-\lstdefinestyle{ml}{
-  basicstyle=\ttfamily\scriptsize,
-  keywordstyle=\bfseries,
-  commentstyle=\itshape\color{gray},
+\usepackage{xurl}
+\settopmatter{printacmref=false}
+\setcopyright{none}
+\citestyle{acmnumeric}
+\input{generated/numbers.tex}
+\lstset{basicstyle=\ttfamily\footnotesize,columns=fullflexible,
+  keepspaces=true,showstringspaces=false,breaklines=true,
   morekeywords={matrix,scalar,print,transpose,identity,zeros,ones},
-  morecomment=[l]{//},
-  morecomment=[s]{/*}{*/},
-  columns=fullflexible,
-  keepspaces=true,
-  showstringspaces=false,
-  aboveskip=4pt, belowskip=2pt,
-}
-\lstset{style=ml}
-
-\begin{document}
-
-\title{Shapes in the Type System}
-\subtitle{A Matrix Language That Lets a Compiler Course Reach Optimization}
-
+  keywordstyle=\bfseries,aboveskip=5pt,belowskip=5pt}
+\title{MatrixLang: Connecting Shape, Cost, and Numerical Contracts in a Teaching Compiler}
 \author{A Aswanth Raj}
-\affiliation{%
-  \institution{Compiler Design Laboratory}
-  \country{India}
-}
-
-%% ------------------------------------------------------------------ abstract
+\affiliation{\institution{School of Computer Science and Engineering, VIT Vellore}\city{Vellore}\country{India}}
+\author{Dr. RANJITHKUMAR S}
+\affiliation{\institution{School of Computer Science and Engineering, VIT Vellore}\city{Vellore}\country{India}}
+\renewcommand{\shortauthors}{A Aswanth Raj and RANJITHKUMAR S}
+\begin{document}
 \begin{abstract}
-A compiler-construction project is usually built for a subset of C, and the
-choice is rarely examined. In such a language the type system is a small
-enumeration, so semantic analysis reduces to comparing two tags and the
-optimizer has only scalar identities to work with.
-
-We report on MatrixLang, a language whose types carry matrix shapes, used for a
-one-semester compiler project. Every shape is known at compile time, so the
-compiler can cost a program before it runs, and can choose the bracketing of a
-matrix product chain. We measure the consequences on 400 generated programs.
-Optimized and unoptimized execution agree byte for byte on all of them.
-The optimizer removes a median of 48.5\% of the arithmetic (IQR 2.5 to 81.7).
-On the same programs, measured the conventional way instead, it removes 5.6\% of
-the instructions (IQR 0.0 to 9.1): the same optimizer, scored on a quantity it
-was never built to reduce.
-
-An instruction count therefore understates the effect roughly ninefold, and
-differential testing over the same corpus found a real defect in our own
-optimizer. MatrixLang reaches all eight canonical phases; three public C-subset
-course compilers reach five, three and six, and none contains an optimizer. We
-claim reachability, not a learning outcome: the language has not been taught.
+An optimization exercise needs both a measure of saved work and a specification
+of the behavior it must preserve. MatrixLang is a small, straight-line teaching
+compiler that makes these requirements inspectable: matrix dimensions flow from
+type checking into a scalar-arithmetic cost model, while separate strict and
+algebraic modes expose the numerical consequences of rewriting. We contribute
+the executable artifact and a reproducible technical characterization, rather
+than a new optimization algorithm or a claim about student learning.
+Across \CostPrograms{} generated cost programs, eight optimizer configurations
+separate pass effects from workload design. On heterogeneous shapes, algebraic
+optimization reduces modeled arithmetic by a median \ArithmeticMedian\%
+(IQR \ArithmeticQone--\ArithmeticQthree\%) and instruction count by
+\InstructionMedian\% (IQR \InstructionQone--\InstructionQthree\%);
+square and elementwise controls have zero chain savings. An independent exhaustive
+oracle agrees on \OracleChains{} chains. Strict optimization matches unoptimized
+hexadecimal output on all \ExecutionPrograms{} generated execution programs and
+\NumericalFixtures{} adversarial fixtures. Algebraic optimization matches all
+small dyadic cases yet differs on \BroadDifferences{} of 1,000 broad-value cases.
+These results support a concrete teaching artifact for studying cost, legality,
+and test adequacy together. They do not establish runtime speedups, universal
+floating-point correctness, or educational effectiveness.
 \end{abstract}
-
-\keywords{compiler construction, computing education, domain-specific languages,
-type systems, code optimization}
-
+\keywords{compiler construction, computing education, matrix shapes,
+optimization, floating-point semantics, reproducibility}
 \maketitle
 
-%% ------------------------------------------------------------- introduction
 \section{Introduction}
+Compiler projects connect language syntax to executable behavior. Choosing their
+scope is a design problem: a language must provide meaningful semantic and
+optimization tasks while leaving enough implementation time for an executable
+compiler. Prior work explicitly examines domain-specific source languages,
+phase selection, and alternative targets \cite{henry,schwartzbach}. A matrix
+language is one useful choice because a dimension is simultaneously a typing
+constraint and an input to a cost calculation.
 
-Ask what a compiler-construction course project should compile and the usual
-answer is a subset of C. Lab manuals specify it, textbooks assume it, and the
-public repositories students leave behind confirm it. Nobody argues for it,
-because nobody has to.
+That connection alone is insufficient. An instructor can show that a different
+parenthesization uses fewer arithmetic operations without showing when the
+transformation is legal. Over real numbers, matrix multiplication is associative;
+over binary64 values, intermediate rounding, overflow, and signed zeros can
+change observable output \cite{goldberg,icing}. Likewise, a shorter intermediate
+representation need not mean less arithmetic. These two distinctions make an
+optimizer a useful object of study rather than merely a collection of rewrites.
 
-The choice is defensible, and it is almost never examined, which is a pity,
-because its consequence for the rest of the course is not small.
-A subset of C has perhaps two numeric types, so its type system
-is an enumeration with two members. Semantic analysis over such a type system is
-a comparison of two tags. An optimizer over it has constant folding and the
-scalar identities, none of which involve anything the front end had to work to
-discover. The two phases that the syllabus presents as the intellectual centre
-of the subject become, in the project, the two phases with the least to do.
+MatrixLang provides a complete executable path from a Flex scanner and Bison
+parser through shape analysis, three-address code (TAC), optimization, typed
+target instructions, and a stack virtual machine (VM). It displays each phase
+and a transformation log. The language omits branches, loops, functions,
+pointers, and dynamic shapes. This bounded scope permits inspection of a whole
+program as one basic block, while retaining mutable variables, literals,
+matrix products, scalar scaling, and transposition.
 
-This paper reports what happened when we changed the source language instead of
-the curriculum. MatrixLang is a small imperative language whose values are
-scalars and matrices, and whose types carry matrix shape: a value is not of type
-\texttt{matrix} but of type \texttt{Matrix<2x3>}. Nothing about that idea is new,
-and we claim nothing about it (Section~\ref{sec:related}). What we report is
-what it made reachable in a course project, and what we measured once it was.
-
-\paragraph{Contributions.}
+Our contribution is an educational tool with a measured account of its
+behavior. We investigate three questions:
 \begin{enumerate}
-\item An account of a shape-typed matrix language used as a compiler-course
-      vehicle, with the design decisions that kept it within one semester
-      (Section~\ref{sec:lang}).
-\item The observation that shape information is a \emph{cost model} as well as a
-      correctness device, which lets a teaching optimizer be scored in
-      arithmetic removed rather than instructions removed
-      (Section~\ref{sec:cost}).
-\item Measurements on 400 randomly generated programs showing that the two
-      metrics disagree by roughly nine times, that chain re-bracketing helps
-      about 80\% of programs while leaving the instruction count untouched, and
-      that optimized and unoptimized execution agree everywhere
-      (Section~\ref{sec:eval}).
-\item A phase-by-phase comparison against three public C-subset course
-      compilers, none of which contains an optimizer
-      (Section~\ref{subsec:baselines}).
-\item A defect our own differential testing found: an algebraic rewrite that is
-      valid over the reals and unsound under IEEE-754 signed zero
-      (Section~\ref{subsec:differential}).
+\item How do modeled arithmetic reduction and TAC instruction reduction differ,
+and which passes account for that difference?
+\item How sensitive are those reductions to the distribution of shapes and
+expression forms supplied by the generator?
+\item What does an execution-equivalence check establish under strict and
+algebraic numerical contracts, and what does a small dyadic corpus miss?
 \end{enumerate}
+The artifact answers these questions through controlled ablations, shape and
+expression controls, numerical counterexamples, and an independent chain-cost
+oracle. It also provides exercises and an assessment rubric that instructors
+can adapt. These are proposed uses, not observations of classroom deployment.
 
-%% ------------------------------------------------------------------ related
-\section{Background and Related Work}
+The study's practical finding is that the contract and the workload must travel
+with an optimization result. A large modeled reduction can be legitimate in
+algebraic mode, absent in a square-shape control, and incompatible with exact
+strict output. The appropriate classroom task is therefore to explain a saving
+and its preconditions, not to maximize a percentage without a specification.
+
+\section{Positioning and Related Work}
 \label{sec:related}
+\paragraph{Compiler education.}
+Henry describes a domain-specific language as a compiler-course vehicle
+\cite{henry}. Schwartzbach examines language and phase choices, including the
+tradeoffs of distributing a project across compiler phases \cite{schwartzbach}.
+These works establish that selecting a project language is a recognized
+curricular decision. MatrixLang does not claim that C subsets inherently lack
+interesting semantics or optimization. Such languages can teach control flow,
+aliasing, conversion, and dataflow analysis that our artifact deliberately omits.
 
-\paragraph{Domain-specific languages in compiler courses.}
-Henry~\cite{henry2005teaching} argues that building a compiler for a
-domain-specific language engages students more than a conventional project,
-and reports using one in an upper-division course. That argument is about
-engagement. Ours is about which phases can carry content: a different claim
-about the same choice. Chakraborty et al.~\cite{chakraborty2011practicum}
-describe a compiler-construction practicum, and the scope problem a semester
-imposes on one. Abounegm et al.~\cite{abounegm2024stella} present Stella, a
-purpose-built extensible language for teaching type-system implementation, and
-report student outcomes; Stella targets type systems in a course that already
-assumes compiler basics, and makes no argument about source-language choice
-across the pipeline.
+Stella supports teaching the implementation of type systems through an extensible
+statically typed language \cite{stella}. Work on certified compilation takes
+a functional-language route to introducing correctness arguments
+\cite{certified}. More recent work supplies compiler intermediate-language
+infrastructure in Racket \cite{bowman} and course-oriented translation across
+multiple instruction sets \cite{urium}. Our emphasis is narrower: a single
+matrix domain connects shape rules to an inspectable cost model and to
+empirical checks of numerical rewrite legality. Those connections are the
+artifact's organizing principle, not an assertion that its pedagogy outperforms
+these alternatives.
 
-\paragraph{Shapes in types.}
-Static shape checking for matrix and tensor programs is an established and
-active area, from dependent and refinement types through to shape-typed
-intermediate representations in deep-learning compilers. MatrixLang's type
-system is the simplest thing in that space that works, and is not offered as a
-contribution.
+\paragraph{Linear algebra.}
+Linnea infers operand properties and generates efficient sequences of
+linear-algebra kernels \cite{linnea}. Generalized matrix-chain optimization
+accounts for more operations and structure than ordinary dense products
+\cite{gmc}. These are substantially richer optimization systems. MatrixLang
+implements a conventional dense chain dynamic program and small local passes
+to expose their operation to a learner. Static dimensions, property tracking,
+and cost-guided parenthesization are established mechanisms; their
+implementation here is not algorithmic novelty. We also do not compare our
+naive VM's runtime with optimized numerical libraries.
 
-\paragraph{Linear-algebra compilers.}
-Linnea~\cite{barthels2021linnea} generates efficient linear-algebra programs,
-costing candidate kernel sequences in floating-point operations and selecting
-among them, with a property inference engine covering identity, diagonal,
-triangular, symmetric, positive-definite and orthogonal operands. LGen and its
-structured-matrix successor~\cite{spampinato2014lgen,spampinato2016structured}
-compile fixed-size linear-algebra expressions to vectorised code. Everything
-MatrixLang's optimizer does, these systems do more thoroughly. Our cost model is
-the textbook $m p (2n-1)$ and our chain ordering is the textbook $O(k^3)$
-dynamic program, chosen in both cases because they are teachable in a lecture.
-The distinction we draw is one of purpose: those are production code generators
-evaluated against numerical libraries, and this is a course project evaluated on
-what a student can build and measure.
+\paragraph{Numerical contracts and testing.}
+Goldberg explains why real-number identities and floating-point evaluation
+cannot be interchanged freely \cite{goldberg}. Icing formalizes configurable
+fast-math rewrites in a verified compiler \cite{icing}; LLVM exposes separate
+permissions for reassociation, signed-zero treatment, and NaN and Infinity
+assumptions \cite{llvm}. Our two modes are a coarse, inspectable instructional
+interface to that established distinction. They provide neither a verification
+proof nor an error bound.
 
-\paragraph{Floating point.}
-That identities valid over the reals are unsound over IEEE-754 is textbook
-material~\cite{goldberg1991floating}, and production compilers gate the affected
-rewrites behind unsafe-math options for exactly this reason. We claim no finding
-about arithmetic; we report that a course-scale testing setup rediscovered one of
-these hazards in our own code.
+Csmith demonstrates validity-aware random generation and differential compiler
+testing \cite{csmith}; NNSmith extends validity and numerical considerations to
+deep-learning compiler tests \cite{nnsmith}. MatrixLang's generator is small
+and author-designed. It is used to characterize this compiler, not to advance
+test-generation algorithms. Its unoptimized and optimized executions share a
+front end and VM, so agreement alone cannot validate the language implementation.
+The separate enumeration oracle and scalar references address specific parts
+of that common-mode risk. Recent educational work on curated semantic mutants
+likewise emphasizes testing against meaningful specification faults
+\cite{mutants}. Our fixtures target optimizer contracts; we have no student-test
+or feedback study comparable to that classroom deployment.
 
-%% ------------------------------------------------------------------ language
-\section{MatrixLang}
-\label{sec:lang}
+\paragraph{Search scope.}
+Positioning used live Crossref and arXiv searches across functional, structural,
+causal, problem, effect, inverse, and adjacent-domain formulations, followed by
+targeted title searches and reference inspection around compiler education,
+linear-algebra compilation, and numerical correctness. Recent compiler-education
+preprints and the 2025--2026 SPLASH-E programs were checked separately. Broad
+queries often returned unrelated algebra or optimization material; an OpenAlex
+request was rate-limited. The companion search log records these limits. This
+is a scoped literature review, not a systematic review or an exhaustive novelty
+search. We make no priority claim about the combination.
 
-MatrixLang is imperative and deliberately small. A program is a sequence of
-declarations, assignments and prints:
+\section{Language and Compiler Design}
+\label{sec:design}
+\subsection{A bounded language with static shapes}
+The value types are \(\mathsf{Scalar}\) and \(\mathsf{Matrix}(r,c)\), with positive
+integer dimensions known at compile time. Declared dimensions are bounded by
+4,096 per axis to avoid conversion and cost overflow in the supported setting.
+Scalar values and matrix entries use C \texttt{double}; the evaluated platform
+uses binary64. Expressions support addition, subtraction, multiplication,
+negation, transposition, and constructors \texttt{identity}, \texttt{zeros},
+and \texttt{ones}. Programs contain declarations, assignments, and prints.
+A declaration can infer its shape from its initializer. An explicitly shaped
+matrix without an initializer is zero-filled by the VM.
 
-\begin{lstlisting}
-matrix A[2,3] = {{1, 2, 3},
-                 {4, 5, 6}};
-matrix B[3,4];
-matrix C = A * B;      // shape inferred: Matrix<2x4>
-print(C);
+Typing and instruction selection share the same shape rules. For environment
+\(\Gamma\), representative rules are:
+Writing \(M_{r,c}\) for \(\mathsf{Matrix}(r,c)\):
+\begin{gather}
+\frac{\Gamma\vdash A:M_{r,n}\quad\Gamma\vdash B:M_{n,c}}
+{\Gamma\vdash AB:M_{r,c}},\\
+\frac{\Gamma\vdash A:M_{r,c}\quad\Gamma\vdash B:M_{r,c}}
+{\Gamma\vdash A\pm B:M_{r,c}},\qquad
+\frac{\Gamma\vdash A:M_{r,c}}{\Gamma\vdash A^T:M_{c,r}}.
+\end{gather}
+A scalar times a matrix preserves the matrix's shape; scalar times scalar
+produces a scalar. Addition requires identical operand types, so there is no
+implicit scalar broadcasting. Assignments preserve a variable's declared or
+inferred type. Invalid operations are rejected before code generation, with
+diagnostics that report operand shapes and the violated rule.
+
+\begin{lstlisting}[caption={An inferred product and a shape-dependent chain.},label={lst:program}]
+matrix A[2,3] = {{1,2,3},{4,5,6}};
+matrix B[3,2] = {{1,0},{0,1},{1,1}};
+matrix P = A * B;       // Matrix(2,2)
+print(P);
+
+matrix X[100,2]; matrix Y[2,100];
+matrix Z[100,2];
+matrix R = X * Y * Z;
+print(R);
 \end{lstlisting}
+In Listing~\ref{lst:program}, changing \(B\)'s shape to \((5,2)\) makes the first
+product invalid. The second fragment can be costed without constructing its
+matrix values. Unparenthesized multiplication is left associative.
 
-There are two kinds of value, scalars and matrices, and the type of a matrix
-carries its shape. \texttt{Matrix<2x3>} and \texttt{Matrix<3x2>} are different
-types. Operations are $+$, $-$, $*$, unary $-$ and \texttt{transpose}, with
-\texttt{identity}, \texttt{zeros} and \texttt{ones} as constructors. Every shape
-rule lives in one 108-line file, consulted by both the semantic analyser and the
-code generator, so there is exactly one place that decides whether $A * B$ is
-legal and what shape it produces.
+\subsection{Inspection across phases}
+The scanner reports classified tokens and source locations. The parser builds
+an AST; semantic analysis annotates it with inferred types and maintains the
+symbol table. TAC then represents one operation per instruction, retaining
+shape and source information. A source-level multiplication becomes a matrix
+product, matrix scaling, or scalar multiplication according to the operand types.
+The backend emits distinct typed VM instructions for these cases.
 
-Two design decisions shaped the project more than any other.
+Command-line flags expose the token stream, AST, symbols, diagnostics, TAC,
+rewrite explanations, costs, target code, and execution trace. A browser
+demonstration additionally visualizes the scanner and the Bison-derived parsing
+automaton. Captured compiler output is regenerated from the executable; the
+browser front end is checked against the compiler over the example corpus.
+This supports examining the consequence of a phase, while the command-line
+compiler remains the authority for semantic and optimization behavior.
 
-\paragraph{There is no control flow.}
-MatrixLang has no \texttt{if} and no loops. The immediate consequence is that a
-program is a single basic block, so available-expression analysis and liveness
-are each one linear scan. A course reaches working common-subexpression
-elimination and dead-code elimination without first building a control-flow
-graph and an iterative dataflow framework. We offer this as a design rationale
-rather than a result: we have not measured student time against a
-control-flow-bearing alternative, and Section~\ref{sec:limits} says so.
+Generated temporary names are registered explicitly and skip user declarations.
+A user's variable named \texttt{t1} therefore cannot be mistaken for a temporary.
+Print instructions retain their source label even when operand copies are
+propagated. These representation details matter because a test compares visible
+program output, not merely the internal numerical value.
 
-\paragraph{Constructors exist so the optimizer can see properties.}
-\texttt{identity(n)} and \texttt{zeros(r,c)} are not conveniences. An optimizer
-can only fold $A \cdot I$ away if it knows some value \emph{is} an identity, and
-a shape does not tell it that: \texttt{Matrix<3x3>} is consistent with any
-$3\times3$ matrix. The optimizer therefore tracks a small property lattice alongside the shape
-(identity, zero matrix, scalar one, scalar zero, and ``is the transpose of
-$x$''), propagating it through copies and
-invalidating it on redefinition. Matrix literals are inspected for the same
-properties, so a hand-written $\{\{1,0\},\{0,1\}\}$ folds exactly as
-\texttt{identity(2)} does.
+\subsection{Shapes and value properties have different roles}
+A square shape does not imply an identity matrix. The optimizer maintains a
+separate property environment for identity and zero matrices, scalar zero and
+one, and transpose provenance. Constructors and inspected literals establish
+properties; copies propagate them. Assignments invalidate facts about redefined
+values and transpose relationships that depend on them.
 
-The compiler is 4{,}700 lines of C organised by phase, with Flex and Bison for
-the front end and no other dependency. It exposes one flag per phase
-(\texttt{--tokens}, \texttt{--ast}, \texttt{--symbols}, \texttt{--tac},
-\texttt{--optimize}, \texttt{--target}, \texttt{--run}), which turns assessment
-from reading source into running the tool.
+For example, if \(T=A^T\) is computed and \(A\) is subsequently reassigned,
+replacing \(T^T\) with the current \(A\) would be unsound. The implementation
+must distinguish a statement about the value originally transposed from a
+statement about a mutable name. The reassignment fixture exercises this boundary.
+The property environment is a small implementation device.
 
-%% ---------------------------------------------------------------- cost model
-\section{Shape Information as a Cost Model}
-\label{sec:cost}
+\section{Cost and Numerical Contracts}
+\label{sec:contracts}
+\subsection{Two metrics with different interpretations}
+The arithmetic model counts conventional scalar operations. A dense product
+of shapes \((m,n)\) and \((n,p)\) costs
+\begin{equation}
+F(m,n,p)=mp\bigl(n+(n-1)\bigr)=mp(2n-1).
+\label{eq:cost}
+\end{equation}
+Entrywise addition, subtraction, negation, and scalar scaling cost one operation
+per entry. Copies, constructors, transposition, and printing have zero modeled
+arithmetic cost. Their allocation, movement, and I/O costs remain real but are
+outside this metric. The model sums costs over live TAC instructions.
 
-The observation this paper is built around is that a shape known at compile time
-fixes arithmetic cost at compile time.
+Equation~\ref{eq:cost} follows a conventional dot-product count with \(n\)
+multiplications and \(n-1\) additions. The VM actually initializes its accumulator
+to positive zero and performs \(n\) additions. Thus the model does not count
+every executed VM arithmetic operation: it omits \(mp\) initial accumulation
+additions per product. This choice is explicit and used consistently by the
+optimizer and independent oracle. No result is presented as elapsed time,
+machine instructions, or energy saved.
 
-The product of an $m \times n$ matrix with an $n \times p$ matrix performs
-$m p n$ multiplications and $m p (n-1)$ additions. Every term is a shape, and in
-MatrixLang every shape is in the type. The compiler can therefore report exactly
-how much arithmetic a program will perform before it runs, and an optimizer can
-be scored on arithmetic removed rather than on lines removed.
+The second metric counts live TAC instructions, including copies and prints.
+For a program with positive baseline cost \(C_b\), arithmetic reduction is
+\(100(C_b-C_o)/C_b\); instruction reduction is defined analogously. Zero-cost
+baselines receive zero reduction rather than an undefined percentage.
+We summarize percentages per program, so a large product does not dominate
+solely because of its dimensions.
 
-That distinction matters more than it first appears. Removing one instruction
-that multiplies two $200\times200$ matrices is worth vastly more than removing
-three that add $2\times2$ ones, and an instruction count cannot tell them apart.
-Worse, an instruction count is easy to flatter: an example written so that many
-instructions vanish produces a good percentage.
+\subsection{Chain ordering and its instruction-count limit}
+For a chain of \(k\) matrices with dimension vector \(d_0,\ldots,d_k\), the
+conventional dynamic program uses \(M[i,i]=0\) and
+\begin{equation}
+M[i,j]=\min_{i\le s<j}\{M[i,s]+M[s+1,j]+
+F(d_i,d_{s+1},d_{j+1})\}.
+\label{eq:dp}
+\end{equation}
+Its table uses \(O(k^2)\) space and \(O(k^3)\) time. The implementation considers
+chains of at most 32 operands, retains the source order when the modeled cost
+does not improve, and emits the chosen tree in postorder.
 
-\paragraph{Chain ordering.}
-The optimization this makes possible is the one a scalar compiler cannot express
-at all. Matrix multiplication is associative, so $A \cdot B \cdot C$ may be
-bracketed either way and both compute the same matrix. They do not perform the
-same arithmetic. With $A$ of shape $100\times2$, $B$ of $2\times100$ and $C$ of
-$100\times2$:
+Any full binary parenthesization of \(k\) operands has \(k-1\) internal product
+nodes. This elementary structural fact explains why the chain-only pass can
+reduce arithmetic without deleting a product instruction. MatrixLang reuses
+exactly the original product slots and preserves the final destination. It
+requires single-use intermediate temporaries and contiguous product slots.
+Without contiguity, moving a leaf earlier could cross its definition or a
+variable write. The compiler conservatively declines such a chain instead of
+performing dependence analysis. This guard limits optimization opportunities
+and is included in the reported artifact.
 
-\begin{center}
-\begin{tabular}{@{}lr@{}}
-\toprule
-bracketing & arithmetic \\
-\midrule
-$(A \cdot B) \cdot C$ & 69{,}800 FLOP \\
-$A \cdot (B \cdot C)$ &  1{,}396 FLOP \\
-\bottomrule
-\end{tabular}
-\end{center}
+For the \((100,2),(2,100),(100,2)\) chain in Listing~\ref{lst:program}, the model
+assigns 69,800 operations to \((XY)Z\). The alternative \(X(YZ)\) costs 1,396.
+Each form still
+contains two product operations. The example illustrates a metric distinction;
+it is not a runtime benchmark and does not assert identical binary64 results
+for arbitrary matrix entries.
 
-The source says $A * B * C$ and $*$ is left-associative, so the program as
-written asks for the first. The compiler chooses the second, by the standard
-$O(k^3)$ dynamic program over the shapes. A chain of $k$ matrices needs exactly
-$k-1$ products under every bracketing, so this transformation \emph{never
-changes the instruction count} --- on this example it removes 98.0\% of the
-arithmetic while leaving the instruction count at four.
+\subsection{Strict mode}
+The default \texttt{--fp-strict} contract seeks to preserve printed values under
+the evaluated platform's fixed default floating-point environment. It retains
+source product association and disables real-algebra identity and zero rewrites.
+It permits finite scalar constant folding, double-transpose elimination,
+common-subexpression elimination (CSE), copy propagation, and dead-code
+elimination (DCE), subject to their data-dependence checks.
 
-%% --------------------------------------------------------------- evaluation
-\section{Evaluation}
-\label{sec:eval}
+Literal and folded scalar constants are serialized with 17 significant decimal
+digits for binary64 round trips. Folding declines a non-finite result, leaving
+the original arithmetic to produce it at execution. The hand-written C sources
+are built with \texttt{-ffp-contract=off} and without fast-math. Double transposition
+copies entries without arithmetic; CSE preserves operand order and invalidates
+available expressions on relevant redefinitions. Copy propagation stops at
+redefinitions of either the copied name or its source. DCE works backward from
+print uses. These local passes repeat until a round makes no change, with a
+ten-round implementation ceiling; chain ordering runs once before them when
+enabled and permitted.
 
-Every example program in the repository was written by the same person who wrote
-the optimizer, which makes any percentage taken over them circular: the examples
-that exercise a pass exist because the pass exists. All measurements below are
-taken on programs produced by a generator instead.
+The contract is intentionally narrower than complete IEEE-754 observational
+equivalence. The language exposes no rounding-mode changes or floating-point
+exception flags. Tests do not inspect NaN payloads, allocation failures, or
+host-specific extended precision. Eliminating unused computations may alter
+unobserved exception flags or resource use. We make no proof of correctness
+for all accepted programs or all platforms.
 
-The generator builds programs shape-correct by construction, assembling
-expressions from operands whose shapes already agree, and draws the shapes
-themselves at random. Dimensions are drawn from
-$\{1,2,3,5,8,12,20,32,50,80,120,200\}$ for cost measurement and from $1..4$ for
-execution. Products and chains are weighted to dominate the expression mix.
-Everything is reproducible from a recorded seed. We report two seeds of 200
-programs each and do not pool them, so the replication is visible.
+\subsection{Algebraic mode}
+The option \texttt{--fp-algebraic} permits identities over real numbers and
+chain reassociation. In addition to strict passes, it can replace multiplication
+by an identity with a copy, remove zero additions, and replace zero products
+with zero constructors. Shape correctness remains required. Exact binary64
+output, signed-zero behavior, and NaN/Infinity propagation may change.
 
-\subsection{Does optimization preserve meaning?}
-\label{subsec:differential}
+This distinction is operational rather than cosmetic. For a negative scalar,
+\(x\times0\) can produce negative zero, while the replacement literal is positive
+zero. A matrix containing Infinity multiplied by an identity can produce NaN
+through an off-diagonal \(\infty\times0\), while a copy cannot. A reassociated
+chain can avoid an overflowing intermediate. Algebraic mode authorizes such
+changes; output inequality there is reported as a contract consequence, not
+automatically classified as a compiler defect. No tolerance or relative-error
+guarantee is offered.
 
-Each generated program is executed twice, with the optimizer and without, and
-the outputs compared byte for byte. Across both seeds, 400 of 400 programs agree.
+\section{Evaluation Method}
+\label{sec:method}
+\subsection{Protocol and implementation boundary}
+The local evaluation protocol was recorded before running seeds 101--110.
+Earlier seeds 1 and 2 were development data. This is an exploratory technical
+characterization, not an externally preregistered confirmatory experiment.
+The stopping rule executes every declared case and arm, and any subprocess
+failure, malformed result, or strict output disagreement fails the run.
+No generated observations were excluded, and the compiler or generator was
+not tuned on the reported evaluation outcomes.
 
-That result is only interesting because the first run did not.
-One program in the first 200 disagreed: it printed \texttt{0} unoptimized and
-\texttt{-0} optimized. The cause was an algebraic rewrite in our own optimizer,
-$0 - x \Rightarrow -x$. The identity holds over the reals. It does not preserve
-observable behaviour in IEEE-754, because $+0 - +0$ evaluates to $+0$ while
-negating $+0$ gives $-0$, and the two print differently. We removed the rewrite;
-it saves no arithmetic, since a negation costs what a subtraction from zero
-costs.
+The evaluated implementation is a C11 executable built on Windows with the
+MSYS2/MinGW toolchain. Python orchestrates independent subprocess invocations.
+The environment manifest records the platform, Python version, executable hash,
+protocol hash, source hashes, arm flags, output hashes, and elapsed evaluation
+time. That elapsed time records evaluation provenance, not compiler performance.
+Generators, analysis scripts, numerical fixtures, raw observations, and generated
+LaTeX tables accompany the manuscript.
+We repeated all measurements after declaration-boundary and provenance-packaging
+repairs; these repairs did not change the workloads or optimizer configurations.
 
-We draw two things from this. The hazard itself is textbook, and we claim
-nothing about it. What is worth reporting is that a testing setup of a size a
-course project can build, a generator and a loop comparing two runs, found a
-defect in a student-scale optimizer that code review had not, on an input
-nobody had chosen. Over the author-written example corpus the same check passes, and passing
-there demonstrates only that the code runs.
+\subsection{Workloads and controls}
+\label{sec:workloads}
+Each cost profile supplies 100 programs at each of ten seeds, for 1,000 programs
+per profile. Each program starts with a scalar, two runs of five compatible
+matrix declarations, and two additional matrices. It creates four result
+expressions and prints all four. Recursive expression depth is chosen from
+two through four; unavailable compatible operands fall back to simpler
+expressions. Each program uses its own stream seeded by
+\(1{,}000{,}003\times\mathit{seed}+\mathit{index}\).
 
-\subsection{Arithmetic against instructions}
+The heterogeneous profile draws each dimension uniformly from
+\(\{1,2,3,5,8,12,20,32,50,80,120,200\}\).
+Its expression choices weight chain generation three times, ordinary products
+twice, and addition, subtraction, transpose, scaling, and variable selection
+once each. Chain generation attempts three through five operands, but available
+shapes can shorten a chain. Compatible declaration runs deliberately create
+chain opportunities. This is a designed workload, not a sample of naturally
+occurring student programs.
 
-\begin{figure}[t]
+Four controls change that design. \emph{Square} uses one dimension chosen from
+\(\{2,8,32,120\}\) for every axis in a program; every parenthesization then has
+the same modeled product cost. \emph{Narrow} restricts dimensions to 8--12.
+\emph{Balanced} retains heterogeneous shapes but assigns one equal weight to
+each expression category. \emph{Elementwise} removes products and chains from
+the category choices, retaining addition, subtraction, transpose, scaling, and
+variables. Cost programs are not executed: their zero-filled input declarations
+provide shape information but do not constitute measured numerical workloads.
+
+\subsection{Ablation configurations}
+Eight configurations run on each identical cost program. \emph{Strict} enables
+the default local optimizer. \emph{Algebraic} enables all passes with the relaxed
+contract. \emph{Chain only} permits chain ordering alone. \emph{No chain} permits
+algebraic simplification, CSE, copy propagation, and DCE without chain ordering.
+Four individual-pass arms enable algebraic simplification, CSE, copy propagation,
+or DCE respectively; only the algebraic-simplification arm opts into the relaxed
+contract. Each reported percentage uses the same program's unoptimized baseline.
+The study contains \CostObservations{} cost-arm observations.
+
+These arms distinguish attribution from correlation. Removing chain ordering
+tests whether local cleanup explains the arithmetic saving; chain-only tests
+whether instruction deletion is necessary. Single-pass arms illustrate
+interactions but are not an additive decomposition: an identity can become a
+copy that propagation and DCE subsequently remove. Their sum need not equal
+the full optimizer's reduction.
+
+\subsection{Execution comparisons and adversaries}
+Execution tests use dimensions 1--4, the heterogeneous expression mix, and
+literal-initialized matrices. The dyadic population uses small integer entries
+from \(-3\) through 5 and scalar choices from
+\(\{2,3,0.5,1.5,-2\}\). The broad-value population draws signed matrix entries
+with mantissas uniformly between 0.1 and 9.9 and decimal exponents uniformly
+from \(-12\) through 12. Scalar choices remain the same. Each population has
+1,000 programs over the ten seeds.
+
+Each program runs unoptimized, strict optimized, and algebraic optimized. The
+\texttt{--exact-output} switch prints hexadecimal floating-point values, avoiding
+the six-significant-digit display that can conceal small rounding differences.
+Comparison includes every printed entry and its label. Hexadecimal equality
+distinguishes finite binary64 values and signed zero; textual NaN output does
+not distinguish payloads. All mismatch outputs and source hashes are retained.
+
+The suite has \NumericalFixtures{} fixtures for literal precision, folded constants,
+cancellation, signed zero, overflow/NaN, identity multiplication,
+subnormals, double transpose, mutable-variable invalidation, temporary naming,
+and chain dependencies. Six scalar fixtures also compare packed binary64 values
+with independently evaluated Python references. The fixtures were designed
+during development and are regression tests, not randomly sampled prevalence
+evidence.
+
+\subsection{Independent chain-cost oracle}
+For each seed, the oracle generates 25 compatible dimension vectors at each
+chain length from three through seven operands. It recursively enumerates
+every binary parenthesization, without memoization, compiler cost imports, or
+the compiler's dynamic-programming implementation. It calculates the conventional
+cost of every tree and compares the minimum with the chain-only compiler result.
+The \OracleChains{} chains contain \OracleTrees{} enumerated trees in total.
+Instruction counts are checked before and after every chain rewrite.
+
+This oracle validates small-chain minimum cost under the declared model. It does
+not validate numerical equivalence, all 32 supported operands, or every
+dependence guard. The adversarial noncontiguous-chain fixture tests the separate
+dependency boundary.
+
+\subsection{Analysis and uncertainty}
+For each profile and arm, we report pooled per-program median and interquartile
+range (IQR), per-seed summaries, and zero-saving counts. The primary paired
+contrast is each program's arithmetic reduction minus its instruction reduction,
+in percentage points. A percentile bootstrap resamples the ten seed clusters
+with replacement, retaining all programs within each selected cluster, and
+recomputes the pooled paired median. It uses 2,000 resamples and seed 87123.
+This interval describes generator-stream sensitivity; ten clusters provide
+limited precision and do not support inference to real courses or workloads.
+
+Wilson intervals describe synthetic mismatch frequencies under the stated
+sampling interpretation. The full per-seed counts are also reported so that
+the apparent precision of a pooled interval is not mistaken for independent
+classroom replication. No significance tests, multiplicity-adjusted hypotheses,
+or best-arm selection are used. The controls and ablations are descriptive.
+
+\section{Results}
+\label{sec:results}
+\begin{figure*}[t]
 \centering
-\includegraphics[width=\columnwidth]{figures/reduction.pdf}
-\caption{What the optimizer removes from 400 generated programs, by each metric.
-Left: the cumulative distribution of per-program reduction. Right: the medians,
-over the same programs.}
-\label{fig:reduction}
-\end{figure}
+\includegraphics[width=\textwidth]{figures/research.pdf}
+\Description{Two panels compare arithmetic and instruction reductions and show
+that algebraic arithmetic savings vary substantially across five workloads.}
+\caption{Left: empirical cumulative distributions of per-program reduction on
+1,000 heterogeneous cost programs. Chain-only instruction reduction is identically
+zero and omitted. Right: algebraic arithmetic medians and IQRs across profiles;
+crosses mark strict medians. Error bars are distribution quartiles, not confidence
+intervals. The results describe modeled work, not elapsed time.}
+\label{fig:study}
+\end{figure*}
+\begin{table*}[t]
+\caption{Shape and expression sensitivity, 1,000 programs per row. Entries are
+median (IQR) percentage reductions. Arithmetic columns use the conventional model;
+the instruction column uses live TAC count for the full algebraic optimizer.}
+\label{tab:profiles}
+\centering\small\input{generated/distributions.tex}
+\end{table*}
 
-Measured both ways on the same programs, the optimizer removes
-a median of 48.5\% of the arithmetic (IQR 2.5 to 81.7).
-It removes a median of 5.6\% of the instructions (IQR 0.0 to 9.1).
-
-Figure~\ref{fig:reduction} shows the two distributions, and
-Table~\ref{tab:seeds} gives the figures at each seed separately. The gap is
-not an artifact of the median: the arithmetic curve lies above the instruction
-curve across its whole range, and the direction is the same at both seeds.
-
-\begin{table}[t]
-\caption{Per-program reduction, by corpus and by metric. Each figure is a
-median over the programs in that row, with its interquartile range beside it.
-The two seeds are independent corpora of 200 programs each; pooled is all 400.}
-\label{tab:seeds}
-\small
-\begin{tabular}{lll}
-\toprule
-corpus & arithmetic removed & instructions removed \\
-\midrule
-first seed & 47.3\% (IQR 1.1 to 78.3) & 5.3\% (IQR 0.0 to 9.2) \\
-second seed & 49.7\% (IQR 2.7 to 82.2) & 5.9\% (IQR 0.0 to 9.1) \\
-\addlinespace
-pooled & 48.5\% (IQR 2.5 to 81.7) & 5.6\% (IQR 0.0 to 9.1) \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-The reason is structural rather than incidental. Most of what the optimizer
-removes is expensive work rather than many lines, and the largest single
-contributor, chain re-bracketing, removes no lines at all by construction.
-An optimizer scored in instructions is being scored on a quantity it was not
-built to reduce.
-
-\subsection{How often does bracketing matter?}
-
-Chain re-bracketing changes something on 79.8\% (Wilson 95\% CI 75.5 to 83.4) of generated programs, 319 of 400.
-On those it removes a median of 60.1\% of the arithmetic (IQR 26.2 to 84.0).
-
-The two corpora agree closely. At the first seed it is 79.5\%, 159 of 200 (Wilson 95\% CI 73.4 to 84.5).
-At the second it is 80.0\%, 160 of 200 (Wilson 95\% CI 73.9 to 85.0).
-
-Roughly a fifth of programs are left alone, and they belong in the table.
-When the shapes make left-to-right the cheapest bracketing, the dynamic program
-says so and the compiler does nothing. Twenty-seven programs at
-the first seed saw no arithmetic reduction from any pass at all. An optimizer
-that always reports an improvement is not measuring anything.
-
-\subsection{What the baselines reach}
-\label{subsec:baselines}
-
-MatrixLang reaches 8 of 8 canonical phases; the baselines reach 5, 3 and 6.
-We cloned three public repositories that describe themselves as compiler-design
-course projects for a subset of C built with Lex and Yacc, selected by that
-description before their contents were inspected, and searched each for markers
-of the eight canonical phases. A single case-insensitive mention counts as
-present, which is generous to the baselines. No tuning or configuration was
-applied to any repository: the comparison is of what each contains, not of how
-well any of them performs.
+\subsection{Metric disagreement and pass attribution}
+On heterogeneous programs, the full algebraic optimizer reduces modeled
+arithmetic by a median \ArithmeticMedian\% (IQR
+\ArithmeticQone--\ArithmeticQthree\%) and instructions by
+\InstructionMedian\% (IQR \InstructionQone--\InstructionQthree\%).
+The median of the paired per-program difference is \DeltaMedian{} percentage
+points, with a seed-cluster bootstrap 95\% interval of
+\DeltaLow--\DeltaHigh{} points. This paired quantity is not the difference
+between the two marginal medians, nor a ratio of medians interpreted as a
+speedup. Figure~\ref{fig:study} shows the distributions rather than only their
+centers.
 
 \begin{table}[t]
-\caption{Compiler phases for which a marker was found. Three public C-subset
-course projects, and MatrixLang.}
-\label{tab:phases}
-\small
-\begin{tabular}{@{}lcccc@{}}
-\toprule
-phase & ML & B1 & B2 & B3 \\
-\midrule
-lexical analysis        & \checkmark & \checkmark & \checkmark & \checkmark \\
-syntax analysis         & \checkmark & \checkmark & \checkmark & \checkmark \\
-symbol table            & \checkmark & \checkmark &            & \checkmark \\
-semantic analysis       & \checkmark & \checkmark &            & \checkmark \\
-intermediate code       & \checkmark &            & \checkmark & \checkmark \\
-code optimization       & \checkmark &            &            &            \\
-target code generation  & \checkmark & \checkmark &            & \checkmark \\
-execution               & \checkmark &            &            &            \\
-\midrule
-total                   & 8 & 5 & 3 & 6 \\
-\bottomrule
-\end{tabular}
+\caption{Heterogeneous-profile ablations. Each arm has 1,000 programs. Reductions
+are median (IQR) percentages; the last column retains zero-saving cases.}
+\label{tab:ablations}
+\centering\footnotesize
+\resizebox{\columnwidth}{!}{\input{generated/ablations.tex}}
 \end{table}
 
-Table~\ref{tab:phases} gives the result. MatrixLang reaches all eight. The
-baselines reach five, three and six, and \emph{none of the three contains an
-optimizer or an execution engine}: all stop at intermediate code generation.
+Table~\ref{tab:ablations} isolates the main mechanism. Chain-only has a 41.2\%
+median arithmetic reduction and zero instruction reduction. Removing chain
+ordering lowers the arithmetic median to zero while retaining a 5.3\%
+instruction median. The chain-only pass saves arithmetic on \ChainShare\%
+of heterogeneous programs; the remainder are included, not discarded as
+uninteresting. The full algebraic configuration leaves 173 of 1,000 programs
+with no arithmetic saving. No arm produces a negative arithmetic or instruction
+reduction in this evaluation.
 
-This is an existence result at $n=3$ on a convenience sample, and we report it
-as one. It does not establish a proportion over what courses assign. It does
-establish that the pattern the design was aimed at is real in practice, and it
-is consistent with what the scope discussion in the pedagogy literature would
-predict.
+Single-pass medians are zero, including CSE and DCE, but some individual programs
+benefit. Copy propagation alone changes operands without deleting instructions
+or arithmetic, so both metrics remain zero by construction. The combined
+pipeline's effects cannot be inferred from single-pass medians alone. The
+strict arm removes instructions but has a zero arithmetic median on this
+workload; that is consistent with disabling the reassociation mechanism
+responsible for most modeled savings.
 
-%% --------------------------------------------------------------- discussion
-\section{Discussion}
+\subsection{The workload is part of the result}
+Table~\ref{tab:profiles} refutes a corpus-independent interpretation of the
+heterogeneous result. On the square profile, chain-only saves exactly zero
+arithmetic on every program, as predicted by equal product costs for all trees.
+The full algebraic optimizer still removes a median 4.3\% of TAC instructions,
+demonstrating the converse distinction: cleanup can shorten code without a
+nonzero median arithmetic saving.
 
-\paragraph{What the domain bought.}
-Three phases gained content that a C-subset project does not give them.
-\emph{Semantic analysis} became shape inference: the analyser computes the shape
-of every expression and rejects the operations whose shapes do not combine, with
-a diagnostic naming both operands, the rule, and the values found. \emph{Code
-generation} gained instruction selection, because one source-level \texttt{*}
-becomes a matrix product, a scaling or a scalar multiply depending only on
-inferred types. \emph{Optimization} gained transformations with a measurable
-effect and a cost model to measure them with.
+Restricting dimensions to 8--12 lowers full algebraic median arithmetic reduction
+to 8.9\%; the chain-only median is 7.7\%. Equal category weights lower the
+heterogeneous full median to 4.6\%, with a broad IQR of 0.0--64.3\%.
+The elementwise profile has zero chain savings on every case and zero median
+full arithmetic reduction, while instruction reduction remains 5.6\%.
+The gap is therefore neither an invariant of matrix languages nor a property
+of instruction counting alone. It depends on the operations and shapes supplied.
 
-\paragraph{What it cost.}
-The language has no control flow, so the project does not teach control-flow
-graphs or iterative dataflow analysis, which a C-subset project can. This is a
-real trade and we do not think it is free. Our position is that a course reaching
-a working optimizer over straight-line code teaches more about optimization than
-one that builds a CFG and runs out of semester before using it, but we have not
-tested that position.
+Per-seed results in Appendix~\ref{app:seeds} expose variation hidden by pooling.
+They do not turn ten generator seeds into ten courses, implementations, or
+hardware platforms. The executable and declared generator population are the
+scope of the result.
 
-\paragraph{On measuring optimizers in a course.}
-The wider transferable point does not depend on matrices. Whatever the domain,
-if the type system carries enough information to cost a program statically, a
-student's optimizer can be evaluated on work removed rather than lines removed,
-and the two are not close. We would expect the same argument to apply to a
-language over units, over relational algebra, or over fixed-size vectors.
+\subsection{Numerical agreement depends on the contract and test values}
+Strict optimization matches unoptimized hexadecimal output on all
+\ExecutionPrograms{} generated execution programs: 1,000 dyadic and 1,000
+broad-value cases. Both groups have zero observed disagreements; separately,
+a Wilson 95\% interval has an upper endpoint of approximately 0.38\%.
+This is evidence of agreement on those synthetic populations, not a universal
+correctness bound.
 
-%% -------------------------------------------------------------- limitations
-\section{Limitations}
-\label{sec:limits}
+Algebraic optimization also matches all dyadic cases, but differs on
+\BroadDifferences{} of 1,000 broad-value cases (81.3\%; Wilson 95\% interval
+78.8--83.6\%). Per-seed mismatch counts range from 72 through 89 of 100.
+These differences include the rounding effects allowed by the contract;
+the comparison does not measure numerical error relative to an exact-real
+solution. Nor does it attribute every mismatch to reassociation rather than
+to another permitted algebraic rewrite.
 
-\emph{It has not been taught.} MatrixLang was built as a project, not yet
-deployed as one. We claim what the design makes reachable; we make no claim
-about learning, retention, or student time, and we have no student data.
+All \NumericalFixtures{} adversarial fixtures match in strict mode, and all
+six independent scalar references agree. Algebraic mode differs on
+\FixtureDifferences{} fixtures. The chain-overflow case uses shapes
+\((5,1),(1,5),(5,1)\), with entries near \(10^{200},10^{200},10^{-200}\).
+The source order overflows its first product; the cheaper reassociation keeps
+that intermediate finite. Both are valid executions under their respective
+contracts. Signed-zero and identity-with-Infinity cases give smaller
+counterexamples to exact-algebra substitution.
 
-\emph{The corpus is synthetic.} The generator was written for this project, so
-the distribution of shapes and expression forms is a choice rather than a sample
-of real MatrixLang programs, and no such sample can exist for a new language.
-The direction of the cost-versus-instruction result does not depend on that
-choice.
-The magnitude is not, and should be read as a property of this corpus.
+The contrast between zero dyadic mismatches and frequent broad-value differences
+shows why a successful narrow differential test cannot establish general
+floating-point preservation. The artifact makes the counterexamples directly
+executable, so an instructor can ask what an oracle checks before discussing
+how many programs it checks.
 
-\emph{The baseline sample is small.} Three repositories, chosen by search
-description, all from one hosting site.
+\subsection{Minimum modeled chain cost agrees with enumeration}
+For all \OracleChains{} oracle chains, the compiler's chosen cost equals the
+minimum over all enumerated parenthesizations. All before/after instruction
+counts agree. The comparison covers \OracleTrees{} trees and chain lengths
+three through seven. It independently checks the recurrence implementation's
+objective on these dimensions; it does not prove global compiler correctness.
 
-\emph{The cost model is a model.} It counts scalar arithmetic and ignores memory
-traffic, cache behaviour and parallelism, all of which dominate real runtimes.
-It is the right measure for what an optimizer removed and the wrong one for how
-fast the result runs.
+\section{Using the Artifact in a Course}
+\label{sec:teaching}
+The intended users are students who already know basic C, syntax trees,
+elementary type checking, and matrix multiplication. An instructor can provide
+the scanner, parser, and VM as infrastructure and ask students to implement
+shape rules or optimizer passes. Alternatively, the phases can be constructed
+in sequence. The repository includes phase demonstrations and a more detailed
+exercise sheet with expected artifacts and a rubric. Neither delivery pattern
+has been evaluated with learners.
 
-%% -------------------------------------------------------------- conclusion
+\paragraph{Exercise 1: make a type fact useful twice.}
+Students infer \(\mathsf{Matrix}(r,c)\) through products and transpositions,
+reject incompatible dimensions, and use the same operand types to select
+matrix-product versus scaling instructions. Assessment examines accepted
+and rejected programs, diagnostic specificity, and the absence of inconsistent
+duplicate shape rules.
+
+\paragraph{Exercise 2: explain an optimization's objective.}
+Students calculate both bracketings of a short chain, enumerate all trees of
+a longer one, and compare their answer with the dynamic-programming pass.
+They report arithmetic and TAC reductions separately. The square-shape control
+asks them to explain a legitimate zero saving, while a copy-propagation-only
+arm distinguishes rewritten operands from deleted work.
+
+\paragraph{Exercise 3: state legality before rewriting.}
+Students run the negative-zero, identity-with-Infinity, and chain-overflow
+fixtures under both modes. They must state which observations each contract
+preserves and why a real-number identity is insufficient evidence for strict
+replacement. A mutable-variable transpose case introduces invalidation;
+a noncontiguous chain introduces a dependence barrier.
+
+\paragraph{Exercise 4: audit a reassuring test.}
+Students compare dyadic and broad-value corpora with ordinary display output
+and hexadecimal output. They identify what a shared VM can conceal and add
+an independent reference for a selected operation. Assessment rewards a
+counterexample and a clearly scoped oracle, not a claim of correctness from
+zero observed mismatches.
+
+The proposed rubric assigns credit to shape correctness, data-dependence
+reasoning, numerical-contract compliance, faithful measurement, and
+reproducibility. Percentage savings are evidence to explain rather than the
+grading objective. An instructor adopting the artifact should separately
+measure completion time, conceptual understanding, and usability before
+making claims about educational benefit.
+
+\section{Limitations and Threats to Validity}
+\paragraph{Educational validity.}
+There are no student participants or classroom outcomes. Completion time and
+alternative teaching languages have not been evaluated. An executable
+exercise demonstrates available behavior, not learnability or improved
+instruction. Proposed exercises and rubric remain unvalidated. A future
+classroom study would need an instructor-defined curriculum, appropriate
+ethics review, a comparable alternative, and direct learning measures.
+
+\paragraph{Workload validity.}
+Generation emphasizes chains.
+The sensitivity controls show the magnitude of that choice
+but do not span real student programs. Generated programs rarely explore the
+full range of reassignment or constructor identities; fixed fixtures cover
+some of those cases separately. Cost and execution populations use different
+dimension ranges, so we do not join a cost observation to a numerical accuracy
+claim about the same workload.
+
+\paragraph{Oracle and platform validity.}
+Execution comparisons share scanner, parser, shape analyzer, code generator,
+and VM. Two paths can agree on a common error. Enumeration checks modeled
+parenthesization cost, while six scalar references cover only a narrow value
+path. There is no independently implemented full matrix interpreter,
+formal semantics proof, or cross-platform validation. Hexadecimal output does
+not inspect NaN payloads. Compilation without contraction and the default
+floating-point environment are part of the tested configuration.
+
+\paragraph{Metric validity.}
+The arithmetic model ignores allocation, data movement, memory hierarchy,
+kernel implementation, and the VM's initial accumulation additions. It counts
+only the operations it defines and is suitable for explaining that objective.
+A cheaper tree can require a larger intermediate or run slower. No measured
+runtime, memory, energy, or accuracy benefit follows from the reported cost
+reductions. TAC instructions are likewise not native machine instructions.
+
+\paragraph{Implementation and statistical limits.}
+Chain ordering is conservative about noncontiguous slots and single-use
+temporaries, and its exhaustive check stops at seven operands. Optimizer
+iteration is bounded by ten rounds. Ten seed clusters limit uncertainty
+estimation, and the bootstrap interval describes this generator rather than
+all possible programs. Wilson intervals assume the stated sampling view and
+must be read beside per-seed variation. All reported configurations share one
+implementation; external compiler performance baselines would answer a
+different question.
+
 \section{Conclusion}
+MatrixLang provides an inspectable connection between shape typing, modeled
+work, and numerical rewrite contracts in a small executable compiler. Its
+controlled evaluation shows that chain ordering can change arithmetic without
+changing product count, that shape and expression controls can largely remove
+the saving, and that small dyadic execution tests can conceal the numerical
+changes permitted by algebraic optimization. Strict mode agrees with all
+tested outputs, while an independent enumeration oracle checks small-chain
+minimum cost. The contribution is the artifact, its reproducible
+characterization, and proposed instructional uses. Classroom effectiveness
+and universal correctness remain open questions.
 
-The source language of a compiler project is a curricular decision, and it
-decides which phases can carry real work. A subset of C leaves semantic analysis
-and optimization with little to do, which is visible in the public record: of
-three C-subset course compilers we measured, none contains an optimizer.
+\section*{Artifact Availability and Research Integrity}
+\ifdefined\AnonymousDraft
+The supplementary artifact contains the compiler, protocol, raw observations,
+analysis scripts, regression fixtures, and proposed exercises. An anonymous
+artifact access method must be supplied for venue submission.
+\else
+The compiler and study artifacts are available at
+\url{https://github.com/aswanth-07/matrixlang}. The repository's
+\path{paper/README.md} gives reconstruction commands and maps each result to
+its raw data and generator. The code is released under the repository's MIT
+license. This manuscript is a technical draft for author review, not an
+accepted publication.
+\fi
+The reported evaluation uses synthetic programs and executable numerical
+fixtures; no human-participant study was conducted. Generative AI assistance
+was used for implementation and repairs, literature discovery, evaluation
+scripts, analysis, and manuscript drafting. Automated checks and primary-source
+inspection provide the reported technical verification. Human authors retain
+responsibility for the manuscript; final author approval and administrative
+declarations are tracked in the companion submission checklist rather than
+asserted as completed here.
 
-Putting matrix shapes into the type system changes that, because a shape is both
-a correctness device and a cost model. The resulting course project reaches all
-eight canonical phases, and its optimizer can be scored honestly. Over 400
-programs an instruction count reports a median reduction of 5.6\% (IQR 0.0 to 9.1).
-The arithmetic actually removed is a median of 48.5\% (IQR 2.5 to 81.7).
-
-Whether students learn more this way is the obvious next question and the one we
-cannot yet answer. The compiler, the generator and the measurement scripts are
-available so that someone teaching a course can find out.
-
-%% ------------------------------------------------------------- statements
-\section*{Data and Code Availability}
-
-Code availability: the compiler, the program generator and the measurement
-scripts are in the project repository. Data availability: the recorded
-experiment output is in the same repository. Every figure and table in this
-paper is regenerated from that recorded output rather than transcribed, and the
-generated corpora are reproducible from the seeds given.
-
-\section*{Funding}
-
-This work received no external funding.
-
-\section*{Conflicts of Interest}
-
-The author declares no competing interests, financial or otherwise.
-
-\section*{Ethics Statement}
-
-No human participants took part and no personal data was collected. The study
-measures source code, some of it from public repositories, used as published.
-
-%% ---------------------------------------------------------- AI disclosure
-\section*{Use of AI Assistance}
-
-An AI coding assistant was used during implementation, literature search and
-drafting. All design decisions, measurements and claims were reviewed and
-validated by the author, who is responsible for the content of this paper.
-
-\section*{Reproducibility Checklist}
-
-Each result in this paper can be regenerated from the repository with a
-single command, and no number in it was transcribed by hand.
-
-\begin{itemize}
-\item \emph{Corpora.} \texttt{tools/gen\_programs.py} writes the generated
-      programs. Output depends only on the seed; seeds 1 and 2 are reported.
-\item \emph{Measurements.} \texttt{tools/run\_experiments.py} runs the
-      differential, cost and chain experiments and writes per-program JSON.
-\item \emph{Figure~\ref{fig:reduction}.} \texttt{tools/plot\_reduction.py}
-      draws it from that JSON.
-\item \emph{Table~\ref{tab:phases}.} \texttt{tools/compare\_baselines.py}
-      records its selection rules and marker list in its own output.
-\end{itemize}
-
-%% ------------------------------------------------------------- bibliography
-\begin{thebibliography}{9}
-
-\bibitem{henry2005teaching}
-Tyson R. Henry. 2005.
-\newblock Teaching compiler construction using a domain specific language.
-\newblock In \emph{Proceedings of the 36th SIGCSE Technical Symposium on
-Computer Science Education}.
-\newblock DOI: 10.1145/1047344.1047364
-
-\bibitem{chakraborty2011practicum}
-Pinaki Chakraborty, P. C. Saxena, C. P. Katti, Gauri Pahwa, and Shweta Taneja.
-2011.
-\newblock A new practicum in compiler construction.
-\newblock \emph{Computer Applications in Engineering Education}.
-\newblock DOI: 10.1002/cae.20566
-
-\bibitem{abounegm2024stella}
-Abdelrahman Abounegm, Nikolai Kudasov, and Alexey Stepanov. 2024.
-\newblock Teaching Type Systems Implementation with Stella, an Extensible
-Statically Typed Programming Language.
-\newblock In \emph{Trends in Functional Programming in Education (TFPIE 2024)},
-EPTCS 405.
-\newblock arXiv: 2407.08089
-
-\bibitem{barthels2021linnea}
-Henrik Barthels, Christos Psarras, and Paolo Bientinesi. 2021.
-\newblock Linnea: Automatic Generation of Efficient Linear Algebra Programs.
-\newblock \emph{ACM Transactions on Mathematical Software} 47, 3.
-\newblock DOI: 10.1145/3446632
-
-\bibitem{spampinato2014lgen}
-Daniele G. Spampinato and Markus P\"uschel. 2014.
-\newblock A Basic Linear Algebra Compiler.
-\newblock In \emph{Proceedings of the Annual IEEE/ACM International Symposium on
-Code Generation and Optimization}.
-\newblock DOI: 10.1145/2544137.2544155
-
-\bibitem{spampinato2016structured}
-Daniele G. Spampinato and Markus P\"uschel. 2016.
-\newblock A basic linear algebra compiler for structured matrices.
-\newblock In \emph{Proceedings of the 2016 International Symposium on Code
-Generation and Optimization}.
-\newblock DOI: 10.1145/2854038.2854060
-
-\bibitem{goldberg1991floating}
-David Goldberg. 1991.
-\newblock What every computer scientist should know about floating-point
-arithmetic.
-\newblock \emph{ACM Computing Surveys} 23, 1, 5--48.
-\newblock DOI: 10.1145/103162.103163
-
+\begin{thebibliography}{14}
+\bibitem{henry} Tyson R. Henry. 2005.
+Teaching compiler construction using a domain specific language.
+In \emph{SIGCSE}. \url{https://doi.org/10.1145/1047344.1047364}.
+\bibitem{schwartzbach} Michael I. Schwartzbach. 2008.
+Design Choices in a Compiler Course or How to Make Undergraduates Love Formal
+Notation. In \emph{Compiler Construction}.
+\url{https://doi.org/10.1007/978-3-540-78791-4_1}.
+\bibitem{stella} Abdelrahman Abounegm, Nikolai Kudasov, and Alexey Stepanov. 2024.
+Teaching Type Systems Implementation with Stella, an Extensible Statically
+Typed Programming Language. \emph{EPTCS} 405.
+\url{https://arxiv.org/abs/2407.08089}.
+\bibitem{certified} Per Lindgren, Marcus Lindner, and Nils Fitinghoff. 2019.
+Introducing Certified Compilation in Education by a Functional Language Approach.
+\emph{EPTCS} 295. \url{https://doi.org/10.4204/EPTCS.295.5}.
+\bibitem{bowman} William J. Bowman. 2025.
+Macro-embedding Compiler Intermediate Languages in Racket.
+Preprint. \url{https://arxiv.org/abs/2509.19607}.
+\bibitem{urium} Francisco J. Moreno Velo and Almudena Garc\'ia Jurado-Centuri\'on.
+2026. URIUM: A Programming Language for a Practical Open Course on Compiler Design.
+Preprint. \url{https://arxiv.org/abs/2608.28202}.
+\bibitem{linnea} Henrik Barthels, Christos Psarras, and Paolo Bientinesi. 2021.
+Linnea: Automatic Generation of Efficient Linear Algebra Programs.
+\emph{ACM Transactions on Mathematical Software} 47, 3.
+\url{https://doi.org/10.1145/3446632}.
+\bibitem{gmc} Henrik Barthels, Marcin Copik, and Paolo Bientinesi. 2018.
+The Generalized Matrix Chain Algorithm. In \emph{CGO}.
+\url{https://doi.org/10.1145/3179541.3168804}.
+\bibitem{goldberg} David Goldberg. 1991.
+What Every Computer Scientist Should Know About Floating-Point Arithmetic.
+\emph{ACM Computing Surveys} 23, 1, 5--48.
+\url{https://doi.org/10.1145/103162.103163}.
+\bibitem{icing} Heiko Becker, Eva Darulova, Magnus O. Myreen, and Zachary Tatlock.
+2019. Icing: Supporting Fast-Math Style Optimizations in a Verified Compiler.
+In \emph{CAV}. \url{https://doi.org/10.1007/978-3-030-25543-5_10}.
+\bibitem{llvm} LLVM Project. 2026. LLVM Language Reference Manual: Fast-Math Flags.
+Accessed October 5, 2026. \url{https://llvm.org/docs/LangRef.html#fast-math-flags}.
+\bibitem{csmith} Xuejun Yang, Yang Chen, Eric Eide, and John Regehr. 2011.
+Finding and Understanding Bugs in C Compilers. In \emph{PLDI}.
+\url{https://doi.org/10.1145/1993316.1993532}.
+\bibitem{nnsmith} Jiawei Liu, Jinkun Lin, Fabian Ruffy, Cheng Tan, Jinyang Li,
+Aurojit Panda, and Lingming Zhang. 2023.
+NNSmith: Generating Diverse and Valid Test Cases for Deep Learning Compilers.
+In \emph{ASPLOS}. \url{https://doi.org/10.1145/3575693.3575707}.
+\bibitem{mutants} Rebecca Williams Earle and Jonathan Bell. 2026.
+Curated Semantic Mutants: Multi-purpose Artifacts for Grading and Hinting Student
+Test Suites. In \emph{SPLASH-E}.
+\url{https://doi.org/10.1145/3841644.3842688}.
 \end{thebibliography}
 
+\appendix
+\section{Per-Seed Results and Reconstruction}
+\label{app:seeds}
+\begin{table*}[t]
+\caption{Heterogeneous cost profile, 100 programs per seed. Arithmetic and
+instruction entries are median (IQR) percentage reductions. Broad mismatches
+refer to algebraic versus unoptimized hexadecimal execution on a separate
+100-program execution population at the same seed.}
+\centering\small\input{generated/seeds.tex}
+\end{table*}
+\begin{itemize}
+\item Raw observations: \path{results/research/cost.jsonl},
+\path{results/research/execution.jsonl},
+\path{results/research/oracle.jsonl}, and
+\path{results/research/numerics.json}.
+\item Lineage and unrounded statistics: the environment and summary JSON files
+in the same directory.
+\item Display generation: \path{tools/analyze_research.py}.
+\item Full protocol: \texttt{make research}. Display reconstruction:
+\texttt{make analyze}. Coverage and replay checks:
+\texttt{make verify-research}.
+\item Proposed classroom material: \path{docs/teaching-exercises.md}.
+\item Author confirmations: \path{paper/submission-checklist.md}.
+\end{itemize}
 \end{document}

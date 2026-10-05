@@ -29,6 +29,11 @@ static int const_eval(const Node *n, double *out)
 
     switch (n->kind) {
     case N_NUMBER:
+        if (!isfinite(n->dval)) {
+            diag_report(DIAG_ERROR, DIAG_SEMANTIC, n->line, n->col,
+                        "numeric literal must be finite");
+            return 0;
+        }
         *out = n->dval;
         return 1;
 
@@ -62,6 +67,11 @@ static int const_dim(const Node *n, const char *what, int *out)
                     "%s must be a constant known at compile time", what);
         diag_detail("MatrixLang decides every shape during compilation, so a\n"
                     "dimension cannot depend on a variable.");
+        return 0;
+    }
+    if (!isfinite(v) || v > 4096) {
+        diag_report(DIAG_ERROR, DIAG_SEMANTIC, n->line, n->col,
+                    "%s must be finite and at most 4096", what);
         return 0;
     }
     if (v != floor(v)) {
@@ -211,6 +221,12 @@ static Type check_expr(Node *n)
 
     switch (n->kind) {
     case N_NUMBER:
+        if (!isfinite(n->dval)) {
+            diag_report(DIAG_ERROR, DIAG_SEMANTIC, n->line, n->col,
+                        "numeric literal must be finite");
+            n->type = type_error();
+            return n->type;
+        }
         n->type = type_scalar();
         return n->type;
 
@@ -337,11 +353,16 @@ static void check_decl(Node *n)
     if (has_init) init_type = check_expr(n->kids[0]);
 
     if (n->has_dims && type_is_matrix(declared)) {
-        if (declared.rows < 1 || declared.cols < 1) {
+        double r = n->decl_rows, c = n->decl_cols;
+        if (!isfinite(r) || !isfinite(c) || r < 1 || c < 1 ||
+            r > 4096 || c > 4096 || r != floor(r) || c != floor(c)) {
             diag_report(DIAG_ERROR, DIAG_SEMANTIC, n->line, n->col,
-                        "matrix '%s' declared with dimensions %dx%d; both must "
-                        "be at least 1", n->name, declared.rows, declared.cols);
+                        "matrix '%s' dimensions must be finite whole numbers "
+                        "from 1 to 4096; got %g,%g", n->name, r, c);
             declared = type_error();
+        } else {
+            declared = type_matrix((int)r, (int)c);
+            n->decl_type = declared;
         }
     }
 

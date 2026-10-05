@@ -55,6 +55,12 @@ typedef struct {
 #define OPT_DCE        0x08
 #define OPT_CHAIN      0x10
 #define OPT_ALL        0x1F
+#define OPT_RELAXED    0x20
+
+/* Without OPT_RELAXED, arithmetic order and IEEE-754 zero/NaN behavior are
+ * preserved. The algebraic pass still folds finite scalar constants and
+ * removes double transposes; matrix identities and chain ordering need the
+ * explicit relaxed contract. */
 
 void optimize_run(int passes);
 

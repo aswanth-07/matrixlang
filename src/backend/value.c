@@ -6,6 +6,10 @@
 
 #include "util.h"
 
+static int exact_output;
+
+void value_set_exact_output(int enabled) { exact_output = enabled; }
+
 Value value_scalar(double v)
 {
     Value r;
@@ -190,7 +194,17 @@ void value_print(FILE *out, const Value *v)
     char buf[64];
 
     if (!v->is_matrix) {
-        fprintf(out, "%g\n", v->scalar);
+        fprintf(out, exact_output ? "%a\n" : "%g\n", v->scalar);
+        return;
+    }
+
+    if (exact_output) {
+        for (i = 0; i < v->rows; i++) {
+            fprintf(out, "  [");
+            for (j = 0; j < v->cols; j++)
+                fprintf(out, " %a", value_get(v, i, j));
+            fprintf(out, " ]\n");
+        }
         return;
     }
 

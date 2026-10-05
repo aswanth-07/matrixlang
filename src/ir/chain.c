@@ -272,6 +272,12 @@ static int reorder_one(int head)
 
     if (c.k < 3) return 0;
 
+    /* Reusing slots may move a leaf earlier. A gap can contain the leaf's
+     * definition or a variable write; decline that chain rather than move
+     * a computation across it without dependency analysis. */
+    for (i = 1; i < c.k - 1; i++)
+        if (c.slot[i] != c.slot[0] + i) return 0;
+
     /* Shapes. Every operand is a matrix and the inner dimensions agree,
      * because the semantic pass proved the products legal before this ran. */
     for (i = 0; i < c.k; i++) {

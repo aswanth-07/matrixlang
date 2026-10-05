@@ -92,8 +92,8 @@ def experiment_differential(files):
     """Optimized and unoptimized execution must agree, byte for byte."""
     results, differ, errors = [], 0, 0
     for f in files:
-        rc1, plain, _ = run([MATRIXC, "-q", "--run", f])
-        rc2, opt, _ = run([MATRIXC, "-q", "--optimize", "--run", f])
+        rc1, plain, _ = run([MATRIXC, "-q", "--exact-output", "--run", f])
+        rc2, opt, _ = run([MATRIXC, "-q", "--exact-output", "--optimize", "--run", f])
         if rc1 != 0 or rc2 != 0:
             errors += 1
             results.append({"program": os.path.basename(f), "status": "error",
@@ -113,7 +113,7 @@ def experiment_cost(files):
     """Arithmetic removed, and instructions removed, on the same programs."""
     rows = []
     for f in files:
-        rc, out, _ = run([MATRIXC, "--tac", "--optimize", "--cost", f], timeout=120)
+        rc, out, _ = run([MATRIXC, "--fp-algebraic", "--tac", "--optimize", "--cost", f], timeout=120)
         if rc != 0:
             continue
         cb, ca = parse_cost(out)
@@ -135,7 +135,7 @@ def experiment_chain(files):
     saving is not confounded with what the other passes remove."""
     rows = []
     for f in files:
-        rc, out, _ = run([MATRIXC, "--opt-chain", "--cost", "--explain", f],
+        rc, out, _ = run([MATRIXC, "--fp-algebraic", "--opt-chain", "--cost", "--explain", f],
                          timeout=120)
         if rc != 0:
             continue

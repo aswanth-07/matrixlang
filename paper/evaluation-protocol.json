@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "recorded_date": "2026-10-05",
+  "intent": "exploratory technical characterization; no human-subject or runtime-speedup inference",
+  "development_seeds": [1, 2],
+  "evaluation_seeds": [101, 102, 103, 104, 105, 106, 107, 108, 109, 110],
+  "programs_per_seed_profile": 100,
+  "profiles": ["heterogeneous", "square", "narrow", "balanced", "elementwise"],
+  "arms": ["strict", "algebraic", "chain_only", "no_chain", "algebra_only", "cse_only", "copy_only", "dce_only"],
+  "execution_values": ["dyadic", "broad"],
+  "execution_programs_per_seed_values": 100,
+  "oracle_chains_per_seed_length": 25,
+  "oracle_chain_lengths": [3, 4, 5, 6, 7],
+  "analysis": "Per-program percentage reductions; pooled median and IQR; per-seed summaries; seed-cluster percentile bootstrap of pooled paired median arithmetic minus instruction reduction, 2000 resamples, seed 87123; Wilson intervals for synthetic frequencies. No p-values or claims about real workload prevalence.",
+  "missing_data": "Any subprocess error, malformed measurement or strict numerical disagreement fails the run; nothing is silently excluded.",
+  "stopping_rule": "Run every declared program and every arm; do not tune generator or optimizer from the reported evaluation.",
+  "falsifiers": ["strict hexadecimal outputs disagree", "chain cost differs from exhaustive parenthesization minimum", "chain-only instruction count changes", "square or elementwise control has chain savings"],
+  "cost_convention": "Conventional mathematical scalar arithmetic: m*p*(2*n-1) per matmul, r*c for entrywise operations, zero for movement/constructors. VM additionally adds the first product to an initial +0 accumulator. This model is not an executed-instruction counter or a runtime predictor."
+}

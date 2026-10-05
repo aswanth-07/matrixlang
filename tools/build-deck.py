@@ -294,7 +294,7 @@ def slide_thesis():
            pad=(0, 0, 0, 0))
     s.rect(bx, y + 104, 386, 1, fill=LINE, name="rule")
     s.text(bx, y + 118, 386, 48,
-           [Para(Run("The compiler emits A * (B * C) instead. Both forms are "
+           [Para(Run("Algebraic mode emits A * (B * C). Both forms are "
                      "four instructions, so the metric course projects report "
                      "sees nothing at all.", 10.5, MUTED), line=14.5)],
            pad=(0, 0, 0, 0))
@@ -319,51 +319,22 @@ def slide_thesis():
 def slide_problem():
     s = Slide()
     backdrop(s)
-    y = title(s, "Where a C-subset project stops",
-              "We measured three public compiler-design course projects. Not "
-              "one of them contains an optimizer, and not one executes "
-              "anything.")
-
-    figure(s, M, y + 4, 420, "0 of 3",
-           "baselines that reach the optimization phase, on a\n"
-           "search deliberately generous enough to overstate them",
-           accent=RED, size=50)
-
-    body(s, M, y + 128, 420, 236, [
-        ("A subset of C has two numeric types, so its type system is an "
-         "enumeration with two members.", 11, TEXT),
-        ("Semantic analysis becomes a comparison of two tags, and an optimizer "
-         "over it has constant folding and the scalar identities, with no way "
-         "to tell a cheap expression from an expensive one.", 10.5, MUTED),
-        ("The baselines are not badly built. They reach lexical analysis, "
-         "parsing and the symbol table, and then run out of anything for the "
-         "later phases to be about.", 10.5, MUTED),
-        ("The two phases the syllabus calls the centre of the subject are the "
-         "two with the least to do.", 10.5, GREEN),
+    y = title(s, "The numerical contract decides which rewrites are legal",
+              "Strict mode is the default. Algebraic mode explicitly permits "
+              "reassociation, rounding and signed-zero changes.")
+    body(s, M, y, 410, 270, [
+        ("Strict", 16, GREEN, True),
+        ("Finite constant folding, double transpose, CSE, copy propagation and dead code.", 12, TEXT),
+        ("Source product association is retained. Exact printed values are checked on the regression corpus.", 11, MUTED),
     ])
-
-    px = M + 470
-    yy = box(s, px, y, CW - 470, 300, "Phases present, of eight")
-    short = ["MatrixLang", "baseline 1", "baseline 2", "baseline 3"]
-    for i, c in enumerate(D["baselines"]):
-        n = c["phase_count"]
-        row = yy + 10 + i * 34
-        s.text(px + 18, row, 96, 16,
-               [Para(Run(short[i], 9.4, WHITE if i == 0 else TEXT,
-                         bold=(i == 0)), line=12)], pad=(0, 0, 0, 0))
-        s.rect(px + 122, row + 3, 150, 10, fill=LINE, name="bar-bg")
-        s.rect(px + 122, row + 3, 150 * n / 8.0, 10,
-               fill=GREEN if i == 0 else RED, name="bar")
-        s.text(px + 284, row, 44, 16,
-               [Para(Run("%d/8" % n, 9.4, WHITE if i == 0 else MUTED, bold=True,
-                         font=MONO), line=12)], pad=(0, 0, 0, 0))
-    s.rect(px + 18, yy + 156, CW - 506, 1, fill=LINE, name="rule")
-    body(s, px + 18, yy + 172, CW - 506, 108, [
-        ("How a phase is counted", 9, GREEN, True),
-        ("A file is attributed to a phase by its path and name, and a phase "
-         "counts as present on a single case-insensitive match of any marker. "
-         "The rule can only overstate a baseline, and it still finds no "
-         "optimizer in any of them.", 9, MUTED),
+    body(s, M + 450, y, 398, 270, [
+        ("Algebraic", 16, RED, True),
+        ("Real-number identities and chain ordering are permitted with --fp-algebraic.", 12, TEXT),
+        ("Floating-point output can differ. Shape correctness is still required; there is no error-bound guarantee.", 11, MUTED),
+    ])
+    body(s, M, y + 285, CW, 75, [
+        ("The paper evaluates ten seeds, eight arms and five workload profiles. This lab deck retains the two-seed development results.", 11, BLUE),
+        ("Repository marker counts do not verify implementations and are excluded from research evidence.", 10, MUTED),
     ])
     folio(s, 3)
     return s
@@ -412,7 +383,7 @@ def slide_types():
         s.text(M + 30, row, 360, 18,
                [Para(Run(t, 9.6, TEXT), line=12)], pad=(0, 0, 0, 0))
     s.text(M + 18, yy + 96, 372, 20,
-           [Para(Run("No control flow. That is the enabling decision, not a gap.",
+           [Para(Run("No control flow: a deliberate limit on project scope.",
                      9.4, GREEN, italic=True), line=12)], pad=(0, 0, 0, 0))
 
     yy = box(s, M + 438, y2, CW - 438, 148, "Why no control flow")
@@ -420,9 +391,9 @@ def slide_types():
         ("With no branches a whole program is a single basic block, so "
          "available-expression analysis and liveness are each one linear scan.",
          10, TEXT),
-        ("A course reaches working CSE and dead-code elimination without first "
-         "building a control-flow graph, which is where a semester usually "
-         "runs out.", 9.6, MUTED),
+        ("CSE and dead-code elimination can be inspected without a "
+         "control-flow graph. The artifact does not teach inter-block "
+         "analysis.", 9.6, MUTED),
     ])
     folio(s, 4)
     return s
@@ -518,9 +489,9 @@ def slide_cost():
     s = Slide()
     backdrop(s)
     y = title(s, "A shape is also a cost model",
-              "Multiplying an m x n by an n x p matrix performs m p (2n-1) "
-              "operations. Every term is a shape, and every shape is in the "
-              "type.")
+              "The conventional dense-product model counts m p (2n-1) "
+              "scalar operations. This is a static arithmetic objective, "
+              "not a measurement of VM runtime.")
 
     figure(s, M, y + 6, 240, "98.0%",
            "of the arithmetic removed from\none three-matrix chain",
@@ -539,8 +510,8 @@ def slide_cost():
         ("A * (B * C)    builds a 2x2 intermediate", GREEN),
         ("                1,396 FLOP", GREEN),
         "",
-        ("Matrix multiplication is associative: both compute the same", MUTED),
-        ("matrix. Which is cheaper depends only on the shapes.", MUTED),
+        ("Over real numbers multiplication is associative; floating-point", MUTED),
+        ("output can change. Reassociation requires --fp-algebraic.", MUTED),
     ], size=9.0, lead=15.2)
 
     y2 = 356.0
@@ -556,8 +527,8 @@ def slide_cost():
     body(s, M + 456, yy + 4, CW - 474, 72, [
         ("The standard O(k^3) dynamic program over the chain, the same one an "
          "algorithms course teaches.", 9.8, TEXT),
-        ("What is new is that a student compiler holds the information needed "
-         "to run it.", 9.8, MUTED),
+        ("The teaching artifact connects this established algorithm to "
+         "shape checking and numerical contracts.", 9.8, MUTED),
     ])
     folio(s, 6)
     return s
@@ -569,8 +540,9 @@ def slide_measure():
     s = Slide()
     backdrop(s)
     y = title(s, "Two metrics, same programs, different answers",
-              "%d programs from a generator, across two seeds. The corpus was "
-              "not written by whoever wrote the optimizer." % D["n"])
+              "%d development programs across two seeds. Cost uses algebraic "
+              "mode; execution uses strict mode. The paper reports the separate "
+              "ten-seed evaluation." % D["n"])
 
     yy = box(s, M, y, CW, 158, "Median reduction per program")
     s.text(M + 16, y + 13, CW - 32, 14,
@@ -608,13 +580,13 @@ def slide_measure():
     figure(s, M + 252, y2, 236, "%.1f%%" % D["chain_med"],
            "median arithmetic saved on\nthose programs", accent=VIOLET, size=40)
     figure(s, M + 504, y2, 300, "%d/%d" % (D["identical"], D["programs"]),
-           "programs printed identical bytes with\nthe optimizer and without",
+           "strict programs printed identical bytes\nwith the optimizer and without",
            accent=GREEN, size=40)
 
     (f1, i1), (f2, i2) = D["per_seed"]
     s.rect(M, 448, CW, 1, fill=LINE, name="rule")
     s.text(M, 460, CW, 20,
-           [Para([Run("Not one lucky corpus.   ", 9.6, GREEN, bold=True),
+           [Para([Run("Development seeds.   ", 9.6, GREEN, bold=True),
                   Run("Taken separately the two seeds give %.1f%% and %.1f%% of "
                       "the arithmetic against %.1f%% and %.1f%% of the "
                       "instructions." % (f1, f2, i1, i2), 9.6, MUTED)],
@@ -658,10 +630,10 @@ def slide_bug():
          "these rewrites behind fast-math.", 10, MUTED),
     ])
     body(s, M + colw + 40, y2 + 18, colw, 80, [
-        ("A finding about what a course can afford.", 10.5, GREEN, True),
-        ("A generator and a loop comparing two runs, which is a weekend of "
-         "work, found a defect in a student-scale optimizer that reading the "
-         "code had not, on an input nobody chose.", 10, MUTED),
+        ("A regression target for the artifact.", 10.5, GREEN, True),
+        ("Generated comparisons motivated explicit strict and algebraic "
+         "contracts. Fifteen numerical fixtures now check signed zeros, "
+         "overflow, reassociation and mutable names.", 10, MUTED),
     ])
     s.text(M, 430, CW, 24,
            [Para(Run("The rewrite was removed. It saved no arithmetic anyway: "
@@ -677,8 +649,9 @@ def slide_meaning():
     s = Slide()
     backdrop(s)
     y = title(s, "The source language is a curricular decision",
-              "It decides which phases can carry real work. That is the claim, "
-              "and it is the one we can evidence.")
+              "MatrixLang connects shape checking, modeled cost and rewrite "
+              "legality. Its proposed exercises have not been evaluated "
+              "with students.")
 
     yy = box(s, M, y, 406, 206, "What the domain bought")
     for i, (h, t) in enumerate([
@@ -706,9 +679,9 @@ def slide_meaning():
                [Para(Run(t, 9.4, TEXT), line=12.4)], pad=(0, 0, 0, 0))
 
     note(s, M, 382, CW - 40,
-         "Whatever the domain, if the type system carries enough to cost a "
-         "program statically, a student's optimizer can be scored on the work "
-         "it removes rather than the lines it removes. The two are not close.")
+         "Use both metrics and state the numerical contract. Shape and "
+         "expression controls show where chain savings disappear; exact "
+         "output comparisons show where algebraic transformations change behavior.")
 
     s.rect(M, 470, CW, 1, fill=LINE, name="rule")
     s.text(M, 482, 520, 18,

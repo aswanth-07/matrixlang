@@ -51,6 +51,7 @@ typedef struct Node {
      * initialiser. */
     Type     decl_type;
     int      has_dims;
+    double   decl_rows, decl_cols; /* raw dimensions; validate before conversion */
 
     Type     type;     /* inferred by the semantic pass */
 

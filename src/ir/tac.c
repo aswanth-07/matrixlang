@@ -106,7 +106,9 @@ const char *tac_new_temp(Type t)
     char buf[32];
     const char *name;
 
-    snprintf(buf, sizeof buf, "t%d", next_temp++);
+    do {
+        snprintf(buf, sizeof buf, "t%d", next_temp++);
+    } while (sym_lookup(buf));
     name = tac_intern(buf);
     temp_record(name, t);
     return name;
@@ -155,8 +157,11 @@ int tac_operand_is_literal(const char *name, int *lit_id)
 
 int tac_operand_is_temp(const char *name)
 {
-    if (!name || name[0] != 't') return 0;
-    return isdigit((unsigned char)name[1]) != 0;
+    int i;
+    if (!name) return 0;
+    for (i = 0; i < ntemps; i++)
+        if (strcmp(temps[i].name, name) == 0) return 1;
+    return 0;
 }
 
 Type tac_operand_type(const char *name)
@@ -235,7 +240,7 @@ static const char *gen_expr(Node *n);
 static const char *const_operand(double v)
 {
     char buf[64];
-    snprintf(buf, sizeof buf, "%g", v);
+    snprintf(buf, sizeof buf, "%.17g", v);
     return tac_intern(buf);
 }
 

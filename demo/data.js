@@ -50,8 +50,8 @@ window.MATRIXLANG = {
      "text": "  PHASE 3  --  OPTIMIZED INTERMEDIATE CODE\n\n    1  A = #0                              Matrix<2x3>\n    2  B = #1                              Matrix<3x4>\n    3  t1 = A * B                          Matrix<2x4>\n    4  C = t1                              Matrix<2x4>\n    5  print C                             Matrix<2x4>\n\n5 instruction(s).\n\n  PHASE 3  --  WHAT THE OPTIMIZER DID\n\nNo transformation applied: the program was already in its simplest form.\n\n  ARITHMETIC COST (computed from the shapes, before running)\n\n  Arithmetic before optimization :             40   (40 FLOP)\n  Arithmetic after optimization  :             40   (40 FLOP)\n  Arithmetic removed             :              0   (0 FLOP)\n  Cost reduction                 :           0.0%\n\nmultiply.ml: ACCEPTED (0 error(s), 0 warning(s))",
      "status": 0,
      "elided": 0,
-     "command": "matrixc --optimize --explain --cost multiply.ml",
-     "title": "Optimizer"
+     "command": "matrixc --fp-algebraic --optimize --explain --cost multiply.ml",
+     "title": "Optimizer (algebraic contract)"
     },
     "target": {
      "text": "  PHASE 3  --  TARGET CODE (MatrixLang VM)\n\n    0  PUSH_MATRIX    #0\n    1  STORE_MATRIX   A\n    2  PUSH_MATRIX    #1\n    3  STORE_MATRIX   B\n    4  LOAD_MATRIX    A\n    5  LOAD_MATRIX    B\n    6  MATMUL\n    7  STORE_MATRIX   t1\n    8  LOAD_MATRIX    t1\n    9  STORE_MATRIX   C\n   10  LOAD_MATRIX    C\n   11  PRINT          C\n   12  HALT\n\n13 instruction(s).\n\nmultiply.ml: ACCEPTED (0 error(s), 0 warning(s))",
@@ -72,7 +72,7 @@ window.MATRIXLANG = {
   {
    "id": "chain",
    "name": "A chain the shapes re-bracket",
-   "blurb": "A * B * C computes the same matrix under either bracketing and not the same amount of arithmetic. Which one is cheaper depends only on the shapes, and the shapes are in the types.",
+   "blurb": "In algebraic mode, A * B * C can be re-bracketed to reduce modeled arithmetic. The cheaper tree depends on shapes; binary64 output can change. Strict mode retains association.",
    "file": "examples/optimize/chain_order.ml",
    "source": "matrix A[100,2];\nmatrix B[2,100];\nmatrix C[100,2];\n\nmatrix R = A * B * C;\n\nprint(R);",
    "stages": {
@@ -115,8 +115,8 @@ window.MATRIXLANG = {
      "text": "  PHASE 3  --  OPTIMIZED INTERMEDIATE CODE\n\n    1  t3 = B * C                          Matrix<2x2>\n    2  t2 = A * t3                         Matrix<100x2>\n    3  R = t2                              Matrix<100x2>\n    4  print R                             Matrix<100x2>\n\n4 instruction(s).\n\n  PHASE 3  --  WHAT THE OPTIMIZER DID\n\n  chain order      : A * B * C  ->  (A * (B * C))\n                     left-to-right 69.80 kFLOP, chosen 1.40 kFLOP, saved 68404 FLOP (98.0%)\n\n  ARITHMETIC COST (computed from the shapes, before running)\n\n  Arithmetic before optimization :          69800   (69.80 kFLOP)\n  Arithmetic after optimization  :           1396   (1.40 kFLOP)\n  Arithmetic removed             :          68404   (68.40 kFLOP)\n  Cost reduction                 :          98.0%\n\nchain_order.ml: ACCEPTED (0 error(s), 0 warning(s))",
      "status": 0,
      "elided": 0,
-     "command": "matrixc --optimize --explain --cost chain_order.ml",
-     "title": "Optimizer"
+     "command": "matrixc --fp-algebraic --optimize --explain --cost chain_order.ml",
+     "title": "Optimizer (algebraic contract)"
     },
     "target": {
      "text": "  PHASE 3  --  TARGET CODE (MatrixLang VM)\n\n    0  LOAD_MATRIX    A\n    1  LOAD_MATRIX    B\n    2  MATMUL\n    3  STORE_MATRIX   t1\n    4  LOAD_MATRIX    t1\n    5  LOAD_MATRIX    C\n    6  MATMUL\n    7  STORE_MATRIX   t2\n    8  LOAD_MATRIX    t2\n    9  STORE_MATRIX   R\n   10  LOAD_MATRIX    R\n   11  PRINT          R\n   12  HALT\n\n13 instruction(s).\n\nchain_order.ml: ACCEPTED (0 error(s), 0 warning(s))",
@@ -180,8 +180,8 @@ window.MATRIXLANG = {
      "text": "mul_mismatch.ml: REJECTED (1 error(s), 0 warning(s))",
      "status": 1,
      "elided": 0,
-     "command": "matrixc --optimize --explain --cost mul_mismatch.ml",
-     "title": "Optimizer"
+     "command": "matrixc --fp-algebraic --optimize --explain --cost mul_mismatch.ml",
+     "title": "Optimizer (algebraic contract)"
     },
     "target": {
      "text": "mul_mismatch.ml: REJECTED (1 error(s), 0 warning(s))",

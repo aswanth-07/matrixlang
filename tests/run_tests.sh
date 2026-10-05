@@ -7,10 +7,8 @@
 # for the wrong reason; output text alone would not catch one that printed the
 # right message and then exited 0.
 #
-# The final section is the strongest test in the suite. It runs each program
-# with and without the optimizer and requires byte-identical output, which is
-# the only way to show that the optimizer preserves meaning rather than merely
-# producing fewer instructions.
+# Execution checks compare strict optimized and unoptimized hexadecimal output.
+# Agreement is regression evidence on these cases, not a correctness proof.
 #
 # Usage:  bash tests/run_tests.sh    (or: make test)
 
@@ -224,7 +222,7 @@ expect_contains "Dead instructions removed :      4"
 
 section "Phase 3 -- matrix-specific optimizations"
 
-run_case "algebra.ml" 0 "$MATRIXC" --optimize --explain --report examples/optimize/algebra.ml
+run_case "algebra.ml" 0 "$MATRIXC" --fp-algebraic --optimize --explain --report examples/optimize/algebra.ml
 expect_contains "(x * I = x)"
 expect_contains "(I * x = x)"
 expect_contains "(x + 0 = x)"
@@ -236,12 +234,12 @@ expect_contains "Double transposes         :      1"
 
 section "Phase 3 -- an identity written as a literal is still an identity"
 
-run_case "literal identity is recognised" 0 "$MATRIXC" --optimize --explain examples/optimize/literal_identity.ml
+run_case "literal identity is recognised" 0 "$MATRIXC" --fp-algebraic --optimize --explain examples/optimize/literal_identity.ml
 expect_contains "(x * I = x)"
 
 section "Phase 3 -- individual passes can be selected"
 
-run_case "algebra only" 0 "$MATRIXC" --opt-algebraic --report examples/optimize/algebra.ml
+run_case "algebra only" 0 "$MATRIXC" --fp-algebraic --opt-algebraic --report examples/optimize/algebra.ml
 expect_contains "Dead instructions removed :      0"
 expect_contains "Identity operations       :      3"
 
@@ -293,13 +291,13 @@ expect_contains "V = Matrix<3x3>"
 run_case "--trace shows the machine executing" 0 "$MATRIXC" --trace examples/valid/multiply.ml
 expect_contains "[stack"
 
-# ====================================== PHASE 3: the optimizer is meaning-safe ==
+# ====================================== PHASE 3: strict output regressions =====
 
-section "Phase 3 -- optimization does not change what a program computes"
+section "Phase 3 -- strict optimization matches tested hexadecimal output"
 
 for f in examples/valid/*.ml examples/optimize/*.ml; do
-    plain=$("$MATRIXC" -q --run "$f" 2>&1)
-    opt=$("$MATRIXC" -q --optimize --run "$f" 2>&1)
+    plain=$("$MATRIXC" -q --exact-output --run "$f" 2>&1)
+    opt=$("$MATRIXC" -q --exact-output --optimize --run "$f" 2>&1)
     if [ "$plain" == "$opt" ]; then
         ok "identical output with and without the optimizer: $f"
     else
@@ -311,6 +309,18 @@ done
 # =========================================================== CLI behaviour ====
 
 section "Driver"
+
+run_case "oversized dimensions are rejected" 1 "$MATRIXC" --check examples/errors/dimension_limit.ml
+expect_contains "4096"
+run_case "fractional declaration dimensions are rejected" 1 "$MATRIXC" --check examples/errors/dimension_fractional.ml
+expect_contains "whole numbers"
+run_case "non-finite declaration dimensions are rejected before conversion" 1 "$MATRIXC" --check examples/errors/dimension_nonfinite.ml
+expect_contains "finite"
+run_case "non-finite matrix literal token is rejected" 1 "$MATRIXC" --check examples/errors/nonfinite_matrix_literal.ml
+expect_contains "finite"
+run_case "dimension bound accepts both endpoints" 0 "$MATRIXC" --check examples/valid/dimension_boundaries.ml
+run_case "non-finite source literal is rejected" 1 "$MATRIXC" --check examples/errors/nonfinite_literal.ml
+expect_contains "finite"
 
 run_case "--help exits cleanly" 0 "$MATRIXC" --help
 expect_contains "MatrixLang"

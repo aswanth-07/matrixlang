@@ -16,11 +16,8 @@ Thumbs.db
 __pycache__/
 *.pyc
 
-# The paper. `paper/matrixlang.tex` is the submission source and is committed,
-# together with the PDF built from it. `paper/main.tex` is the working draft it
-# is generated from: same text, plus one comment per stated figure binding it to
-# the measurement it reports. Those comments are drafting apparatus, so the draft
-# stays local. `make paper` regenerates both.
+# Public paper source and exported PDFs are tracked. Local annotated drafting
+# copies stay outside the build inputs; `make paper` uses matrixlang.tex.
 paper/main.tex
 tools/strip_anchors.py
 
@@ -32,3 +29,4 @@ paper/*.fls
 paper/*.fdb_latexmk
 paper/*.synctex.gz
 paper/build.log
+paper/build-*.txt

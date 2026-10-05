@@ -1,0 +1,84 @@
+{
+  "platform": "Windows-10-10.0.26200-SP0",
+  "python": "3.10.11 (tags/v3.10.11:7d4cc5a, Apr  5 2023, 00:38:17) [MSC v.1929 64 bit (AMD64)]",
+  "binary_sha256": "e6ac441f469d07baab0831cc2609c40befa392ec4003352e15a75583175f44a5",
+  "source_sha256": {
+    "src/analysis/semantic.c": "65b783d53289246540bf528c81f28a8d5dc242b67f84e0b4e5246a990e837eef",
+    "src/analysis/semantic.h": "1263b14e2eb614d47fc0bfa9eb46b4d28806312ec0a9c724b9a5341995576dbc",
+    "src/analysis/symtab.c": "6c228dd20c5ae99e38f2dd8a480773e79e56b974f417ca9225e80ed2b7a42858",
+    "src/analysis/symtab.h": "a30342cd3705af1883336b785da1f3c43988b394b342d46710fac008bce0d92f",
+    "src/analysis/types.c": "ff5c0a34cbec7ac2e494166d5c2766722a8140ec719bc4b9e45cad462441091a",
+    "src/analysis/types.h": "db3f609d0327c5e435581e805fde134f979e45a978f7cab561888e24a211fa9d",
+    "src/backend/codegen.c": "e41ef9308710c640dda04b58f5051046edb50d12e84f6e3ac0ae539ac3176ffb",
+    "src/backend/codegen.h": "7a8f11e40f17909b03738e11a7d0e2f2038721fe102cb31fbf2bafaded0b5929",
+    "src/backend/value.c": "4f707a422fb23b215b7787f0879eaf3f53d183429496e9e7de3590881062bd96",
+    "src/backend/value.h": "6452c9722968efc7e5880acf9f9ee1633a332238ca12c786444eb5767e39a503",
+    "src/backend/vm.c": "cb671f9227c6409ebaf26161c9b3e78f08e6d0c3954e3706ad9a8633ebc94d6b",
+    "src/backend/vm.h": "ab940167c26e47e6aff1c86b76196ab64b6501a041d9c3e2db9051a93f27536b",
+    "src/frontend/ast.c": "68f2189430dfd90746583952b3fbec3dcc2b05e36efdba9970dc507683e68b42",
+    "src/frontend/ast.h": "2c62c5208bf6430b8fe2ecd098beba37495de37492983b495d50b6d96c381b1d",
+    "src/frontend/matrix.l": "6689705eeeea386c6c624adb32c61e42eb33b175a94dd35cd4b8ff1e681aa095",
+    "src/frontend/matrix.y": "8aa99d70ab3488f99fb4f79f90567e09f8755b6f2b9b57c5122789b35bed59f5",
+    "src/frontend/tokens.c": "72fb95b597e0f7990c26041999110f22699f43480baa00b9ee341317ced3a346",
+    "src/frontend/tokens.h": "9ef8e1e4dabba53c2df9290a5ef99a5e1ef4d5ec1e1432910721a2eb4a389b35",
+    "src/ir/chain.c": "f0989733b904b86cdc5de31b37a33b77c20d8e5319d7770a24bd9e47c05b02a9",
+    "src/ir/chain.h": "be1a9499763c227effcc55689b34ee7fcf217e075be1c23637cf33f03ba8c5f9",
+    "src/ir/cost.c": "ed734dd75c08df56dbe7ebc424b1d697bb97f23f891c595bb59f8b1c2809fdd8",
+    "src/ir/cost.h": "d57801ffd79b03f5e814e45dd1b6b2162a7ca4052fafb55ca9727208714f0f8f",
+    "src/ir/optimize.c": "3b12320fea29fb32b05b70dda34a5a200abc5c190050c7f01c31c0d924b91efa",
+    "src/ir/optimize.h": "9bc7087aa5e81302aa36cc886143bae4e040ca0412941d20c6a53f47db30e12c",
+    "src/ir/tac.c": "c09f4e14b901292d6ccbc2f1b9a3095b18c9350ae1f2e4f6147bb8b689589ad2",
+    "src/ir/tac.h": "6edbf07f77507000d3d053d918a035aeb90b5fc07648ce2201b10c07032d5642",
+    "src/main.c": "2deb5ecbfaa6f83936daa600330747d272e79c90c9478266f3848cc9966c062f",
+    "src/support/diag.c": "d2b27f755a29603b2b4084546e6652770bc390dd323b9704cc043bce56bad783",
+    "src/support/diag.h": "013d405f68d2178b8209760be79a1baf1a07cd85e53549706f333177a9d573ef",
+    "src/support/util.c": "a7cb73fde8c0c3f3efdfb98a20baa5fa3e73bb9357dfe90e2cbf9d281c3a7d7b",
+    "src/support/util.h": "0ed07602c4dab34f5f56870d0b0b98752c0e3fb894a015de0cddaebe06c3717c",
+    "tools/gen_programs.py": "410b8709dc8aa7e0f49285e4eed9c0302496a0189225e479a299d45d4f3c79fa",
+    "tools/evaluate_research.py": "33712bfb97d546aab0f388f7d628fad960291b568804a2b811e64eed05298704",
+    "tools/check_numerics.py": "e72dae14041aabc6462c0698e7e877fbe01cf00dcd40874e82a391692b36c7ed"
+  },
+  "protocol_sha256": "9650f020038331fdde1c614fc1d0c0d162f9a82be8da954533b2e8345cdc843b",
+  "arm_flags": {
+    "strict": [
+      "--optimize"
+    ],
+    "algebraic": [
+      "--fp-algebraic",
+      "--optimize"
+    ],
+    "chain_only": [
+      "--fp-algebraic",
+      "--opt-chain"
+    ],
+    "no_chain": [
+      "--fp-algebraic",
+      "--opt-algebraic",
+      "--opt-cse",
+      "--opt-copyprop",
+      "--opt-dce"
+    ],
+    "algebra_only": [
+      "--fp-algebraic",
+      "--opt-algebraic"
+    ],
+    "cse_only": [
+      "--opt-cse"
+    ],
+    "copy_only": [
+      "--opt-copyprop"
+    ],
+    "dce_only": [
+      "--opt-dce"
+    ]
+  },
+  "command": "python tools/evaluate_research.py",
+  "status": "complete",
+  "elapsed_seconds": 554.5929999999935,
+  "outputs_sha256": {
+    "cost.jsonl": "b162ecbd5d569367ecdff779bf637712f2abf328040136a605bc34ad1d6165b2",
+    "execution.jsonl": "bf39956e6210e659a5059a11f719647970d510d8efd8cf77859d9937a1178507",
+    "numerics.json": "f8c9ecf6b04d4225145cd6afb71b08c5a106b3f95735365ec719698412532e5f",
+    "oracle.jsonl": "fbf6bb42bc26f861369b5a2b59081c64db1945c9460c1dacc01de9689a6d5980"
+  }
+}

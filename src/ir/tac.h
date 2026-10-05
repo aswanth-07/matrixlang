@@ -1,15 +1,15 @@
 /* tac.h -- three-address code: the intermediate representation.
  *
  * One flat instruction array. MatrixLang has no control flow, so the whole
- * program is a single basic block -- which is precisely what makes the local
- * optimizations in optimize.c correct without any control-flow graph or
- * dataflow iteration.
+ * program is a single basic block. Local passes check linear dependencies;
+ * numerical rewrites additionally depend on the chosen floating-point mode.
  *
- * Operands are strings, in the textbook style, and their spelling is what
- * distinguishes them:
+ * Operands are interned strings. Generated temporaries are registered and skip
+ * user-declared names; a spelling such as t1 can also name a user variable.
+ * Typical operands are:
  *
  *     A, C        a program variable  (an identifier never starts with a digit)
- *     t1, t7      a compiler temporary
+ *     t1, t7      a registered compiler temporary, unless user-declared
  *     3, 2.5, -1  a scalar constant
  *     #0, #4      a matrix literal, by index into the literal pool
  *

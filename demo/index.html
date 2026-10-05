@@ -67,17 +67,16 @@
     <section id="thesis">
       <div class="hero-grid">
         <div>
-          <div class="eyebrow">Compiler Design Laboratory &middot; Experience report</div>
+          <div class="eyebrow">Compiler Design Laboratory &middot; Teaching artifact</div>
           <h1>Shapes in the<em>Type System</em></h1>
           <p class="tagline">A matrix language that lets a compiler course
             reach optimization.</p>
-          <p class="stem">A compiler project is usually built for a subset of
-            C, and the choice is rarely examined. In a general-purpose
-            mini-language the type system is an enumeration with two members,
-            so semantic analysis reduces to comparing two tags and the
-            optimizer has only the scalar identities to work with. Put matrix
-            shapes in the types instead and the compiler can cost a program
-            before it runs.</p>
+          <p class="stem">Matrix shapes connect type checking to a static
+            arithmetic model. This compiler exposes that connection across
+            its phases. Strict optimization preserves association; explicit
+            algebraic mode permits numerical changes to reduce modeled work.
+            The figures below describe the two-seed development corpus.
+            The expanded research study includes ablations and shape controls.</p>
 
           <div class="pair">
             <div class="figure">
@@ -107,9 +106,10 @@ print(R);</pre>
             <b>4</b> instructions, either way
           </div>
           <p class="note" style="margin-top:16px">Matrix multiplication is
-            associative, so both bracketings compute the same matrix. They do
-            not perform the same amount of arithmetic, and which is cheaper
-            depends only on the shapes.</p>
+            associative over real numbers. Algebraic mode permits this cheaper
+            tree; rounding, signed zero, and NaN/Infinity output may change.
+            Strict mode retains the source association. FLOP here is a
+            conventional arithmetic model, not measured runtime.</p>
         </div>
       </div>
     </section>
@@ -383,7 +383,7 @@ print(R);</pre>
         <div class="eyebrow">04 &middot; The idea, running</div>
         <h2>A shape is also a cost model</h2>
         <p class="lede">Multiplying an <code>m x n</code> matrix by an
-          <code>n x p</code> one performs <code>m p (2n-1)</code> scalar
+          <code>n x p</code> one has a conventional cost of <code>m p (2n-1)</code> scalar
           operations. Every term is a shape, and every shape is in the type, so
           the compiler can price an expression it has not run. Change the
           dimensions below and watch it choose.</p>
@@ -419,7 +419,7 @@ print(R);</pre>
 
             <div class="row">
               <div class="lab">
-                <span class="who"><b>As compiled.</b> The bracketing the cost
+                <span class="who"><b>Algebraic mode.</b> The bracketing the cost
                   model picks, by dynamic programming over the shapes.</span>
                 <span class="amt" style="color:var(--mint)" id="opt-cost"></span>
               </div>
@@ -435,9 +435,8 @@ print(R);</pre>
             <p style="font-size:13.5px; color:var(--dim); line-height:1.6">A chain
               of <code>k</code> matrices needs exactly <code>k-1</code> products
               under every bracketing, so re-bracketing never changes the
-              instruction count. It is invisible to the metric course projects
-              conventionally report, which is the whole reason this project
-              measures arithmetic instead.</p>
+              product-instruction count. This project reports both instruction
+              and modeled arithmetic reduction.</p>
             <p style="font-size:12px; color:var(--faint); line-height:1.6; margin-top:12px">
               This explorer runs the same formulae as
               <code>src/ir/cost.c</code> and <code>src/ir/chain.c</code>,
@@ -483,18 +482,17 @@ print(R);</pre>
 
       <div class="cols" style="margin-top:36px">
         <div>
-          <div class="eyebrow" style="margin-bottom:14px">Phases present, of eight</div>
+          <div class="eyebrow" style="margin-bottom:14px">Historical repository marker counts</div>
           <table>
             <thead><tr><th>Compiler</th><th></th><th class="num" style="text-align:right">Phases</th></tr></thead>
             <tbody id="baseline-rows"></tbody>
           </table>
           <p style="font-size:12px; color:var(--faint); margin-top:14px; line-height:1.6">
-            Three public C-subset course projects, chosen by their description
-            before their contents were read, each reduced to its most complete
-            version. A phase counts as present on a single case-insensitive
-            match of any of its markers, a rule generous enough that it can
-            only overstate a baseline. None of the three contains an optimizer,
-            and none executes anything.</p>
+            This exploratory scan counts filename and text markers in three
+            repositories. A missing marker does not establish a missing
+            implementation, and a match does not verify functionality.
+            These counts are excluded from the research paper and do not
+            compare teaching effectiveness.</p>
         </div>
         <div>
           <div class="eyebrow" style="margin-bottom:14px">What the testing found</div>
@@ -509,10 +507,11 @@ R = Matrix&lt;1x1&gt;      R = Matrix&lt;1x1&gt;
             <code>+0</code> gives <code>-0</code>.</p>
           <p style="font-size:13.5px; color:var(--dim); margin-top:12px; line-height:1.6">
             That floating-point identities break this way is textbook. What is
-            worth reporting is that a generator and a loop comparing two runs
-            &mdash; a weekend of work &mdash; found a defect in a student-scale
-            optimizer that reading the code had not, on an input nobody chose.
-            The rewrite was removed.</p>
+            useful here is the regression target it supplies. The rewrite was
+            removed. The compiler now defaults to strict mode, with explicit
+            algebraic mode for transformations that can change output. The
+            paper's broader evaluation and numerical fixtures are linked from
+            the repository.</p>
         </div>
       </div>
     </section>
@@ -522,9 +521,10 @@ R = Matrix&lt;1x1&gt;      R = Matrix&lt;1x1&gt;
       <div class="head">
         <div class="eyebrow">06 &middot; Scope</div>
         <h2>What the domain bought, and what it did not</h2>
-        <p class="lede">The claim is that the source language is a curricular
-          decision: it decides which phases can carry real work. That is the
-          claim we can evidence, and it is the only one we make.</p>
+        <p class="lede">MatrixLang connects shape checking, modeled cost and
+          numerical rewrite legality in an inspectable compiler. These are
+          concrete artifact capabilities; their educational effectiveness
+          remains to be measured.</p>
       </div>
 
       <div class="rule"></div>
@@ -534,8 +534,7 @@ R = Matrix&lt;1x1&gt;      R = Matrix&lt;1x1&gt;
           <div class="eyebrow" style="margin-bottom:14px">What it bought</div>
           <ul class="plain yes">
             <li><span>+</span><div><b style="color:var(--paper);font-weight:600">Semantic analysis</b>
-              became shape inference and dimension checking, not a comparison
-              of two type tags.</div></li>
+              includes shape inference and dimension checking.</div></li>
             <li><span>+</span><div><b style="color:var(--paper);font-weight:600">Code generation</b>
               gained instruction selection driven by inferred types.</div></li>
             <li><span>+</span><div><b style="color:var(--paper);font-weight:600">Optimization</b>
@@ -554,7 +553,7 @@ R = Matrix&lt;1x1&gt;      R = Matrix&lt;1x1&gt;
               outcome here to report.</div></li>
             <li><span>x</span><div>That the mechanisms are new. Shape-typed
               array languages, chain ordering and differential testing are all
-              established; the contribution is the curricular consequence.</div></li>
+              established; the artifact connects them to inspectable exercises.</div></li>
             <li><span>x</span><div>That the magnitudes generalise. The corpus
               comes from a generator written for this project, so its
               distribution of shapes is a choice, not a sample.</div></li>
@@ -567,7 +566,8 @@ R = Matrix&lt;1x1&gt;      R = Matrix&lt;1x1&gt;
       <div class="closing" style="margin-top:38px">
         Whatever the domain, if the type system carries enough to cost a
         program statically, a student's optimizer can be scored on the work it
-        removes rather than the lines it removes. The two are not close.
+        removes alongside the instructions it removes. State the workload and
+        numerical contract when interpreting either metric.
       </div>
     </section>
 

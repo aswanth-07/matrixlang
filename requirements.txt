@@ -11,5 +11,5 @@
 #
 # So a reader who only wants to reproduce the measurements needs nothing here.
 
-matplotlib>=3.5
-Pillow>=9.0
+matplotlib==3.10.9
+Pillow==12.3.0

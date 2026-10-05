@@ -1,7 +1,7 @@
 # The MatrixLang language reference
 
 The definition of what `matrixc` accepts. Where this document and
-`src/matrix.l` / `src/matrix.y` disagree, the source is correct and this
+`src/frontend/matrix.l` / `src/frontend/matrix.y` disagree, the source is correct and this
 document is stale.
 
 ---
@@ -62,7 +62,9 @@ exponent -> ('e'|'E') ['+'|'-'] digit+
 ```
 
 So `3`, `2.5`, `.5`, `4.`, `1e3` and `1.5E-2` are all numbers. There is one
-numeric kind; scalars are double precision.
+numeric kind; scalars use C double (binary64 on the evaluated platform).
+Source numeric tokens must be finite. Arithmetic on finite tokens may overflow;
+such computed Infinity/NaN values are supported by the VM.
 
 ### Comments
 
@@ -207,6 +209,10 @@ it.
 
 ### Dimensions are compile-time
 
+Explicit bracket dimensions and constructor dimensions must be finite whole
+numbers from 1 to 4096 inclusive. Validation precedes integer conversion;
+`matrix A[2.5,1]` and `matrix A[1e999,1]` are rejected.
+
 Every shape is fixed during compilation. The arguments to `identity`, `zeros`
 and `ones`, and every entry of a matrix literal, must therefore fold to a
 constant — arithmetic on literals is allowed, variables are not:
@@ -285,3 +291,13 @@ different machine instructions depending on its operands.
 The machine performs **no dimension checking**. Every operation it executes was
 proved shape-correct before the code was generated; if a shape error could
 reach the VM, the compiler would be broken.
+
+## 7. Numerical optimizer contracts
+
+Strict mode is the default and retains matrix-product association. It disables
+real-algebra identity/zero rewrites. `--fp-algebraic` permits those rewrites and
+chain reordering, with possible changes in rounding, signed zero and non-finite
+propagation. `--exact-output` prints hexadecimal values for output comparisons.
+Tests target printed values in a fixed floating-point environment and do not
+inspect exception flags, NaN payloads or allocation failures. Detailed pass rules
+and the conventional arithmetic objective are in [phase3-optimization.md](phase3-optimization.md).

@@ -1,6 +1,7 @@
 #include "optimize.h"
 
 #include <stdarg.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -12,6 +13,7 @@
 #include "value.h"
 
 static OptStats stats;
+static int relaxed_math;
 
 /* --- transformation log --------------------------------------------------- */
 
@@ -175,7 +177,8 @@ static int fold_scalar_constants(Tac *t, char *what, size_t whatsz)
 
     {
         char buf[64];
-        snprintf(buf, sizeof buf, "%g", r);
+        if (!isfinite(r)) return 0;
+        snprintf(buf, sizeof buf, "%.17g", r);
         snprintf(what, whatsz, "%g", r);
         rewrite_to_copy(t, tac_intern(buf));
     }
@@ -219,7 +222,7 @@ static int pass_algebraic(void)
             }
             /* X + 0 and X - 0 are X. The zero must have the same shape as X,
              * which the semantic pass already guaranteed for '+' and '-'. */
-            if (pb == P_ZERO_MAT || pb == P_SCALAR_ZERO) {
+            if (relaxed_math && (pb == P_ZERO_MAT || pb == P_SCALAR_ZERO)) {
                 const char *kept = t->a1;
                 const char *sign = (t->op == TAC_ADD) ? "+" : "-";
                 rewrite_to_copy(t, kept);
@@ -227,7 +230,7 @@ static int pass_algebraic(void)
                       before, t->dst, kept, sign);
                 stats.zero_ops++;
                 changed = 1;
-            } else if (t->op == TAC_ADD && (pa == P_ZERO_MAT || pa == P_SCALAR_ZERO)) {
+            } else if (relaxed_math && t->op == TAC_ADD && (pa == P_ZERO_MAT || pa == P_SCALAR_ZERO)) {
                 const char *kept = t->a2;
                 rewrite_to_copy(t, kept);
                 logf_("zero operand     : %-28s -> %s = %s  (0 + x = x)",
@@ -267,8 +270,8 @@ static int pass_algebraic(void)
 
             /* A multiplication by anything zero produces a zero result of the
              * shape the semantic pass already computed. */
-            if (pa == P_SCALAR_ZERO || pb == P_SCALAR_ZERO ||
-                pa == P_ZERO_MAT   || pb == P_ZERO_MAT) {
+            if (relaxed_math && (pa == P_SCALAR_ZERO || pb == P_SCALAR_ZERO ||
+                pa == P_ZERO_MAT   || pb == P_ZERO_MAT)) {
                 if (type_is_matrix(t->type)) {
                     t->op = TAC_ZEROS;
                     t->i1 = t->type.rows;
@@ -288,7 +291,7 @@ static int pass_algebraic(void)
             /* The identity rewrites. A * I is valid only when I is the right
              * size, and the semantic pass has already established that -- if it
              * had not, this instruction would not exist. */
-            if (pb == P_IDENTITY || pb == P_SCALAR_ONE) {
+            if (relaxed_math && (pb == P_IDENTITY || pb == P_SCALAR_ONE)) {
                 const char *kept = t->a1;
                 rewrite_to_copy(t, kept);
                 logf_("identity operand : %-28s -> %s = %s  (x * %s = x)",
@@ -296,7 +299,7 @@ static int pass_algebraic(void)
                       pb == P_IDENTITY ? "I" : "1");
                 stats.identity_ops++;
                 changed = 1;
-            } else if (pa == P_IDENTITY || pa == P_SCALAR_ONE) {
+            } else if (relaxed_math && (pa == P_IDENTITY || pa == P_SCALAR_ONE)) {
                 const char *kept = t->a2;
                 rewrite_to_copy(t, kept);
                 logf_("identity operand : %-28s -> %s = %s  (%s * x = x)",
@@ -591,6 +594,7 @@ void optimize_run(int passes)
 
     stats.original = tac_live_count();
     stats.flops_before = cost_total();
+    relaxed_math = (passes & OPT_RELAXED) != 0;
 
     /* Chain re-bracketing runs first and once. It never changes the number of
      * instructions -- a chain of k operands needs k-1 products however it is
@@ -598,7 +602,7 @@ void optimize_run(int passes)
      * running it inside their fixed-point loop would only repeat work. Running
      * it first does matter: it decides the shapes of the intermediate results,
      * and the passes that follow reason about those shapes. */
-    if (passes & OPT_CHAIN) {
+    if (relaxed_math && (passes & OPT_CHAIN)) {
         stats.chains = chain_reorder();
         stats.flops_chain = chain_flops_saved();
     }
@@ -650,6 +654,9 @@ void optimize_report(FILE *out)
     fprintf(out, "==================================================\n");
     fprintf(out, " MATRIXLANG OPTIMIZATION REPORT\n");
     fprintf(out, "==================================================\n\n");
+    fprintf(out, "  Numerical contract          : %s\n",
+            relaxed_math ? "algebraic (rounding/zero/NaN changes permitted)"
+                         : "strict (arithmetic order preserved)");
     fprintf(out, "  Original TAC instructions   : %6d\n", stats.original);
     fprintf(out, "  Optimized TAC instructions  : %6d\n", stats.optimized);
     fprintf(out, "\n");

@@ -1,0 +1,157 @@
+{
+  "fixtures": 15,
+  "strict_identical": 15,
+  "algebraic_differences": 6,
+  "results": [
+    {
+      "fixture": "literal_roundtrip",
+      "source_sha256": "0f48417eb8cf452f6f586519bff571a2ea33234336f2afb5f55a945940374cbc",
+      "plain": "x = 0x1.3c0ca428c59fbp+0\n",
+      "strict": "x = 0x1.3c0ca428c59fbp+0\n",
+      "algebraic": "x = 0x1.3c0ca428c59fbp+0\n",
+      "strict_identical": true,
+      "algebraic_identical": true,
+      "independent_scalar_reference": true
+    },
+    {
+      "fixture": "fold_roundtrip",
+      "source_sha256": "51f832a96b121c27f071953f9175fc410295597511513771497a8432d24a0480",
+      "plain": "x = 0x1.3a193487a132fp+1\n",
+      "strict": "x = 0x1.3a193487a132fp+1\n",
+      "algebraic": "x = 0x1.3a193487a132fp+1\n",
+      "strict_identical": true,
+      "algebraic_identical": true,
+      "independent_scalar_reference": true
+    },
+    {
+      "fixture": "fold_cancellation",
+      "source_sha256": "89465034ec7d8f5aa70ba7419b2b6bf18d84b946112b98691d5674f770e6148f",
+      "plain": "x = 0x1.19f51c99p-18\n",
+      "strict": "x = 0x1.19f51c99p-18\n",
+      "algebraic": "x = 0x1.19f51c99p-18\n",
+      "strict_identical": true,
+      "algebraic_identical": true,
+      "independent_scalar_reference": true
+    },
+    {
+      "fixture": "signed_zero_add",
+      "source_sha256": "672cae3d0369857fdf8541a1f7345e36e334253b76e5e5ae71090e20cda8b4f1",
+      "plain": "R = Matrix<1x1>\n  [ 0x0p+0 ]\n",
+      "strict": "R = Matrix<1x1>\n  [ 0x0p+0 ]\n",
+      "algebraic": "R = Matrix<1x1>\n  [ -0x0p+0 ]\n",
+      "strict_identical": true,
+      "algebraic_identical": false,
+      "independent_scalar_reference": false
+    },
+    {
+      "fixture": "signed_zero_scale",
+      "source_sha256": "3ac112c98d5676d3a42a6e0edcf7a66fb508649600ac9401d725417f63d6ead4",
+      "plain": "y = -0x0p+0\n",
+      "strict": "y = -0x0p+0\n",
+      "algebraic": "y = 0x0p+0\n",
+      "strict_identical": true,
+      "algebraic_identical": false,
+      "independent_scalar_reference": true
+    },
+    {
+      "fixture": "zero_inf",
+      "source_sha256": "e0b24f7d8ebf912cf4052648fd52f492fb161db527902702febb5f69ca6cc664",
+      "plain": "y = nan\n",
+      "strict": "y = nan\n",
+      "algebraic": "y = 0x0p+0\n",
+      "strict_identical": true,
+      "algebraic_identical": false,
+      "independent_scalar_reference": false
+    },
+    {
+      "fixture": "identity_inf",
+      "source_sha256": "bd9e55b3c97a4797dc0d6e3c00ba145321f4e558a3794adff46e3fd21d80ca44",
+      "plain": "R = Matrix<2x2>\n  [ inf nan ]\n  [ 0x1.8p+1 0x1p+2 ]\n",
+      "strict": "R = Matrix<2x2>\n  [ inf nan ]\n  [ 0x1.8p+1 0x1p+2 ]\n",
+      "algebraic": "R = Matrix<2x2>\n  [ inf 0x1p+1 ]\n  [ 0x1.8p+1 0x1p+2 ]\n",
+      "strict_identical": true,
+      "algebraic_identical": false,
+      "independent_scalar_reference": false
+    },
+    {
+      "fixture": "identity_zero",
+      "source_sha256": "3cc8a17b006038a55fdce732f90f503e4d191ea3ce9b0933f38bfe13127dc15b",
+      "plain": "R = Matrix<2x2>\n  [ 0x0p+0 0x0p+0 ]\n  [ 0x0p+0 0x0p+0 ]\n",
+      "strict": "R = Matrix<2x2>\n  [ 0x0p+0 0x0p+0 ]\n  [ 0x0p+0 0x0p+0 ]\n",
+      "algebraic": "R = Matrix<2x2>\n  [ 0x0p+0 0x0p+0 ]\n  [ 0x0p+0 0x0p+0 ]\n",
+      "strict_identical": true,
+      "algebraic_identical": true,
+      "independent_scalar_reference": false
+    },
+    {
+      "fixture": "double_transpose",
+      "source_sha256": "6a876a69c2ca04417c4e463f0332f62726a15fea8220a1b171110bb02b6d2cec",
+      "plain": "R = Matrix<2x2>\n  [ -0x0p+0 0x1.999999999999ap-4 ]\n  [ 0x1.56e1fc2f8f359p-997 0x1.7e43c8800759cp+996 ]\n",
+      "strict": "R = Matrix<2x2>\n  [ -0x0p+0 0x1.999999999999ap-4 ]\n  [ 0x1.56e1fc2f8f359p-997 0x1.7e43c8800759cp+996 ]\n",
+      "algebraic": "R = Matrix<2x2>\n  [ -0x0p+0 0x1.999999999999ap-4 ]\n  [ 0x1.56e1fc2f8f359p-997 0x1.7e43c8800759cp+996 ]\n",
+      "strict_identical": true,
+      "algebraic_identical": true,
+      "independent_scalar_reference": false
+    },
+    {
+      "fixture": "reassignment",
+      "source_sha256": "07524db4bc620850387db50ae3a9e03f937b6a11f36164c0601632254f8d1887",
+      "plain": "R = Matrix<2x2>\n  [ 0x1p+0 0x1p+1 ]\n  [ 0x1.8p+1 0x1p+2 ]\n",
+      "strict": "R = Matrix<2x2>\n  [ 0x1p+0 0x1p+1 ]\n  [ 0x1.8p+1 0x1p+2 ]\n",
+      "algebraic": "R = Matrix<2x2>\n  [ 0x1p+0 0x1p+1 ]\n  [ 0x1.8p+1 0x1p+2 ]\n",
+      "strict_identical": true,
+      "algebraic_identical": true,
+      "independent_scalar_reference": false
+    },
+    {
+      "fixture": "temporary_namespace",
+      "source_sha256": "800e8b07fc2515f9dd6fbac1515dfff6380cff2f9bd4560b94dbed757aea4672",
+      "plain": "t1 = 0x1.cp+2\ny = 0x1.44p+6\n",
+      "strict": "t1 = 0x1.cp+2\ny = 0x1.44p+6\n",
+      "algebraic": "t1 = 0x1.cp+2\ny = 0x1.44p+6\n",
+      "strict_identical": true,
+      "algebraic_identical": true,
+      "independent_scalar_reference": true
+    },
+    {
+      "fixture": "subnormal",
+      "source_sha256": "c22bb70d18cb91640ff28da17530fbf6b194d05b21a185fedf4c8ee160411ff2",
+      "plain": "z = 0x0.00000000007e8p-1022\n",
+      "strict": "z = 0x0.00000000007e8p-1022\n",
+      "algebraic": "z = 0x0.00000000007e8p-1022\n",
+      "strict_identical": true,
+      "algebraic_identical": true,
+      "independent_scalar_reference": true
+    },
+    {
+      "fixture": "chain_overflow",
+      "source_sha256": "daeb319745e5e621808765e436b83699851f97188628b44cfa80e01a8a047ec7",
+      "plain": "R = Matrix<5x1>\n  [ inf ]\n  [ inf ]\n  [ inf ]\n  [ inf ]\n  [ inf ]\n",
+      "strict": "R = Matrix<5x1>\n  [ inf ]\n  [ inf ]\n  [ inf ]\n  [ inf ]\n  [ inf ]\n",
+      "algebraic": "R = Matrix<5x1>\n  [ 0x1.a20df0dcd3afp+666 ]\n  [ 0x1.a20df0dcd3afp+666 ]\n  [ 0x1.a20df0dcd3afp+666 ]\n  [ 0x1.a20df0dcd3afp+666 ]\n  [ 0x1.a20df0dcd3afp+666 ]\n",
+      "strict_identical": true,
+      "algebraic_identical": false,
+      "independent_scalar_reference": false
+    },
+    {
+      "fixture": "chain_rounding",
+      "source_sha256": "110b8d456d996869c7fd84a22ac14bf92853f00636d2291977dbcd9a1837c746",
+      "plain": "R = Matrix<5x1>\n  [ 0x1.2d0e560418938p-1 ]\n  [ 0x1.c395810624dd2p+0 ]\n  [ 0x1.076c8b439581p+2 ]\n  [ 0x1.9df3b645a1cacp+2 ]\n  [ 0x1.e9374bc6a7efap+2 ]\n",
+      "strict": "R = Matrix<5x1>\n  [ 0x1.2d0e560418938p-1 ]\n  [ 0x1.c395810624dd2p+0 ]\n  [ 0x1.076c8b439581p+2 ]\n  [ 0x1.9df3b645a1cacp+2 ]\n  [ 0x1.e9374bc6a7efap+2 ]\n",
+      "algebraic": "R = Matrix<5x1>\n  [ 0x1.2d0e560418937p-1 ]\n  [ 0x1.c395810624dd3p+0 ]\n  [ 0x1.076c8b439581p+2 ]\n  [ 0x1.9df3b645a1cacp+2 ]\n  [ 0x1.e9374bc6a7efap+2 ]\n",
+      "strict_identical": true,
+      "algebraic_identical": false,
+      "independent_scalar_reference": false
+    },
+    {
+      "fixture": "chain_dependency",
+      "source_sha256": "55ff83376f4ddfba4326464d76e5357d0458e6d9d062f69591161a7bd069aa17",
+      "plain": "R = Matrix<5x1>\n  [ 0x1.ep+4 ]\n  [ 0x1.ep+4 ]\n  [ 0x1.ep+4 ]\n  [ 0x1.ep+4 ]\n  [ 0x1.ep+4 ]\n",
+      "strict": "R = Matrix<5x1>\n  [ 0x1.ep+4 ]\n  [ 0x1.ep+4 ]\n  [ 0x1.ep+4 ]\n  [ 0x1.ep+4 ]\n  [ 0x1.ep+4 ]\n",
+      "algebraic": "R = Matrix<5x1>\n  [ 0x1.ep+4 ]\n  [ 0x1.ep+4 ]\n  [ 0x1.ep+4 ]\n  [ 0x1.ep+4 ]\n  [ 0x1.ep+4 ]\n",
+      "strict_identical": true,
+      "algebraic_identical": true,
+      "independent_scalar_reference": false
+    }
+  ]
+}

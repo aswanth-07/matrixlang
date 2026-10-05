@@ -1,6 +1,8 @@
 # Phase 1 — Problem Definition and Design
 
-The Review 1 deliverable. Section numbering follows §8.3 of the lab manual.
+The initial Review 1 design document. Section numbering follows §8.3 of the lab manual.
+The current technical characterization is in [the research artifact](../paper/README.md).
+The original Phase 1 DOCX is retained as a historical laboratory deliverable.
 
 Demonstration: `make demo1`
 
@@ -24,7 +26,7 @@ computed.
 
 The compiler implements the full pipeline — lexical analysis with Flex, parsing
 with Bison, an abstract syntax tree, a symbol table carrying shapes, semantic
-analysis, three-address code, four optimization passes, target code generation
+analysis, three-address code, local passes and algebraic-mode chain ordering, target code generation
 for a matrix virtual machine, and execution. Alongside the standard
 optimizations it implements a set of **matrix-specific algebraic
 simplifications** that a general-purpose optimizer cannot perform, because they
@@ -35,49 +37,21 @@ transpose of a transpose.
 
 ## 3. Problem statement
 
-Shape errors are the characteristic bug of matrix code, and in the languages
-people actually use for it they are found late:
-
-- In **C or Java**, a matrix is an array and its dimensions are ordinary
-  integers. Nothing checks them. A wrong shape is an out-of-bounds access, a
-  silently wrong answer, or a crash somewhere far from the mistake.
-- In **Python with NumPy**, the check happens, but at runtime — after the data
-  is loaded, after the earlier stages of the computation have run, possibly
-  minutes into a job.
-
-In both cases the information needed to catch the error is present in the
-source. `A` was declared 2x3 and `B` was declared 5x4; that `A * B` is
-impossible is a fact about the program text, not about its input. No mainstream
-language uses it.
-
-**The problem this project addresses: matrix dimension errors are detectable at
-compile time, and are not detected at compile time.**
-
----
+Matrix dimensions can support static checks when they are known at compile time.
+MatrixLang makes those checks explicit in a small source language. This differs
+from ordinary dynamically shaped NumPy programs, where compatibility is checked
+at runtime, but static matrix typing and domain-specific compiler languages are
+established techniques. General-purpose languages and their libraries can also
+provide useful checks and richer compiler-course tasks.
 
 ## 4. Motivation
 
-Three reasons this is worth building as a compiler project.
-
-**It puts real work in the semantic analyser.** In a typical toy language,
-semantic analysis checks that `int` is not assigned to `bool` — a comparison of
-two enum values. Here, type checking means propagating shapes through
-expressions, inferring the result of a product from its operands, and producing
-a diagnostic that explains a rule of linear algebra. The phase carries genuine
-weight rather than being a formality between parsing and code generation.
-
-**It gives the optimizer something a general optimizer cannot do.** Constant
-folding and dead code elimination are the same in every compiler. But `A * I = A`
-is a fact about matrices, and exploiting it requires the compiler to track which
-values are identity matrices — an analysis that has no counterpart in a scalar
-language. That is where this project's originality lies.
-
-**Errors can be genuinely helpful.** When shapes are known at compile time, the
-compiler can say exactly which rule was violated and what it found instead. That
-is a large usability difference over a runtime exception, and it is only possible
-because of the design.
-
----
+Shapes connect a concrete type rule to a cost objective: a valid product supplies
+the dimensions needed to count conventional arithmetic. Value properties such as
+identity and zero provide another analysis task, and mutable names require facts
+to be invalidated on writes. Numerical contracts let a learner test whether a
+shape-correct rewrite also preserves the specified printed output. These are
+proposed instructional uses, without a classroom effectiveness comparison.
 
 ## 5. Objectives
 
@@ -101,7 +75,8 @@ because of the design.
 9. Generate target code for a matrix virtual machine and execute it.
 10. Produce an optimization report quantifying the improvement.
 11. Validate with a test suite covering valid programs, every error class, and
-    the equivalence of optimized and unoptimized execution.
+    hexadecimal output agreement under strict mode and the permitted
+    numerical differences under explicit algebraic mode.
 
 ---
 
@@ -120,7 +95,7 @@ because of the design.
 ### Deliberately out of scope
 
 - **Control flow** — no `if`, no loops. With straight-line code the whole
-  program is one basic block, which makes the optimizations exact without any
+  program is one basic block, which permits local dependence analysis without any
   control-flow graph or dataflow iteration. The marks here come from
   dimension-aware semantics and matrix optimization, and control flow would add
   bulk without adding either.
@@ -139,14 +114,14 @@ because of the design.
 
 | Area | What was studied | Where it is used |
 | --- | --- | --- |
-| Regular expressions, finite automata | token specification | `src/matrix.l` |
-| Context-free grammars, LALR(1) parsing | grammar design, conflict resolution | `src/matrix.y` |
-| Syntax-directed translation | AST construction in semantic actions | `src/matrix.y` |
-| Symbol table organisation | hash tables, insertion-ordered storage | `src/symtab.c` |
-| Type systems and type inference | shapes as types, inference through expressions | `src/semantic.c` |
-| Intermediate representations | three-address code, temporaries | `src/tac.c` |
-| Local optimization | available expressions, liveness, algebraic identities | `src/optimize.c` |
-| Code generation for stack machines | instruction selection from types | `src/codegen.c` |
+| Regular expressions, finite automata | token specification | `src/frontend/matrix.l` |
+| Context-free grammars, LALR(1) parsing | grammar design, conflict resolution | `src/frontend/matrix.y` |
+| Syntax-directed translation | AST construction in semantic actions | `src/frontend/matrix.y` |
+| Symbol table organisation | hash tables, insertion-ordered storage | `src/analysis/symtab.c` |
+| Type systems and type inference | shapes as types, inference through expressions | `src/analysis/semantic.c` |
+| Intermediate representations | three-address code, temporaries | `src/ir/tac.c` |
+| Local optimization | available expressions, liveness, algebraic identities | `src/ir/optimize.c` |
+| Code generation for stack machines | instruction selection from types | `src/backend/codegen.c` |
 
 Existing systems considered: NumPy (runtime shape checking, the behaviour this
 project improves on); the dependent-type systems of Idris and Agda, where
@@ -227,41 +202,41 @@ that runs.
 ## 10. System architecture
 
 ```
- src/matrix.l ---- tokens ----> src/matrix.y ---- AST ----> src/semantic.c
+ src/frontend/matrix.l ---- tokens ----> src/frontend/matrix.y ---- AST ----> src/analysis/semantic.c
       |                              |                            |
       v                              v                            v
- src/tokens.c                   src/ast.c                   src/symtab.c
+ src/frontend/tokens.c                   src/frontend/ast.c                   src/analysis/symtab.c
  (token table                   (tree, printer,             (hash table per
   for display)                   shape annotation)           scope, shapes)
                                                                   |
                                                                   v
-                                                             src/types.c
+                                                             src/analysis/types.c
                                                        (the shape rules live
                                                         here, in one place)
                                                                   |
                                     +-----------------------------+
                                     v
-                               src/tac.c  ---- three-address code
+                               src/ir/tac.c  ---- three-address code
                                     |
                                     v
-                             src/optimize.c ---- four passes to a fixed point
+                             src/ir/optimize.c ---- four passes to a fixed point
                                     |
                                     v
-                              src/codegen.c ---- MVM instructions
+                              src/backend/codegen.c ---- MVM instructions
                                     |
                                     v
-                                src/vm.c  ---- execution
+                                src/backend/vm.c  ---- execution
                                     |
                                     v
-                               src/value.c
+                               src/backend/value.c
                         (matrix arithmetic and the
                          compile-time literal pool)
 
- src/diag.c    every phase reports here, so messages come out in source order
+ src/support/diag.c    every phase reports here, so messages come out in source order
  src/main.c    the driver: flags, stage selection, exit status
 ```
 
-The shape rules are deliberately isolated in `src/types.c` rather than spread
+The shape rules are deliberately isolated in `src/analysis/types.c` rather than spread
 through the analyser. There is exactly one place that decides whether `A * B` is
 legal and what shape it produces, and both the semantic pass and the code
 generator consult it.
@@ -277,7 +252,7 @@ generator consult it.
 | Parser generator | Bison 3.8.2 | LALR(1) handles this grammar as written |
 | Build | GNU Make | one command from clean tree to binary |
 | Compiler | gcc 15.2 (mingw64), `-Wall -Wextra` | warning-free build as a standing requirement |
-| Testing | bash script, 139 assertions | asserts exit status *and* output text |
+| Testing | bash acceptance checks and numerical fixtures | asserts exit status *and* output text |
 | Version control | Git | one commit per phase |
 
 No third-party libraries. Everything outside Flex, Bison and the C standard
@@ -352,5 +327,6 @@ scripts.
   the operands, the rule and the mismatch.
 - A measurable optimization result: an instruction count reduction, itemised by
   which transformation produced it.
-- Evidence that the optimizer preserves meaning, not just size.
+- Scoped evidence for strict printed-output agreement, alongside explicit
+  numerical counterexamples for algebraic mode.
 - A test suite that can be run in one command.

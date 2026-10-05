@@ -12,6 +12,8 @@
 
 #include <stdio.h>
 
+void value_set_exact_output(int enabled);
+
 #include "types.h"
 
 typedef struct {

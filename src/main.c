@@ -75,6 +75,10 @@ static void usage(FILE *out, const char *prog)
         "Other:\n"
         "  --cost          arithmetic cost, in scalar operations, before and\n"
         "                  after the optimizer\n"
+        "  --fp-strict     preserve arithmetic order (default)\n"
+        "  --fp-algebraic  permit matrix identities and reassociation; results\n"
+        "                  may differ in rounding, signed zero, and NaN/Inf\n"
+        "  --exact-output  print values as hexadecimal floating-point numbers\n"
         "  --stats         counts for tokens, AST, symbols and instructions\n"
         "  -q, --quiet     no stage output; exit status only\n"
         "  -h, --help      this message\n"
@@ -92,6 +96,7 @@ int main(int argc, char **argv)
     int want_target = 0, want_run = 0, want_trace = 0, want_stats = 0, want_cost = 0;
     int quiet = 0, chose = 0, phase1_only = 0;
     int passes = 0;
+    int relaxed = 0;
     int i, status;
     long long cost_before = 0;
 
@@ -130,6 +135,9 @@ int main(int argc, char **argv)
         else if (!strcmp(a, "--opt-dce"))       { passes |= OPT_DCE;       want_opt = chose = 1; }
         else if (!strcmp(a, "--opt-chain"))     { passes |= OPT_CHAIN;     want_opt = chose = 1; }
         else if (!strcmp(a, "--cost"))          { want_cost = 1; }
+        else if (!strcmp(a, "--fp-strict"))     { relaxed = 0; }
+        else if (!strcmp(a, "--fp-algebraic"))  { relaxed = 1; }
+        else if (!strcmp(a, "--exact-output"))  { value_set_exact_output(1); }
 
         else if (!strcmp(a, "-q") || !strcmp(a, "--quiet")) quiet = 1;
 
@@ -156,6 +164,7 @@ int main(int argc, char **argv)
         want_opt = want_explain = want_report = want_target = want_run = 1;
     }
     if (passes == 0) passes = OPT_ALL;
+    if (relaxed) passes |= OPT_RELAXED;
 
     yyin = fopen(path, "r");
     if (!yyin) {

@@ -1,16 +1,10 @@
 """Generate random, semantically valid MatrixLang programs.
 
-The measurements this project reports are only worth reading if the programs
-they were taken on were not written by the person reporting them. Every
-hand-written example in examples/ was written by the author of the optimizer,
-which makes any percentage taken over that corpus circular: the examples that
-exercise a pass exist because the pass exists.
-
-This generator removes that objection. Programs are built shape-correct by
-construction -- an expression is assembled from operands whose shapes already
-agree, so the semantic pass has nothing to reject -- and the shapes themselves
-are drawn at random. Whatever the optimizer removes from these programs, it was
-not offered the chance to remove it on purpose.
+Programs are shape-correct by construction and reproducible from seeds. The
+author-designed distribution deliberately supplies compatible products and
+chains; random sampling does not remove that design bias. Research evaluation
+therefore compares shape and expression profiles, retains zero-saving cases,
+and limits inference to the declared generator populations.
 
     python tools/gen_programs.py --out corpus/ --count 200 --seed 1 --mode exec
     python tools/gen_programs.py --out corpus/ --count 200 --seed 1 --mode cost
@@ -27,9 +21,12 @@ import random
 
 
 class Gen:
-    def __init__(self, rng, mode):
+    def __init__(self, rng, mode, profile="heterogeneous", values="dyadic"):
         self.rng = rng
         self.mode = mode
+        self.profile = profile
+        self.values = values
+        self.square_dim = rng.choice([2, 8, 32, 120]) if profile == "square" else None
         self.lines = []
         self.mats = []          # (name, rows, cols)
         self.scalars = []
@@ -40,6 +37,10 @@ class Gen:
     def dim(self):
         if self.mode == "exec":
             return self.rng.randint(1, 4)
+        if self.profile == "square":
+            return self.square_dim
+        if self.profile == "narrow":
+            return self.rng.choice([8, 9, 10, 11, 12])
         # Cost mode spans two orders of magnitude on purpose: bracketing only
         # matters when the dimensions differ, and a corpus of near-square
         # matrices would report that chain ordering never helps.
@@ -54,7 +55,12 @@ class Gen:
     def literal(self, r, c):
         rows = []
         for _ in range(r):
-            vals = ", ".join(str(self.rng.randint(-3, 5)) for _ in range(c))
+            if self.values == "broad":
+                vals = ", ".join(format(self.rng.choice([-1, 1]) *
+                    self.rng.uniform(0.1, 9.9) * 10 ** self.rng.randint(-12, 12), ".17g")
+                    for _ in range(c))
+            else:
+                vals = ", ".join(str(self.rng.randint(-3, 5)) for _ in range(c))
             rows.append("{" + vals + "}")
         return "{" + ", ".join(rows) + "}"
 
@@ -99,9 +105,13 @@ class Gen:
         # Weighted so that products and chains dominate: they are what this
         # language is about, and what both the cost model and chain ordering
         # have anything to say about.
-        kind = self.rng.choice(
-            ["chain", "chain", "chain", "mul", "mul",
-             "add", "sub", "transpose", "scale", "var"])
+        kinds = ["chain", "chain", "chain", "mul", "mul",
+                 "add", "sub", "transpose", "scale", "var"]
+        if self.profile == "elementwise":
+            kinds = ["add", "sub", "transpose", "scale", "var"]
+        elif self.profile == "balanced":
+            kinds = ["chain", "mul", "add", "sub", "transpose", "scale", "var"]
+        kind = self.rng.choice(kinds)
 
         if kind == "var":
             nm, r, c = self.rng.choice(self.mats)
@@ -184,16 +194,17 @@ def main():
     ap.add_argument("--count", type=int, default=100)
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--mode", choices=["exec", "cost"], default="exec")
+    ap.add_argument("--profile", choices=["heterogeneous", "square", "narrow", "balanced", "elementwise"], default="heterogeneous")
+    ap.add_argument("--values", choices=["dyadic", "broad"], default="dyadic")
     ap.add_argument("--decls", type=int, default=5)
     ap.add_argument("--stmts", type=int, default=4)
     a = ap.parse_args()
 
     os.makedirs(a.out, exist_ok=True)
     for i in range(a.count):
-        # One stream seeded once, advanced per program: reproducible from the
-        # recorded seed alone, which is what makes the corpus citable.
+        # Each program has a separate reproducible stream.
         rng = random.Random(a.seed * 1000003 + i)
-        g = Gen(rng, a.mode)
+        g = Gen(rng, a.mode, a.profile, a.values)
         text = g.build(a.decls, a.stmts)
         with open(os.path.join(a.out, f"g{i:04d}.ml"), "w", newline="\n") as f:
             f.write(f"/* generated: seed={a.seed} index={i} mode={a.mode} */\n")

@@ -40,9 +40,9 @@ PROGRAMS = [
     {
         "id": "chain",
         "name": "A chain the shapes re-bracket",
-        "blurb": "A * B * C computes the same matrix under either bracketing "
-                 "and not the same amount of arithmetic. Which one is cheaper "
-                 "depends only on the shapes, and the shapes are in the types.",
+        "blurb": "In algebraic mode, A * B * C can be re-bracketed to reduce "
+                 "modeled arithmetic. The cheaper tree depends on shapes; "
+                 "binary64 output can change. Strict mode retains association.",
         "file": "examples/optimize/chain_order.ml",
     },
     {
@@ -90,7 +90,7 @@ STAGES = [
     ("symbols", "--symbols", "Symbol table"),
     ("semantic", "--check", "Diagnostics and verdict"),
     ("tac", "--tac", "Three-address code"),
-    ("optimize", "--optimize --explain --cost", "Optimizer"),
+    ("optimize", "--fp-algebraic --optimize --explain --cost", "Optimizer (algebraic contract)"),
     ("target", "--target", "VM target code"),
     ("execute", "--run", "Execution"),
 ]

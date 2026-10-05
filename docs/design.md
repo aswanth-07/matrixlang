@@ -9,7 +9,7 @@ Why the code is shaped the way it is. For *what* the language accepts, see
 
 A type carries its shape. Everything else follows from that:
 
-- `src/types.c` holds the shape rules and nothing else. There is exactly one
+- `src/analysis/types.c` holds the shape rules and nothing else. There is exactly one
   place that decides whether `A * B` is legal and what it produces, and both the
   semantic analyser and the code generator consult it. Had those rules been
   written inline in `semantic.c`, the code generator would have had to re-derive
@@ -30,7 +30,7 @@ A type carries its shape. Everything else follows from that:
 ### No control flow
 
 `if` and `while` are absent by choice. The consequence is that a program is a
-single basic block, and that is what makes the Phase 3 optimizations *exact*
+single basic block, and that is what permits local dependence analysis
 rather than conservative: available expressions and liveness are both computed
 by one linear scan, with no control-flow graph and no dataflow iteration.
 

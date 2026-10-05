@@ -90,12 +90,13 @@ def parse_rules(text):
         if head:
             lhs = head
         rhs = rhs.strip()
-        symbols = [] if rhs == "%empty" else rhs.split()
+        empty = rhs in ("%empty", "\u03b5")
+        symbols = [] if empty else rhs.split()
         rules.append({
             "n": int(number),
             "lhs": lhs,
             "rhs": symbols,
-            "empty": rhs == "%empty",
+            "empty": empty,
         })
     if not rules:
         sys.exit("could not read the grammar out of bison's report")
@@ -196,8 +197,8 @@ def parse_states(text, rules):
                 st["gotos"][m.group(1)] = int(m.group(2))
                 continue
 
-            # Anything left at this indent is an item. The dot is a bare '.',
-            # which is unambiguous because this grammar has no '.' token.
+            # Bison uses either ASCII '.' or Unicode bullet in its report,
+            # depending on locale. Neither is a token in this grammar.
             m = RULE.match(line)
             if not m:
                 continue
@@ -208,16 +209,21 @@ def parse_states(text, rules):
 
             parts = rhs.split()
             lookahead = []
-            if "[" in rhs:
-                body_, look = rhs.split("[", 1)
+            # A quoted '[' is an ordinary grammar terminal. Only Bison's
+            # trailing, unquoted bracket group denotes lookahead tokens.
+            look_group = re.search(r"\s+\[([^\n]*)\]\s*$", rhs)
+            if look_group:
+                body_, look = rhs[:look_group.start()], look_group.group(1)
                 parts = body_.split()
                 # A lookahead set is printed as [a, b, c], and one of this
                 # grammar's terminals is ','. Splitting on the comma turns
                 # that one token into two empty ones, so the members are
                 # matched rather than split.
                 lookahead = re.findall(r"'(?:[^']|'')*'|[A-Za-z_$][\w$]*",
-                                       look.rstrip("]"))
-            dot = parts.index(".") if "." in parts else len(parts)
+                                       look)
+            dot = next((i for i, p in enumerate(parts) if p in (".", "\u2022")), None)
+            if dot is None:
+                raise ValueError("unrecognized Bison item marker: " + line)
             if rule["empty"]:
                 dot = 0
             st["items"].append({"rule": rule["n"], "dot": dot,

@@ -1,10 +1,14 @@
 cff-version: 1.2.0
 title: "MatrixLang: a dimension-aware optimizing compiler"
-message: "If you refer to this work, please cite the paper."
+message: "Please cite the software and its technical manuscript; the manuscript is a draft for author review."
 type: software
 authors:
   - family-names: "Aswanth Raj"
     given-names: "A"
+    affiliation: "School of Computer Science and Engineering, VIT Vellore"
+  - family-names: "RANJITHKUMAR"
+    given-names: "S"
+    affiliation: "School of Computer Science and Engineering, VIT Vellore"
 repository-code: "https://github.com/aswanth-07/matrixlang"
 license: MIT
 abstract: >-
@@ -12,8 +16,10 @@ abstract: >-
   Because every shape is known at compile time, the compiler can compute the
   arithmetic cost of a program before running it and choose the bracketing of a
   matrix product chain. The repository carries the compiler, a program
-  generator, the recorded measurements over 400 generated programs, the paper
-  and a web demonstration.
+  generator, a five-profile eight-configuration cost study, explicit strict and
+  algebraic numerical contracts, independent chain checks, a technical manuscript,
+  teaching exercises, and a web demonstration. No classroom effectiveness or
+  runtime speedup is claimed.
 keywords:
   - compiler construction
   - computing education
@@ -21,9 +27,13 @@ keywords:
   - type systems
   - code optimization
 preferred-citation:
-  type: article
-  title: "Shapes in the Type System: A Matrix Language That Lets a Compiler Course Reach Optimization"
+  type: report
+  title: "MatrixLang: Connecting Shape, Cost, and Numerical Contracts in a Teaching Compiler"
   authors:
     - family-names: "Aswanth Raj"
       given-names: "A"
+      affiliation: "School of Computer Science and Engineering, VIT Vellore"
+    - family-names: "RANJITHKUMAR"
+      given-names: "S"
+      affiliation: "School of Computer Science and Engineering, VIT Vellore"
   year: 2026

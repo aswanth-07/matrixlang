@@ -983,21 +983,19 @@
     var v = el("verdict");
     clear(v);
     if (saved > 0) {
-      v.appendChild(document.createTextNode("The compiler re-brackets and removes "));
+      v.appendChild(document.createTextNode("Algebraic mode re-brackets and removes "));
       v.appendChild(make("b", "", commas(saved) + " FLOP"));
       v.appendChild(document.createTextNode(", which is "));
       v.appendChild(make("b", "", share.toFixed(1) + "%"));
       v.appendChild(document.createTextNode(" of the arithmetic. Both bracketings emit "));
       v.appendChild(make("b", "", k - 1));
       v.appendChild(document.createTextNode(" product" + (k === 2 ? "" : "s")
-        + ", so the instruction count does not move and a course project "
-        + "reporting instructions would record no change at all."));
+        + ", so the product-instruction count does not move. "
+        + "The saving is in the conventional arithmetic model."));
       v.style.borderLeftColor = "var(--mint)";
     } else {
       v.textContent = "Left to right is already the cheapest bracketing for "
-        + "these shapes, so the compiler leaves the expression alone. About a "
-        + "fifth of generated programs land here, and an optimizer that always "
-        + "claimed an improvement would be measuring nothing.";
+        + "these shapes, so the compiler leaves the expression alone.";
       v.style.borderLeftColor = "var(--gold)";
     }
   }
@@ -1033,9 +1031,9 @@
   /* ========================================================== the evidence = */
 
   el("ev-lede").textContent =
-    M.n + " programs from a generator, across two seeds. The corpus was not "
-    + "written by whoever wrote the optimizer, which is the point: a corpus "
-    + "the author chose can only show that the optimizer runs.";
+    M.n + " author-designed development programs across two seeds. Cost uses "
+    + "algebraic mode; execution uses strict mode. These measurements describe "
+    + "this synthetic distribution. The paper reports the separate ten-seed study.";
 
   var tiles = [
     [pct(M.flops.median), "var(--mint)",
@@ -1048,7 +1046,7 @@
      "of programs had a chain worth re-bracketing (" + M.chain.helped
        + " of " + M.chain.total + ")"],
     [M.differential.identical + "/" + M.differential.programs, "var(--mint)",
-     "programs printed identical bytes with the optimizer and without"]
+     "strict programs printed identical bytes with the optimizer and without"]
   ];
   var tileBox = el("tiles");
   clear(tileBox);
