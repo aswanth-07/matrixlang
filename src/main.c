@@ -21,6 +21,7 @@
 #include "codegen.h"
 #include "diag.h"
 #include "cost.h"
+#include "inputs.h"
 #include "optimize.h"
 #include "semantic.h"
 #include "symtab.h"
@@ -72,12 +73,25 @@ static void usage(FILE *out, const char *prog)
         "  --opt-dce        dead code elimination\n"
         "  --opt-chain      matrix chain ordering, chosen by arithmetic cost\n"
         "\n"
+        "Numerical contract (what the optimizer must preserve):\n"
+        "  --fp-strict     bit-identical output (default). A rewrite that can\n"
+        "                  change floating-point results is applied only when\n"
+        "                  the declared input domains prove it exact.\n"
+        "  --fp-bounded    every output keeps the worst-case error bound of the\n"
+        "                  source evaluation order; signed zeros may differ\n"
+        "  --fp-algebraic  rewrites valid over the reals; results may differ in\n"
+        "                  rounding, signed zero, and NaN/Inf\n"
+        "  --no-proofs     do not use value facts: strict and bounded then refuse\n"
+        "                  every value-changing rewrite\n"
+        "  --certificate   the guarantee each printed value keeps, and why\n"
+        "\n"
+        "Inputs (declared in source with input(domain)):\n"
+        "  --input NAME=FILE     read NAME's values from FILE, in row-major order\n"
+        "  --random-inputs SEED  draw every input from its declared domain\n"
+        "\n"
         "Other:\n"
         "  --cost          arithmetic cost, in scalar operations, before and\n"
         "                  after the optimizer\n"
-        "  --fp-strict     preserve arithmetic order (default)\n"
-        "  --fp-algebraic  permit matrix identities and reassociation; results\n"
-        "                  may differ in rounding, signed zero, and NaN/Inf\n"
         "  --exact-output  print values as hexadecimal floating-point numbers\n"
         "  --stats         counts for tokens, AST, symbols and instructions\n"
         "  -q, --quiet     no stage output; exit status only\n"
@@ -94,9 +108,11 @@ int main(int argc, char **argv)
     int want_tokens = 0, want_ast = 0, want_symbols = 0, want_check = 0;
     int want_tac = 0, want_opt = 0, want_explain = 0, want_report = 0;
     int want_target = 0, want_run = 0, want_trace = 0, want_stats = 0, want_cost = 0;
+    int want_cert = 0;
     int quiet = 0, chose = 0, phase1_only = 0;
     int passes = 0;
-    int relaxed = 0;
+    int contract = 0;           /* 0 strict, 1 bounded, 2 algebraic */
+    int no_proofs = 0;
     int i, status;
     long long cost_before = 0;
 
@@ -113,6 +129,7 @@ int main(int argc, char **argv)
         } else if (!strcmp(a, "--phase3")) {
             want_tokens = want_ast = want_symbols = want_check = want_tac = 1;
             want_opt = want_explain = want_report = want_target = want_run = 1;
+            want_cert = 1;
             chose = 1;
         }
 
@@ -135,9 +152,41 @@ int main(int argc, char **argv)
         else if (!strcmp(a, "--opt-dce"))       { passes |= OPT_DCE;       want_opt = chose = 1; }
         else if (!strcmp(a, "--opt-chain"))     { passes |= OPT_CHAIN;     want_opt = chose = 1; }
         else if (!strcmp(a, "--cost"))          { want_cost = 1; }
-        else if (!strcmp(a, "--fp-strict"))     { relaxed = 0; }
-        else if (!strcmp(a, "--fp-algebraic"))  { relaxed = 1; }
+        else if (!strcmp(a, "--fp-strict"))     { contract = 0; }
+        else if (!strcmp(a, "--fp-bounded"))    { contract = 1; }
+        else if (!strcmp(a, "--fp-algebraic"))  { contract = 2; }
+        else if (!strcmp(a, "--no-proofs"))     { no_proofs = 1; }
+        else if (!strcmp(a, "--certificate"))   { want_cert = want_opt = chose = 1; }
         else if (!strcmp(a, "--exact-output"))  { value_set_exact_output(1); }
+
+        else if (!strcmp(a, "--input") || !strcmp(a, "--random-inputs")) {
+            const char *arg = (i + 1 < argc) ? argv[++i] : NULL;
+            if (!arg) {
+                fprintf(stderr, "matrixc: %s needs an argument\n", a);
+                return 2;
+            }
+            if (!strcmp(a, "--input")) {
+                const char *eq = strchr(arg, '=');
+                char name[128];
+                size_t len = eq ? (size_t)(eq - arg) : 0;
+                if (!eq || len == 0 || len >= sizeof name || eq[1] == '\0') {
+                    fprintf(stderr, "matrixc: --input expects NAME=FILE, got '%s'\n", arg);
+                    return 2;
+                }
+                memcpy(name, arg, len);
+                name[len] = '\0';
+                inputs_request_file(name, eq + 1);
+            } else {
+                char *end;
+                unsigned long long seed = strtoull(arg, &end, 10);
+                if (*arg == '\0' || *end != '\0') {
+                    fprintf(stderr, "matrixc: --random-inputs expects a whole "
+                                    "number, got '%s'\n", arg);
+                    return 2;
+                }
+                inputs_request_random(seed);
+            }
+        }
 
         else if (!strcmp(a, "-q") || !strcmp(a, "--quiet")) quiet = 1;
 
@@ -162,9 +211,12 @@ int main(int argc, char **argv)
     if (!chose) {
         want_tokens = want_ast = want_symbols = want_check = want_tac = 1;
         want_opt = want_explain = want_report = want_target = want_run = 1;
+        want_cert = 1;
     }
     if (passes == 0) passes = OPT_ALL;
-    if (relaxed) passes |= OPT_RELAXED;
+    if (contract == 2)      passes |= OPT_RELAXED;
+    else if (contract == 1) passes |= OPT_BOUNDED;
+    if (no_proofs) passes |= OPT_NOPROOF;
 
     yyin = fopen(path, "r");
     if (!yyin) {
@@ -205,6 +257,7 @@ int main(int argc, char **argv)
     if (!quiet && want_symbols) {
         banner("PHASE 2  --  SYMBOL TABLE");
         sym_print_table(stdout);
+        inputs_print(stdout);
     }
 
     if (!quiet && want_check) {
@@ -258,6 +311,10 @@ int main(int argc, char **argv)
             if (!quiet && want_report) {
                 printf("\n");
                 optimize_report(stdout);
+            }
+            if (!quiet && want_cert) {
+                banner("PHASE 3  --  OUTPUT GUARANTEES");
+                optimize_guarantees(stdout);
             }
         }
 
@@ -323,6 +380,7 @@ int main(int argc, char **argv)
     optimize_free();
     codegen_free();
     litpool_free();
+    inputs_free();
     diag_free();
 
     return status;

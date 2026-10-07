@@ -56,7 +56,14 @@ GEN_OBJ  := $(BUILDDIR)/matrix.tab.o $(BUILDDIR)/lex.yy.o
 
 MATRIXC  := $(BINDIR)/matrixc
 
-.PHONY: all clean test test-demo dirs toolchain demo1 demo2 demo3 deck web serve serve-static measure research analyze paper verify-research
+# The test-adequacy study needs a second compiler in which one side condition
+# at a time can be switched off (src/ir/mutant.h). It is built from the same
+# sources into its own object directory and is never installed or tested as
+# the compiler.
+MUTANTS  := $(BINDIR)/matrixc-mutants
+MUT_OBJ  := $(patsubst $(SRCDIR)/%.c,$(BUILDDIR)/mutants/%.o,$(CORE_SRC))
+
+.PHONY: all clean test test-demo dirs toolchain demo1 demo2 demo3 deck web serve serve-static measure research analyze paper verify-research mutants contracts contracts-analyze bench
 
 all: dirs $(MATRIXC)
 
@@ -102,6 +109,15 @@ $(CORE_OBJ): $(BUILDDIR)/matrix.tab.h
 $(MATRIXC): $(CORE_OBJ) $(GEN_OBJ)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
+$(BUILDDIR)/mutants/%.o: $(SRCDIR)/%.c $(BUILDDIR)/matrix.tab.h | dirs
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -DMATRIXC_MUTANTS -c $< -o $@
+
+$(MUTANTS): $(MUT_OBJ) $(GEN_OBJ)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LDLIBS)
+
+mutants: all $(MUTANTS)
+
 # ---- review demonstrations --------------------------------------------------
 
 demo1: all
@@ -142,6 +158,24 @@ analyze:
 
 verify-research: all
 	"$(PYTHON)" tools/verify_research.py
+
+# ---- numerical contracts study ----------------------------------------------
+#
+# `make contracts` repeats every measurement behind the contract paper and
+# writes raw observations to results/contracts/; `make contracts-analyze`
+# rebuilds the paper's tables, macros and figures from those observations
+# alone. Both need numpy (requirements.txt); the analysis also needs
+# matplotlib. `make bench` compiles and runs the licensed-reassociation
+# kernels on this machine.
+
+contracts: all mutants
+	"$(PYTHON)" tools/contracts/run_all.py
+
+contracts-analyze:
+	"$(PYTHON)" tools/contracts/analyze.py
+
+bench:
+	"$(PYTHON)" tools/contracts/bench.py
 
 # The demonstration has four generated inputs. build-demo.py captures
 # the compiler's output per phase and reads the measurements; build-grammar.py

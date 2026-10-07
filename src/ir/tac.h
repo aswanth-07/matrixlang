@@ -35,6 +35,7 @@ typedef enum {
     TAC_IDENTITY,  /* dst = identity(i1)    */
     TAC_ZEROS,     /* dst = zeros(i1,i2)    */
     TAC_ONES,      /* dst = ones(i1,i2)     */
+    TAC_INPUT,     /* dst = input(domain)   i1 = input table index */
     TAC_PRINT      /* print a1              */
 } TacOp;
 
@@ -55,6 +56,12 @@ typedef struct {
     int   line;
 
     int   removed;     /* set by an optimizer pass; printers skip these */
+
+    /* Set by the optimizer on an instruction it rewrote: the weakest numerical
+     * guarantee the rewrite keeps (a NumGuarantee from optimize.h; 0 means
+     * bit-identical) and, when the rewrite was proved, a one-line reason. */
+    int         cert;
+    const char *proof;
 } Tac;
 
 void tac_init(void);

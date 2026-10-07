@@ -59,6 +59,7 @@ const char *ast_kind_name(NodeKind k)
     case N_IDENTITY:  return "Identity";
     case N_ZEROS:     return "Zeros";
     case N_ONES:      return "Ones";
+    case N_INPUT:     return "Input";
     case N_MATLIT:    return "MatrixLiteral";
     case N_MATROW:    return "Row";
     case N_NUMBER:    return "Number";
@@ -89,6 +90,7 @@ static void node_label(const Node *n, char *buf, size_t bufsz)
     case N_ASSIGN:
     case N_IDENT:
     case N_BINOP:
+    case N_INPUT:
         if (n->name) snprintf(payload, sizeof payload, " %s", n->name);
         break;
     case N_NUMBER:
@@ -172,6 +174,9 @@ static int expr_text_rec(const Node *n, char *buf, size_t bufsz, int depth)
         return snprintf(buf, bufsz, "zeros(...)");
     case N_ONES:
         return snprintf(buf, bufsz, "ones(...)");
+    case N_INPUT:
+        return snprintf(buf, bufsz, n->nkids ? "input(%s(...))" : "input(%s)",
+                        n->name ? n->name : "?");
     case N_MATLIT:
         return snprintf(buf, bufsz, "{...}");
     default:

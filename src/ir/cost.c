@@ -61,6 +61,7 @@ long long cost_of(const Tac *t)
     case TAC_IDENTITY:
     case TAC_ZEROS:
     case TAC_ONES:
+    case TAC_INPUT:
     case TAC_PRINT:
         return 0;
     }

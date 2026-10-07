@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "inputs.h"
 #include "symtab.h"
 #include "util.h"
 #include "value.h"
@@ -203,6 +204,11 @@ void tac_format(const Tac *t, char *buf, size_t bufsz)
     case TAC_IDENTITY: snprintf(buf, bufsz, "%s = identity(%d)", t->dst, t->i1); break;
     case TAC_ZEROS:    snprintf(buf, bufsz, "%s = zeros(%d,%d)", t->dst, t->i1, t->i2); break;
     case TAC_ONES:     snprintf(buf, bufsz, "%s = ones(%d,%d)", t->dst, t->i1, t->i2); break;
+    case TAC_INPUT: {
+        const InputSpec *in = inputs_get(t->i1);
+        snprintf(buf, bufsz, "%s = input(%s)", t->dst, in ? in->domain.name : "?");
+        break;
+    }
     case TAC_PRINT:    snprintf(buf, bufsz, "print %s", t->a1); break;
     }
 }
@@ -330,8 +336,12 @@ static void gen_stmt(Node *n)
     case N_DECL:
         /* A declaration with no initialiser emits nothing. The VM creates every
          * declared variable zero-filled at its declared shape, which is both
-         * the natural default and what keeps the IR free of noise. */
-        if (n->nkids == 1) {
+         * the natural default and what keeps the IR free of noise. An input
+         * writes its variable directly: "A = input(int8)". */
+        if (n->nkids == 1 && n->kids[0]->kind == N_INPUT) {
+            Tac *t = emit(TAC_INPUT, tac_intern(n->name), NULL, NULL, n->type, n->line);
+            t->i1 = n->kids[0]->lit_id;
+        } else if (n->nkids == 1) {
             const char *src = gen_expr(n->kids[0]);
             emit(TAC_COPY, tac_intern(n->name), src, NULL, n->type, n->line);
         }

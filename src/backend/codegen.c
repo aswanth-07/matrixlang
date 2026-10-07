@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "inputs.h"
 #include "tac.h"
 #include "types.h"
 #include "util.h"
@@ -59,6 +60,7 @@ const char *vm_op_name(VmOp op)
     case OP_IDENTITY:     return "IDENTITY";
     case OP_ZEROS:        return "ZEROS";
     case OP_ONES:         return "ONES";
+    case OP_INPUT:        return "INPUT";
     case OP_PRINT:        return "PRINT";
     case OP_HALT:         return "HALT";
     }
@@ -168,6 +170,13 @@ void codegen_run(void)
             break;
         }
 
+        case TAC_INPUT: {
+            Instr *in = emit(OP_INPUT, t->line);
+            in->a = t->i1;
+            emit_store(t->dst, t->type, t->line);
+            break;
+        }
+
         case TAC_PRINT: {
             Instr *in;
             emit_load(t->a1, t->line);
@@ -217,6 +226,11 @@ void codegen_print(FILE *out, const char *title)
         case OP_IDENTITY:
             fprintf(out, " %d", in->a);
             break;
+        case OP_INPUT: {
+            const InputSpec *spec = inputs_get(in->a);
+            fprintf(out, " %s %s", spec ? spec->name : "?", spec ? spec->domain.name : "?");
+            break;
+        }
         case OP_ZEROS:
         case OP_ONES:
             fprintf(out, " %d %d", in->a, in->b);

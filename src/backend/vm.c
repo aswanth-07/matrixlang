@@ -5,6 +5,7 @@
 
 #include "codegen.h"
 #include "diag.h"
+#include "inputs.h"
 #include "symtab.h"
 #include "util.h"
 #include "value.h"
@@ -121,6 +122,14 @@ int vm_run(FILE *out, int trace)
     slots_free();
     sp = 0;
     slots_init_from_symtab();
+
+    /* Every input is loaded and checked against its declared domain before
+     * the first instruction runs, including inputs the optimizer found dead:
+     * the domain is part of the program's meaning, not an optimization hint. */
+    if (inputs_count() > 0 && inputs_load() != 0) {
+        status = 1;
+        goto done;
+    }
 
     for (pc = 0; pc < codegen_count(); pc++) {
         Instr *in = codegen_at(pc);
@@ -239,6 +248,18 @@ int vm_run(FILE *out, int trace)
         case OP_ONES:
             if (!push(value_ones(in->a, in->b), in->line)) { status = 1; goto done; }
             break;
+
+        case OP_INPUT: {
+            const Value *v = inputs_value(in->a);
+            if (!v) {
+                diag_report(DIAG_ERROR, DIAG_RUNTIME, in->line, 1,
+                            "input #%d has no value", in->a);
+                status = 1;
+                goto done;
+            }
+            if (!push(value_copy(*v), in->line)) { status = 1; goto done; }
+            break;
+        }
 
         case OP_PRINT:
             a = pop();

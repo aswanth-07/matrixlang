@@ -38,6 +38,7 @@ typedef enum {
     OP_IDENTITY,       /* push identity(<a>)          */
     OP_ZEROS,          /* push zeros(<a>,<b>)         */
     OP_ONES,           /* push ones(<a>,<b>)          */
+    OP_INPUT,          /* push input <a>, already checked against its domain */
 
     OP_PRINT,
     OP_HALT

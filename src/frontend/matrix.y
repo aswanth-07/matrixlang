@@ -45,7 +45,7 @@ Node *parse_root = NULL;
  * the process is about to exit, and the alternative corrupts every good run. */
 %destructor { free($$); } <str>
 
-%token KW_MATRIX KW_SCALAR KW_PRINT KW_TRANSPOSE KW_IDENTITY KW_ZEROS KW_ONES
+%token KW_MATRIX KW_SCALAR KW_PRINT KW_TRANSPOSE KW_IDENTITY KW_ZEROS KW_ONES KW_INPUT
 
 %type <node> program stmt_list stmt decl assign print_stmt
 %type <node> expr matrix_literal row_list row num_list
@@ -158,6 +158,22 @@ expr
                                 { $$ = node_new(N_ONES, @1.first_line,
                                                 @1.first_column);
                                   node_add($$, $3); node_add($$, $5); }
+      /* input(int8), input(int(0,255)), input(real(1)): a value supplied at
+       * run time from a declared domain. The domain name is an ordinary
+       * identifier; the semantic pass decides which names are domains. */
+    | KW_INPUT '(' IDENT ')'    { $$ = node_named(N_INPUT, @1.first_line,
+                                                  @1.first_column, $3);
+                                  free($3); }
+    | KW_INPUT '(' IDENT '(' expr ')' ')'
+                                { $$ = node_named(N_INPUT, @1.first_line,
+                                                  @1.first_column, $3);
+                                  node_add($$, $5);
+                                  free($3); }
+    | KW_INPUT '(' IDENT '(' expr ',' expr ')' ')'
+                                { $$ = node_named(N_INPUT, @1.first_line,
+                                                  @1.first_column, $3);
+                                  node_add($$, $5); node_add($$, $7);
+                                  free($3); }
     | '(' expr ')'              { $$ = $2; }
     | matrix_literal            { $$ = $1; }
     | NUMBER                    { $$ = node_new(N_NUMBER, @1.first_line, @1.first_column);

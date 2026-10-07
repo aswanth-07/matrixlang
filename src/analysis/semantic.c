@@ -5,6 +5,8 @@
 #include <string.h>
 
 #include "diag.h"
+#include "domain.h"
+#include "inputs.h"
 #include "symtab.h"
 #include "types.h"
 #include "value.h"
@@ -310,10 +312,65 @@ static Type check_expr(Node *n)
         n->type = check_matlit(n);
         return n->type;
 
+    case N_INPUT:
+        diag_report(DIAG_ERROR, DIAG_SEMANTIC, n->line, n->col,
+                    "input(...) may only initialise a declaration");
+        diag_detail("Declare the input first and then use its name:\n"
+                    "    matrix A[2,3] = input(int8);\n"
+                    "    matrix C = A * B;");
+        n->type = type_error();
+        return n->type;
+
     default:
         n->type = type_error();
         return n->type;
     }
+}
+
+/* ------------------------------------------------------------ inputs ---- */
+
+/* input(domain) is a declaration form rather than an expression: it has no
+ * shape of its own, so the declaration must supply one. The domain arguments
+ * fold to constants here, exactly as dimensions do, because the optimizer's
+ * numerical facts are derived from them before the program runs. */
+static Type check_input(Node *decl, Type declared, Domain *dom)
+{
+    Node  *in = decl->kids[0];
+    double args[2] = { 0.0, 0.0 };
+    char   why[160];
+    int    i;
+
+    if (type_is_matrix(declared) && !decl->has_dims) {
+        diag_report(DIAG_ERROR, DIAG_SEMANTIC, decl->line, decl->col,
+                    "input matrix '%s' needs a declared shape", decl->name);
+        diag_detail("An input's values arrive at run time, so its shape must be\n"
+                    "written in the declaration:\n"
+                    "    matrix %s[rows,cols] = input(%s);",
+                    decl->name, in->name ? in->name : "real");
+        in->type = type_error();
+        return in->type;
+    }
+
+    for (i = 0; i < in->nkids && i < 2; i++) {
+        if (!const_eval(in->kids[i], &args[i])) {
+            diag_report(DIAG_ERROR, DIAG_SEMANTIC, in->kids[i]->line, in->kids[i]->col,
+                        "the bounds of input(%s(...)) must be constants",
+                        in->name ? in->name : "?");
+            in->type = type_error();
+            return in->type;
+        }
+        in->kids[i]->type = type_scalar();
+    }
+
+    if (!domain_resolve(in->name ? in->name : "", in->nkids, args, dom, why, sizeof why)) {
+        diag_report(DIAG_ERROR, DIAG_SEMANTIC, in->line, in->col, "%s", why);
+        diag_detail("Value domains: %s.", domain_named_list());
+        in->type = type_error();
+        return in->type;
+    }
+
+    in->type = declared;
+    return declared;
 }
 
 /* --------------------------------------------------------- statements ---- */
@@ -347,10 +404,16 @@ static void check_decl(Node *n)
     Type    init_type = type_unknown();
     Symbol *s;
     int     has_init = (n->nkids == 1);
+    int     is_input = has_init && n->kids[0]->kind == N_INPUT;
+    Domain  dom;
+
+    memset(&dom, 0, sizeof dom);
 
     /* The initialiser is analysed before the name is inserted, so
-     * "matrix A = A;" reports A as undeclared rather than reading itself. */
-    if (has_init) init_type = check_expr(n->kids[0]);
+     * "matrix A = A;" reports A as undeclared rather than reading itself.
+     * An input has no expression to analyse; its shape is the declared one,
+     * checked below before the domain is resolved. */
+    if (has_init && !is_input) init_type = check_expr(n->kids[0]);
 
     if (n->has_dims && type_is_matrix(declared)) {
         double r = n->decl_rows, c = n->decl_cols;
@@ -366,7 +429,11 @@ static void check_decl(Node *n)
         }
     }
 
-    if (!n->has_dims) {
+    if (is_input) {
+        init_type = type_is_error(declared) ? type_error()
+                                            : check_input(n, declared, &dom);
+        if (type_is_error(init_type)) declared = type_error();
+    } else if (!n->has_dims) {
         /* "matrix C = <expr>;" -- the shape comes from the expression. */
         if (type_is_error(init_type)) {
             declared = type_error();
@@ -400,6 +467,9 @@ static void check_decl(Node *n)
 
     n->type = declared;
     if (has_init) s->assigns++;
+
+    if (is_input && type_is_usable(declared))
+        n->kids[0]->lit_id = inputs_add(n->name, declared, dom, n->line);
 }
 
 static void check_assign(Node *n)

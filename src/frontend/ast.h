@@ -29,6 +29,7 @@ typedef enum {
     N_IDENTITY,    /* kids: size expression                                   */
     N_ZEROS,       /* kids: rows, cols                                        */
     N_ONES,        /* kids: rows, cols                                        */
+    N_INPUT,       /* name: domain spelling; kids: 0-2 constant domain bounds  */
 
     N_MATLIT,      /* kids: N_MATROW...                                       */
     N_MATROW,      /* kids: N_NUMBER...                                       */
@@ -57,8 +58,9 @@ typedef struct Node {
 
     /* Filled in by the semantic pass, which is the first place that can
      * evaluate them. N_MATLIT records where its data landed in the literal
-     * pool; identity/zeros/ones record their folded dimensions so that later
-     * phases never re-evaluate the argument expressions. */
+     * pool and N_INPUT its index in the input table; identity/zeros/ones
+     * record their folded dimensions so that later phases never re-evaluate
+     * the argument expressions. */
     int      lit_id;
     int      d1, d2;
 

@@ -306,6 +306,112 @@ for f in examples/valid/*.ml examples/optimize/*.ml; do
     fi
 done
 
+# ================================================ inputs and value domains ====
+
+section "Inputs -- declared domains are checked at compile time and at load"
+
+run_case "unknown domain is rejected" 1 "$MATRIXC" --check examples/errors/input_unknown_domain.ml
+expect_contains "unknown value domain 'int9'"
+expect_contains "int(lo,hi)"
+run_case "an input matrix must declare its shape" 1 "$MATRIXC" --check examples/errors/input_no_shape.ml
+expect_contains "needs a declared shape"
+run_case "input() is a declaration form, not an expression" 1 "$MATRIXC" --check examples/errors/input_in_expression.ml
+expect_contains "may only initialise a declaration"
+run_case "domain bounds must be ordered" 1 "$MATRIXC" --check examples/errors/input_bad_bounds.ml
+expect_contains "needs lo <= hi"
+
+run_case "an input appears in the TAC with its domain" 0 "$MATRIXC" --tac examples/contracts/exact_chain.ml
+expect_contains "A = input(int8)"
+run_case "the symbol table lists inputs and their domains" 0 "$MATRIXC" --symbols examples/contracts/file_input.ml
+expect_contains "integers in [0, 255]"
+
+run_case "values are read from a file, literal syntax allowed" 0 "$MATRIXC" -q --run --input A=tests/data/inside_uint8.txt examples/contracts/file_input.ml
+expect_contains "15 22"
+run_case "a value outside the domain stops execution" 1 "$MATRIXC" --run --input A=tests/data/outside_uint8.txt examples/contracts/file_input.ml
+expect_contains "entry (2,2) = 300 is outside its declared domain uint8"
+run_case "a file with the wrong count is rejected" 1 "$MATRIXC" --run --input A=tests/data/short.txt examples/contracts/file_input.ml
+expect_contains "holds 3 number(s); input 'A' needs 4"
+run_case "running without values names both ways to supply them" 1 "$MATRIXC" --run examples/contracts/file_input.ml
+expect_contains "--random-inputs SEED"
+run_case "--input must name an input" 1 "$MATRIXC" --run --input Q=tests/data/inside_uint8.txt --random-inputs 1 examples/contracts/file_input.ml
+expect_contains "not declared with input"
+run_case "--input without NAME=FILE is a usage error" 2 "$MATRIXC" --run --input tests/data/inside_uint8.txt examples/contracts/file_input.ml
+
+first=$("$MATRIXC" -q --exact-output --run --random-inputs 11 examples/contracts/mixed.ml 2>&1)
+second=$("$MATRIXC" -q --exact-output --run --random-inputs 11 examples/contracts/mixed.ml 2>&1)
+other=$("$MATRIXC" -q --exact-output --run --random-inputs 12 examples/contracts/mixed.ml 2>&1)
+if [ "$first" == "$second" ] && [ "$first" != "$other" ]; then
+    ok "a seed names the same inputs on every run, and a different seed different ones"
+else
+    bad "--random-inputs is not deterministic per seed"
+fi
+
+# ==================================================== numerical contracts ====
+
+section "Contracts -- strict reorders only what it proves exact"
+
+run_case "an int8 chain is proved exact and reordered under strict" 0 "$MATRIXC" --explain --certificate examples/contracts/exact_chain.ml
+expect_contains "chain order      : A * B * C  ->  A * (B * C)"
+expect_contains "needs at most 29 of 53 significand bits"
+expect_contains "1. bit-identical     print(R)"
+
+run_case "a real-valued chain is kept under strict" 0 "$MATRIXC" --explain examples/contracts/real_chain.ml
+expect_contains "chain kept"
+expect_contains "A is real-valued, so products with it round"
+expect_contains "--fp-bounded permits it"
+
+run_case "the bounded contract reorders it and states the bound" 0 "$MATRIXC" --fp-bounded --explain --certificate examples/contracts/real_chain.ml
+expect_contains "chain order      : A * B * C  ->  A * (B * C)"
+expect_contains "keeps the source-order error bound"
+expect_contains "1. bound-preserving  print(R)"
+
+run_case "53 bits exactly is still exact" 0 "$MATRIXC" --explain examples/contracts/boundary_exact.ml
+expect_contains "needs at most 53 of 53 significand bits"
+run_case "one more bit is not provable" 0 "$MATRIXC" --explain examples/contracts/boundary_inexact.ml
+expect_contains "may need 54 significand bits"
+expect_contains "chain kept"
+
+run_case "a partially provable chain is reordered in its proved segment" 0 "$MATRIXC" --explain examples/contracts/mixed.ml
+expect_contains "(A * (B * C)) * D"
+run_case "bounded keeps the stronger guarantee where it is free" 0 "$MATRIXC" --fp-bounded --certificate examples/contracts/mixed.ml
+expect_contains "1. bit-identical     print(R)"
+expect_contains "2. bound-preserving  print(S)"
+
+run_case "--no-proofs reproduces the unproved strict optimizer" 0 "$MATRIXC" --no-proofs --explain --report examples/contracts/exact_chain.ml
+expect_contains "proofs are disabled"
+expect_contains "Product chains reordered  :      0"
+
+section "Contracts -- IEEE side conditions of identities"
+
+run_case "x * I = x is proved where A cannot hold -0" 0 "$MATRIXC" --explain examples/contracts/signed_zero.ml
+expect_contains "bit-identical: A is finite and has no -0 entry"
+expect_contains "N may hold -0, which the product turns into +0"
+expect_contains "N may hold -0, and -0 + 0 = +0"
+run_case "the bounded contract applies them and labels them" 0 "$MATRIXC" --fp-bounded --certificate examples/contracts/signed_zero.ml
+expect_contains "2. bound-preserving  print(Q)"
+expect_contains "3. bound-preserving  print(V)"
+
+run_case "a scaled identity is not a multiplicative unit" 0 "$MATRIXC" -q --fp-algebraic --optimize --run examples/optimize/scaled_identity.ml
+expect_contains "T = Matrix<3x3>"
+
+section "Contracts -- strict output is bit-identical for drawn inputs"
+
+for f in examples/contracts/exact_chain.ml examples/contracts/real_chain.ml \
+         examples/contracts/boundary_exact.ml examples/contracts/boundary_inexact.ml \
+         examples/contracts/signed_zero.ml examples/contracts/mixed.ml; do
+    same=1
+    for seed in 1 2 3 4 5; do
+        plain=$("$MATRIXC" -q --exact-output --run --random-inputs "$seed" "$f" 2>&1)
+        opt=$("$MATRIXC" -q --exact-output --optimize --run --random-inputs "$seed" "$f" 2>&1)
+        [ "$plain" == "$opt" ] || same=0
+    done
+    if [ "$same" -eq 1 ]; then
+        ok "strict output identical for seeds 1-5: $f"
+    else
+        bad "strict optimization changed the output of $f"
+    fi
+done
+
 # =========================================================== CLI behaviour ====
 
 section "Driver"

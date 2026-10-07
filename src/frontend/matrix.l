@@ -80,6 +80,7 @@ REALLIT   ({DIGIT}+"."{DIGIT}*|"."{DIGIT}+)([eE][+-]?{DIGIT}+)?|{DIGIT}+[eE][+-]
 "identity"                   { return tok(KW_IDENTITY,  "IDENTITY");  }
 "zeros"                      { return tok(KW_ZEROS,     "ZEROS");     }
 "ones"                       { return tok(KW_ONES,      "ONES");      }
+"input"                      { return tok(KW_INPUT,     "INPUT");     }
 
 {REALLIT}                    { yylval.dval = atof(yytext);
                                return tok(NUMBER, "NUMBER"); }

@@ -1,24 +1,48 @@
 /* optimize.h -- the MatrixLang optimizer.
  *
- * Four kinds of transformation run to a fixed point over the single basic
- * block that a MatrixLang program compiles to:
+ * Five kinds of transformation run over the single basic block that a
+ * MatrixLang program compiles to:
  *
- *   1. algebraic simplification, including the matrix-specific identities
+ *   1. matrix chain ordering, chosen by arithmetic cost (chain.c)
+ *   2. algebraic simplification, including the matrix-specific identities
  *      (A*I, I*A, A+0, A*1, transpose(transpose(A))) and scalar constant folding
- *   2. common subexpression elimination
- *   3. copy propagation
- *   4. dead code elimination
+ *   3. common subexpression elimination
+ *   4. copy propagation
+ *   5. dead code elimination
  *
- * They are ordered that way because each feeds the next: simplification turns
- * operations into copies, CSE turns repeats into copies, copy propagation makes
- * those copies unused, and dead code elimination deletes them. Running once is
- * not enough -- deleting one instruction can expose another -- so the sequence
- * repeats until nothing changes.
+ * Passes 2-5 repeat to a fixed point, because each feeds the next.
+ *
+ * Every rewrite that can change a floating-point result carries a proof
+ * obligation, and the numerical contract decides which obligations must be
+ * discharged:
+ *
+ *   strict     (default) output is bit-identical to the unoptimized program.
+ *              A value-changing rewrite is applied only when the fact analysis
+ *              proves that, for every input the declared domains admit, it
+ *              produces the same bits: a chain whose every intermediate is
+ *              exact, A*I with A finite and free of -0, and so on.
+ *   bounded    every output keeps the worst-case componentwise error bound of
+ *              the source evaluation order (standard model of floating-point
+ *              arithmetic), and NaN/Infinity behavior is unchanged. Signed
+ *              zeros may differ.
+ *   algebraic  real-number algebra: any rewrite valid over the reals.
+ *
+ * After optimization every printed value is labelled with the strongest
+ * guarantee that all rewrites on its dependency cone keep.
  */
 #ifndef MATRIXLANG_OPTIMIZE_H
 #define MATRIXLANG_OPTIMIZE_H
 
 #include <stdio.h>
+
+/* The guarantee a rewrite keeps, ordered from strongest to weakest. */
+typedef enum {
+    NG_BITWISE = 0,     /* output bits unchanged                         */
+    NG_BOUNDED = 1,     /* source-order error bound kept; -0 may differ   */
+    NG_RELAXED = 2      /* valid over the reals only                      */
+} NumGuarantee;
+
+const char *num_guarantee_name(int level);
 
 typedef struct {
     int original;           /* instructions before optimization */
@@ -37,14 +61,21 @@ typedef struct {
 
     int chains;             /* matrix product chains re-bracketed */
 
+    /* Value-changing rewrites, by the guarantee each one keeps. A rewrite that
+     * needed no numerical argument (CSE, folding, double transpose) is not
+     * counted here. */
+    int proved_bitwise;     /* proved bit-identical                    */
+    int kept_bound;         /* proved to keep the source error bound   */
+    int relaxed;            /* valid over the reals only               */
+    int declined;           /* applicable, but refused by the contract */
+
     /* Arithmetic, in scalar floating-point operations, before and after.
-     * This is the measure that matters: instruction counts cannot distinguish
-     * removing a 2x2 addition from removing a 100x100 product, and they are
-     * easy to flatter by choosing the example. Arithmetic cost is fixed by the
-     * shapes, which the type system already carries. */
+     * Instruction counts cannot distinguish removing a 2x2 addition from
+     * removing a 100x100 product; arithmetic cost is fixed by the shapes. */
     long long flops_before;
     long long flops_after;
-    long long flops_chain;  /* of which, attributable to chain re-bracketing */
+    long long flops_chain;     /* of which, attributable to chain re-bracketing */
+    long long flops_declined;  /* chain saving the contract refused             */
 } OptStats;
 
 /* Which passes to run. Individually selectable so a demonstration can show one
@@ -55,12 +86,11 @@ typedef struct {
 #define OPT_DCE        0x08
 #define OPT_CHAIN      0x10
 #define OPT_ALL        0x1F
-#define OPT_RELAXED    0x20
 
-/* Without OPT_RELAXED, arithmetic order and IEEE-754 zero/NaN behavior are
- * preserved. The algebraic pass still folds finite scalar constants and
- * removes double transposes; matrix identities and chain ordering need the
- * explicit relaxed contract. */
+/* The numerical contract. Neither flag means strict. */
+#define OPT_RELAXED    0x20     /* --fp-algebraic */
+#define OPT_BOUNDED    0x40     /* --fp-bounded   */
+#define OPT_NOPROOF    0x80     /* --no-proofs: value facts are not used */
 
 void optimize_run(int passes);
 
@@ -68,9 +98,15 @@ void optimize_run(int passes);
 void optimize_report(FILE *out);
 
 /* A line per transformation, in the order they were applied, saying what was
- * rewritten and why. This is what turns "the count went down" into something a
- * reader can check. */
+ * rewritten, the guarantee it keeps and why -- and every rewrite the contract
+ * declined, with the condition that could not be proved. */
 void optimize_explain(FILE *out);
+
+/* One line per printed value: the strongest guarantee it keeps and the proofs
+ * it rests on. */
+void optimize_guarantees(FILE *out);
+
+const OptStats *optimize_stats(void);
 
 void optimize_free(void);
 
