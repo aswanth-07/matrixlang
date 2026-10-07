@@ -32,14 +32,14 @@ if not os.path.exists(MATRIXC) and os.path.exists(MATRIXC + ".exe"):
 PROGRAMS = [
     {
         "id": "multiply",
-        "name": "A product",
-        "blurb": "Two literal matrices multiplied. C is never given a shape; "
-                 "the compiler infers Matrix<2x4> from A and B.",
+        "name": "Matrix product",
+        "blurb": "Multiply two literal matrices. The compiler infers "
+                 "Matrix<2x4> for C from the operand shapes.",
         "file": "examples/valid/multiply.ml",
     },
     {
         "id": "chain",
-        "name": "A chain the shapes re-bracket",
+        "name": "Chain ordering",
         "blurb": "In algebraic mode, A * B * C can be re-bracketed to reduce "
                  "modeled arithmetic. The cheaper tree depends on shapes; "
                  "binary64 output can change. Strict mode retains association.",
@@ -47,10 +47,10 @@ PROGRAMS = [
     },
     {
         "id": "mismatch",
-        "name": "A program that is rejected",
-        "blurb": "Matrix<2x3> times Matrix<5x4> is not a type error the "
-                 "compiler can shrug off. It is caught in semantic analysis, "
-                 "before any code is generated.",
+        "name": "Shape mismatch",
+        "blurb": "Matrix<2x3> and Matrix<5x4> have incompatible inner "
+                 "dimensions. Semantic analysis rejects this product "
+                 "before code generation.",
         "file": "examples/errors/mul_mismatch.ml",
     },
 ]
@@ -63,22 +63,20 @@ PROGRAMS = [
 # scanner and the parser each have to report and carry on.
 MACHINE = [
     ("examples/phase1/declare.ml", "Two declarations",
-     "Sixteen tokens and a complete parse. Short enough to walk from the "
-     "first shift to accept without losing anybody."),
-    ("examples/phase1/precedence.ml", "Precedence, decided",
-     "A + B * C. The grammar does not say which binds tighter; the parser "
-     "reaches a shift/reduce conflict and %left decides it. Watch for the "
-     "note that appears when it does."),
-    ("examples/valid/multiply.ml", "The headline example",
+     "Step through sixteen tokens, from the first shift to acceptance."),
+    ("examples/phase1/precedence.ml", "Operator precedence",
+     "Parse A + B * C. Bison's %left declarations resolve the "
+     "shift/reduce conflict; the trace identifies the decision."),
+    ("examples/valid/multiply.ml", "Matrix product",
      "Matrix literals, nested rows, and an inferred shape. The reductions "
      "build the literal row by row."),
-    ("examples/optimize/chain_order.ml", "A chain worth re-bracketing",
-     "The program the rest of this page is about, through the front end."),
+    ("examples/optimize/chain_order.ml", "Matrix chain",
+     "Inspect the syntax tree of a three-matrix product."),
     ("examples/errors/syntax.ml", "Three syntax errors",
      "The parser reports, pops to a state that can shift the error token, "
-     "discards input to the next semicolon, and carries on. That is "
-     "`stmt: error ';'` doing its work."),
-    ("examples/errors/lexical.ml", "Characters the scanner refuses",
+     "discards input to the next semicolon, and resumes parsing with "
+     "the stmt: error ';' recovery rule."),
+    ("examples/errors/lexical.ml", "Lexical errors",
      "An illegal character and an identifier beginning with a digit. The "
      "scanner reports both and returns no token, so the parser sees a gap "
      "where they were."),

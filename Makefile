@@ -56,7 +56,7 @@ GEN_OBJ  := $(BUILDDIR)/matrix.tab.o $(BUILDDIR)/lex.yy.o
 
 MATRIXC  := $(BINDIR)/matrixc
 
-.PHONY: all clean test dirs toolchain demo1 demo2 demo3 deck web serve measure research analyze paper verify-research
+.PHONY: all clean test test-demo dirs toolchain demo1 demo2 demo3 deck web serve serve-static measure research analyze paper verify-research
 
 all: dirs $(MATRIXC)
 
@@ -143,21 +143,29 @@ analyze:
 verify-research: all
 	"$(PYTHON)" tools/verify_research.py
 
-# The demonstration page has three generated inputs. build-demo.py captures
+# The demonstration has four generated inputs. build-demo.py captures
 # the compiler's output per phase and reads the measurements; build-grammar.py
 # reads the grammar and the LALR automaton out of `bison --report=all`, so the
 # page parses with bison's own table; check-demo-engines.py compares the
 # page's own scanner and parser against bin/matrixc over every example and
 # exits non-zero on a disagreement, which is what stops a drifting page from
-# being published.
+# being published. build-workspace.py captures both numerical contracts for
+# the workspace through the same adapter used by the localhost service.
 web: all
 	"$(PYTHON)" tools/build-demo.py
 	"$(PYTHON)" tools/build-grammar.py
 	"$(PYTHON)" tools/check-demo-engines.py
+	"$(PYTHON)" tools/build-workspace.py
 
 serve: web
 	@echo "http://127.0.0.1:8731/"
+	"$(PYTHON)" tools/demo_service.py
+
+serve-static:
 	"$(PYTHON)" -m http.server 8731 --directory demo --bind 127.0.0.1
+
+test-demo: all
+	"$(PYTHON)" -m unittest discover -s tests -p 'test_demo_service.py'
 
 # ---- housekeeping -----------------------------------------------------------
 
@@ -166,6 +174,7 @@ test: all
 	@"$(PYTHON)" tools/check_numerics.py --out build/numerics-check.json
 	@echo
 	@"$(PYTHON)" tools/check-demo-engines.py --optional
+	@"$(PYTHON)" -m unittest discover -s tests -p 'test_demo_service.py'
 
 clean:
 	rm -rf $(BUILDDIR) $(BINDIR)

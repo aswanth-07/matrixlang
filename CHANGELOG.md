@@ -1,5 +1,12 @@
 # Changelog
 
+## Compiler workspace
+
+- Added an editable source/results workspace with all compiler stages, five examples, diagnostic line links and a presentation view.
+- Added a local compiler service, exact strict/algebraic comparisons and bounded execution.
+- Retained the scanner/parser walkthrough and added a seven-minute demo guide.
+- Added recorded static examples and service integration tests; the workspace uses no external assets.
+
 ## 2026-10-05 — Research artifact revision
 
 - Rewrote the manuscript as a technical educational-tool study in ACM SIGPLAN

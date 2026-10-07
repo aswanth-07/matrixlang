@@ -139,7 +139,7 @@
     el("t-next").disabled = !stepped() || i >= last;
     el("t-last").disabled = !stepped() || i >= last;
     el("t-play").disabled = !stepped() || steps.length === 0;
-    el("t-play").textContent = m.playing ? "⏸ Pause" : "▶ Play";
+    el("t-play").textContent = m.playing ? "Pause" : "Play";
 
     el("t-count").innerHTML = "";
     if (stepped()) {
@@ -825,7 +825,7 @@
   el("hero-flop").textContent = pct(M.flops.median);
   el("hero-instr").textContent = pct(M.instr.median);
   el("hero-note").textContent =
-    "Same optimizer. The same " + M.n + " programs. A different question.";
+    "Median reductions across the same " + M.n + " development programs.";
 
   var progIdx = 1, stageIdx = 5;
 
@@ -1043,7 +1043,7 @@
      "median instructions removed, same programs (IQR " + M.instr.q1.toFixed(1)
        + " to " + M.instr.q3.toFixed(1) + ")"],
     [pct(M.chain.sharePct), "var(--violet)",
-     "of programs had a chain worth re-bracketing (" + M.chain.helped
+     "of programs had a cheaper chain association (" + M.chain.helped
        + " of " + M.chain.total + ")"],
     [M.differential.identical + "/" + M.differential.programs, "var(--mint)",
      "strict programs printed identical bytes with the optimizer and without"]

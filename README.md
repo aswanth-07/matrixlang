@@ -79,14 +79,20 @@ See [paper/README.md](paper/README.md) for the evidence map, [venue.md](paper/ve
 
 ## Demonstration and teaching materials
 
+The browser workspace puts editable source beside all eight compiler stages. Five examples cover shape inference, dimension errors, chain ordering, common subexpressions, and signed zero. Compare strict and algebraic optimization using modeled arithmetic, TAC counts, and exact execution output.
+
 ```bash
 make web       # regenerate compiler captures and parser tables; check agreement
-make serve     # http://127.0.0.1:8731/
+make serve     # local C compiler + workspace at http://127.0.0.1:8731/
+make serve-static # recorded examples and browser front end, without a compiler API
+make test-demo # local service, compiler integration and recorded-example replay
 make deck      # laboratory presentation
 make measure   # repeat the retained two-seed development experiments
 ```
 
-The browser demonstration steps through scanner rules, parser states, reductions, and syntax recovery. Its scanner and parser are checked against `matrixc`; semantic and optimization examples are captured from the executable. The displayed two-seed figures are development results, separate from the paper's expanded evaluation. Historical repository-marker counts are labeled as exploratory metadata and excluded from research evidence.
+`make serve` invokes the existing C compiler for edited source through a bounded localhost service. Compilation results identify their source and numerical contract; editing hides earlier results until recompilation. Static hosting or opening `demo/index.html` uses labeled compiler captures for unchanged examples. Edited source on a static host supports browser scanning/parsing only. The service has no third-party Python dependencies.
+
+Read the [seven-minute demonstration guide](docs/demo.md), or use **Demo guide** in the workspace. The linked front-end walkthrough retains step-by-step scanner rules, parser states, reductions and syntax recovery, checked against `matrixc`. Its two-seed figures are development results, separate from the paper's expanded evaluation. Historical repository-marker counts remain exploratory metadata and are excluded from research evidence.
 
 [Teaching exercises and rubric](docs/teaching-exercises.md) connect shape rules, independent cost checks, numerical counterexamples, and test adequacy. They are proposed materials without a classroom evaluation. [docs/README.md](docs/README.md) indexes laboratory reports and submission documents.
 

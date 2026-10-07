@@ -1,582 +1,115 @@
-<title>Shapes in the Type System</title>
-
-<!-- MatrixLang -- the demonstration page.
-
-     Deliberately single-theme: this page shares its visual identity with the
-     project's paper figures and slide deck, so it commits to the dark ground
-     and paints every colour explicitly rather than tracking the host theme.
-
-     Almost nothing here is typed by hand.
-
-       demo/data.js       phase output captured from bin/matrixc, and the
-                          measurement figures, read from results/
-       demo/grammar.js    the grammar and the LALR automaton, read out of
-                          `bison --report=all` over src/frontend/matrix.y
-       demo/agreement.js  the result of checking this page's own scanner and
-                          parser against bin/matrixc
-
-     Two things are re-implementations, and the page says so where they
-     appear: demo/lexer.js and demo/parser.js, which exist so the page can
-     answer for text the reader types, and the cost explorer, which runs the
-     formulae of src/ir/cost.c and src/ir/chain.c in JavaScript so it can
-     respond as you drag. -->
-
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;1,400&amp;family=Archivo:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
-<link rel="stylesheet" href="style.css">
-
-<div class="shell">
-
-  <div class="rail">
-    <div>
-      <div class="mark">Shapes in the<span>Type System</span></div>
-      <div class="sub">MatrixLang &mdash; a compiler-design course project,
-        and what putting matrix shapes in the type system made reachable.</div>
-    </div>
-
-    <nav aria-label="Sections">
-      <div class="eyebrow">On this page</div>
-      <ol>
-        <li><a href="#thesis" class="on"><span class="n">01</span>The claim</a></li>
-        <li><a href="#machine"><span class="n">02</span>flex and bison, live</a></li>
-        <li><a href="#pipeline"><span class="n">03</span>Walk the compiler</a></li>
-        <li><a href="#explorer"><span class="n">04</span>Cost model, live</a></li>
-        <li><a href="#evidence"><span class="n">05</span>What we measured</a></li>
-        <li><a href="#limits"><span class="n">06</span>What we do not claim</a></li>
-      </ol>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#172c3b">
+  <meta name="description" content="Edit MatrixLang programs, inspect compiler stages, and compare strict and algebraic optimization.">
+  <title>MatrixLang — Compiler workspace</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="workspace.css">
+  <script src="workspace-data.js" defer></script>
+  <script src="grammar.js" defer></script>
+  <script src="lexer.js" defer></script>
+  <script src="parser.js" defer></script>
+  <script src="workspace.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#source">Skip to source editor</a>
+  <svg class="icon-definitions" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7Z"/></symbol>
+    <symbol id="i-compare" viewBox="0 0 24 24"><path d="M8 3v18M16 3v18M4 7h8M12 17h8"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V3H3v13h5"/></symbol>
+    <symbol id="i-save" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 17v4h16v-4"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 1 8M4 4v6h6"/></symbol>
+    <symbol id="i-expand" viewBox="0 0 24 24"><path d="M3 9V3h6m6 0h6v6M3 15v6h6m6 0h6v-6"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-5-5 5 5-5 5"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+  </svg>
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="MatrixLang workspace">
+      <svg class="brand-mark" width="29" height="29" viewBox="0 0 32 32" aria-hidden="true"><path d="M7 3H3v26h4M25 3h4v26h-4"/><path d="M11 10h3m5 0h3m-11 12h3m5 0h3"/></svg>
+      <span>MatrixLang</span>
+    </a>
+    <nav class="primary-nav" aria-label="Main navigation">
+      <a href="./" aria-current="page">Workspace</a>
+      <a href="walkthrough.html#machine">Front end</a>
+      <a href="guide.html">Demo guide</a>
     </nav>
-
-    <footer>
-      <b style="color:var(--dim);font-weight:600">A Aswanth Raj</b><br>
-      24BAI0044<br>
-      BCSE307P &mdash; Compiler Design Lab<br>
-      Supervisor: Dr. Ranjithkumar S<br><br>
-      <span class="eyebrow">In the repository</span><br>
-      <code>paper/matrixlang.pdf</code><br>
-      <code>docs/submission/</code><br>
-      <code>make &middot; make test</code>
-    </footer>
+    <button id="presentation" class="top-button" type="button" aria-pressed="false"><svg class="icon"><use href="#i-expand"/></svg><span>Presentation</span></button>
+  </header>
+  <div class="app-layout">
+    <aside class="sidebar" aria-label="Example programs">
+      <div class="sidebar-heading"><h2>Examples</h2><span>5</span></div>
+      <div id="examples" class="example-list"></div>
+      <div class="sidebar-bottom">
+        <div class="connection"><span class="connection-dot" id="connection-dot"></span><span id="connection-label">Recorded examples</span></div>
+        <p id="connection-detail">Checking the local compiler.</p>
+        <a href="https://github.com/aswanth-07/matrixlang" target="_blank" rel="noopener noreferrer">Source repository <svg class="icon"><use href="#i-arrow"/></svg></a>
+      </div>
+    </aside>
+    <main class="workspace">
+      <div class="workspace-heading">
+        <div><h1 id="example-title">Matrix product</h1><p id="example-description">Infer a result shape and execute a matrix product.</p></div>
+        <span class="language-label">Matrix language compiler</span>
+      </div>
+      <div class="controlbar">
+        <fieldset class="contract-switch"><legend>Numerical contract</legend><div>
+          <button type="button" id="strict" aria-pressed="true">Strict</button>
+          <button type="button" id="algebraic" aria-pressed="false">Algebraic</button>
+        </div></fieldset>
+        <div class="actions">
+          <button type="button" id="compare" class="button secondary"><svg class="icon"><use href="#i-compare"/></svg>Compare modes</button>
+          <button type="button" id="compile" class="button primary"><svg class="icon"><use href="#i-play"/></svg><span id="compile-label">Compile &amp; run</span></button>
+        </div>
+      </div>
+      <p id="contract-note" class="contract-note">Strict retains arithmetic order. Algebraic permits rewrites that can change floating-point output.</p>
+      <div id="notice" class="notice" role="status" hidden></div>
+      <div class="workpanes">
+        <section class="source-pane" aria-labelledby="source-heading">
+          <div class="pane-heading"><div><h2 id="source-heading">Source</h2><span id="source-file">multiply.ml</span></div>
+            <div class="source-actions">
+              <button type="button" class="icon-button" id="reset" title="Reset example source" aria-label="Reset example source"><svg class="icon"><use href="#i-reset"/></svg></button>
+              <button type="button" class="icon-button" id="copy" title="Copy source" aria-label="Copy source"><svg class="icon"><use href="#i-copy"/></svg></button>
+              <button type="button" class="icon-button" id="download" title="Download source" aria-label="Download source"><svg class="icon"><use href="#i-save"/></svg></button>
+            </div>
+          </div>
+          <div class="editor-shell" id="editor-shell">
+            <div id="line-numbers" class="line-numbers" aria-hidden="true"></div>
+            <div class="editor-content">
+              <pre id="highlight" class="source-highlight" aria-hidden="true"></pre>
+              <textarea id="source" aria-label="MatrixLang source" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off" aria-describedby="source-note"></textarea>
+            </div>
+          </div>
+          <div class="editor-footer"><span id="cursor">Ln 1, Col 1</span><span><kbd>Ctrl</kbd> + <kbd>Enter</kbd> to compile</span></div>
+          <div id="source-note" class="source-note">Edit the source, then compile to update every stage.</div>
+          <details class="language-help"><summary>Language reference</summary><div>
+            <p><code>matrix A[2,3];</code> declares a zero matrix. <code>matrix C = A * B;</code> infers its shape.</p>
+            <p>Construct values with <code>{{1,2},{3,4}}</code>, <code>zeros(r,c)</code>, <code>ones(r,c)</code> and <code>identity(n)</code>. Use <code>transpose(A)</code> and <code>print(A)</code>.</p>
+            <p>Products require matching inner dimensions. Addition and subtraction require equal shapes. Dimensions are static; the language has no loops or functions.</p>
+          </div></details>
+        </section>
+        <section class="result-pane" aria-labelledby="result-heading">
+          <div class="pane-heading result-heading"><div><h2 id="result-heading">Compiler results</h2><span id="result-origin">Recorded compiler output</span></div><span id="verdict" class="verdict" role="status">Accepted</span></div>
+          <div id="stage-tabs" class="stage-tabs" role="tablist" aria-label="Compiler stages"></div>
+          <div id="stage-panel" class="stage-panel" role="tabpanel" tabindex="0" aria-label="Selected compiler stage">
+            <div class="stage-heading"><h3 id="stage-title">Shape check</h3><button id="show-stages" class="text-button" type="button" hidden>Back to stages</button><span id="stage-state"></span></div>
+            <div id="shape-strip" class="shape-strip"></div>
+            <div id="cost-summary" class="cost-summary" hidden></div>
+            <div id="diagnostic-links" class="diagnostic-links"></div>
+            <pre id="output" class="compiler-output" tabindex="0" aria-label="Compiler output"></pre>
+            <div id="comparison-panel" hidden></div>
+          </div>
+          <div class="result-footer"><span id="result-footnote">Output captured from matrixc.</span><button id="copy-output" class="text-button" type="button">Copy output</button></div>
+        </section>
+      </div>
+      <section class="observation" aria-label="Compilation observation">
+        <div><h2 id="observation-title">Shapes inferred before execution</h2><p id="observation-text">Inspect the compiler output to follow this program through each stage.</p></div>
+        <a href="guide.html">Demonstration flow <svg class="icon"><use href="#i-arrow"/></svg></a>
+      </section>
+      <footer class="workspace-footer"><span>Flex / Bison · C11 · Typed matrix VM</span><span>Arithmetic cost is modeled work, not measured runtime.</span></footer>
+    </main>
   </div>
-
-  <main>
-
-    <!-- ================================================== 01 the claim -- -->
-    <section id="thesis">
-      <div class="hero-grid">
-        <div>
-          <div class="eyebrow">Compiler Design Laboratory &middot; Teaching artifact</div>
-          <h1>Shapes in the<em>Type System</em></h1>
-          <p class="tagline">A matrix language that lets a compiler course
-            reach optimization.</p>
-          <p class="stem">Matrix shapes connect type checking to a static
-            arithmetic model. This compiler exposes that connection across
-            its phases. Strict optimization preserves association; explicit
-            algebraic mode permits numerical changes to reduce modeled work.
-            The figures below describe the two-seed development corpus.
-            The expanded research study includes ablations and shape controls.</p>
-
-          <div class="pair">
-            <div class="figure">
-              <div class="v mint" id="hero-flop">&nbsp;</div>
-              <div class="k">of the arithmetic removed by the optimizer</div>
-            </div>
-            <div class="figure">
-              <div class="v coral" id="hero-instr">&nbsp;</div>
-              <div class="k">what an instruction count would have reported</div>
-            </div>
-          </div>
-          <p class="note" id="hero-note">&nbsp;</p>
-        </div>
-
-        <div class="panel">
-          <h3>The whole argument, in six lines</h3>
-          <pre>matrix A[100,2];
-matrix B[2,100];
-matrix C[100,2];
-
-matrix R = A * B * C;
-print(R);</pre>
-          <div class="rule" style="margin:18px 0"></div>
-          <div class="shapes">
-            <b>69,800</b> FLOP as written, left to right<br>
-            <b>1,396</b> FLOP as the compiler emitted it<br>
-            <b>4</b> instructions, either way
-          </div>
-          <p class="note" style="margin-top:16px">Matrix multiplication is
-            associative over real numbers. Algebraic mode permits this cheaper
-            tree; rounding, signed zero, and NaN/Infinity output may change.
-            Strict mode retains the source association. FLOP here is a
-            conventional arithmetic model, not measured runtime.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============================ 02 flex and bison, one step at a time -->
-    <section id="machine">
-      <div class="head">
-        <div class="eyebrow">02 &middot; flex and bison, one step at a time</div>
-        <h2>Watch the front end run</h2>
-        <p class="lede">Edit the program, then step through it. The scanner is
-          <code>matrix.l</code>'s rules in <code>matrix.l</code>'s order; the
-          parser is driven by the LALR table
-          <code id="bison-version">bison</code> built from
-          <code>src/frontend/matrix.y</code>, read out of
-          <code>--report=all</code> at build time. The state numbers below are
-          the state numbers the compiler walks.</p>
-      </div>
-
-      <div class="rule"></div>
-
-      <div class="machine" id="machine-app">
-
-        <div class="mbar">
-          <div class="chooser" id="prog-chooser" role="group"
-               aria-label="Choose a program"></div>
-          <button class="toggle" id="presenter" type="button"
-                  aria-pressed="false"
-                  title="Larger type, for a projector">Presenter</button>
-        </div>
-
-        <div class="mbody" style="padding-bottom:4px">
-          <p class="lede" id="prog-note"
-             style="font-size:13px; margin-bottom:14px; max-width:78ch"></p>
-          <div class="duo">
-            <div class="card">
-              <h4>Source <span class="hint">edit it, everything follows</span></h4>
-              <textarea class="editor" id="src" spellcheck="false"
-                        aria-label="MatrixLang source"></textarea>
-            </div>
-            <div class="card">
-              <h4>What the front end makes of it</h4>
-              <div id="verdict-box"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="transport" id="transport">
-          <div class="keys">
-            <button id="t-first" type="button" title="First step (Home)">&#9198;</button>
-            <button id="t-prev" type="button" title="Back one step (left arrow)">&#9664;</button>
-            <button id="t-play" class="go" type="button" title="Play or pause (space)">&#9654; Play</button>
-            <button id="t-next" type="button" title="Forward one step (right arrow)">&#9654;</button>
-            <button id="t-last" type="button" title="Last step (End)">&#9197;</button>
-          </div>
-          <div class="counter" id="t-count"></div>
-          <div class="scrub">
-            <label for="t-speed">Speed</label>
-            <input type="range" id="t-speed" min="60" max="960" value="580" step="20">
-          </div>
-        </div>
-        <div class="progress"><i id="t-bar"></i></div>
-
-        <div class="mtabs" id="mtabs" role="tablist" aria-label="Front-end view"></div>
-
-        <!-- ------------------------------------------------------ scanner -->
-        <div class="mbody" id="pane-scan">
-          <div class="duo">
-            <div class="stak">
-              <div class="card">
-                <h4>The cursor <span class="hint" id="scan-where"></span></h4>
-                <div class="film" id="scan-film"></div>
-              </div>
-              <div class="card">
-                <h4>What flex does with the match</h4>
-                <div class="act" id="scan-act"></div>
-              </div>
-            </div>
-            <div class="stak">
-              <div class="card">
-                <h4>Rules that match here <span class="hint">longest wins</span></h4>
-                <div class="cands" id="scan-cands"></div>
-                <p style="font-size:12px; color:var(--faint); margin-top:13px; line-height:1.6">
-                  flex tries every rule at the cursor and keeps the longest
-                  match; a tie goes to whichever rule comes first in
-                  <code>matrix.l</code>. That single sentence is why
-                  <code>matrix</code> is a keyword and <code>matrixx</code> is
-                  not: on <code>matrix</code> the keyword rule and the
-                  identifier rule both match six characters and the keyword
-                  rule is earlier, while on <code>matrixx</code> the identifier
-                  rule matches seven and wins outright.</p>
-              </div>
-              <div class="card">
-                <h4>Token stream <span class="hint">as <code>--tokens</code> prints it</span></h4>
-                <div class="stream" id="scan-stream"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ------------------------------------------------------- parser -->
-        <div class="mbody" id="pane-parse">
-          <div class="duo">
-            <div class="stak">
-              <div class="card">
-                <h4>Lookahead <span class="hint" id="parse-look"></span></h4>
-                <div class="queue" id="parse-queue"></div>
-                <p style="font-size:12px; color:var(--faint); margin-top:12px; line-height:1.6">
-                  One token. That is the whole of what an LALR(1) parser is
-                  allowed to see beyond what it has already read, and every
-                  decision below is taken on it.</p>
-              </div>
-              <div class="card">
-                <h4>In the source</h4>
-                <div class="film" id="parse-film"></div>
-              </div>
-            </div>
-
-            <div class="stak">
-              <div class="card">
-                <h4>The stack <span class="hint" id="parse-depth"></span></h4>
-                <div class="stack" id="parse-stack"></div>
-              </div>
-              <div class="card">
-                <h4>The action</h4>
-                <div class="act" id="parse-act"></div>
-              </div>
-              <div class="card">
-                <h4><span id="parse-state">state</span>
-                  <span class="hint">its items, then its row of the table</span></h4>
-                <div class="items" id="parse-items"></div>
-                <div class="rule" style="margin:12px 0"></div>
-                <div class="rows" id="parse-rows"></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="card" style="margin-top:16px">
-            <h4>The tree the reductions build
-              <span class="hint" id="parse-nodes"></span></h4>
-            <div class="treepane" id="parse-forest"></div>
-          </div>
-
-          <div class="card" style="margin-top:16px">
-            <h4>Every step so far <span class="hint">click one to jump back</span></h4>
-            <div class="log" id="parse-log"></div>
-          </div>
-        </div>
-
-        <!-- ---------------------------------------------------- automaton -->
-        <div class="mbody" id="pane-auto">
-          <div class="facts">
-            <div class="fact">
-              <div class="v" id="fact-states">&nbsp;</div>
-              <div class="k">LALR states bison built from this grammar</div>
-            </div>
-            <div class="fact">
-              <div class="v" id="fact-rules">&nbsp;</div>
-              <div class="k">rules, counting the <code>$accept</code> bison adds</div>
-            </div>
-            <div class="fact">
-              <div class="v mint" id="fact-conflicts">&nbsp;</div>
-              <div class="k">conflicts left unresolved</div>
-            </div>
-            <div class="fact">
-              <div class="v" style="color:var(--violet)" id="fact-resolved">&nbsp;</div>
-              <div class="k">conflicts the precedence declarations settled</div>
-            </div>
-          </div>
-
-          <p class="lede" style="font-size:13px; max-width:80ch; margin-bottom:18px">
-            The expression grammar is ambiguous as written:
-            <code>expr: expr '+' expr</code> and
-            <code>expr: expr '*' expr</code> say nothing about which binds
-            tighter. Bison finds the conflicts, and the three precedence lines
-            decide every one of them. Those are the states to look at.</p>
-
-          <div class="picker">
-            <button class="mini" id="auto-prev" type="button">&larr; state</button>
-            <input type="number" id="auto-n" min="0" value="0" aria-label="State number">
-            <button class="mini" id="auto-next" type="button">state &rarr;</button>
-            <button class="mini" id="auto-here" type="button">jump to where the parser is</button>
-          </div>
-
-          <div class="duo">
-            <div class="card">
-              <h4>Item set <span class="hint">the dot is how far it has read</span></h4>
-              <div class="items" id="auto-items"></div>
-            </div>
-            <div class="stak">
-              <div class="card">
-                <h4>Actions and gotos</h4>
-                <div class="rows" id="auto-rows"></div>
-              </div>
-              <div class="card">
-                <h4>Conflicts settled here</h4>
-                <div id="auto-resolved"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ------------------------------------------------------ grammar -->
-        <div class="mbody" id="pane-gram">
-          <p class="lede" style="font-size:13px; max-width:80ch" id="agreement"></p>
-          <p style="font-size:12px; color:var(--faint); margin:10px 0 20px; line-height:1.6; max-width:80ch">
-            The page has to scan and parse in the browser to answer for text
-            you type, so those two engines are the one part of this
-            demonstration that is a re-implementation rather than a capture.
-            They are checked against <code>bin/matrixc</code> over every
-            program in <code>examples/</code> at build time, token for token
-            and diagnostic for diagnostic, and the build fails on a
-            disagreement. Everything in the next section is the compiler's own
-            output.</p>
-
-          <div class="duo">
-            <div class="card">
-              <h4>The grammar, as bison numbered it</h4>
-              <div class="gram" id="gram-rules"></div>
-            </div>
-            <div class="stak">
-              <div class="card">
-                <h4>Precedence <span class="hint">from matrix.y</span></h4>
-                <div class="gram" id="gram-prec"></div>
-              </div>
-              <div class="card">
-                <h4>The scanner's rules, in <code>matrix.l</code> order</h4>
-                <div class="gram" id="gram-flex"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-
-    <!-- ============================================= 03 walk the compiler -->
-    <section id="pipeline">
-      <div class="head">
-        <div class="eyebrow">03 &middot; Every phase, with its output</div>
-        <h2>Walk the compiler</h2>
-        <p class="lede">One flag per phase, so you can stop the compiler
-          anywhere and read what it produced. Everything below is real
-          <code>matrixc</code> output, captured when this page was built.</p>
-      </div>
-
-      <div class="rule"></div>
-
-      <div class="chooser" id="prog-choice" role="group" aria-label="Choose a program"></div>
-      <p class="lede" id="prog-blurb" style="margin:16px 0 22px; max-width:66ch; font-size:14px"></p>
-
-      <div class="pipe">
-        <div class="panel">
-          <h3>The program</h3>
-          <pre id="prog-source"></pre>
-          <div class="cmd" style="margin:12px 0 0" id="prog-file"></div>
-        </div>
-
-        <div>
-          <div class="stepper" id="stage-tabs" role="tablist" aria-label="Compiler phase"></div>
-          <div class="cmd" id="stage-cmd"></div>
-          <pre id="stage-out" role="tabpanel" tabindex="0"></pre>
-          <p class="lede" id="stage-note" style="margin-top:12px; font-size:12.5px"></p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ================================================ 04 the cost model -->
-    <section id="explorer">
-      <div class="head">
-        <div class="eyebrow">04 &middot; The idea, running</div>
-        <h2>A shape is also a cost model</h2>
-        <p class="lede">Multiplying an <code>m x n</code> matrix by an
-          <code>n x p</code> one has a conventional cost of <code>m p (2n-1)</code> scalar
-          operations. Every term is a shape, and every shape is in the type, so
-          the compiler can price an expression it has not run. Change the
-          dimensions below and watch it choose.</p>
-      </div>
-
-      <div class="rule"></div>
-
-      <div class="explorer">
-        <div class="panel">
-          <h3>The chain</h3>
-          <div class="dims" id="dims"></div>
-          <div style="display:flex; gap:8px; margin-bottom:16px">
-            <button class="mini" id="add">Add a matrix</button>
-            <button class="mini" id="drop">Remove one</button>
-          </div>
-          <div class="shapes" id="shapes"></div>
-          <div class="rule" style="margin:16px 0"></div>
-          <div class="eyebrow" style="margin-bottom:10px">Try</div>
-          <div class="chooser" id="presets"></div>
-        </div>
-
-        <div>
-          <div class="outcome">
-            <div class="row">
-              <div class="lab">
-                <span class="who"><b>As written.</b> <code>*</code> is left
-                  associative, so this is what the source asks for.</span>
-                <span class="amt" style="color:var(--coral)" id="lr-cost"></span>
-              </div>
-              <div class="bracket" id="lr-bracket"></div>
-              <div class="track"><i id="lr-bar" style="background:var(--coral)"></i></div>
-            </div>
-
-            <div class="row">
-              <div class="lab">
-                <span class="who"><b>Algebraic mode.</b> The bracketing the cost
-                  model picks, by dynamic programming over the shapes.</span>
-                <span class="amt" style="color:var(--mint)" id="opt-cost"></span>
-              </div>
-              <div class="bracket" id="opt-bracket"></div>
-              <div class="track"><i id="opt-bar" style="background:var(--mint)"></i></div>
-            </div>
-          </div>
-
-          <div class="verdict" id="verdict" style="margin-top:22px"></div>
-
-          <div class="panel flat" style="margin-top:22px">
-            <h3 class="coral">Why an instruction count cannot see this</h3>
-            <p style="font-size:13.5px; color:var(--dim); line-height:1.6">A chain
-              of <code>k</code> matrices needs exactly <code>k-1</code> products
-              under every bracketing, so re-bracketing never changes the
-              product-instruction count. This project reports both instruction
-              and modeled arithmetic reduction.</p>
-            <p style="font-size:12px; color:var(--faint); line-height:1.6; margin-top:12px">
-              This explorer runs the same formulae as
-              <code>src/ir/cost.c</code> and <code>src/ir/chain.c</code>,
-              re-implemented in JavaScript so it can respond as you type. The
-              compiler itself is C, and the figures elsewhere on this page come
-              from running it.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- =============================================== 05 what we measured -->
-    <section id="evidence">
-      <div class="head">
-        <div class="eyebrow">05 &middot; The measurement</div>
-        <h2>Two metrics, same programs, different answers</h2>
-        <p class="lede" id="ev-lede"></p>
-      </div>
-
-      <div class="rule"></div>
-
-      <div class="tiles" id="tiles"></div>
-
-      <div class="charts" style="margin-top:36px">
-        <div class="panel">
-          <h3>Distribution over every generated program</h3>
-          <div id="chart-cdf"></div>
-          <div class="legend">
-            <span><i style="background:var(--mint)"></i>arithmetic removed</span>
-            <span><i style="background:var(--coral)"></i>instructions removed</span>
-          </div>
-        </div>
-        <div class="panel">
-          <h3>Median and interquartile range</h3>
-          <div id="chart-box"></div>
-          <p style="font-size:12px; color:var(--faint); margin-top:12px; line-height:1.6">
-            Roughly a fifth of programs are left alone, and they belong in the
-            figure. When the shapes make left to right already the cheapest
-            bracketing, the dynamic program says so and the compiler does
-            nothing.</p>
-        </div>
-      </div>
-
-      <div class="cols" style="margin-top:36px">
-        <div>
-          <div class="eyebrow" style="margin-bottom:14px">Historical repository marker counts</div>
-          <table>
-            <thead><tr><th>Compiler</th><th></th><th class="num" style="text-align:right">Phases</th></tr></thead>
-            <tbody id="baseline-rows"></tbody>
-          </table>
-          <p style="font-size:12px; color:var(--faint); margin-top:14px; line-height:1.6">
-            This exploratory scan counts filename and text markers in three
-            repositories. A missing marker does not establish a missing
-            implementation, and a match does not verify functionality.
-            These counts are excluded from the research paper and do not
-            compare teaching effectiveness.</p>
-        </div>
-        <div>
-          <div class="eyebrow" style="margin-bottom:14px">What the testing found</div>
-          <pre class="plain" style="font-size:12px">unoptimized          optimized
-R = Matrix&lt;1x1&gt;      R = Matrix&lt;1x1&gt;
-  [ 0 ]                [ -0 ]</pre>
-          <p style="font-size:13.5px; color:var(--dim); margin-top:14px; line-height:1.6">
-            One generated program in the first run disagreed. The cause was the
-            rewrite <code>0 - x =&gt; -x</code>: true over the reals, and not
-            observationally equivalent in IEEE-754, because <code>+0</code>
-            minus <code>+0</code> is <code>+0</code> while negating
-            <code>+0</code> gives <code>-0</code>.</p>
-          <p style="font-size:13.5px; color:var(--dim); margin-top:12px; line-height:1.6">
-            That floating-point identities break this way is textbook. What is
-            useful here is the regression target it supplies. The rewrite was
-            removed. The compiler now defaults to strict mode, with explicit
-            algebraic mode for transformations that can change output. The
-            paper's broader evaluation and numerical fixtures are linked from
-            the repository.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- =============================================== 06 what we do not -- -->
-    <section id="limits">
-      <div class="head">
-        <div class="eyebrow">06 &middot; Scope</div>
-        <h2>What the domain bought, and what it did not</h2>
-        <p class="lede">MatrixLang connects shape checking, modeled cost and
-          numerical rewrite legality in an inspectable compiler. These are
-          concrete artifact capabilities; their educational effectiveness
-          remains to be measured.</p>
-      </div>
-
-      <div class="rule"></div>
-
-      <div class="cols">
-        <div>
-          <div class="eyebrow" style="margin-bottom:14px">What it bought</div>
-          <ul class="plain yes">
-            <li><span>+</span><div><b style="color:var(--paper);font-weight:600">Semantic analysis</b>
-              includes shape inference and dimension checking.</div></li>
-            <li><span>+</span><div><b style="color:var(--paper);font-weight:600">Code generation</b>
-              gained instruction selection driven by inferred types.</div></li>
-            <li><span>+</span><div><b style="color:var(--paper);font-weight:600">Optimization</b>
-              gained transformations worth applying and a cost model to score
-              them with.</div></li>
-            <li><span>-</span><div>It costs control-flow graphs and dataflow
-              analysis. MatrixLang has no branches, which is the enabling
-              decision and also the honest limitation.</div></li>
-          </ul>
-        </div>
-        <div>
-          <div class="eyebrow" style="margin-bottom:14px">What we do not claim</div>
-          <ul class="plain">
-            <li><span>x</span><div>That students learn more. The language has
-              not been taught to a cohort yet, so there is no learning
-              outcome here to report.</div></li>
-            <li><span>x</span><div>That the mechanisms are new. Shape-typed
-              array languages, chain ordering and differential testing are all
-              established; the artifact connects them to inspectable exercises.</div></li>
-            <li><span>x</span><div>That the magnitudes generalise. The corpus
-              comes from a generator written for this project, so its
-              distribution of shapes is a choice, not a sample.</div></li>
-            <li><span>x</span><div>That three repositories are a sample of
-              teaching compilers.</div></li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="closing" style="margin-top:38px">
-        Whatever the domain, if the type system carries enough to cost a
-        program statically, a student's optimizer can be scored on the work it
-        removes alongside the instructions it removes. State the workload and
-        numerical contract when interpreting either metric.
-      </div>
-    </section>
-
-  </main>
-</div>
-
-<script src="data.js"></script>
-<script src="grammar.js"></script>
-<script src="agreement.js"></script>
-<script src="lexer.js"></script>
-<script src="parser.js"></script>
-<script src="app.js"></script>
+  <noscript><p class="notice">Enable JavaScript to use the workspace. The <a href="https://github.com/aswanth-07/matrixlang">repository</a> includes the CLI demonstrations.</p></noscript>
+</body>
+</html>

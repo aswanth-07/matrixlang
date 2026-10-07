@@ -6,8 +6,8 @@ window.MATRIXLANG = {
  "programs": [
   {
    "id": "multiply",
-   "name": "A product",
-   "blurb": "Two literal matrices multiplied. C is never given a shape; the compiler infers Matrix<2x4> from A and B.",
+   "name": "Matrix product",
+   "blurb": "Multiply two literal matrices. The compiler infers Matrix<2x4> for C from the operand shapes.",
    "file": "examples/valid/multiply.ml",
    "source": "matrix A[2,3] = {{1, 2, 3},\n                 {4, 5, 6}};\n\nmatrix B[3,4] = {{1, 0, 0, 1},\n                 {0, 1, 0, 2},\n                 {0, 0, 1, 3}};\n\nmatrix C = A * B;      // shape inferred: Matrix<2x4>\n\nprint(C);",
    "stages": {
@@ -71,7 +71,7 @@ window.MATRIXLANG = {
   },
   {
    "id": "chain",
-   "name": "A chain the shapes re-bracket",
+   "name": "Chain ordering",
    "blurb": "In algebraic mode, A * B * C can be re-bracketed to reduce modeled arithmetic. The cheaper tree depends on shapes; binary64 output can change. Strict mode retains association.",
    "file": "examples/optimize/chain_order.ml",
    "source": "matrix A[100,2];\nmatrix B[2,100];\nmatrix C[100,2];\n\nmatrix R = A * B * C;\n\nprint(R);",
@@ -136,8 +136,8 @@ window.MATRIXLANG = {
   },
   {
    "id": "mismatch",
-   "name": "A program that is rejected",
-   "blurb": "Matrix<2x3> times Matrix<5x4> is not a type error the compiler can shrug off. It is caught in semantic analysis, before any code is generated.",
+   "name": "Shape mismatch",
+   "blurb": "Matrix<2x3> and Matrix<5x4> have incompatible inner dimensions. Semantic analysis rejects this product before code generation.",
    "file": "examples/errors/mul_mismatch.ml",
    "source": "matrix A[2,3];\nmatrix B[5,4];\nmatrix C[2,4];\n\nC = A * B;\n\nprint(C);",
    "stages": {
@@ -204,41 +204,41 @@ window.MATRIXLANG = {
   {
    "id": "declare",
    "name": "Two declarations",
-   "blurb": "Sixteen tokens and a complete parse. Short enough to walk from the first shift to accept without losing anybody.",
+   "blurb": "Step through sixteen tokens, from the first shift to acceptance.",
    "file": "examples/phase1/declare.ml",
    "source": "matrix A[2,3];\nmatrix B[3,4];\n"
   },
   {
    "id": "precedence",
-   "name": "Precedence, decided",
-   "blurb": "A + B * C. The grammar does not say which binds tighter; the parser reaches a shift/reduce conflict and %left decides it. Watch for the note that appears when it does.",
+   "name": "Operator precedence",
+   "blurb": "Parse A + B * C. Bison's %left declarations resolve the shift/reduce conflict; the trace identifies the decision.",
    "file": "examples/phase1/precedence.ml",
    "source": "matrix A[2,2];\nmatrix B[2,2];\nmatrix C[2,2];\n\nmatrix R = A + B * C;\n\nprint(R);\n"
   },
   {
    "id": "multiply",
-   "name": "The headline example",
+   "name": "Matrix product",
    "blurb": "Matrix literals, nested rows, and an inferred shape. The reductions build the literal row by row.",
    "file": "examples/valid/multiply.ml",
    "source": "matrix A[2,3] = {{1, 2, 3},\n                 {4, 5, 6}};\n\nmatrix B[3,4] = {{1, 0, 0, 1},\n                 {0, 1, 0, 2},\n                 {0, 0, 1, 3}};\n\nmatrix C = A * B;      // shape inferred: Matrix<2x4>\n\nprint(C);\n"
   },
   {
    "id": "chain_order",
-   "name": "A chain worth re-bracketing",
-   "blurb": "The program the rest of this page is about, through the front end.",
+   "name": "Matrix chain",
+   "blurb": "Inspect the syntax tree of a three-matrix product.",
    "file": "examples/optimize/chain_order.ml",
    "source": "matrix A[100,2];\nmatrix B[2,100];\nmatrix C[100,2];\n\nmatrix R = A * B * C;\n\nprint(R);\n"
   },
   {
    "id": "syntax",
    "name": "Three syntax errors",
-   "blurb": "The parser reports, pops to a state that can shift the error token, discards input to the next semicolon, and carries on. That is `stmt: error ';'` doing its work.",
+   "blurb": "The parser reports, pops to a state that can shift the error token, discards input to the next semicolon, and resumes parsing with the stmt: error ';' recovery rule.",
    "file": "examples/errors/syntax.ml",
    "source": "matrix A[2,3]\n\nA = ;\nmatrix B[2 3];\nprint(A;\n"
   },
   {
    "id": "lexical",
-   "name": "Characters the scanner refuses",
+   "name": "Lexical errors",
    "blurb": "An illegal character and an identifier beginning with a digit. The scanner reports both and returns no token, so the parser sees a gap where they were.",
    "file": "examples/errors/lexical.ml",
    "source": "matrix A[2,2];\n\nA = A $ A;      // '$' is not a MatrixLang character\nA = 12abc * A;  // an identifier may not begin with a digit\n"
