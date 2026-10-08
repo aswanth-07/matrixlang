@@ -1,67 +1,45 @@
 # MatrixLang research artifact
 
-**MatrixLang: Connecting Shape, Cost, and Numerical Contracts in a Teaching Compiler**
+**Exact, Bounded, or Relaxed: Proving Which Floating-Point Guarantee a Compiler Rewrite Keeps**
 
-Authors, in order: **A Aswanth Raj**, **Dr. RANJITHKUMAR S**. Both are affiliated with the School of Computer Science and Engineering, VIT Vellore, India. Ranjithkumar's stated role is mentorship/supervision. See the [author checklist](submission-checklist.md) for unconfirmed administrative details.
+Authors, in order: **A Aswanth Raj**, **Dr. RANJITHKUMAR S**, School of Computer Science and Engineering, VIT Vellore, India. See the [author checklist](submission-checklist.md) for unconfirmed administrative details.
 
-The [named manuscript](matrixlang.pdf) and [anonymous review build](anonymous.pdf) describe a technical educational-tool study. There is no classroom experiment, claimed new optimization algorithm, runtime speedup, or proof of universal floating-point preservation. The [venue assessment](venue.md) recommends the next announced SPLASH-E archival call; the 2026 deadline has passed.
+The [named manuscript](matrixlang.pdf) and [anonymous review build](anonymous.pdf) present three numerical contracts (strict, bounded, algebraic), per-output guarantee certificates derived from declared input domains, two theorems behind them, and six measured research questions. The earlier teaching-compiler paper is kept as [archive/matrixlang-teaching-compiler.pdf](archive/matrixlang-teaching-compiler.pdf); its source is in the Git history, and its data in `results/research/` remain reproducible with `make research`.
 
 ## Reproduce
 
-Build tools: Flex, Bison, GCC or a compatible C11 compiler, GNU Make. Evaluation scripts use Python 3.10 or newer and the standard library. Display generation uses the packages in `requirements.txt`; `requirements-lock.txt` records the evaluated Python package versions. PDFs use the publisher's `acmart` class with `sigplan,review` options and an existing LaTeX installation.
+Build tools: Flex, Bison, GCC (C11) and GNU Make. The contracts study needs Python 3.10 or newer with numpy and matplotlib (`requirements.txt`). PDFs use the publisher's `acmart` class (`sigplan,review`).
 
 From the repository root:
 
 ```bash
 make
 make test
-make verify-research  # check recorded lineage, every program hash, and replay
-make analyze          # rebuild summary, tables, and figure from recorded data
-make paper            # build named and anonymous PDFs, twice each
+make contracts           # repeat every measurement into results/contracts/ (about 20 minutes)
+make contracts-analyze   # regenerate summary, macros, tables, figures and demo data
+make paper               # named and anonymous PDFs
 ```
 
-To repeat every measurement:
-
-```bash
-make research
-make verify-research
-make paper
-```
-
-`make research` replaces the local recorded research output. Copy it elsewhere first if comparing versions. The reference run takes about ten minutes on the evaluated machine; this is evaluation-driver duration, not a compiler benchmark. A rebuilt binary can have a different digest because of platform or build timestamps. The verifier requires recorded source/protocol equality and checks representative replay rather than demanding identical executable bytes across machines.
-
-Git pins text files to LF, raw observations are written with LF, and source-lineage keys use portable forward-slash paths. The verifier compares exact recorded bytes; preserve these line endings when copying the artifact outside Git. A fresh Git-exported checkout was built and verified on the evaluated Windows host. This packaging check does not establish cross-platform numerical equivalence.
-
-On Windows, use MSYS2 Bash with `/mingw64/bin` before `/usr/bin`; do not substitute WSL Bash for the native MinGW build. LaTeX compilation was verified with MiKTeX's `acmart` 2.20. The built-in document compiler was unavailable on this host, so the exported PDFs were compiled with the existing MiKTeX installation.
+`make contracts` builds the compiler and the mutant compiler first, then runs `tools/contracts/run_all.py`: `corpus.py` (RQ1, RQ2), `tightness.py` (RQ3), `mutation.py` (RQ5), `accuracy.py` (RQ6), `bench.py` (RQ4, last, so that nothing competes for the CPU), and `analyze.py`. `overhead.py` measures compile time serially. On Windows, run Make from MSYS2 with `/mingw64/bin` first on `PATH`, and use a Python that has numpy.
 
 ## Evidence map
 
-| Result | Data | Check |
-| --- | --- | --- |
-| 5,000 cost programs, 40,000 arm observations | `results/research/cost.jsonl` | All five profiles, ten seeds, 100 programs, eight arms; medians, IQRs, zero and negative counts |
-| Paired arithmetic minus instruction contrast | `results/research/summary.json` | Median per-program difference; seed-cluster bootstrap, 2,000 resamples, seed 87123 |
-| 2,000 execution programs | `results/research/execution.jsonl` | Strict and algebraic comparisons against unoptimized hexadecimal output; all mismatch outputs retained |
-| 1,250 chains, 48,750 candidate trees | `results/research/oracle.jsonl` | Exhaustive independent parenthesization enumeration, without dynamic programming or compiler cost imports |
-| 15 numerical fixtures | `results/research/numerics.json` | Strict equality, intended algebraic differences, six independent scalar references |
-| Tables, macros, and Figure 1 | `paper/generated/`, `paper/figures/research.pdf` | `tools/analyze_research.py` reads raw data and checks recorded output hashes |
-| Protocol and lineage | `paper/evaluation-protocol.json`, `results/research/environment.json` | Source, binary, program, protocol, and output SHA-256 hashes |
+Every number in the manuscript is a macro in `generated/contracts.tex` or a cell of a `generated/tab-*.tex` table, written by `tools/contracts/analyze.py` from the raw files below. Nothing is typed by hand.
 
-The original two-seed datasets are retained as development experiments for the laboratory demonstration. Their measurements use algebraic mode for cost and strict mode for execution; they are not the paper's evaluation population. The historical repository-marker comparison is exploratory metadata and is excluded from the paper's evidence.
+| Result | Raw data | Script | What is checked |
+| --- | --- | --- | --- |
+| RQ1 recovery (Table 2, Figure 1) | `results/contracts/rq1_recovery.jsonl` | `corpus.py` | 15,000 programs, 10 seeds, 6 profiles, 10 value populations, 4 arms; pooled modeled saving and recovery per domain |
+| RQ2 soundness (Table 3) | `rq2_soundness.jsonl` | `corpus.py` | 4,800 programs × 3 input seeds × 4 arms; per-output bit equality against the unoptimized run, by certificate level |
+| RQ3 threshold (Table 4) | `rq3_tightness.jsonl`, `rq3_env.json` | `tightness.py` | Compiler threshold by binary search versus closed form; 17 witnesses at 14 values of m per family |
+| RQ4 kernels (Table 5) | `rq4_bench.jsonl`, `rq4_threads.jsonl`, `rq4_vectorizer.txt` | `bench.py`, `bench/licensed/kernels.c` | GCC 15.2 strict versus licensed builds; 7 processes × 21 repetitions; result bits; OpenMP 1–24 threads |
+| RQ5 mutation (Table 6) | `rq5_mutation.jsonl` | `mutation.py`, `witnesses/` | 9 mutants of `src/ir/mutant.h` against 6 test populations |
+| RQ6 accuracy (Table 7, Figure 2) | `rq6_accuracy.jsonl`, `rq6_validation.jsonl` | `accuracy.py` | 2,700 chains, exact integer references, VM emulation validated bit for bit; sign tests, Holm, seed-cluster bootstrap |
+| Compile-time overhead | `overhead.jsonl` | `overhead.py` | Sequential compilations, 5 repetitions, median per program and arm |
 
-## Contracts and interpretation
+## Preregistration and deviations
 
-Strict mode is the default. `--fp-algebraic` explicitly permits reassociation and real-number identity rewrites, including changes in rounding, signed zero, and NaN/Infinity propagation. `--exact-output` prints hexadecimal values for comparisons. NaN payloads, exception flags, memory failures, and alternate floating-point environments are outside the tested observation model.
+RQ6 follows the research contract IG-RD-010 recorded before the confirmatory run. Deviations, all stated in the paper: profiles that draw identical chain shapes (balanced) or have no chains (elementwise) are not separate populations, and square chains enter only the ablation; no SuiteSparse or other dataset could be downloaded, so value distributions are synthetic; chains whose exact reference needs more than 1.5 million scalar products are redrawn. The decision rule's "four of five profiles" becomes "both eligible profiles".
 
-The arithmetic objective is `m*p*(2*n-1)` for a dense matrix product, with zero arithmetic assigned to movement and constructors. The VM also adds the first product to a positive-zero accumulator; those initial additions are outside the conventional model. The paper reports model reductions, not executed machine instructions or elapsed time.
+## Scope of the claims
 
-The heterogeneous algebraic median is 45.3% arithmetic reduction (IQR 0.8–79.9%) and 5.9% instruction reduction (IQR 0.0–9.5%). Square and elementwise controls have zero chain savings. Strict output matches all 2,000 generated execution cases; algebraic output differs on 813/1,000 broad-value cases despite zero differences on 1,000 dyadic cases. These observations are scoped to the declared synthetic populations.
-
-## License and provenance
-
-Scientific-writing review also used the procedural guidance in Timothy Kassis,
-Vinayak Agarwal, Yuhuan He, Darshil Patel, and Aubrey M. Brueckner (2026),
-[Scientific Agent Skills: A Library of Procedural Knowledge for Research Agents](https://doi.org/10.48550/arXiv.2609.00065).
-This identifies assisted workflow provenance; it is not experimental evidence
-for MatrixLang or independent human verification.
-
-All research observations are generated locally from synthetic programs. No third-party dataset or human-participant data is included. Compiler, generators, raw results, and original figures are covered by the repository's existing MIT license. References and their source URLs are documented in [literature.md](literature.md); third-party papers and publisher templates are referenced rather than redistributed. GitHub is the current distribution point, not a persistent archival DOI.
+Certificates are static claims over the declared input domains; execution checks them on drawn inputs only. The bounded contract promises the standard-model error bound; gradual underflow is outside it. Modeled arithmetic is a cost model, not runtime; runtime appears only in RQ4, on one machine and one compiler. Workloads are generated; no benchmark suite or application data is used.

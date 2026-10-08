@@ -10,7 +10,7 @@ Open <http://127.0.0.1:8731/>. The page reports **Local compiler ready**. Python
 
 ## Demonstration flow
 
-Allow about ten minutes. Use **Presentation** for larger source and output text.
+Allow about twelve minutes. Use **Presentation** for larger source and output text.
 
 The workspace offers three numerical contracts. Each names the weakest guarantee a value-changing rewrite may have and still be applied:
 
@@ -25,10 +25,12 @@ The **Guarantees** stage lists every `print` with the level it was certified at 
 3. **Real-valued chain**: the same shapes over `input(real(1))`. Strict keeps the source order; **Bounded** applies the cheaper order and certifies `|error| <= 4.66e-15 |A1|...|Ak|`. **Compare contracts** shows bounded output differing from the unoptimized run in low-order bits, as its certificate permits.
 4. **Unbounded reals**: with `input(real)` an intermediate may overflow, so strict and bounded both keep the source order; only algebraic reorders, and it certifies the output as relaxed.
 5. **Per-output guarantees**: under **Bounded**, the `int16` chain `R` is certified bit-identical and the real-valued chain `S` bound-preserving, within one program.
-6. **Signed zero**: select **Compare contracts**. `-2 * 0` is `-0`; strict keeps it, bounded and algebraic print `+0` and certify the output as bound-preserving. Hexadecimal output exposes the difference.
-7. **Shape mismatch**: read the rejected product's two shapes and inner-dimension rule. Use the diagnostic line link. Change B's declaration to `matrix B[3,4];` and compile; the new program is accepted.
-8. **Expression reuse**: compare original TAC with optimization. X and Y share one computed `A * B`; the rewrite is exact and needs no proof.
-9. **Front end**: open the linked walkthrough for scanner rules, Bison states, shifts, reductions and error recovery.
+6. **Inherited guarantee**: under **Bounded**, the inner `0 * N` is rewritten to `+0` as bound-preserving and the outer `0 * T` is then proved `+0`; when the outer rewrite removes the inner product, the certificate of `print(R)` still inherits bound-preserving. The evaluation found this defect in an earlier version.
+7. **Signed zero**: select **Compare contracts**. `-2 * 0` is `-0`; strict keeps it, bounded and algebraic print `+0` and certify the output as bound-preserving. Hexadecimal output exposes the difference.
+8. **Shape mismatch**: read the rejected product's two shapes and inner-dimension rule. Use the diagnostic line link. Change B's declaration to `matrix B[3,4];` and compile; the new program is accepted.
+9. **Expression reuse**: compare original TAC with optimization. X and Y share one computed `A * B`; the rewrite is exact and needs no proof.
+10. **Evaluation**: open the Evaluation page. The threshold explorer evaluates the exactness theorem in the browser (`100, 2, 100, 2` is exact up to 35578); the six sections show the measured recovery, soundness, threshold tightness, GCC kernel speedups with identical bits, mutation adequacy and the preregistered accuracy study, generated from `results/contracts/` by `make contracts-analyze`.
+11. **Front end**: open the linked walkthrough for scanner rules, Bison states, shifts, reductions and error recovery.
 
 Ctrl+Enter compiles. Ctrl+Shift+Enter compiles under all three contracts and compares them. Stage tabs support arrow keys, Home and End. Tab leaves the editor; Ctrl+] inserts two spaces. Source can be copied, downloaded or reset. The browser retains the current draft and input seed locally; choosing an example or Reset replaces them. The source remains on the local machine when using the local service.
 
@@ -44,7 +46,7 @@ Shape diagnostics prevent TAC generation and execution. Runtime errors and execu
 
 `make web` regenerates `workspace-data.js`, the walkthrough captures, Bison tables and agreement data. Do not hand-edit generated files.
 
-`make serve-static` serves the demo without the compiler API. A static host or local `demo/index.html` can inspect the eight unchanged examples under every contract, including their recorded guarantees and output comparison. Edited source uses the browser scanner/parser and explicitly reports **Browser scanner / parser only**. Syntax acceptance does not imply shape validity. No arbitrary edited source is sent to a remote compiler.
+`make serve-static` serves the demo without the compiler API. A static host or local `demo/index.html` can inspect the nine unchanged examples under every contract, including their recorded guarantees and output comparison. Edited source uses the browser scanner/parser and explicitly reports **Browser scanner / parser only**. Syntax acceptance does not imply shape validity. No arbitrary edited source is sent to a remote compiler.
 
 `demo/walkthrough.html` preserves the earlier detailed demonstration, and `demo/guide.html` provides the presentation flow inside the demo. The workspace needs no external fonts, JavaScript packages or network assets.
 
@@ -62,4 +64,4 @@ make test
 make web
 ```
 
-Service tests exercise inferred shapes, compiler diagnostics, exact signed-zero comparison, contract-dependent costs, strict reordering of a chain proved exact, relaxed-only reordering of unbounded reals, a check of every certificate against execution for three seeds, seed validation, execution limits, request boundaries, process timeout/output bounds and replay of all 24 recorded example/contract pairs. Existing acceptance and numerical tests continue to verify compiler behavior. The browser front-end agreement check covers example sources independently of the service adapter.
+Service tests exercise inferred shapes, compiler diagnostics, exact signed-zero comparison, contract-dependent costs, strict reordering of a chain proved exact, relaxed-only reordering of unbounded reals, a check of every certificate against execution for three seeds, seed validation, execution limits, request boundaries, process timeout/output bounds and replay of all 27 recorded example/contract pairs. Existing acceptance and numerical tests continue to verify compiler behavior. The browser front-end agreement check covers example sources independently of the service adapter.

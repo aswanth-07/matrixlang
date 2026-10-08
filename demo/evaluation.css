@@ -49,3 +49,5 @@
   .bar-row { grid-template-columns: 84px minmax(0, 1fr) 96px; gap: 8px; }
   .explorer { grid-template-columns: 1fr; }
 }
+.eval-sub { margin: 22px 0 4px; font-size: 13px; font-weight: 600; }
+.eval-sub-note { margin: 0 0 10px; color: var(--muted); font-size: 12px; max-width: 80ch; }

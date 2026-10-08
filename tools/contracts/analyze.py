@@ -142,6 +142,16 @@ def rq2(rows):
                 for level, same in zip(r["levels"], r["same"]):
                     levels[level] += 1
                     level_differ[level] += not same
+        # Pessimism: outputs certified below bit-identical whose bits matched on
+        # every input draw. Keyed by program and output position.
+        per_output = collections.defaultdict(list)
+        for r in compared:
+            if r["levels"] and len(r["levels"]) == len(r["same"]):
+                for k, (level, same) in enumerate(zip(r["levels"], r["same"])):
+                    per_output[(r["seed"], r["index"], r["profile"], r["domain"], k, level)].append(same)
+        weaker = [v for key, v in per_output.items() if key[-1] != "bit-identical"]
+        pessimistic = sum(all(v) for v in weaker)
+        out.setdefault("pessimism", {})[arm] = {"weaker_outputs": len(weaker), "always_identical": pessimistic}
         out["arms"][arm] = {"runs": len(rs), "compared": len(compared), "outputs": outputs, "differ": differ,
                             "levels": dict(levels), "level_differ": dict(level_differ),
                             "errors": sum(r["status"] != 0 or r["base_status"] != 0 for r in rs)}
@@ -297,6 +307,11 @@ def write_macros(s):
     if two:
         m["TwoPrograms"] = num(two["programs"])
         m["TwoRuns"] = num(two["runs"])
+        for arm, cell in two.get("pessimism", {}).items():
+            if cell["weaker_outputs"]:
+                m[f"TwoWeaker{arm.capitalize()}"] = num(cell["weaker_outputs"])
+                m[f"TwoPessimistic{arm.capitalize()}"] = num(cell["always_identical"])
+                m[f"TwoPessimisticPct{arm.capitalize()}"] = pct(cell["always_identical"] / cell["weaker_outputs"])
         for arm, cell in two["arms"].items():
             m[f"TwoOutputs{arm.capitalize()}"] = num(cell["outputs"])
             m[f"TwoDiffer{arm.capitalize()}"] = num(cell["differ"])
@@ -321,6 +336,20 @@ def write_macros(s):
         m["FiveKilledAny"] = str(len(five["killed_by_any"]))
         for p, n in five["populations"].items():
             m["FiveTests" + p.capitalize()] = num(n)
+    width = s.get("width")
+    if width:
+        m["WidthPrograms"] = num(width["programs_per_width"])
+        for b, cell in width["bits"].items():
+            if cell["exact_share"] is not None:
+                m[f"WidthShare{b}"] = pct(cell["exact_share"], 0)
+        m["WidthZeroFrom"] = str(min((int(b) for b, c in width["bits"].items() if c["strict_chains"] == 0), default=0))
+    over = s.get("overhead")
+    if over:
+        m["OverheadPrograms"] = num(over["programs"])
+        m["OverheadNoproofMs"] = f"{1e3 * over['median_s']['noproof']:.1f}"
+        m["OverheadStrictMs"] = f"{1e3 * over['median_s']['strict']:.1f}"
+        m["OverheadRatio"] = f"{over['median_ratio_strict']:.2f}"
+        m["OverheadMaxRatio"] = f"{over['max_ratio_strict']:.2f}"
     six = s.get("rq6")
     if six:
         m["SixChains"] = num(six["chains"])
@@ -498,6 +527,24 @@ def main():
         summary["rq5"] = rq5(load("rq5_mutation.jsonl"))
     if (R / "rq6_accuracy.jsonl").exists():
         summary["rq6"] = rq6(load("rq6_accuracy.jsonl"), load("rq6_validation.jsonl"))
+    if (R / "width.jsonl").exists():
+        rows = load("width.jsonl")
+        widths = {}
+        for b in sorted({r["bits"] for r in rows}):
+            rs = [r for r in rows if r["bits"] == b]
+            applied = sum(r["algebraic_chains"] for r in rs)
+            widths[b] = {"programs": len(rs), "algebraic_chains": applied,
+                         "strict_chains": sum(r["strict_chains"] for r in rs),
+                         "exact_share": sum(r["strict_chains"] for r in rs) / applied if applied else None}
+        summary["width"] = {"programs_per_width": len(rows) // len(widths), "bits": widths}
+    if (R / "overhead.jsonl").exists():
+        rows = load("overhead.jsonl")
+        summary["overhead"] = {
+            "programs": len(rows),
+            "median_s": {arm: statistics.median(r[f"{arm}_s"] for r in rows)
+                         for arm in ["noproof", "strict", "bounded", "algebraic"]},
+            "median_ratio_strict": statistics.median(r["strict_s"] / r["noproof_s"] for r in rows),
+            "max_ratio_strict": max(r["strict_s"] / r["noproof_s"] for r in rows)}
     common.write_json(R / "summary.json", summary)
     macros = write_macros(summary)
     write_tables(summary)

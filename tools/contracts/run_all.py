@@ -2,9 +2,10 @@
 
     make contracts            (builds bin/matrixc and bin/matrixc-mutants first)
 
-Runs, in order: corpus.py (RQ1, RQ2), tightness.py (RQ3), mutation.py (RQ5),
-accuracy.py (RQ6), bench.py (RQ4, last, so that nothing else competes for the
-CPU while it times), and analyze.py. The interpreter running this script runs
+Runs, in order: corpus.py (RQ1, RQ2), tightness.py (RQ3), width.py (RQ1 by
+domain width), mutation.py (RQ5), accuracy.py (RQ6), overhead.py (compile
+time), bench.py (RQ4, last, so that nothing else competes for the CPU while it
+times), and analyze.py. The interpreter running this script runs
 them all, so it needs numpy and matplotlib (requirements.txt). Raw output goes
 to results/contracts/; the paper's tables, macros and figures and the
 workspace's evaluation data are regenerated from it.
@@ -16,7 +17,7 @@ import sys
 import time
 
 HERE = Path(__file__).resolve().parent
-STEPS = ["corpus.py", "tightness.py", "mutation.py", "accuracy.py", "bench.py", "analyze.py"]
+STEPS = ["corpus.py", "tightness.py", "width.py", "mutation.py", "accuracy.py", "overhead.py", "bench.py", "analyze.py"]
 
 
 def main():

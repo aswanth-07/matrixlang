@@ -56,6 +56,12 @@
       Object.entries(one.domains).map(([domain, c]) => `<div class="bar-row"><span class="label">${escape(label[domain] || domain)}</span><div class="bar-track stack">${arms.map(([id]) => `<div class="bar ${id}" style="width:${(100 * c[id].saving / max).toFixed(2)}%" title="${id}: ${pct(c[id].saving)}"></div>`).join("")}</div><span class="value">strict ${pct(c.strict.saving)} · recovery ${pct(c.strict.recovery, 0)}</span></div>`).join("");
   }
 
+  const width = data.width;
+  if (width && one) {
+    const bits = Object.entries(width.bits).sort((a, b) => Number(a[0]) - Number(b[0]));
+    $("rq1-chart").insertAdjacentHTML("afterend", `<h3 class="eval-sub">Chains proved exact as the integer domain widens</h3><p class="eval-sub-note">${n(width.programs_per_width)} heterogeneous and narrow programs per width, every matrix over int(−(2<sup>b</sup>−1), 2<sup>b</sup>−1): share of the algebraic contract's chain reorderings that strict proves exact.</p><div class="bars">${bits.map(([b, c]) => `<div class="bar-row"><span class="label">${b} bit${b === "1" ? "" : "s"}</span><div class="bar-track"><div class="bar strict" style="width:${(100 * (c.exact_share || 0)).toFixed(1)}%"></div></div><span class="value">${pct(c.exact_share, 0)} · ${n(c.strict_chains)} / ${n(c.algebraic_chains)}</span></div>`).join("")}</div>`);
+  }
+
   /* --- RQ2 ---------------------------------------------------------------- */
   const two = data.rq2;
   if (two) {

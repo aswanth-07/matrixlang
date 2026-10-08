@@ -390,6 +390,18 @@ bound, and \RqOneRecoveryRealxBounded\% on unbounded \texttt{real}, where it
 cannot exclude overflow. On the earlier study's dyadic literals the strict
 contract recovers \RqOneRecoveryDyadicStrict\%: those programs were exact all
 along, which explains why an earlier algebraic mode never changed their output.
+How far the proofs reach depends on the domain's width. Recompiling
+\RqWidthPrograms{} heterogeneous and narrow programs with every matrix over
+$\mathtt{int}(-(2^b-1), 2^b-1)$, the strict contract proves exact
+\RqWidthShareThree\% of the chain reorderings the algebraic contract applies at
+$b=3$, \RqWidthShareSeven\% at $b=7$, \RqWidthShareOneFive\% at $b=15$,
+\RqWidthShareOneSeven\% at $b=17$, and none from $b=\RqWidthZeroFrom$: a product
+of three such operands already needs more than 53 bits.
+The proofs are cheap: compiled one at a time, a sample of \RqOverheadPrograms{}
+of these programs took a median \RqOverheadStrictMs{}~ms end to end under strict
+against \RqOverheadNoproofMs{}~ms without proofs (median ratio
+\RqOverheadRatio, largest \RqOverheadMaxRatio), a time dominated by process
+start-up.
 \begin{figure}[t]
 \centering\includegraphics[width=\columnwidth]{figures/contracts-recovery.pdf}
 \caption{RQ1. Modeled arithmetic removed per value domain and contract.}
@@ -412,7 +424,11 @@ experiment is what found the inheritance defect of Section~\ref{sec:contracts}:
 before the fix, 12 outputs per contract, from four programs of the algebraic
 profile, were certified bit-identical and differed. Execution checks a
 certificate for drawn inputs only; the certificate itself is a claim over the
-whole domain, which Theorem~\ref{thm:exact} supports.
+whole domain, which Theorem~\ref{thm:exact} supports. Certificates are also
+conservative: of \RqTwoWeakerBounded{} outputs the bounded contract certified
+below bit-identical, \RqTwoPessimisticBounded{} (\RqTwoPessimisticPctBounded\%)
+printed the unoptimized bits on all three draws; the certificate bounds what may
+change, not what will.
 
 \subsection{RQ3: Tightness of the exactness threshold}\label{sec:rq3}
 \begin{table*}[t]
