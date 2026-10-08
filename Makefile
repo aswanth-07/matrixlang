@@ -63,7 +63,7 @@ MATRIXC  := $(BINDIR)/matrixc
 MUTANTS  := $(BINDIR)/matrixc-mutants
 MUT_OBJ  := $(patsubst $(SRCDIR)/%.c,$(BUILDDIR)/mutants/%.o,$(CORE_SRC))
 
-.PHONY: all clean test test-demo dirs toolchain demo1 demo2 demo3 deck web serve serve-static measure research analyze paper verify-research mutants contracts contracts-analyze bench
+.PHONY: all clean test test-demo dirs toolchain demo1 demo2 demo3 deck web race-data serve serve-static measure research analyze paper verify-research mutants contracts contracts-analyze bench
 
 all: dirs $(MATRIXC)
 
@@ -190,6 +190,11 @@ web: all
 	"$(PYTHON)" tools/build-grammar.py
 	"$(PYTHON)" tools/check-demo-engines.py
 	"$(PYTHON)" tools/build-workspace.py
+
+# Records every race on this machine for the workspace's Race and Results
+# views (demo/race-data.js); needs gcc and a Python with numpy. About four minutes.
+race-data: all
+	"$(PYTHON)" tools/build-race.py
 
 serve: web
 	@echo "http://127.0.0.1:8731/"

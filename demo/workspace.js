@@ -9,6 +9,8 @@
     return;
   }
   const examples = data.examples;
+  const groups = [["Numerical contracts", ["exact", "real", "outputs", "unbounded", "numerics", "inherited"]],
+    ["Language", ["multiply", "mismatch", "reuse"]]];
   const contracts = ["strict", "bounded", "algebraic"];
   const contractNames = {strict: "Strict", bounded: "Bounded", algebraic: "Algebraic"};
   const contractNotes = {
@@ -28,12 +30,13 @@
   const recordedSeed = data.seed || 1;
   let example = examples[0], mode = "strict", stage = "check", live = false, busy = false;
   let results = {}, origin = "recorded", revision = 0, compiledSource = "", compiledSeed = recordedSeed, comparing = false;
-  let controller = null;
+  let controller = null, bitsChoice = {output: 0, entry: null};
   const source = $("source"), seedField = $("seed");
-  const escape = (text) => String(text).replace(/[&<>"']/g, (c) => ({"&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"}[c]));
+  const escape = (text) => String(text).replace(/[&<>"']/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
   const number = (value) => value == null ? "—" : value.toLocaleString("en-US");
   const normalize = (text) => text.replace(/\r\n/g, "\n");
   const plural = (count, word) => `${number(count)} ${word}${count === 1 ? "" : "s"}`;
+  const listeners = [];
 
   function announce(message) {
     $("notice").hidden = !message;
@@ -50,16 +53,21 @@
     return Number.isInteger(value) && value >= 1 && value <= 2147483647 ? value : null;
   }
 
-  function highlight() {
-    const pattern = /(\/\*[\s\S]*?\*\/|\/\/[^\n]*|\b(?:matrix|scalar|print|transpose|zeros|ones|identity|input)\b|\b(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?)/g;
-    let text = "", end = 0;
-    for (const match of source.value.matchAll(pattern)) {
-      text += escape(source.value.slice(end, match.index));
-      const kind = match[0].startsWith("/") ? "comment" : /^[\d.]/.test(match[0]) ? "number" : "keyword";
-      text += `<span class="${kind}">${escape(match[0])}</span>`;
-      end = match.index + match[0].length;
+  function highlightHTML(text) {
+    const pattern = /(\/\*[\s\S]*?\*\/|\/\/[^\n]*|\b(?:matrix|scalar|print|transpose|zeros|ones|identity|input)\b|\b(?:bool|uint8|int8|uint16|int16|int32|int|real)\b(?=\s*[(),])|\b(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?)/g;
+    let html = "", end = 0;
+    for (const match of text.matchAll(pattern)) {
+      html += escape(text.slice(end, match.index));
+      const t = match[0];
+      const kind = t.startsWith("/") ? "comment" : /^[\d.]/.test(t) ? "number" : /^(bool|uint8|int8|uint16|int16|int32|int|real)$/.test(t) ? "domain" : "keyword";
+      html += `<span class="${kind}">${escape(t)}</span>`;
+      end = match.index + t.length;
     }
-    $("highlight").innerHTML = text + escape(source.value.slice(end)) + "\n";
+    return html + escape(text.slice(end));
+  }
+
+  function highlight() {
+    $("highlight").innerHTML = highlightHTML(source.value) + "\n";
     $("line-numbers").textContent = Array.from({length: source.value.split("\n").length}, (_, i) => i + 1).join("\n");
     syncScroll(); updateCursor();
     $("reset").disabled = normalize(source.value) === normalize(example.source);
@@ -88,7 +96,7 @@
     revision++;
     if (controller) controller.abort();
     setBusy(false); example = item; source.value = item.source; stage = item.stage;
-    seedField.value = String(recordedSeed); compiledSeed = recordedSeed;
+    seedField.value = String(recordedSeed); compiledSeed = recordedSeed; bitsChoice = {output: 0, entry: null};
     results = {...item.captures}; origin = "recorded"; comparing = false; compiledSource = source.value;
     $("example-title").textContent = item.title;
     $("example-description").textContent = item.description;
@@ -143,7 +151,7 @@
         }
       }
       if (revision !== currentRevision) return;
-      results = next;
+      results = next; bitsChoice = {output: 0, entry: null};
       origin = live ? "live" : ["parsed", "syntax-error"].includes(results[contract].status) ? "browser" : "recorded";
       compiledSource = text; compiledSeed = live ? seed : recordedSeed; comparing = compare; render(); persist();
     } catch (error) {
@@ -174,11 +182,39 @@
     const outputs = (result.guarantees && result.guarantees.outputs) || [];
     const inputs = result.inputs || [];
     const inputList = inputs.length
-      ? `<div class="inputs"><h4>Declared inputs</h4><ul>${inputs.map((input) => `<li><code>${escape(input.name)}</code><span>${input.kind === "Matrix" ? `${input.rows} × ${input.cols}` : "Scalar"}</span><b>${escape(input.domain)}</b><span class="input-meaning">${escape(input.meaning)}</span></li>`).join("")}</ul><p>Values are drawn from each domain with input seed ${number(result.seed)} and checked before execution.</p></div>`
+      ? `<div class="inputs"><h4>Declared inputs</h4><ul>${inputs.map((input) => `<li><code>${escape(input.name)}</code><span>${input.kind === "Matrix" ? `${input.rows} × ${input.cols}` : "Scalar"}</span><b>${escape(input.domain)}</b><span class="input-meaning">${escape(input.meaning)}</span></li>`).join("")}</ul><p>Values are drawn from each domain with seed ${number(result.seed)} and checked before execution. The compiler sees only the domains.</p></div>`
       : `<div class="inputs"><h4>Declared inputs</h4><p>This program has no <code>input(…)</code> declarations; every value is known at compile time.</p></div>`;
-    const cards = outputs.map((item) => `<li class="guarantee guarantee-${escape(item.level)}"><div class="guarantee-head"><code>print(${escape(item.label)})</code>${levelBadge(item.level)}</div><p class="guarantee-meaning">${escape(levelMeaning[item.level] || "")}</p><ul class="reasons">${item.reasons.map((reason) => `<li>${escape(reason)}</li>`).join("")}</ul>${checkLabel(item, result)}</li>`).join("");
+    const cards = outputs.map((item) => `<li class="guarantee"><div class="guarantee-head"><code>print(${escape(item.label)})</code>${levelBadge(item.level)}</div><p class="guarantee-meaning">${escape(levelMeaning[item.level] || "")}</p><ul class="reasons">${item.reasons.map((reason) => `<li>${escape(reason)}</li>`).join("")}</ul>${checkLabel(item, result)}</li>`).join("");
     const promise = result.guarantees && result.guarantees.promise ? `<p class="promise"><b>${contractNames[result.mode]} contract.</b> ${escape(result.guarantees.promise)}</p>` : "";
     return `${promise}${inputList}<ol class="guarantee-list">${cards || "<li class=\"guarantee\">This program prints no output.</li>"}</ol>`;
+  }
+
+  /* The signature view: one output entry, unoptimized against optimized, bit for bit. */
+  function bitsView(result) {
+    if (!result || !result.comparison || result.execution !== "complete" || !window.Bits) return "";
+    let before, after;
+    try { before = Bits.parseOutputs(result.comparison.baseline); after = Bits.parseOutputs(result.comparison.optimized); }
+    catch (_) { return ""; }
+    if (!before.length || before.length !== after.length) return "";
+    const k = Math.min(bitsChoice.output, before.length - 1);
+    const a = before[k], b = after[k];
+    if (!a.values.length || a.values.length !== b.values.length) return "";
+    let differ = 0, first = null;
+    a.values.forEach((value, i) => { if (value !== b.values[i]) { differ++; if (first === null) first = i; } });
+    const entry = bitsChoice.entry != null ? Math.min(bitsChoice.entry, a.values.length - 1) : first != null ? first : 0;
+    const row = Math.floor(entry / a.cols), col = entry % a.cols;
+    const level = ((result.guarantees && result.guarantees.outputs) || [])[k];
+    const options = before.map((block, i) => `<option value="${i}"${i === k ? " selected" : ""}>print(${escape(block.label)})</option>`).join("");
+    const pa = a.values[entry], pb = b.values[entry];
+    return `<h4>Bits of one output entry</h4>
+      <div class="bits-controls"><label>Output <select id="bits-output">${options}</select></label>
+        <label>Entry <select id="bits-entry">${Array.from({length: Math.min(a.values.length, 400)}, (_, i) => `<option value="${i}"${i === entry ? " selected" : ""}>(${Math.floor(i / a.cols) + 1},${i % a.cols + 1})${a.values[i] !== b.values[i] ? " ·" : ""}</option>`).join("")}</select></label>
+        <span class="bit-key"><i></i>bits that differ</span></div>
+      <dl class="bit-pair">
+        <dt>unoptimized</dt><dd>${Bits.strip(pa, null, {legend: false, size: "md"})}<span class="bit-value">${escape(Bits.describe(pa))}</span></dd>
+        <dt>${escape(contractNames[result.mode].toLowerCase())}</dt><dd>${Bits.strip(pb, pa, {size: "md"})}<span class="bit-value">${escape(Bits.describe(pb))}</span></dd>
+      </dl>
+      <p class="bits-summary">Entry (${row + 1},${col + 1}) of <code>${escape(a.label)}</code>: <b>${Bits.differing(pa, pb)} of 64 bits differ</b>. Across the output, <b>${number(differ)} of ${number(a.values.length)}</b> entries differ${level ? `; certified <b>${escape(level.level)}</b>` : ""}.</p>`;
   }
 
   function renderComparison() {
@@ -186,7 +222,7 @@
     if (available.length < 2) return;
     const checked = available.every((item) => results[item].comparison && results[item].execution === "complete");
     $("stage-title").textContent = "Numerical contracts"; $("stage-state").textContent = `Input seed ${number(compiledSeed)}`;
-    $("shape-strip").hidden = $("cost-summary").hidden = $("output").hidden = $("guarantee-panel").hidden = true;
+    $("shape-strip").hidden = $("cost-summary").hidden = $("output").hidden = $("guarantee-panel").hidden = $("bits-panel").hidden = true;
     $("diagnostic-links").replaceChildren(); $("comparison-panel").hidden = false; $("show-stages").hidden = false;
     const differing = available.filter((item) => results[item].comparison && !results[item].comparison.identical);
     const headline = !checked ? "Execution comparison is unavailable for this program. Inspect the diagnostics or reduce its dimensions."
@@ -194,7 +230,7 @@
       : "Every contract printed output identical to the unoptimized program for this input seed.";
     $("comparison-panel").innerHTML = `<p class="comparison-summary">${headline}</p><div class="comparison-grid">${available.map((item) => {
       const result = results[item], ran = result.comparison && result.execution === "complete";
-      return `<section class="comparison-side ${item === mode ? "selected-contract" : ""}"><h4>${contractNames[item]}${item === mode ? '<span class="comparison-active">Selected</span>' : ""}</h4><p class="comparison-cost"><b>${number(result.metrics.after)}</b> modeled ${result.metrics.after === 1 ? "operation" : "operations"} · ${plural(result.metrics.instructionsAfter, "instruction")}</p><ul class="comparison-outputs">${((result.guarantees && result.guarantees.outputs) || []).map((item) => `<li><code>print(${escape(item.label)})</code>${levelBadge(item.level)}<span class="${item.identical === false ? "differs" : item.identical ? "same" : ""}">${item.identical == null ? "not run" : item.identical ? "same bits" : "bits differ"}</span></li>`).join("")}</ul><span class="comparison-label ${ran && !result.comparison.identical ? "different" : ""}">${ran ? result.comparison.identical ? "Output equals unoptimized run" : "Output differs from unoptimized run" : "Not executed"}</span><pre>${escape(ran ? result.comparison.optimized || "No printed output." : result.stages.find((part) => part.id === (result.status === "rejected" ? "check" : "execute")).text)}</pre></section>`;
+      return `<section class="comparison-side ${item === mode ? "selected-contract" : ""}"><h4><span class="lvl-${item === "strict" ? "bit-identical" : item === "bounded" ? "bound-preserving" : "relaxed"}">${contractNames[item]}</span>${item === mode ? '<span class="comparison-active">Selected</span>' : ""}</h4><p class="comparison-cost"><b>${number(result.metrics.after)}</b> modeled ${result.metrics.after === 1 ? "operation" : "operations"} · ${plural(result.metrics.instructionsAfter, "instruction")}</p><ul class="comparison-outputs">${((result.guarantees && result.guarantees.outputs) || []).map((g) => `<li><code>print(${escape(g.label)})</code>${levelBadge(g.level)}<span class="${g.identical === false ? "differs" : g.identical ? "same" : ""}">${g.identical == null ? "not run" : g.identical ? "same bits" : "bits differ"}</span></li>`).join("")}</ul><span class="comparison-label ${ran && !result.comparison.identical ? "different" : ""}">${ran ? result.comparison.identical ? "Output equals unoptimized run" : "Output differs from unoptimized run" : "Not executed"}</span><pre>${escape(ran ? result.comparison.optimized || "No printed output." : result.stages.find((part) => part.id === (result.status === "rejected" ? "check" : "execute")).text)}</pre></section>`;
     }).join("")}</div>`;
     $("result-footnote").textContent = "Hexadecimal output distinguishes every binary64 value, including the sign of zero.";
   }
@@ -215,6 +251,16 @@
     }
     if (equations.length) return equations.slice(0, 2).join("") + `<span class="shape-caption">Matching inner dimensions are underlined.${equations.length > 2 ? " First two matrix products shown." : ""}</span>`;
     return result.symbols.map((symbol) => `<span class="shape-item">${escape(symbol.name)}<span>${symbol.kind === "Matrix" ? `${symbol.rows} × ${symbol.cols}` : "Scalar"}</span></span>`).join("");
+  }
+
+  function statusBar(result, pending) {
+    $("status-contract").textContent = `contract ${mode}`;
+    $("status-contract").className = `status-item lvl-${mode === "strict" ? "bit-identical" : mode === "bounded" ? "bound-preserving" : "relaxed"}`;
+    $("status-seed").textContent = `seed ${number(compiledSeed)}`;
+    const m = result && result.metrics;
+    $("status-cost").textContent = !pending && m && m.before != null ? `${number(m.before)} → ${number(m.after)} modeled operations` : "cost pending";
+    const outputs = !pending && result && result.guarantees ? result.guarantees.outputs || [] : [];
+    $("status-chips").innerHTML = outputs.map((g) => `<span class="status-chip lvl-${escape(g.level)}" title="${escape(levelNames[g.level])}">print(${escape(g.label)}) ${escape(g.level)}</span>`).join("");
   }
 
   function render() {
@@ -244,7 +290,10 @@
     const showGuarantees = !pending && result.status === "accepted" && stage === "guarantees" && result.guarantees;
     $("guarantee-panel").hidden = !showGuarantees;
     $("guarantee-panel").innerHTML = showGuarantees ? guaranteeView(result) : "";
-    $("output").classList.toggle("secondary-output", Boolean(showGuarantees));
+    const showBits = !pending && result.status === "accepted" && ["guarantees", "execute"].includes(stage);
+    const bitsHTML = showBits ? bitsView(result) : "";
+    $("bits-panel").hidden = !bitsHTML; $("bits-panel").innerHTML = bitsHTML;
+    $("output").classList.toggle("secondary-output", Boolean(showGuarantees || bitsHTML));
     const showShapes = !pending && result.status === "accepted" && ["check", "symbols", "tac", "optimize"].includes(stage);
     $("shape-strip").hidden = !showShapes;
     $("shape-strip").innerHTML = showShapes ? shapeEquations(result) : "";
@@ -268,6 +317,8 @@
     $("result-footnote").textContent = pending ? "Compile to refresh the evidence for this source." : origin === "live" ? `Output from the local matrixc executable · input seed ${number(compiledSeed)}.` : origin === "browser" ? "Browser results cover lexical and syntax analysis." : `Captured from matrixc for the unchanged example source · input seed ${number(recordedSeed)}.`;
     if (comparing && !pending) renderComparison();
     observation(result, pending);
+    statusBar(result, pending);
+    listeners.forEach((fn) => fn({example, mode, stage, result, pending}));
   }
 
   function observation(result, pending) {
@@ -292,7 +343,7 @@
         text = `${weaker.map((item) => `print(${item.label}) is ${item.level}`).join("; ")}. ${saved > 0 ? `The ${contractNames[mode].toLowerCase()} contract removes ${number(saved)} of ${number(result.metrics.before)} modeled operations.` : ""} Compare contracts to inspect the exact bits.`;
       } else if (saved > 0) {
         title = `${plural(saved, "modeled operation")} removed, every output bit-identical`;
-        text = `${number(result.metrics.before)} → ${number(result.metrics.after)} scalar operations; ${number(result.metrics.instructionsBefore)} → ${number(result.metrics.instructionsAfter)} TAC instructions. Counts are modeled work, not measured runtime.`;
+        text = `${number(result.metrics.before)} → ${number(result.metrics.after)} scalar operations; ${number(result.metrics.instructionsBefore)} → ${number(result.metrics.instructionsAfter)} TAC instructions. Counts are modeled work; the Race view measures time.`;
       } else {
         title = result.comparison ? "Every output bit-identical to the source program" : "Compiler stages complete";
         text = mode === "strict" ? "No value-changing rewrite was proved for this program. Compare contracts to inspect the bounded and algebraic results." : "No modeled arithmetic reduction for this program. Inspect the stage output or choose another example.";
@@ -302,15 +353,18 @@
   }
 
   $("example-count").textContent = String(examples.length);
-  examples.forEach((item) => {
-    const button = document.createElement("button"); button.type = "button"; button.className = "example-button"; button.dataset.example = item.id;
-    button.innerHTML = `<strong>${escape(item.title)}</strong><span>${escape(item.description)}</span>`;
-    button.addEventListener("click", () => chooseExample(item)); $("examples").append(button);
-  });
+  for (const [name, ids] of groups) {
+    const heading = document.createElement("div"); heading.className = "example-group"; heading.textContent = name; $("examples").append(heading);
+    ids.map((id) => examples.find((item) => item.id === id)).filter(Boolean).forEach((item) => {
+      const button = document.createElement("button"); button.type = "button"; button.className = "example-button"; button.dataset.example = item.id;
+      button.innerHTML = `<strong>${escape(item.title)}</strong><span>${escape(item.description)}</span>`;
+      button.addEventListener("click", () => chooseExample(item)); $("examples").append(button);
+    });
+  }
   stageNames.forEach(([id, title], index) => {
     const button = document.createElement("button"); button.type = "button"; button.className = "stage-tab"; button.id = `tab-${id}`; button.dataset.stage = id;
     button.setAttribute("role", "tab"); button.setAttribute("aria-controls", "stage-panel"); button.textContent = title;
-    button.addEventListener("click", () => {stage = id; comparing = false; render(); persist();});
+    button.addEventListener("click", () => { stage = id; comparing = false; render(); persist(); });
     button.addEventListener("keydown", (event) => {
       let next = index;
       if (event.key === "ArrowRight") next = (index + 1) % stageNames.length;
@@ -318,17 +372,18 @@
       else if (event.key === "Home") next = 0;
       else if (event.key === "End") next = stageNames.length - 1;
       else return;
-      event.preventDefault(); stage = stageNames[next][0]; comparing = false; render(); $(`tab-${stage}`).focus(); persist();
+      event.preventDefault(); event.stopPropagation(); stage = stageNames[next][0]; comparing = false; render(); $(`tab-${stage}`).focus(); persist();
     });
     $("stage-tabs").append(button);
   });
-  contracts.forEach((contract) => $(contract).addEventListener("click", () => {
-    if (mode === contract) return;
+  function setContract(contract) {
+    if (!contracts.includes(contract) || mode === contract) return;
     mode = contract; revision++; if (controller) controller.abort(); setBusy(false);
     comparing = Boolean(comparing && contracts.filter((item) => results[item]).length > 1);
     if (!results[mode] && live) compile(); else render();
     persist();
-  }));
+  }
+  contracts.forEach((contract) => $(contract).addEventListener("click", () => setContract(contract)));
   source.addEventListener("input", () => {
     revision++; if (controller) controller.abort(); setBusy(false); comparing = false; highlight(); render(); persist(); announce("");
   });
@@ -341,9 +396,22 @@
       event.preventDefault(); source.setRangeText("  ", source.selectionStart, source.selectionEnd, "end"); source.dispatchEvent(new Event("input"));
     }
   });
+  document.querySelectorAll("[data-snippet]").forEach((button) => button.addEventListener("click", () => {
+    const at = source.selectionEnd, text = source.value;
+    const lineStart = text.lastIndexOf("\n", at - 1) + 1, lineEnd = text.indexOf("\n", at);
+    const atEnd = text.slice(lineStart, lineEnd === -1 ? text.length : lineEnd).trim() !== "";
+    const insert = (atEnd ? "\n" : "") + button.dataset.snippet;
+    const position = atEnd ? (lineEnd === -1 ? text.length : lineEnd) : at;
+    source.focus(); source.setRangeText(insert, position, position, "end"); source.dispatchEvent(new Event("input"));
+  }));
+  $("bits-panel").addEventListener("change", (event) => {
+    if (event.target.id === "bits-output") bitsChoice = {output: Number(event.target.value), entry: null};
+    if (event.target.id === "bits-entry") bitsChoice.entry = Number(event.target.value);
+    render();
+  });
   $("compile").addEventListener("click", () => compile()); $("compare").addEventListener("click", () => compile(true));
   $("reset").addEventListener("click", () => chooseExample(example));
-  $("show-stages").addEventListener("click", () => {comparing = false; render();});
+  $("show-stages").addEventListener("click", () => { comparing = false; render(); });
   async function copy(text) {
     try { await navigator.clipboard.writeText(text); announce("Copied to clipboard."); }
     catch (_) { announce("Clipboard unavailable. Select the text and copy it with your keyboard."); }
@@ -354,12 +422,23 @@
     const url = URL.createObjectURL(new Blob([source.value + "\n"], {type: "text/plain"}));
     const link = document.createElement("a"); link.href = url; link.download = "program.ml"; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
   });
-  $("presentation").addEventListener("click", () => {
-    const active = document.body.classList.toggle("presentation"); $("presentation").setAttribute("aria-pressed", String(active)); syncScroll();
-  });
+
+  window.Workspace = {
+    examples, contracts, highlightHTML,
+    select(id) { const item = examples.find((e) => e.id === id); if (item) chooseExample(item); },
+    setContract,
+    setStage(id) { if (stageNames.some(([s]) => s === id)) { stage = id; comparing = false; render(); persist(); } },
+    compile, compare: () => compile(true),
+    showComparison() { if (contracts.filter((c) => results[c]).length > 1) { comparing = true; render(); } else compile(true); },
+    onRender(fn) { listeners.push(fn); },
+    get live() { return live; },
+    get state() { return {example: example.id, mode, stage}; },
+  };
+
   let saved;
   try { saved = JSON.parse(localStorage.getItem("matrixlang-workspace")); } catch (_) { saved = null; }
-  const requested = new URLSearchParams(location.search).get("example");
+  const params = new URLSearchParams(location.search);
+  const requested = params.get("example");
   chooseExample(examples.find((item) => item.id === requested) || examples.find((item) => saved && item.id === saved.example) || examples[0]);
   if (!requested && saved) {
     if (contracts.includes(saved.mode)) mode = saved.mode;
@@ -368,15 +447,17 @@
     if (Number.isInteger(saved.seed) && saved.seed >= 1) seedField.value = String(saved.seed);
     highlight(); render();
   }
-  const requestedMode = new URLSearchParams(location.search).get("contract");
+  const requestedMode = params.get("contract");
   if (contracts.includes(requestedMode)) { mode = requestedMode; render(); }
   const healthController = new AbortController(); const healthTimer = setTimeout(() => healthController.abort(), 2500);
   fetch("api/health", {signal: healthController.signal}).then((response) => response.ok ? response.json() : null).then((health) => {
     live = Boolean(health && health.available && health.compiler === "matrixc" && health.schema >= 2);
-  }).catch(() => { live = false; }).finally(() => {
+    window.MATRIXLANG_LIVE = {compile: live, race: live && Boolean(health.race)};
+  }).catch(() => { live = false; window.MATRIXLANG_LIVE = {compile: false, race: false}; }).finally(() => {
     clearTimeout(healthTimer); $("connection-dot").classList.toggle("connected", live);
-    $("connection-label").textContent = live ? "Local compiler ready" : "Recorded examples";
-    $("connection-detail").textContent = live ? "Edited source compiles with matrixc on this machine." : "Run make serve to compile edited source and other input seeds.";
+    $("connection-label").textContent = live ? "Local compiler ready" : "Recorded results";
+    $("connection-detail").textContent = live ? "Edited source compiles with matrixc on this machine; races run live." : "Run make serve for live compilation and races.";
     if (!busy) setBusy(false);
+    document.dispatchEvent(new CustomEvent("matrixlang:live", {detail: window.MATRIXLANG_LIVE}));
   });
 })();

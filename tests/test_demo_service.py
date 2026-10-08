@@ -13,6 +13,7 @@ from unittest.mock import patch
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 import demo_service as demo
+import race
 
 
 class CompilerAdapterTests(unittest.TestCase):
@@ -220,6 +221,49 @@ class HttpBoundaryTests(unittest.TestCase):
     def test_missing_binary(self):
         with patch.object(demo, "binary_path", side_effect=demo.DemoError("Compiler unavailable", 503)):
             self.assertEqual(self.request("GET", "/api/health")[0], 503)
+
+    def test_race_request(self):
+        if race.numpy_python() is None:
+            self.skipTest("no Python with NumPy on this machine")
+        source = (ROOT / "examples/demo/exact_chain.ml").read_text(encoding="utf-8")
+        status, result = self.request("POST", "/api/race", json.dumps({"source": source, "threads": 1}),
+                                      {"Content-Type": "application/json"})
+        self.assertEqual(status, 200, result)
+        lanes = {lane["id"]: lane for lane in result["contestants"]}
+        self.assertEqual(sorted(lanes), sorted(c[0] for c in race.CONTESTANTS))
+        # The integer chain is exact: every contestant must print the bits the program as written prints.
+        for lane in lanes.values():
+            self.assertNotIn("error", lane, lane)
+            self.assertTrue(lane["bits"]["identical"], lane["id"])
+            self.assertGreater(lane["median_ns"], 0)
+        self.assertEqual(lanes["ml-strict"]["guarantees"]["levels"][0]["level"], "bit-identical")
+        self.assertLess(lanes["ml-strict"]["guarantees"]["modeled_after"], lanes["ml-strict"]["guarantees"]["modeled_before"])
+        self.assertEqual(self.request("POST", "/api/race", json.dumps({"source": source, "threads": 3}),
+                                      {"Content-Type": "application/json"})[0], 400)
+
+
+class RaceEngineTests(unittest.TestCase):
+    def test_numpy_translation_computes_the_written_program(self):
+        if race.numpy_python() is None:
+            self.skipTest("no Python with NumPy on this machine")
+        source = ("matrix A[2,3] = {{1,2,3},{4,5,6}}; matrix B = transpose(A); scalar s = -2;"
+                  "matrix C = s * (A * B) + identity(2) - ones(2,2); matrix D = C * zeros(2,1) + ones(2,1);"
+                  "print(C); print(D);")
+        result = race.race(source, budget=0.05, only={"gcc-o3", "numpy-matmul"})
+        lanes = {lane["id"]: lane for lane in result["contestants"]}
+        self.assertTrue(lanes["numpy-matmul"]["bits"]["identical"], lanes["numpy-matmul"])
+        self.assertEqual([o["label"] for o in lanes["numpy-matmul"]["bits"]["outputs"]], ["C", "D"])
+
+    def test_multidot_flattens_chains(self):
+        source = "matrix A[2,2] = input(int8); matrix B[2,2] = input(int8); matrix C[2,2] = input(int8); matrix R = A * B * C; print(R);"
+        text, _ = race.numpy_source(source, multidot=True)
+        self.assertIn("np.linalg.multi_dot([v_A, v_B, v_C])", text)
+        text, _ = race.numpy_source(source, multidot=False)
+        self.assertIn("((v_A @ v_B) @ v_C)", text)
+
+    def test_race_rejects_bad_threads(self):
+        with self.assertRaises(demo.DemoError):
+            demo.race_source("scalar x = 1; print(x);", threads=4)
 
 
 if __name__ == "__main__":

@@ -3,18 +3,25 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#172c3b">
-  <meta name="description" content="Edit MatrixLang programs, inspect every compiler stage, and see which floating-point guarantee each output keeps under the strict, bounded and algebraic contracts.">
+  <meta name="theme-color" content="#0b0e13">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="MatrixLang compiler workspace: edit a matrix program, see which floating-point guarantee each output keeps, and race the compiled result against NumPy and GCC on this machine.">
   <title>MatrixLang — Compiler workspace</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="workspace.css">
   <script src="workspace-data.js" defer></script>
+  <script src="race-data.js" defer></script>
+  <script src="evaluation-data.js" defer></script>
   <script src="grammar.js" defer></script>
   <script src="lexer.js" defer></script>
   <script src="parser.js" defer></script>
+  <script src="bits.js" defer></script>
   <script src="workspace.js" defer></script>
+  <script src="race.js" defer></script>
+  <script src="results.js" defer></script>
+  <script src="story.js" defer></script>
 </head>
-<body>
+<body class="app">
   <a class="skip-link" href="#source">Skip to source editor</a>
   <svg class="icon-definitions" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <symbol id="i-play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7Z"/></symbol>
@@ -22,61 +29,115 @@
     <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V3H3v13h5"/></symbol>
     <symbol id="i-save" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 17v4h16v-4"/></symbol>
     <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 1 8M4 4v6h6"/></symbol>
-    <symbol id="i-expand" viewBox="0 0 24 24"><path d="M3 9V3h6m6 0h6v6M3 15v6h6m6 0h6v-6"/></symbol>
     <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-5-5 5 5-5 5"/></symbol>
+    <symbol id="i-left" viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></symbol>
+    <symbol id="i-right" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
     <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-cross" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="i-neq" viewBox="0 0 24 24"><path d="M5 9h14M5 15h14M15 4 9 20"/></symbol>
+    <symbol id="i-approx" viewBox="0 0 24 24"><path d="M4 9c3-3 5 3 8 0s5-3 8 0M4 15c3-3 5 3 8 0s5-3 8 0"/></symbol>
+    <symbol id="i-bits" viewBox="0 0 24 24"><path d="M3 7h2v10H3zM8 7h13v10H8z"/><path d="M11 7v10M14 7v10M17 7v10"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24"><path d="m8 7-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></symbol>
+    <symbol id="i-race" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 13V9M10 2h4M18.5 6.5l1.5-1.5"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4h6a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4ZM20 4h-6a3 3 0 0 0-1 .2"/><path d="M13 7v13a2 2 0 0 1 2-2h5V4"/></symbol>
+    <symbol id="i-eval" viewBox="0 0 24 24"><path d="M9 3h6M10 3v6L4 20h16L14 9V3"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5"/></symbol>
+    <symbol id="i-notes" viewBox="0 0 24 24"><path d="M5 4h14v16H5zM9 8h6M9 12h6M9 16h3"/></symbol>
+    <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7Z"/></symbol>
   </svg>
-  <header class="topbar">
+
+  <header class="titlebar">
     <a class="brand" href="./" aria-label="MatrixLang workspace">
-      <svg class="brand-mark" width="29" height="29" viewBox="0 0 32 32" aria-hidden="true"><path d="M7 3H3v26h4M25 3h4v26h-4"/><path d="M11 10h3m5 0h3m-11 12h3m5 0h3"/></svg>
+      <svg class="brand-mark" width="22" height="22" viewBox="0 0 32 32" aria-hidden="true"><path d="M7 3H3v26h4M25 3h4v26h-4"/><path d="M11 10h3m5 0h3m-11 12h3m5 0h3"/></svg>
       <span>MatrixLang</span>
     </a>
-    <nav class="primary-nav" aria-label="Main navigation">
-      <a href="./" aria-current="page">Workspace</a>
-      <a href="evaluation.html">Evaluation</a>
-      <a href="walkthrough.html#machine">Front end</a>
-      <a href="guide.html">Demo guide</a>
+    <span class="brand-rule" aria-hidden="true"><i class="f-sign"></i><i class="f-exp"></i><i class="f-frac"></i></span>
+    <nav class="view-tabs" aria-label="Views">
+      <button type="button" data-view="opener">Opener</button>
+      <button type="button" data-view="workspace">Workspace</button>
+      <button type="button" data-view="race">Race</button>
+      <button type="button" data-view="results">Results</button>
     </nav>
-    <button id="presentation" class="top-button" type="button" aria-pressed="false"><svg class="icon"><use href="#i-expand"/></svg><span>Presentation</span></button>
+    <button type="button" class="palette-trigger" id="palette-open" aria-haspopup="dialog">
+      <svg class="icon"><use href="#i-search"/></svg><span>Jump to an example, view or action</span><kbd>Ctrl</kbd><kbd>K</kbd>
+    </button>
+    <div class="connection" id="connection" role="status"><span class="connection-dot" id="connection-dot"></span><span id="connection-label">Recorded results</span></div>
   </header>
-  <div class="app-layout">
-    <aside class="sidebar" aria-label="Example programs">
-      <div class="sidebar-heading"><h2>Examples</h2><span id="example-count">9</span></div>
-      <div id="examples" class="example-list"></div>
-      <div class="sidebar-bottom">
-        <div class="connection"><span class="connection-dot" id="connection-dot"></span><span id="connection-label">Recorded examples</span></div>
-        <p id="connection-detail">Checking the local compiler.</p>
-        <a href="https://github.com/aswanth-07/matrixlang" target="_blank" rel="noopener noreferrer">Source repository <svg class="icon"><use href="#i-arrow"/></svg></a>
-      </div>
-    </aside>
-    <main class="workspace">
-      <div class="workspace-heading">
-        <div><h1 id="example-title">Matrix product</h1><p id="example-description">Infer a result shape and execute a matrix product.</p></div>
-        <span class="language-label">Matrix language compiler</span>
-      </div>
-      <div class="controlbar">
-        <fieldset class="contract-switch"><legend>Numerical contract</legend><div>
-          <button type="button" id="strict" aria-pressed="true" title="Apply only rewrites proved bit-identical">Strict</button>
-          <button type="button" id="bounded" aria-pressed="false" title="Also apply rewrites that keep the source-order error bound">Bounded</button>
-          <button type="button" id="algebraic" aria-pressed="false" title="Apply any rewrite valid over the reals">Algebraic</button>
-        </div></fieldset>
-        <label class="seed-field" for="seed"><span>Input seed</span><input id="seed" type="number" inputmode="numeric" min="1" max="2147483647" step="1" value="1" aria-describedby="seed-note"></label>
-        <span id="seed-note" class="visually-hidden">Seeds the values drawn for every input declaration.</span>
-        <div class="actions">
-          <button type="button" id="compare" class="button secondary"><svg class="icon"><use href="#i-compare"/></svg>Compare contracts</button>
-          <button type="button" id="compile" class="button primary"><svg class="icon"><use href="#i-play"/></svg><span id="compile-label">Compile &amp; run</span></button>
+
+  <div class="frame">
+    <nav class="activity" aria-label="Views and pages">
+      <button type="button" data-view="opener" title="Opener: Python's own floating-point results" aria-label="Opener"><svg class="icon"><use href="#i-bits"/></svg></button>
+      <button type="button" data-view="workspace" title="Workspace: compile and certify" aria-label="Workspace"><svg class="icon"><use href="#i-code"/></svg></button>
+      <button type="button" data-view="race" title="Race against NumPy and GCC" aria-label="Race"><svg class="icon"><use href="#i-race"/></svg></button>
+      <button type="button" data-view="results" title="Results measured on this laptop" aria-label="Results"><svg class="icon"><use href="#i-chart"/></svg></button>
+      <span class="activity-gap"></span>
+      <a href="evaluation.html" title="Full evaluation" aria-label="Full evaluation"><svg class="icon"><use href="#i-eval"/></svg></a>
+      <a href="guide.html" title="Demo guide" aria-label="Demo guide"><svg class="icon"><use href="#i-book"/></svg></a>
+    </nav>
+
+    <main class="views" id="main">
+
+      <!-- Opener ------------------------------------------------------------ -->
+      <section class="view view-opener" id="view-opener" aria-labelledby="opener-title" hidden>
+        <div class="opener">
+          <div class="opener-head">
+            <h1 id="opener-title">Python disagrees with itself</h1>
+            <p>Each pair below is the same arithmetic in a different order, evaluated by <span id="opener-python">Python</span> on this machine. Every result is drawn as its 64 bits; the bits that differ are drawn white.</p>
+          </div>
+          <ol class="opener-list" id="opener-list"></ol>
+          <div class="opener-close">
+            <p>So compilers either refuse to reorder floating-point arithmetic, and leave the speed on the table, or reorder blindly under <code>-ffast-math</code> and change the answer without saying so. <b>MatrixLang proves, for each rewrite, which of these bits it keeps.</b></p>
+            <button type="button" class="button primary" data-go="workspace"><span>Open the workspace</span><svg class="icon"><use href="#i-arrow"/></svg></button>
+          </div>
         </div>
-      </div>
-      <p id="contract-note" class="contract-note">Strict applies a value-changing rewrite only when the declared input domains prove it bit-identical to the source program.</p>
-      <div id="notice" class="notice" role="status" hidden></div>
-      <div class="workpanes">
-        <section class="source-pane" aria-labelledby="source-heading">
-          <div class="pane-heading"><div><h2 id="source-heading">Source</h2><span id="source-file">multiply.ml</span></div>
+      </section>
+
+      <!-- Workspace ---------------------------------------------------------- -->
+      <section class="view view-workspace" id="view-workspace" aria-labelledby="example-title" hidden>
+        <aside class="explorer" aria-label="Example programs">
+          <div class="pane-title"><h2>Examples</h2><span id="example-count">9</span></div>
+          <div id="examples" class="example-list"></div>
+          <details class="language-help"><summary>Language reference</summary><div>
+            <p><code>matrix A[40,2] = input(int8);</code> declares an input; the compiler sees only its domain. Domains: <code>bool</code> <code>uint8</code> <code>int8</code> <code>int16</code> <code>int32</code> <code>int(lo,hi)</code> <code>real</code> <code>real(B)</code> <code>real(lo,hi)</code>.</p>
+            <p><code>A * B</code> is a matrix product, <code>2 * A</code> a scaling, <code>u * transpose(v)</code> a dot product. Also <code>+</code> <code>-</code> <code>transpose()</code> <code>identity(n)</code> <code>zeros(r,c)</code> <code>ones(r,c)</code> and literals <code>{{1,2},{3,4}}</code>.</p>
+          </div></details>
+        </aside>
+
+        <section class="editor-pane" aria-labelledby="source-heading">
+          <div class="editor-tabs">
+            <span class="file-tab" id="source-heading"><svg class="icon"><use href="#i-code"/></svg><span id="source-file">program.ml</span></span>
             <div class="source-actions">
               <button type="button" class="icon-button" id="reset" title="Reset example source" aria-label="Reset example source"><svg class="icon"><use href="#i-reset"/></svg></button>
               <button type="button" class="icon-button" id="copy" title="Copy source" aria-label="Copy source"><svg class="icon"><use href="#i-copy"/></svg></button>
               <button type="button" class="icon-button" id="download" title="Download source" aria-label="Download source"><svg class="icon"><use href="#i-save"/></svg></button>
             </div>
+          </div>
+          <div class="editor-head">
+            <div class="editor-title"><h1 id="example-title">Matrix product</h1><p id="example-description">Infer a result shape and execute a matrix product.</p></div>
+          </div>
+          <div class="toolbar">
+            <div class="segmented" role="group" aria-label="Numerical contract">
+              <button type="button" id="strict" aria-pressed="true" title="Apply only rewrites proved bit-identical">Strict</button>
+              <button type="button" id="bounded" aria-pressed="false" title="Also apply rewrites that keep the source-order error bound">Bounded</button>
+              <button type="button" id="algebraic" aria-pressed="false" title="Apply any rewrite valid over the reals">Algebraic</button>
+            </div>
+            <label class="seed-field" for="seed"><span>Seed</span><input id="seed" type="number" inputmode="numeric" min="1" max="2147483647" step="1" value="1" aria-describedby="seed-note"></label>
+            <span id="seed-note" class="visually-hidden">Seeds the values drawn for every input declaration.</span>
+            <span class="toolbar-gap"></span>
+            <button type="button" id="compare" class="button secondary"><svg class="icon"><use href="#i-compare"/></svg>Compare contracts</button>
+            <button type="button" id="compile" class="button primary"><svg class="icon"><use href="#i-play"/></svg><span id="compile-label">Compile &amp; run</span></button>
+          </div>
+          <p id="contract-note" class="contract-note">Strict applies a value-changing rewrite only when the declared input domains prove it bit-identical to the source program.</p>
+          <div class="snippets" role="group" aria-label="Insert a snippet">
+            <span>Insert</span>
+            <button type="button" data-snippet="matrix C = A * B;">product</button>
+            <button type="button" data-snippet="matrix T = transpose(A);">transpose</button>
+            <button type="button" data-snippet="matrix d = u * transpose(v);">dot product</button>
+            <button type="button" data-snippet="matrix S = 2 * A;">scaling</button>
+            <button type="button" data-snippet="matrix R = A * B * C;">chain</button>
+            <button type="button" data-snippet="matrix X[40,2] = input(int8);">input</button>
+            <button type="button" data-snippet="print(R);">print</button>
           </div>
           <div class="editor-shell" id="editor-shell">
             <div id="line-numbers" class="line-numbers" aria-hidden="true"></div>
@@ -85,37 +146,121 @@
               <textarea id="source" aria-label="MatrixLang source" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off" aria-describedby="source-note"></textarea>
             </div>
           </div>
-          <div class="editor-footer"><span id="cursor">Ln 1, Col 1</span><span><kbd>Ctrl</kbd> + <kbd>Enter</kbd> to compile</span></div>
-          <div id="source-note" class="source-note">Edit the source, then compile to update every stage.</div>
-          <details class="language-help"><summary>Language reference</summary><div>
-            <p><code>matrix A[2,3];</code> declares a zero matrix. <code>matrix C = A * B;</code> infers its shape.</p>
-            <p>Construct values with <code>{{1,2},{3,4}}</code>, <code>zeros(r,c)</code>, <code>ones(r,c)</code> and <code>identity(n)</code>. Use <code>transpose(A)</code> and <code>print(A)</code>.</p>
-            <p><code>matrix A[40,2] = input(int8);</code> declares a run-time input. Domains: <code>bool</code>, <code>uint8</code>, <code>int8</code>, <code>uint16</code>, <code>int16</code>, <code>int32</code>, <code>int(lo,hi)</code>, <code>real</code>, <code>real(B)</code>, <code>real(lo,hi)</code>. The optimizer sees only the domain; values are checked against it before execution.</p>
-            <p>Products require matching inner dimensions. Addition and subtraction require equal shapes. Dimensions are static; the language has no loops or functions.</p>
-          </div></details>
+          <div class="editor-footer"><span id="cursor">Ln 1, Col 1</span><span id="source-note">Edit the source, then compile to update every stage.</span><span><kbd>Ctrl</kbd> <kbd>Enter</kbd> compile · <kbd>Ctrl</kbd> <kbd>Shift</kbd> <kbd>Enter</kbd> compare</span></div>
         </section>
-        <section class="result-pane" aria-labelledby="result-heading">
-          <div class="pane-heading result-heading"><div><h2 id="result-heading">Compiler results</h2><span id="result-origin">Recorded compiler output</span></div><span id="verdict" class="verdict" role="status">Accepted</span></div>
+
+        <section class="inspector" aria-labelledby="result-heading" aria-busy="false">
+          <div class="inspector-head">
+            <div><h2 id="result-heading">Compiler results</h2><span id="result-origin">Recorded compiler output</span></div>
+            <span id="verdict" class="verdict" role="status">Accepted</span>
+          </div>
           <div id="stage-tabs" class="stage-tabs" role="tablist" aria-label="Compiler stages"></div>
+          <div id="notice" class="notice" role="status" hidden></div>
           <div id="stage-panel" class="stage-panel" role="tabpanel" tabindex="0" aria-label="Selected compiler stage">
             <div class="stage-heading"><h3 id="stage-title">Shape check</h3><button id="show-stages" class="text-button" type="button" hidden>Back to stages</button><span id="stage-state"></span></div>
+            <div id="insight" class="insight"><b id="observation-title">Shapes inferred before execution</b><span id="observation-text">Inspect the compiler output to follow this program through each stage.</span></div>
             <div id="shape-strip" class="shape-strip"></div>
             <div id="cost-summary" class="cost-summary" hidden></div>
             <div id="guarantee-panel" class="guarantee-panel" hidden></div>
+            <div id="bits-panel" class="bits-panel" hidden></div>
             <div id="diagnostic-links" class="diagnostic-links"></div>
             <pre id="output" class="compiler-output" tabindex="0" aria-label="Compiler output"></pre>
             <div id="comparison-panel" hidden></div>
           </div>
-          <div class="result-footer"><span id="result-footnote">Output captured from matrixc.</span><button id="copy-output" class="text-button" type="button">Copy output</button></div>
+          <div class="inspector-foot"><span id="result-footnote">Output captured from matrixc.</span><button id="copy-output" class="text-button" type="button">Copy output</button></div>
         </section>
-      </div>
-      <section class="observation" aria-label="Compilation observation">
-        <div><h2 id="observation-title">Shapes inferred before execution</h2><p id="observation-text">Inspect the compiler output to follow this program through each stage.</p></div>
-        <a href="guide.html">Demonstration flow <svg class="icon"><use href="#i-arrow"/></svg></a>
       </section>
-      <footer class="workspace-footer"><span>Flex / Bison · C11 · Typed matrix VM · binary64</span><span>Arithmetic cost is modeled work, not measured runtime.</span></footer>
+
+      <!-- Race --------------------------------------------------------------- -->
+      <section class="view view-race" id="view-race" aria-labelledby="race-title" hidden>
+        <div class="race-head">
+          <div class="race-heading">
+            <h1 id="race-title">Race</h1>
+            <p id="race-subtitle">One program, the same inputs, compiled and timed on this laptop.</p>
+          </div>
+          <div class="race-controls">
+            <div class="race-picker" id="race-picker" role="group" aria-label="Program to race"></div>
+            <div class="segmented" role="group" aria-label="Threads for every contestant">
+              <button type="button" id="threads-1" aria-pressed="true">1 thread</button>
+              <button type="button" id="threads-8" aria-pressed="false">8 threads</button>
+            </div>
+            <button type="button" class="button secondary" id="race-replay"><svg class="icon"><use href="#i-reset"/></svg>Replay</button>
+            <button type="button" class="button primary" id="race-run"><svg class="icon"><use href="#i-bolt"/></svg><span id="race-run-label">Run on this laptop</span></button>
+          </div>
+        </div>
+        <div class="race-body">
+          <aside class="race-program" aria-label="The raced program">
+            <div class="pane-title"><h2 id="race-program-title">Graph walks</h2><span id="race-program-file"></span></div>
+            <p id="race-program-text" class="race-program-text"></p>
+            <pre id="race-source" class="race-source"></pre>
+            <div class="race-provenance" id="race-provenance"></div>
+          </aside>
+          <div class="race-main">
+            <p class="race-verdict" id="race-verdict" role="status"></p>
+            <p class="race-scale">Bars show time taken on a log scale: shorter is faster. Replay fills each bar in time proportional to its measured run.</p>
+            <div class="race-sides">
+              <section class="race-side side-matrixlang" aria-labelledby="side-ml"><h2 id="side-ml">MatrixLang <span>certified C, compiled by GCC</span></h2><ol class="lanes" id="lanes-matrixlang"></ol></section>
+              <section class="race-side side-baseline" aria-labelledby="side-base"><h2 id="side-base">Baselines <span>what you would write instead</span></h2><ol class="lanes" id="lanes-baseline"></ol></section>
+            </div>
+            <section class="race-bits" id="race-bits" aria-label="Bit check"></section>
+          </div>
+        </div>
+      </section>
+
+      <!-- Results ------------------------------------------------------------ -->
+      <section class="view view-results" id="view-results" aria-labelledby="results-title" hidden>
+        <div class="results">
+          <div class="results-head">
+            <h1 id="results-title">Faster than what you would write, and it says why</h1>
+            <p id="results-machine"></p>
+          </div>
+          <div class="results-grid">
+            <section class="chart-panel chart-speed" aria-labelledby="chart-speed-title">
+              <h2 id="chart-speed-title">Speedup over the program as written</h2>
+              <p class="chart-note">GCC -O3 on the program as written is 1×. Log scale; one thread for every contestant.</p>
+              <div id="chart-speed" class="chart"></div>
+            </section>
+            <section class="chart-panel chart-trust" aria-labelledby="chart-trust-title">
+              <h2 id="chart-trust-title">Bits compared with the program as written</h2>
+              <p class="chart-note">Every output entry, bit for bit, on the same inputs.</p>
+              <div id="chart-trust" class="trust"></div>
+            </section>
+            <section class="chart-panel chart-proof" aria-labelledby="chart-proof-title">
+              <h2 id="chart-proof-title">And the guarantees hold</h2>
+              <div id="chart-proof" class="proof"></div>
+            </section>
+          </div>
+        </div>
+      </section>
     </main>
   </div>
-  <noscript><p class="notice">Enable JavaScript to use the workspace. The <a href="https://github.com/aswanth-07/matrixlang">repository</a> includes the CLI demonstrations.</p></noscript>
+
+  <div class="presenter" id="presenter" aria-label="Demo steps">
+    <button type="button" class="icon-button" id="step-prev" aria-label="Previous step"><svg class="icon"><use href="#i-left"/></svg></button>
+    <div class="step-dots" id="step-dots" role="tablist" aria-label="Steps"></div>
+    <div class="step-text" aria-live="polite"><b id="step-title">1 · Opener</b><span id="step-note"></span></div>
+    <button type="button" class="icon-button" id="step-next" aria-label="Next step"><svg class="icon"><use href="#i-right"/></svg></button>
+    <button type="button" class="icon-button" id="notes-toggle" aria-pressed="true" title="Show or hide the talking points" aria-label="Talking points"><svg class="icon"><use href="#i-notes"/></svg></button>
+  </div>
+
+  <footer class="statusbar" id="statusbar">
+    <span class="status-item" id="status-contract">strict</span>
+    <span class="status-item" id="status-seed">seed 1</span>
+    <span class="status-item" id="status-cost">—</span>
+    <span class="status-chips" id="status-chips"></span>
+    <span class="status-gap"></span>
+    <span class="status-item" id="connection-detail">Run make serve for live compilation and races.</span>
+  </footer>
+
+  <dialog class="palette" id="palette" aria-label="Command palette">
+    <form method="dialog" class="palette-form">
+      <svg class="icon"><use href="#i-search"/></svg>
+      <input id="palette-input" type="text" autocomplete="off" spellcheck="false" placeholder="Type to find an example, view, race or action" aria-controls="palette-list" aria-label="Search commands">
+      <kbd>Esc</kbd>
+    </form>
+    <ul id="palette-list" class="palette-list" role="listbox" aria-label="Commands"></ul>
+  </dialog>
+
+  <noscript><p class="notice">Enable JavaScript to use the workspace. The <a href="https://github.com/aswanth-07/matrixlang">repository</a> includes the command-line demonstrations.</p></noscript>
 </body>
 </html>

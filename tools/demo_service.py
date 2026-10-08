@@ -12,6 +12,8 @@ import threading
 import time
 from urllib.parse import urlsplit
 
+import race as race_engine
+
 ROOT = Path(__file__).resolve().parents[1]
 DEMO = ROOT / "demo"
 MAX_SOURCE_BYTES = 16_000
@@ -76,7 +78,9 @@ def validate_source(source):
 
 def invoke(path, flags):
     """Bound time and captured bytes; never pass source or options to a shell."""
-    with tempfile.TemporaryDirectory(prefix="matrixlang-output-") as directory:
+    # Windows can hold a killed process's handle for a moment; a leftover
+    # temporary file must not turn a reported limit into a crash.
+    with tempfile.TemporaryDirectory(prefix="matrixlang-output-", ignore_cleanup_errors=True) as directory:
         output_path = Path(directory) / "output.txt"
         with output_path.open("wb") as output:
             process = subprocess.Popen(
@@ -287,6 +291,25 @@ def compile_source(source, mode="strict", seed=None):
                 "command": "matrixc " + " ".join(flags) + " program.ml"}
 
 
+RACE_THREADS = (1, 8)
+
+
+def race_source(source, seed=None, threads=1):
+    """Race the program against NumPy and GCC on this machine (tools/race.py)."""
+    validate_source(source)
+    seed = validate_seed(seed)
+    if threads not in RACE_THREADS:
+        raise DemoError("Race with 1 or 8 threads.")
+    try:
+        result = race_engine.race(source, seed=seed, budget=0.8, threads=threads)
+    except race_engine.RaceError as error:
+        raise DemoError(f"The race could not run: {error}", 422) from None
+    except subprocess.TimeoutExpired:
+        raise DemoError("The race exceeded the demo time limit. Reduce the program and try again.", 422) from None
+    result["sourceHash"] = hashlib.sha256(source.encode()).hexdigest()
+    return result
+
+
 class DemoServer(ThreadingHTTPServer):
     daemon_threads = True
 
@@ -333,7 +356,7 @@ class DemoHandler(SimpleHTTPRequestHandler):
             if path == "/api/health":
                 binary_path()
                 self.json_response({"compiler": "matrixc", "available": True, "schema": 2,
-                                    "contracts": list(CONTRACTS)})
+                                    "contracts": list(CONTRACTS), "race": True})
             elif path.startswith("/api/"):
                 self.json_response({"error": "Endpoint not found."}, 404)
             else:
@@ -344,7 +367,8 @@ class DemoHandler(SimpleHTTPRequestHandler):
     def do_POST(self):
         try:
             self.trusted_request()
-            if urlsplit(self.path).path != "/api/compile":
+            endpoint = urlsplit(self.path).path
+            if endpoint not in ("/api/compile", "/api/race"):
                 raise DemoError("Endpoint not found.", 404)
             if self.headers.get("Content-Type", "").split(";")[0].strip().lower() != "application/json":
                 raise DemoError("Send a JSON compilation request.", 415)
@@ -363,7 +387,10 @@ class DemoHandler(SimpleHTTPRequestHandler):
             if not self.server.compile_slots.acquire(blocking=False):
                 raise DemoError("The compiler is busy. Try again shortly.", 429)
             try:
-                result = compile_source(payload.get("source"), payload.get("mode", "strict"), payload.get("seed"))
+                if endpoint == "/api/race":
+                    result = race_source(payload.get("source"), payload.get("seed"), payload.get("threads", 1))
+                else:
+                    result = compile_source(payload.get("source"), payload.get("mode", "strict"), payload.get("seed"))
             finally:
                 self.server.compile_slots.release()
             self.json_response(result)

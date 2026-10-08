@@ -1,13 +1,23 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#172c3b"><title>MatrixLang — Demo guide</title><link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="workspace.css"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#0b0e13"><title>MatrixLang — Demo guide</title><link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="workspace.css"></head>
 <body>
   <header class="topbar"><a class="brand" href="./">MatrixLang</a><nav class="primary-nav" aria-label="Main navigation"><a href="./">Workspace</a><a href="evaluation.html">Evaluation</a><a href="walkthrough.html#machine">Front end</a><a href="guide.html" aria-current="page">Demo guide</a></nav></header>
   <main class="guide-main">
-    <h1>A twelve-minute demonstration</h1>
-    <p>Show how static shapes and declared input domains let the compiler decide, for each rewrite, which floating-point guarantee it keeps, and report that guarantee for every printed output. Keep the source visible while moving through the compiler stages.</p>
+    <h1>The demonstration</h1>
+    <p>Show how declared input domains let the compiler decide, for each rewrite, which floating-point guarantee it keeps, report it for every printed output, and turn the proof into measured speed against NumPy and GCC. The full script, contrasts and answers to likely questions are in <code>docs/demo-notes.md</code>.</p>
     <section><h2>Start the local compiler</h2><pre>make serve
-# Open http://127.0.0.1:8731/</pre><p>The workspace reports <strong>Local compiler ready</strong>. Use <strong>Compile &amp; run</strong> after editing. On a static host, the nine unchanged examples show recorded compiler output for input seed 1; edited programs receive browser lexical and syntax analysis only.</p><p><strong>Presentation</strong> increases code size. Ctrl+Enter compiles; Ctrl+Shift+Enter compiles under all three contracts and compares them. Arrow keys move between stage tabs. Tab leaves the editor; Ctrl+] inserts two spaces.</p></section>
+# Open http://127.0.0.1:8731/</pre><p>The title bar reports <strong>Local compiler ready</strong>; edited source then compiles with <code>matrixc</code>, and <strong>Run on this laptop</strong> in the Race view times every contestant live. Without the service, every view works from results recorded on this laptop.</p><p>The presenter strip at the bottom steps through the five-minute path: <kbd>→</kbd> and <kbd>←</kbd> move between steps whenever the cursor is not in the editor. <kbd>Ctrl</kbd> <kbd>K</kbd> opens the command palette. <kbd>Ctrl</kbd> <kbd>Enter</kbd> compiles; <kbd>Ctrl</kbd> <kbd>Shift</kbd> <kbd>Enter</kbd> compiles under all three contracts and compares them.</p></section>
+    <section><h2>The five-minute path</h2><ol>
+      <li><strong>Opener.</strong> Python's own floating-point results drawn as bits: reordering changes the answer.</li>
+      <li><strong>Shapes before code.</strong> <em>Matrix product</em>: inferred shapes, rejected mismatches.</li>
+      <li><strong>Proved exact.</strong> <em>Exact integer chain</em> under strict: 11,120 → 556 operations, certified bit-identical.</li>
+      <li><strong>Bounded.</strong> <em>Real-valued chain</em>: strict refuses, bounded reorders within a stated error bound.</li>
+      <li><strong>Race: graph walks.</strong> MatrixLang on one side, NumPy and GCC on the other, timed on this laptop.</li>
+      <li><strong>Race: diffusion.</strong> Real data: a certified bound against silent bit changes.</li>
+      <li><strong>Race: overflow trap.</strong> <code>multi_dot</code> returns infinity; MatrixLang keeps the finite answer.</li>
+      <li><strong>Results.</strong> Speedup, bits and guarantees on one screen.</li>
+    </ol></section>
     <section><h2>The three contracts</h2><p>A contract names the weakest guarantee a value-changing rewrite may have and still be applied.</p><ul>
       <li><strong>Strict</strong> (default): a rewrite applies only when facts derived from the declared input domains prove its result bit-identical to the source program.</li>
       <li><strong>Bounded</strong>: also applies rewrites that keep the source order's standard-model worst-case error bound and its NaN and infinity behaviour. Signed zeros and low-order bits may differ.</li>

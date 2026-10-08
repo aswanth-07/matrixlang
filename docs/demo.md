@@ -8,6 +8,17 @@ make serve
 
 Open <http://127.0.0.1:8731/>. The page reports **Local compiler ready**. Python 3.10 or newer is required; the server uses only the standard library. On Windows, run Make from MSYS2 with MinGW first on PATH as described in the main README. If the compiler is already built, `python tools/demo_service.py` starts it directly. `--port 8732` selects another port.
 
+## The workspace
+
+The workspace is a dark, IDE-style page with four views, chosen from the title bar or the left rail:
+
+- **Opener**: Python's own floating-point results, each drawn as its 64 binary64 bits (sign, exponent, fraction); bits that differ between the two orders are drawn white.
+- **Workspace**: example explorer, editor with snippet buttons, and the compiler's stages, guarantees and a **Bits** panel that opens any output entry bit for bit against the unoptimized run.
+- **Race**: one program, MatrixLang's three contracts on one side and NumPy (`@`, `multi_dot`) and GCC (`-O3`, `-ffast-math`) on the other, every contestant compiled and timed on this machine (`tools/race.py`). **Run on this laptop** measures live through the local service; otherwise the recorded runs in `demo/race-data.js` (`make race-data`) are shown with their provenance. Bars show time on a log scale; **Replay** fills each bar in time proportional to its measured run.
+- **Results**: speedup over the program as written, a bits table per kernel and contestant, and the soundness figures from the full evaluation.
+
+A presenter strip steps through the five-minute path (→ and ← outside the editor), and **Ctrl K** opens a command palette. The step-by-step script, the contrasts and answers to likely questions are in [demo-notes.md](demo-notes.md).
+
 ## Demonstration flow
 
 Allow about twelve minutes. Use **Presentation** for larger source and output text.

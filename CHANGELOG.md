@@ -1,5 +1,12 @@
 # Changelog
 
+## Product demo and race
+
+- Redesigned the workspace as a dark, IDE-style product in an IEEE 754 field-diagram world: every reported value can be opened as its sign, exponent and fraction bits, compared bit for bit.
+- Added the Race view (`tools/race.py`, `POST /api/race`): one program raced as MatrixLang's three contracts against NumPy `@`, NumPy `multi_dot`, GCC `-O3` and GCC `-ffast-math`, on the same inputs, with one thread count for every contestant, timed and compared bit for bit on the local machine.
+- Added the Opener (Python's floating-point results in bits), the Results view (speedup, bits and guarantees), a presenter strip for the five-minute path, a command palette, and `docs/demo-notes.md`.
+- Added `examples/race/overflow_trap.ml`, where the cheaper bracketing overflows: `multi_dot` returns infinity and MatrixLang keeps the finite answer.
+
 ## Correctly rounded chains, C output, and the final paper
 
 - The strict contract now accepts a chain whose proper sub-chains are exact and

@@ -103,11 +103,12 @@ make paper               # named and anonymous PDFs, with an existing LaTeX inst
 
 ## Workspace
 
-The browser workspace puts editable source beside every compiler stage. Nine examples cover shape inference, an exact integer chain strict reorders, a real-valued chain only bounded reorders, unbounded reals only algebraic reorders, two outputs at different levels, an inherited guarantee, signed zero, a shape error and common subexpressions. Choose a contract and an input seed; the **Guarantees** stage shows each output's certificate and whether an unoptimized run on the same inputs printed the same bits, and **Compare contracts** compiles all three. The **Evaluation** page shows every measured result with an exactness-threshold explorer.
+The browser workspace is a dark, IDE-style product demo with four views. The **Opener** shows Python's own floating-point results as 64-bit sign, exponent and fraction strips. The **Workspace** puts editable source beside every compiler stage, nine examples, three contracts, an input seed, each output's certificate and a **Bits** panel comparing any output entry with the unoptimized run. The **Race** compiles one program as MatrixLang's three contracts and as NumPy `@`, NumPy `multi_dot`, GCC `-O3` and GCC `-ffast-math`, runs all of them on the same inputs with the same thread count, and shows measured times and whether each printed the bits of the program as written (graph walks: 1.17 ms certified against 322 ms for the C as written and 65 ms for NumPy `@`). The **Results** view puts speedup, bits and guarantees on one screen. A presenter strip steps through a five-minute path ([demo notes](docs/demo-notes.md)), and Ctrl K opens a command palette. The **Evaluation** page shows every measured result with an exactness-threshold explorer.
 
 ```bash
 make web          # regenerate compiler captures and parser tables; check agreement
 make serve        # local C compiler + workspace at http://127.0.0.1:8731/
+make race-data    # re-record the Race and Results views on this machine (gcc + numpy)
 make serve-static # recorded examples and browser front end, without a compiler API
 make test-demo    # local service, compiler integration and recorded-example replay
 ```
