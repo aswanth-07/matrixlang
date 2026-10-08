@@ -183,8 +183,8 @@ bench:
 # page parses with bison's own table; check-demo-engines.py compares the
 # page's own scanner and parser against bin/matrixc over every example and
 # exits non-zero on a disagreement, which is what stops a drifting page from
-# being published. build-workspace.py captures both numerical contracts for
-# the workspace through the same adapter used by the localhost service.
+# being published. build-workspace.py captures all three numerical contracts
+# for the workspace through the same adapter used by the localhost service.
 web: all
 	"$(PYTHON)" tools/build-demo.py
 	"$(PYTHON)" tools/build-grammar.py

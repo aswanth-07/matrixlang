@@ -79,8 +79,9 @@
             in a matrix language compiler.</p>
           <p class="stem">Matrix shapes connect type checking to a static
             arithmetic model. This compiler exposes that connection across
-            its phases. Strict optimization preserves association; explicit
-            algebraic mode permits numerical changes to reduce modeled work.
+            its phases. The strict contract applies a value-changing rewrite only
+            when it proves the result bit-identical; the bounded and algebraic
+            contracts admit rewrites that keep an error bound or hold over the reals.
             The figures below describe the two-seed development corpus.
             The expanded research study includes ablations and shape controls.</p>
 
@@ -112,10 +113,12 @@ print(R);</pre>
             <b>4</b> instructions, either way
           </div>
           <p class="note" style="margin-top:16px">Matrix multiplication is
-            associative over real numbers. Algebraic mode permits this cheaper
-            tree; rounding, signed zero, and NaN/Infinity output may change.
-            Strict mode retains the source association. FLOP here is a
-            conventional arithmetic model, not measured runtime.</p>
+            associative over the reals, not in floating point. These matrices
+            are zero, so every bracketing is exact and the strict contract
+            applies the cheaper tree; integer input domains such as
+            <code>int8</code> are proved exact the same way. Over real-valued
+            inputs, only the bounded and algebraic contracts reorder. FLOP here
+            is a conventional arithmetic model, not measured runtime.</p>
         </div>
       </div>
     </section>
@@ -420,7 +423,7 @@ print(R);</pre>
 
             <div class="row">
               <div class="lab">
-                <span class="who"><b>Algebraic mode.</b> The bracketing the cost
+                <span class="who"><b>Optimized.</b> The bracketing the cost
                   model picks, by dynamic programming over the shapes.</span>
                 <span class="amt" style="color:var(--mint)" id="opt-cost"></span>
               </div>
@@ -506,8 +509,9 @@ R = Matrix&lt;1x1&gt;      R = Matrix&lt;1x1&gt;
             <code>+0</code> gives <code>-0</code>.</p>
           <p style="font-size:13.5px; color:var(--dim); margin-top:12px; line-height:1.6">
             The regression test now covers this signed-zero difference.
-            The rewrite was removed. The compiler defaults to strict mode, with explicit
-            algebraic mode for transformations that can change output. The
+            The rewrite was removed. The compiler defaults to the strict contract,
+            which applies a value-changing rewrite only when it is proved
+            bit-identical; the bounded and algebraic contracts are explicit. The
             paper's broader evaluation and numerical fixtures are linked from
             the repository.</p>
         </div>

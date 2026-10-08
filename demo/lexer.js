@@ -50,35 +50,36 @@
     { n: 9,  kind: "token", re: /identity/y,  symbol: "KW_IDENTITY",  category: "IDENTITY" },
     { n: 10, kind: "token", re: /zeros/y,     symbol: "KW_ZEROS",     category: "ZEROS" },
     { n: 11, kind: "token", re: /ones/y,      symbol: "KW_ONES",      category: "ONES" },
+    { n: 12, kind: "token", re: /input/y,     symbol: "KW_INPUT",     category: "INPUT" },
 
     /* {REALLIT} and {INTLIT} expanded. Both return NUMBER; they are two rules
      * because a real and an integer are two patterns, not because the parser
      * can tell them apart. */
-    { n: 12, kind: "token", symbol: "NUMBER", category: "NUMBER",
+    { n: 13, kind: "token", symbol: "NUMBER", category: "NUMBER",
               re: /(?:(?:[0-9]+\.[0-9]*|\.[0-9]+)(?:[eE][+-]?[0-9]+)?|[0-9]+[eE][+-]?[0-9]+)/y },
-    { n: 13, kind: "token", re: /[0-9]+/y,                symbol: "NUMBER", category: "NUMBER" },
-    { n: 14, kind: "token", re: /[A-Za-z_][A-Za-z_0-9]*/y, symbol: "IDENT", category: "IDENTIFIER" },
+    { n: 14, kind: "token", re: /[0-9]+/y,                symbol: "NUMBER", category: "NUMBER" },
+    { n: 15, kind: "token", re: /[A-Za-z_][A-Za-z_0-9]*/y, symbol: "IDENT", category: "IDENTIFIER" },
 
-    { n: 15, kind: "token", re: /\+/y, symbol: "'+'", category: "PLUS" },
-    { n: 16, kind: "token", re: /-/y,  symbol: "'-'", category: "MINUS" },
-    { n: 17, kind: "token", re: /\*/y, symbol: "'*'", category: "MULTIPLY" },
-    { n: 18, kind: "token", re: /=/y,  symbol: "'='", category: "ASSIGN" },
-    { n: 19, kind: "token", re: /\[/y, symbol: "'['", category: "LBRACKET" },
-    { n: 20, kind: "token", re: /\]/y, symbol: "']'", category: "RBRACKET" },
-    { n: 21, kind: "token", re: /\(/y, symbol: "'('", category: "LPAREN" },
-    { n: 22, kind: "token", re: /\)/y, symbol: "')'", category: "RPAREN" },
-    { n: 23, kind: "token", re: /\{/y, symbol: "'{'", category: "LBRACE" },
-    { n: 24, kind: "token", re: /\}/y, symbol: "'}'", category: "RBRACE" },
-    { n: 25, kind: "token", re: /,/y,  symbol: "','", category: "COMMA" },
-    { n: 26, kind: "token", re: /;/y,  symbol: "';'", category: "SEMICOLON" },
+    { n: 16, kind: "token", re: /\+/y, symbol: "'+'", category: "PLUS" },
+    { n: 17, kind: "token", re: /-/y,  symbol: "'-'", category: "MINUS" },
+    { n: 18, kind: "token", re: /\*/y, symbol: "'*'", category: "MULTIPLY" },
+    { n: 19, kind: "token", re: /=/y,  symbol: "'='", category: "ASSIGN" },
+    { n: 20, kind: "token", re: /\[/y, symbol: "'['", category: "LBRACKET" },
+    { n: 21, kind: "token", re: /\]/y, symbol: "']'", category: "RBRACKET" },
+    { n: 22, kind: "token", re: /\(/y, symbol: "'('", category: "LPAREN" },
+    { n: 23, kind: "token", re: /\)/y, symbol: "')'", category: "RPAREN" },
+    { n: 24, kind: "token", re: /\{/y, symbol: "'{'", category: "LBRACE" },
+    { n: 25, kind: "token", re: /\}/y, symbol: "'}'", category: "RBRACE" },
+    { n: 26, kind: "token", re: /,/y,  symbol: "','", category: "COMMA" },
+    { n: 27, kind: "token", re: /;/y,  symbol: "';'", category: "SEMICOLON" },
 
-    { n: 27, kind: "error", re: /[0-9]+[A-Za-z_][A-Za-z_0-9]*/y,
+    { n: 28, kind: "error", re: /[0-9]+[A-Za-z_][A-Za-z_0-9]*/y,
               what: "malformed number or identifier",
               message: function (t) {
                 return "malformed number or identifier '" + t
                      + "' (an identifier may not begin with a digit)";
               } },
-    { n: 28, kind: "error", re: /[^\n]/y, what: "illegal character",
+    { n: 29, kind: "error", re: /[^\n]/y, what: "illegal character",
               message: function (t) { return "illegal character '" + t + "'"; } }
   ];
 

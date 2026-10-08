@@ -24,8 +24,14 @@ TIMEOUT_SECONDS = 6
 STAGES = (
     ("tokens", "Tokens"), ("ast", "Syntax tree"), ("symbols", "Symbols"),
     ("check", "Shape check"), ("tac", "Intermediate code"),
-    ("optimize", "Optimization"), ("target", "VM code"), ("execute", "Execution"),
+    ("optimize", "Optimization"), ("guarantees", "Guarantees"), ("target", "VM code"),
+    ("execute", "Execution"),
 )
+# Each contract names the weakest guarantee a rewrite may have and still apply.
+CONTRACTS = {"strict": "--fp-strict", "bounded": "--fp-bounded", "algebraic": "--fp-algebraic"}
+LEVELS = ("bit-identical", "bound-preserving", "relaxed")
+DEFAULT_SEED = 1
+MAX_SEED = 2**31 - 1
 
 
 class DemoError(Exception):
@@ -118,6 +124,8 @@ def sections(raw):
             key = "tac"
         elif "TARGET CODE" in title:
             key = "target"
+        elif "OUTPUT GUARANTEES" in title:
+            key = "guarantees"
         elif "WHAT THE OPTIMIZER" in title or "OPTIMIZATION REPORT" in title:
             found["optimize"] = (found.get("optimize", "") + "\n\n" + body).strip()
             continue
@@ -153,21 +161,79 @@ def symbols_from(text):
     return symbols
 
 
-def compile_source(source, mode="strict"):
+def inputs_from(text):
+    """The symbol stage lists every declared input with its shape and domain."""
+    inputs = []
+    listing = text.split("\nInputs (", 1)
+    if len(listing) < 2:
+        return inputs
+    for line in listing[1].splitlines()[1:]:
+        match = re.match(r"^\s+(\w+)\s+(?:Matrix<(\d+)x(\d+)>|Scalar)\s+(\S+)\s+(.+?)\s*$", line)
+        if not match:
+            break
+        inputs.append({"name": match[1], "kind": "Matrix" if match[2] else "Scalar",
+                       "rows": int(match[2]) if match[2] else None,
+                       "cols": int(match[3]) if match[3] else None,
+                       "domain": match[4], "meaning": match[5]})
+    return inputs
+
+
+def guarantees_from(text):
+    """One certificate per print: its guarantee level and the reasons given."""
+    contract = re.search(r"^Contract: \w+\. (.+)$", text, re.M)
+    outputs = []
+    for line in text.splitlines():
+        match = re.match(r"^\s+(\d+)\.\s+(" + "|".join(LEVELS) + r")\s+print\((.*)\)\s*$", line)
+        if match:
+            outputs.append({"index": int(match[1]), "level": match[2], "label": match[3],
+                            "reasons": [], "identical": None})
+        elif outputs and line.strip():
+            outputs[-1]["reasons"].append(re.sub(r"^- ", "", line.strip()))
+    return {"promise": contract[1] if contract else None, "outputs": outputs}
+
+
+def split_outputs(text):
+    """Splits --exact-output execution text into one block per print."""
+    blocks, current = [], None
+    for line in text.splitlines():
+        if re.match(r"^\S.* = ", line):
+            if current is not None:
+                blocks.append("\n".join(current))
+            current = [line]
+        elif current is not None and line.strip():
+            current.append(line)
+    if current is not None:
+        blocks.append("\n".join(current))
+    return blocks
+
+
+def validate_seed(seed):
+    if seed is None:
+        return DEFAULT_SEED
+    if isinstance(seed, bool) or not isinstance(seed, int) or not 1 <= seed <= MAX_SEED:
+        raise DemoError(f"Choose an input seed between 1 and {MAX_SEED:,}.")
+    return seed
+
+
+def compile_source(source, mode="strict", seed=None):
     validate_source(source)
-    if mode not in ("strict", "algebraic"):
-        raise DemoError("Choose the strict or algebraic numerical contract.")
+    if mode not in CONTRACTS:
+        raise DemoError("Choose the strict, bounded or algebraic numerical contract.")
+    seed = validate_seed(seed)
     with tempfile.TemporaryDirectory(prefix="matrixlang-demo-") as directory:
         path = Path(directory) / "program.ml"
         path.write_text(source, encoding="utf-8", newline="\n")
-        flags = [f"--fp-{mode}", "--tokens", "--ast", "--symbols", "--check", "--tac",
-                 "--optimize", "--explain", "--report", "--cost", "--target", "--stats"]
+        flags = [CONTRACTS[mode], "--tokens", "--ast", "--symbols", "--check", "--tac",
+                 "--optimize", "--explain", "--report", "--cost", "--certificate", "--target", "--stats"]
         code, raw = invoke(path, flags)
         if code not in (0, 1):
             raise DemoError("The compiler could not finish this program. Reduce the source and try again.", 422)
         found = sections(raw)
         diagnostics = diagnostics_from(found.get("check", ""))
         symbols = symbols_from(found.get("symbols", ""))
+        inputs = inputs_from(found.get("symbols", ""))
+        guarantees = guarantees_from(found.get("guarantees", ""))
+        run_inputs = ["--random-inputs", str(seed)]
         metrics = {"before": integer_field(raw, "Arithmetic before optimization"),
                    "after": integer_field(raw, "Arithmetic after optimization"),
                    "instructionsBefore": integer_field(raw, "Original TAC instructions"),
@@ -187,13 +253,19 @@ def compile_source(source, mode="strict"):
                                     "The compiler stages and cost report remain available.")
             else:
                 execution_status = "complete"
-                baseline_code, baseline = invoke(path, ["-q", "--run", "--exact-output"])
-                selected_code, exact = invoke(path, ["-q", "--run", "--exact-output", "--optimize", f"--fp-{mode}"])
-                human_code, human = invoke(path, ["-q", "--run", "--optimize", f"--fp-{mode}"])
+                baseline_code, baseline = invoke(path, ["-q", "--run", "--exact-output", *run_inputs])
+                selected_code, exact = invoke(path, ["-q", "--run", "--exact-output", "--optimize", CONTRACTS[mode], *run_inputs])
+                human_code, human = invoke(path, ["-q", "--run", "--optimize", CONTRACTS[mode], *run_inputs])
                 found["execute"] = human.strip() or "Program completed without printed output."
                 comparison = {"baseline": baseline.strip(), "optimized": exact.strip(),
                               "identical": baseline_code == selected_code == 0 and baseline == exact,
                               "baselineStatus": baseline_code, "optimizedStatus": selected_code}
+                # Each certificate is checked against the run it describes: an
+                # output certified bit-identical must equal the unoptimized one.
+                before, after = split_outputs(baseline), split_outputs(exact)
+                if baseline_code == selected_code == 0 and len(before) == len(after) == len(guarantees["outputs"]):
+                    for item, old, new in zip(guarantees["outputs"], before, after):
+                        item["identical"] = old == new
                 if baseline_code or selected_code or human_code:
                     execution_status = "error"
         stages = []
@@ -207,9 +279,10 @@ def compile_source(source, mode="strict"):
             if not text:
                 text = "Compilation stopped before this stage. Resolve the diagnostics and compile again."
             stages.append({"id": key, "title": title, "state": state, "text": text})
-        return {"schema": 1, "sourceHash": hashlib.sha256(source.encode()).hexdigest(),
-                "mode": mode, "status": "rejected" if code else "accepted",
-                "diagnostics": diagnostics, "symbols": symbols, "metrics": metrics,
+        return {"schema": 2, "sourceHash": hashlib.sha256(source.encode()).hexdigest(),
+                "mode": mode, "seed": seed, "status": "rejected" if code else "accepted",
+                "diagnostics": diagnostics, "symbols": symbols, "inputs": inputs,
+                "guarantees": guarantees, "metrics": metrics,
                 "stages": stages, "comparison": comparison, "execution": execution_status,
                 "command": "matrixc " + " ".join(flags) + " program.ml"}
 
@@ -259,7 +332,8 @@ class DemoHandler(SimpleHTTPRequestHandler):
             path = urlsplit(self.path).path
             if path == "/api/health":
                 binary_path()
-                self.json_response({"compiler": "matrixc", "available": True, "schema": 1})
+                self.json_response({"compiler": "matrixc", "available": True, "schema": 2,
+                                    "contracts": list(CONTRACTS)})
             elif path.startswith("/api/"):
                 self.json_response({"error": "Endpoint not found."}, 404)
             else:
@@ -285,11 +359,11 @@ class DemoHandler(SimpleHTTPRequestHandler):
             except (ValueError, UnicodeError):
                 raise DemoError("Invalid JSON compilation request.") from None
             if not isinstance(payload, dict):
-                raise DemoError("Send a JSON object with source and mode.")
+                raise DemoError("Send a JSON object with source, mode and seed.")
             if not self.server.compile_slots.acquire(blocking=False):
                 raise DemoError("The compiler is busy. Try again shortly.", 429)
             try:
-                result = compile_source(payload.get("source"), payload.get("mode", "strict"))
+                result = compile_source(payload.get("source"), payload.get("mode", "strict"), payload.get("seed"))
             finally:
                 self.server.compile_slots.release()
             self.json_response(result)

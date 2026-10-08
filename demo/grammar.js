@@ -262,8 +262,9 @@ window.MATRIXLANG_GRAMMAR = {
    "n": 24,
    "lhs": "expr",
    "rhs": [
+    "KW_INPUT",
     "'('",
-    "expr",
+    "IDENT",
     "')'"
    ],
    "empty": false
@@ -272,7 +273,13 @@ window.MATRIXLANG_GRAMMAR = {
    "n": 25,
    "lhs": "expr",
    "rhs": [
-    "matrix_literal"
+    "KW_INPUT",
+    "'('",
+    "IDENT",
+    "'('",
+    "expr",
+    "')'",
+    "')'"
    ],
    "empty": false
   },
@@ -280,7 +287,15 @@ window.MATRIXLANG_GRAMMAR = {
    "n": 26,
    "lhs": "expr",
    "rhs": [
-    "NUMBER"
+    "KW_INPUT",
+    "'('",
+    "IDENT",
+    "'('",
+    "expr",
+    "','",
+    "expr",
+    "')'",
+    "')'"
    ],
    "empty": false
   },
@@ -288,12 +303,38 @@ window.MATRIXLANG_GRAMMAR = {
    "n": 27,
    "lhs": "expr",
    "rhs": [
-    "IDENT"
+    "'('",
+    "expr",
+    "')'"
    ],
    "empty": false
   },
   {
    "n": 28,
+   "lhs": "expr",
+   "rhs": [
+    "matrix_literal"
+   ],
+   "empty": false
+  },
+  {
+   "n": 29,
+   "lhs": "expr",
+   "rhs": [
+    "NUMBER"
+   ],
+   "empty": false
+  },
+  {
+   "n": 30,
+   "lhs": "expr",
+   "rhs": [
+    "IDENT"
+   ],
+   "empty": false
+  },
+  {
+   "n": 31,
    "lhs": "matrix_literal",
    "rhs": [
     "'{'",
@@ -303,7 +344,7 @@ window.MATRIXLANG_GRAMMAR = {
    "empty": false
   },
   {
-   "n": 29,
+   "n": 32,
    "lhs": "row_list",
    "rhs": [
     "row"
@@ -311,7 +352,7 @@ window.MATRIXLANG_GRAMMAR = {
    "empty": false
   },
   {
-   "n": 30,
+   "n": 33,
    "lhs": "row_list",
    "rhs": [
     "row_list",
@@ -321,7 +362,7 @@ window.MATRIXLANG_GRAMMAR = {
    "empty": false
   },
   {
-   "n": 31,
+   "n": 34,
    "lhs": "row",
    "rhs": [
     "'{'",
@@ -331,7 +372,7 @@ window.MATRIXLANG_GRAMMAR = {
    "empty": false
   },
   {
-   "n": 32,
+   "n": 35,
    "lhs": "num_list",
    "rhs": [
     "expr"
@@ -339,7 +380,7 @@ window.MATRIXLANG_GRAMMAR = {
    "empty": false
   },
   {
-   "n": 33,
+   "n": 36,
    "lhs": "num_list",
    "rhs": [
     "num_list",
@@ -366,7 +407,10 @@ window.MATRIXLANG_GRAMMAR = {
     21,
     22,
     23,
-    24
+    24,
+    25,
+    26,
+    27
    ]
   },
   {
@@ -378,7 +422,10 @@ window.MATRIXLANG_GRAMMAR = {
     21,
     22,
     23,
-    24
+    24,
+    25,
+    26,
+    27
    ]
   },
   {
@@ -403,8 +450,9 @@ window.MATRIXLANG_GRAMMAR = {
     10,
     22,
     23,
-    30,
-    33
+    26,
+    33,
+    36
    ]
   },
   {
@@ -460,16 +508,16 @@ window.MATRIXLANG_GRAMMAR = {
    "name": "'{'",
    "code": 123,
    "rules": [
-    28,
-    31
+    31,
+    34
    ]
   },
   {
    "name": "'}'",
    "code": 125,
    "rules": [
-    28,
-    31
+    31,
+    34
    ]
   },
   {
@@ -489,7 +537,10 @@ window.MATRIXLANG_GRAMMAR = {
     12,
     13,
     14,
-    27
+    24,
+    25,
+    26,
+    30
    ]
   },
   {
@@ -498,7 +549,7 @@ window.MATRIXLANG_GRAMMAR = {
    "rules": [
     9,
     10,
-    26
+    29
    ]
   },
   {
@@ -554,8 +605,17 @@ window.MATRIXLANG_GRAMMAR = {
    ]
   },
   {
-   "name": "UMINUS",
+   "name": "KW_INPUT",
    "code": 267,
+   "rules": [
+    24,
+    25,
+    26
+   ]
+  },
+  {
+   "name": "UMINUS",
+   "code": 268,
    "rules": []
   }
  ],
@@ -645,7 +705,10 @@ window.MATRIXLANG_GRAMMAR = {
     24,
     25,
     26,
-    27
+    27,
+    28,
+    29,
+    30
    ],
    "right": [
     10,
@@ -661,43 +724,24 @@ window.MATRIXLANG_GRAMMAR = {
     21,
     22,
     23,
-    24,
-    32,
-    33
+    25,
+    26,
+    27,
+    35,
+    36
    ]
   },
   {
    "name": "matrix_literal",
    "left": [
-    28
+    31
    ],
    "right": [
-    25
+    28
    ]
   },
   {
    "name": "row_list",
-   "left": [
-    29,
-    30
-   ],
-   "right": [
-    28,
-    30
-   ]
-  },
-  {
-   "name": "row",
-   "left": [
-    31
-   ],
-   "right": [
-    29,
-    30
-   ]
-  },
-  {
-   "name": "num_list",
    "left": [
     32,
     33
@@ -705,6 +749,27 @@ window.MATRIXLANG_GRAMMAR = {
    "right": [
     31,
     33
+   ]
+  },
+  {
+   "name": "row",
+   "left": [
+    34
+   ],
+   "right": [
+    32,
+    33
+   ]
+  },
+  {
+   "name": "num_list",
+   "left": [
+    35,
+    36
+   ],
+   "right": [
+    34,
+    36
    ]
   }
  ],
@@ -1178,6 +1243,21 @@ window.MATRIXLANG_GRAMMAR = {
      "rule": 28,
      "dot": 0,
      "lookahead": []
+    },
+    {
+     "rule": 29,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 30,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 31,
+     "dot": 0,
+     "lookahead": []
     }
    ],
    "actions": {
@@ -1205,23 +1285,27 @@ window.MATRIXLANG_GRAMMAR = {
      "kind": "shift",
      "to": 24
     },
-    "'-'": {
+    "KW_INPUT": {
      "kind": "shift",
      "to": 25
     },
-    "'('": {
+    "'-'": {
      "kind": "shift",
      "to": 26
     },
-    "'{'": {
+    "'('": {
      "kind": "shift",
      "to": 27
+    },
+    "'{'": {
+     "kind": "shift",
+     "to": 28
     }
    },
    "default": null,
    "gotos": {
-    "expr": 28,
-    "matrix_literal": 29
+    "expr": 29,
+    "matrix_literal": 30
    },
    "resolved": []
   },
@@ -1247,11 +1331,11 @@ window.MATRIXLANG_GRAMMAR = {
    "actions": {
     "'['": {
      "kind": "shift",
-     "to": 30
+     "to": 31
     },
     "'='": {
      "kind": "shift",
-     "to": 31
+     "to": 32
     }
    },
    "default": null,
@@ -1275,11 +1359,11 @@ window.MATRIXLANG_GRAMMAR = {
    "actions": {
     "';'": {
      "kind": "shift",
-     "to": 32
+     "to": 33
     },
     "'='": {
      "kind": "shift",
-     "to": 33
+     "to": 34
     }
    },
    "default": null,
@@ -1358,6 +1442,21 @@ window.MATRIXLANG_GRAMMAR = {
      "rule": 28,
      "dot": 0,
      "lookahead": []
+    },
+    {
+     "rule": 29,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 30,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 31,
+     "dot": 0,
+     "lookahead": []
     }
    ],
    "actions": {
@@ -1385,23 +1484,27 @@ window.MATRIXLANG_GRAMMAR = {
      "kind": "shift",
      "to": 24
     },
-    "'-'": {
+    "KW_INPUT": {
      "kind": "shift",
      "to": 25
     },
-    "'('": {
+    "'-'": {
      "kind": "shift",
      "to": 26
     },
-    "'{'": {
+    "'('": {
      "kind": "shift",
      "to": 27
+    },
+    "'{'": {
+     "kind": "shift",
+     "to": 28
     }
    },
    "default": null,
    "gotos": {
-    "expr": 34,
-    "matrix_literal": 29
+    "expr": 35,
+    "matrix_literal": 30
    },
    "resolved": []
   },
@@ -1409,7 +1512,7 @@ window.MATRIXLANG_GRAMMAR = {
    "id": 19,
    "items": [
     {
-     "rule": 27,
+     "rule": 30,
      "dot": 1,
      "lookahead": []
     }
@@ -1417,7 +1520,7 @@ window.MATRIXLANG_GRAMMAR = {
    "actions": {},
    "default": {
     "kind": "reduce",
-    "rule": 27
+    "rule": 30
    },
    "gotos": {},
    "resolved": []
@@ -1426,7 +1529,7 @@ window.MATRIXLANG_GRAMMAR = {
    "id": 20,
    "items": [
     {
-     "rule": 26,
+     "rule": 29,
      "dot": 1,
      "lookahead": []
     }
@@ -1434,7 +1537,7 @@ window.MATRIXLANG_GRAMMAR = {
    "actions": {},
    "default": {
     "kind": "reduce",
-    "rule": 26
+    "rule": 29
    },
    "gotos": {},
    "resolved": []
@@ -1451,7 +1554,7 @@ window.MATRIXLANG_GRAMMAR = {
    "actions": {
     "'('": {
      "kind": "shift",
-     "to": 35
+     "to": 36
     }
    },
    "default": null,
@@ -1470,7 +1573,7 @@ window.MATRIXLANG_GRAMMAR = {
    "actions": {
     "'('": {
      "kind": "shift",
-     "to": 36
+     "to": 37
     }
    },
    "default": null,
@@ -1489,7 +1592,7 @@ window.MATRIXLANG_GRAMMAR = {
    "actions": {
     "'('": {
      "kind": "shift",
-     "to": 37
+     "to": 38
     }
    },
    "default": null,
@@ -1508,7 +1611,7 @@ window.MATRIXLANG_GRAMMAR = {
    "actions": {
     "'('": {
      "kind": "shift",
-     "to": 38
+     "to": 39
     }
    },
    "default": null,
@@ -1519,119 +1622,29 @@ window.MATRIXLANG_GRAMMAR = {
    "id": 25,
    "items": [
     {
-     "rule": 16,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 17,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 18,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 19,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 19,
+     "rule": 24,
      "dot": 1,
      "lookahead": []
     },
     {
-     "rule": 20,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 21,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 22,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 23,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 24,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
      "rule": 25,
-     "dot": 0,
+     "dot": 1,
      "lookahead": []
     },
     {
      "rule": 26,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 27,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 28,
-     "dot": 0,
+     "dot": 1,
      "lookahead": []
     }
    ],
    "actions": {
-    "IDENT": {
-     "kind": "shift",
-     "to": 19
-    },
-    "NUMBER": {
-     "kind": "shift",
-     "to": 20
-    },
-    "KW_TRANSPOSE": {
-     "kind": "shift",
-     "to": 21
-    },
-    "KW_IDENTITY": {
-     "kind": "shift",
-     "to": 22
-    },
-    "KW_ZEROS": {
-     "kind": "shift",
-     "to": 23
-    },
-    "KW_ONES": {
-     "kind": "shift",
-     "to": 24
-    },
-    "'-'": {
-     "kind": "shift",
-     "to": 25
-    },
     "'('": {
      "kind": "shift",
-     "to": 26
-    },
-    "'{'": {
-     "kind": "shift",
-     "to": 27
+     "to": 40
     }
    },
    "default": null,
-   "gotos": {
-    "expr": 39,
-    "matrix_literal": 29
-   },
+   "gotos": {},
    "resolved": []
   },
   {
@@ -1658,6 +1671,11 @@ window.MATRIXLANG_GRAMMAR = {
      "lookahead": []
     },
     {
+     "rule": 19,
+     "dot": 1,
+     "lookahead": []
+    },
+    {
      "rule": 20,
      "dot": 0,
      "lookahead": []
@@ -1683,11 +1701,6 @@ window.MATRIXLANG_GRAMMAR = {
      "lookahead": []
     },
     {
-     "rule": 24,
-     "dot": 1,
-     "lookahead": []
-    },
-    {
      "rule": 25,
      "dot": 0,
      "lookahead": []
@@ -1704,6 +1717,21 @@ window.MATRIXLANG_GRAMMAR = {
     },
     {
      "rule": 28,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 29,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 30,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 31,
      "dot": 0,
      "lookahead": []
     }
@@ -1733,23 +1761,27 @@ window.MATRIXLANG_GRAMMAR = {
      "kind": "shift",
      "to": 24
     },
-    "'-'": {
+    "KW_INPUT": {
      "kind": "shift",
      "to": 25
     },
-    "'('": {
+    "'-'": {
      "kind": "shift",
      "to": 26
     },
-    "'{'": {
+    "'('": {
      "kind": "shift",
      "to": 27
+    },
+    "'{'": {
+     "kind": "shift",
+     "to": 28
     }
    },
    "default": null,
    "gotos": {
-    "expr": 40,
-    "matrix_literal": 29
+    "expr": 41,
+    "matrix_literal": 30
    },
    "resolved": []
   },
@@ -1757,8 +1789,73 @@ window.MATRIXLANG_GRAMMAR = {
    "id": 27,
    "items": [
     {
-     "rule": 28,
+     "rule": 16,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 17,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 18,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 19,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 20,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 21,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 22,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 23,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 24,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 25,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 26,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 27,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 27,
      "dot": 1,
+     "lookahead": []
+    },
+    {
+     "rule": 28,
+     "dot": 0,
      "lookahead": []
     },
     {
@@ -1778,20 +1875,93 @@ window.MATRIXLANG_GRAMMAR = {
     }
    ],
    "actions": {
+    "IDENT": {
+     "kind": "shift",
+     "to": 19
+    },
+    "NUMBER": {
+     "kind": "shift",
+     "to": 20
+    },
+    "KW_TRANSPOSE": {
+     "kind": "shift",
+     "to": 21
+    },
+    "KW_IDENTITY": {
+     "kind": "shift",
+     "to": 22
+    },
+    "KW_ZEROS": {
+     "kind": "shift",
+     "to": 23
+    },
+    "KW_ONES": {
+     "kind": "shift",
+     "to": 24
+    },
+    "KW_INPUT": {
+     "kind": "shift",
+     "to": 25
+    },
+    "'-'": {
+     "kind": "shift",
+     "to": 26
+    },
+    "'('": {
+     "kind": "shift",
+     "to": 27
+    },
     "'{'": {
      "kind": "shift",
-     "to": 41
+     "to": 28
     }
    },
    "default": null,
    "gotos": {
-    "row_list": 42,
-    "row": 43
+    "expr": 42,
+    "matrix_literal": 30
    },
    "resolved": []
   },
   {
    "id": 28,
+   "items": [
+    {
+     "rule": 31,
+     "dot": 1,
+     "lookahead": []
+    },
+    {
+     "rule": 32,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 33,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 34,
+     "dot": 0,
+     "lookahead": []
+    }
+   ],
+   "actions": {
+    "'{'": {
+     "kind": "shift",
+     "to": 43
+    }
+   },
+   "default": null,
+   "gotos": {
+    "row_list": 44,
+    "row": 45
+   },
+   "resolved": []
+  },
+  {
+   "id": 29,
    "items": [
     {
      "rule": 14,
@@ -1817,19 +1987,19 @@ window.MATRIXLANG_GRAMMAR = {
    "actions": {
     "'+'": {
      "kind": "shift",
-     "to": 44
+     "to": 46
     },
     "'-'": {
      "kind": "shift",
-     "to": 45
+     "to": 47
     },
     "'*'": {
      "kind": "shift",
-     "to": 46
+     "to": 48
     },
     "';'": {
      "kind": "shift",
-     "to": 47
+     "to": 49
     }
    },
    "default": null,
@@ -1837,10 +2007,10 @@ window.MATRIXLANG_GRAMMAR = {
    "resolved": []
   },
   {
-   "id": 29,
+   "id": 30,
    "items": [
     {
-     "rule": 25,
+     "rule": 28,
      "dot": 1,
      "lookahead": []
     }
@@ -1848,13 +2018,13 @@ window.MATRIXLANG_GRAMMAR = {
    "actions": {},
    "default": {
     "kind": "reduce",
-    "rule": 25
+    "rule": 28
    },
    "gotos": {},
    "resolved": []
   },
   {
-   "id": 30,
+   "id": 31,
    "items": [
     {
      "rule": 9,
@@ -1870,7 +2040,7 @@ window.MATRIXLANG_GRAMMAR = {
    "actions": {
     "NUMBER": {
      "kind": "shift",
-     "to": 48
+     "to": 50
     }
    },
    "default": null,
@@ -1878,7 +2048,7 @@ window.MATRIXLANG_GRAMMAR = {
    "resolved": []
   },
   {
-   "id": 31,
+   "id": 32,
    "items": [
     {
      "rule": 11,
@@ -1949,6 +2119,21 @@ window.MATRIXLANG_GRAMMAR = {
      "rule": 28,
      "dot": 0,
      "lookahead": []
+    },
+    {
+     "rule": 29,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 30,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 31,
+     "dot": 0,
+     "lookahead": []
     }
    ],
    "actions": {
@@ -1976,28 +2161,32 @@ window.MATRIXLANG_GRAMMAR = {
      "kind": "shift",
      "to": 24
     },
-    "'-'": {
+    "KW_INPUT": {
      "kind": "shift",
      "to": 25
     },
-    "'('": {
+    "'-'": {
      "kind": "shift",
      "to": 26
     },
-    "'{'": {
+    "'('": {
      "kind": "shift",
      "to": 27
+    },
+    "'{'": {
+     "kind": "shift",
+     "to": 28
     }
    },
    "default": null,
    "gotos": {
-    "expr": 49,
-    "matrix_literal": 29
+    "expr": 51,
+    "matrix_literal": 30
    },
    "resolved": []
   },
   {
-   "id": 32,
+   "id": 33,
    "items": [
     {
      "rule": 12,
@@ -2014,7 +2203,7 @@ window.MATRIXLANG_GRAMMAR = {
    "resolved": []
   },
   {
-   "id": 33,
+   "id": 34,
    "items": [
     {
      "rule": 13,
@@ -2085,6 +2274,21 @@ window.MATRIXLANG_GRAMMAR = {
      "rule": 28,
      "dot": 0,
      "lookahead": []
+    },
+    {
+     "rule": 29,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 30,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 31,
+     "dot": 0,
+     "lookahead": []
     }
    ],
    "actions": {
@@ -2112,28 +2316,32 @@ window.MATRIXLANG_GRAMMAR = {
      "kind": "shift",
      "to": 24
     },
-    "'-'": {
+    "KW_INPUT": {
      "kind": "shift",
      "to": 25
     },
-    "'('": {
+    "'-'": {
      "kind": "shift",
      "to": 26
     },
-    "'{'": {
+    "'('": {
      "kind": "shift",
      "to": 27
+    },
+    "'{'": {
+     "kind": "shift",
+     "to": 28
     }
    },
    "default": null,
    "gotos": {
-    "expr": 50,
-    "matrix_literal": 29
+    "expr": 52,
+    "matrix_literal": 30
    },
    "resolved": []
   },
   {
-   "id": 34,
+   "id": 35,
    "items": [
     {
      "rule": 15,
@@ -2159,142 +2367,23 @@ window.MATRIXLANG_GRAMMAR = {
    "actions": {
     "'+'": {
      "kind": "shift",
-     "to": 44
+     "to": 46
     },
     "'-'": {
      "kind": "shift",
-     "to": 45
+     "to": 47
     },
     "'*'": {
      "kind": "shift",
-     "to": 46
+     "to": 48
     },
     "')'": {
      "kind": "shift",
-     "to": 51
+     "to": 53
     }
    },
    "default": null,
    "gotos": {},
-   "resolved": []
-  },
-  {
-   "id": 35,
-   "items": [
-    {
-     "rule": 16,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 17,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 18,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 19,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 20,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 20,
-     "dot": 2,
-     "lookahead": []
-    },
-    {
-     "rule": 21,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 22,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 23,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 24,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 25,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 26,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 27,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 28,
-     "dot": 0,
-     "lookahead": []
-    }
-   ],
-   "actions": {
-    "IDENT": {
-     "kind": "shift",
-     "to": 19
-    },
-    "NUMBER": {
-     "kind": "shift",
-     "to": 20
-    },
-    "KW_TRANSPOSE": {
-     "kind": "shift",
-     "to": 21
-    },
-    "KW_IDENTITY": {
-     "kind": "shift",
-     "to": 22
-    },
-    "KW_ZEROS": {
-     "kind": "shift",
-     "to": 23
-    },
-    "KW_ONES": {
-     "kind": "shift",
-     "to": 24
-    },
-    "'-'": {
-     "kind": "shift",
-     "to": 25
-    },
-    "'('": {
-     "kind": "shift",
-     "to": 26
-    },
-    "'{'": {
-     "kind": "shift",
-     "to": 27
-    }
-   },
-   "default": null,
-   "gotos": {
-    "expr": 52,
-    "matrix_literal": 29
-   },
    "resolved": []
   },
   {
@@ -2326,13 +2415,13 @@ window.MATRIXLANG_GRAMMAR = {
      "lookahead": []
     },
     {
-     "rule": 21,
-     "dot": 0,
+     "rule": 20,
+     "dot": 2,
      "lookahead": []
     },
     {
      "rule": 21,
-     "dot": 2,
+     "dot": 0,
      "lookahead": []
     },
     {
@@ -2369,6 +2458,21 @@ window.MATRIXLANG_GRAMMAR = {
      "rule": 28,
      "dot": 0,
      "lookahead": []
+    },
+    {
+     "rule": 29,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 30,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 31,
+     "dot": 0,
+     "lookahead": []
     }
    ],
    "actions": {
@@ -2396,23 +2500,27 @@ window.MATRIXLANG_GRAMMAR = {
      "kind": "shift",
      "to": 24
     },
-    "'-'": {
+    "KW_INPUT": {
      "kind": "shift",
      "to": 25
     },
-    "'('": {
+    "'-'": {
      "kind": "shift",
      "to": 26
     },
-    "'{'": {
+    "'('": {
      "kind": "shift",
      "to": 27
+    },
+    "'{'": {
+     "kind": "shift",
+     "to": 28
     }
    },
    "default": null,
    "gotos": {
-    "expr": 53,
-    "matrix_literal": 29
+    "expr": 54,
+    "matrix_literal": 30
    },
    "resolved": []
   },
@@ -2450,13 +2558,13 @@ window.MATRIXLANG_GRAMMAR = {
      "lookahead": []
     },
     {
-     "rule": 22,
-     "dot": 0,
+     "rule": 21,
+     "dot": 2,
      "lookahead": []
     },
     {
      "rule": 22,
-     "dot": 2,
+     "dot": 0,
      "lookahead": []
     },
     {
@@ -2488,6 +2596,21 @@ window.MATRIXLANG_GRAMMAR = {
      "rule": 28,
      "dot": 0,
      "lookahead": []
+    },
+    {
+     "rule": 29,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 30,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 31,
+     "dot": 0,
+     "lookahead": []
     }
    ],
    "actions": {
@@ -2515,23 +2638,27 @@ window.MATRIXLANG_GRAMMAR = {
      "kind": "shift",
      "to": 24
     },
-    "'-'": {
+    "KW_INPUT": {
      "kind": "shift",
      "to": 25
     },
-    "'('": {
+    "'-'": {
      "kind": "shift",
      "to": 26
     },
-    "'{'": {
+    "'('": {
      "kind": "shift",
      "to": 27
+    },
+    "'{'": {
+     "kind": "shift",
+     "to": 28
     }
    },
    "default": null,
    "gotos": {
-    "expr": 54,
-    "matrix_literal": 29
+    "expr": 55,
+    "matrix_literal": 30
    },
    "resolved": []
   },
@@ -2574,6 +2701,144 @@ window.MATRIXLANG_GRAMMAR = {
      "lookahead": []
     },
     {
+     "rule": 22,
+     "dot": 2,
+     "lookahead": []
+    },
+    {
+     "rule": 23,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 24,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 25,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 26,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 27,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 28,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 29,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 30,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 31,
+     "dot": 0,
+     "lookahead": []
+    }
+   ],
+   "actions": {
+    "IDENT": {
+     "kind": "shift",
+     "to": 19
+    },
+    "NUMBER": {
+     "kind": "shift",
+     "to": 20
+    },
+    "KW_TRANSPOSE": {
+     "kind": "shift",
+     "to": 21
+    },
+    "KW_IDENTITY": {
+     "kind": "shift",
+     "to": 22
+    },
+    "KW_ZEROS": {
+     "kind": "shift",
+     "to": 23
+    },
+    "KW_ONES": {
+     "kind": "shift",
+     "to": 24
+    },
+    "KW_INPUT": {
+     "kind": "shift",
+     "to": 25
+    },
+    "'-'": {
+     "kind": "shift",
+     "to": 26
+    },
+    "'('": {
+     "kind": "shift",
+     "to": 27
+    },
+    "'{'": {
+     "kind": "shift",
+     "to": 28
+    }
+   },
+   "default": null,
+   "gotos": {
+    "expr": 56,
+    "matrix_literal": 30
+   },
+   "resolved": []
+  },
+  {
+   "id": 39,
+   "items": [
+    {
+     "rule": 16,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 17,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 18,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 19,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 20,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 21,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 22,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
      "rule": 23,
      "dot": 0,
      "lookahead": []
@@ -2607,6 +2872,21 @@ window.MATRIXLANG_GRAMMAR = {
      "rule": 28,
      "dot": 0,
      "lookahead": []
+    },
+    {
+     "rule": 29,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 30,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 31,
+     "dot": 0,
+     "lookahead": []
     }
    ],
    "actions": {
@@ -2634,28 +2914,61 @@ window.MATRIXLANG_GRAMMAR = {
      "kind": "shift",
      "to": 24
     },
-    "'-'": {
+    "KW_INPUT": {
      "kind": "shift",
      "to": 25
     },
-    "'('": {
+    "'-'": {
      "kind": "shift",
      "to": 26
     },
-    "'{'": {
+    "'('": {
      "kind": "shift",
      "to": 27
+    },
+    "'{'": {
+     "kind": "shift",
+     "to": 28
     }
    },
    "default": null,
    "gotos": {
-    "expr": 55,
-    "matrix_literal": 29
+    "expr": 57,
+    "matrix_literal": 30
    },
    "resolved": []
   },
   {
-   "id": 39,
+   "id": 40,
+   "items": [
+    {
+     "rule": 24,
+     "dot": 2,
+     "lookahead": []
+    },
+    {
+     "rule": 25,
+     "dot": 2,
+     "lookahead": []
+    },
+    {
+     "rule": 26,
+     "dot": 2,
+     "lookahead": []
+    }
+   ],
+   "actions": {
+    "IDENT": {
+     "kind": "shift",
+     "to": 58
+    }
+   },
+   "default": null,
+   "gotos": {},
+   "resolved": []
+  },
+  {
+   "id": 41,
    "items": [
     {
      "rule": 16,
@@ -2714,7 +3027,7 @@ window.MATRIXLANG_GRAMMAR = {
    ]
   },
   {
-   "id": 40,
+   "id": 42,
    "items": [
     {
      "rule": 16,
@@ -2732,7 +3045,7 @@ window.MATRIXLANG_GRAMMAR = {
      "lookahead": []
     },
     {
-     "rule": 24,
+     "rule": 27,
      "dot": 2,
      "lookahead": []
     }
@@ -2740,177 +3053,19 @@ window.MATRIXLANG_GRAMMAR = {
    "actions": {
     "'+'": {
      "kind": "shift",
-     "to": 44
+     "to": 46
     },
     "'-'": {
      "kind": "shift",
-     "to": 45
+     "to": 47
     },
     "'*'": {
      "kind": "shift",
-     "to": 46
+     "to": 48
     },
     "')'": {
      "kind": "shift",
-     "to": 56
-    }
-   },
-   "default": null,
-   "gotos": {},
-   "resolved": []
-  },
-  {
-   "id": 41,
-   "items": [
-    {
-     "rule": 16,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 17,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 18,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 19,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 20,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 21,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 22,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 23,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 24,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 25,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 26,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 27,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 28,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 31,
-     "dot": 1,
-     "lookahead": []
-    },
-    {
-     "rule": 32,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 33,
-     "dot": 0,
-     "lookahead": []
-    }
-   ],
-   "actions": {
-    "IDENT": {
-     "kind": "shift",
-     "to": 19
-    },
-    "NUMBER": {
-     "kind": "shift",
-     "to": 20
-    },
-    "KW_TRANSPOSE": {
-     "kind": "shift",
-     "to": 21
-    },
-    "KW_IDENTITY": {
-     "kind": "shift",
-     "to": 22
-    },
-    "KW_ZEROS": {
-     "kind": "shift",
-     "to": 23
-    },
-    "KW_ONES": {
-     "kind": "shift",
-     "to": 24
-    },
-    "'-'": {
-     "kind": "shift",
-     "to": 25
-    },
-    "'('": {
-     "kind": "shift",
-     "to": 26
-    },
-    "'{'": {
-     "kind": "shift",
-     "to": 27
-    }
-   },
-   "default": null,
-   "gotos": {
-    "expr": 57,
-    "matrix_literal": 29,
-    "num_list": 58
-   },
-   "resolved": []
-  },
-  {
-   "id": 42,
-   "items": [
-    {
-     "rule": 28,
-     "dot": 2,
-     "lookahead": []
-    },
-    {
-     "rule": 30,
-     "dot": 1,
-     "lookahead": []
-    }
-   ],
-   "actions": {
-    "','": {
-     "kind": "shift",
      "to": 59
-    },
-    "'}'": {
-     "kind": "shift",
-     "to": 60
     }
    },
    "default": null,
@@ -2921,7 +3076,184 @@ window.MATRIXLANG_GRAMMAR = {
    "id": 43,
    "items": [
     {
+     "rule": 16,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 17,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 18,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 19,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 20,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 21,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 22,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 23,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 24,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 25,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 26,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 27,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 28,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
      "rule": 29,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 30,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 31,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 34,
+     "dot": 1,
+     "lookahead": []
+    },
+    {
+     "rule": 35,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 36,
+     "dot": 0,
+     "lookahead": []
+    }
+   ],
+   "actions": {
+    "IDENT": {
+     "kind": "shift",
+     "to": 19
+    },
+    "NUMBER": {
+     "kind": "shift",
+     "to": 20
+    },
+    "KW_TRANSPOSE": {
+     "kind": "shift",
+     "to": 21
+    },
+    "KW_IDENTITY": {
+     "kind": "shift",
+     "to": 22
+    },
+    "KW_ZEROS": {
+     "kind": "shift",
+     "to": 23
+    },
+    "KW_ONES": {
+     "kind": "shift",
+     "to": 24
+    },
+    "KW_INPUT": {
+     "kind": "shift",
+     "to": 25
+    },
+    "'-'": {
+     "kind": "shift",
+     "to": 26
+    },
+    "'('": {
+     "kind": "shift",
+     "to": 27
+    },
+    "'{'": {
+     "kind": "shift",
+     "to": 28
+    }
+   },
+   "default": null,
+   "gotos": {
+    "expr": 60,
+    "matrix_literal": 30,
+    "num_list": 61
+   },
+   "resolved": []
+  },
+  {
+   "id": 44,
+   "items": [
+    {
+     "rule": 31,
+     "dot": 2,
+     "lookahead": []
+    },
+    {
+     "rule": 33,
+     "dot": 1,
+     "lookahead": []
+    }
+   ],
+   "actions": {
+    "','": {
+     "kind": "shift",
+     "to": 62
+    },
+    "'}'": {
+     "kind": "shift",
+     "to": 63
+    }
+   },
+   "default": null,
+   "gotos": {},
+   "resolved": []
+  },
+  {
+   "id": 45,
+   "items": [
+    {
+     "rule": 32,
      "dot": 1,
      "lookahead": []
     }
@@ -2929,247 +3261,9 @@ window.MATRIXLANG_GRAMMAR = {
    "actions": {},
    "default": {
     "kind": "reduce",
-    "rule": 29
+    "rule": 32
    },
    "gotos": {},
-   "resolved": []
-  },
-  {
-   "id": 44,
-   "items": [
-    {
-     "rule": 16,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 16,
-     "dot": 2,
-     "lookahead": []
-    },
-    {
-     "rule": 17,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 18,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 19,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 20,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 21,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 22,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 23,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 24,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 25,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 26,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 27,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 28,
-     "dot": 0,
-     "lookahead": []
-    }
-   ],
-   "actions": {
-    "IDENT": {
-     "kind": "shift",
-     "to": 19
-    },
-    "NUMBER": {
-     "kind": "shift",
-     "to": 20
-    },
-    "KW_TRANSPOSE": {
-     "kind": "shift",
-     "to": 21
-    },
-    "KW_IDENTITY": {
-     "kind": "shift",
-     "to": 22
-    },
-    "KW_ZEROS": {
-     "kind": "shift",
-     "to": 23
-    },
-    "KW_ONES": {
-     "kind": "shift",
-     "to": 24
-    },
-    "'-'": {
-     "kind": "shift",
-     "to": 25
-    },
-    "'('": {
-     "kind": "shift",
-     "to": 26
-    },
-    "'{'": {
-     "kind": "shift",
-     "to": 27
-    }
-   },
-   "default": null,
-   "gotos": {
-    "expr": 61,
-    "matrix_literal": 29
-   },
-   "resolved": []
-  },
-  {
-   "id": 45,
-   "items": [
-    {
-     "rule": 16,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 17,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 17,
-     "dot": 2,
-     "lookahead": []
-    },
-    {
-     "rule": 18,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 19,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 20,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 21,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 22,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 23,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 24,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 25,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 26,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 27,
-     "dot": 0,
-     "lookahead": []
-    },
-    {
-     "rule": 28,
-     "dot": 0,
-     "lookahead": []
-    }
-   ],
-   "actions": {
-    "IDENT": {
-     "kind": "shift",
-     "to": 19
-    },
-    "NUMBER": {
-     "kind": "shift",
-     "to": 20
-    },
-    "KW_TRANSPOSE": {
-     "kind": "shift",
-     "to": 21
-    },
-    "KW_IDENTITY": {
-     "kind": "shift",
-     "to": 22
-    },
-    "KW_ZEROS": {
-     "kind": "shift",
-     "to": 23
-    },
-    "KW_ONES": {
-     "kind": "shift",
-     "to": 24
-    },
-    "'-'": {
-     "kind": "shift",
-     "to": 25
-    },
-    "'('": {
-     "kind": "shift",
-     "to": 26
-    },
-    "'{'": {
-     "kind": "shift",
-     "to": 27
-    }
-   },
-   "default": null,
-   "gotos": {
-    "expr": 62,
-    "matrix_literal": 29
-   },
    "resolved": []
   },
   {
@@ -3181,6 +3275,282 @@ window.MATRIXLANG_GRAMMAR = {
      "lookahead": []
     },
     {
+     "rule": 16,
+     "dot": 2,
+     "lookahead": []
+    },
+    {
+     "rule": 17,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 18,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 19,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 20,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 21,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 22,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 23,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 24,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 25,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 26,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 27,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 28,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 29,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 30,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 31,
+     "dot": 0,
+     "lookahead": []
+    }
+   ],
+   "actions": {
+    "IDENT": {
+     "kind": "shift",
+     "to": 19
+    },
+    "NUMBER": {
+     "kind": "shift",
+     "to": 20
+    },
+    "KW_TRANSPOSE": {
+     "kind": "shift",
+     "to": 21
+    },
+    "KW_IDENTITY": {
+     "kind": "shift",
+     "to": 22
+    },
+    "KW_ZEROS": {
+     "kind": "shift",
+     "to": 23
+    },
+    "KW_ONES": {
+     "kind": "shift",
+     "to": 24
+    },
+    "KW_INPUT": {
+     "kind": "shift",
+     "to": 25
+    },
+    "'-'": {
+     "kind": "shift",
+     "to": 26
+    },
+    "'('": {
+     "kind": "shift",
+     "to": 27
+    },
+    "'{'": {
+     "kind": "shift",
+     "to": 28
+    }
+   },
+   "default": null,
+   "gotos": {
+    "expr": 64,
+    "matrix_literal": 30
+   },
+   "resolved": []
+  },
+  {
+   "id": 47,
+   "items": [
+    {
+     "rule": 16,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 17,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 17,
+     "dot": 2,
+     "lookahead": []
+    },
+    {
+     "rule": 18,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 19,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 20,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 21,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 22,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 23,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 24,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 25,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 26,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 27,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 28,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 29,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 30,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 31,
+     "dot": 0,
+     "lookahead": []
+    }
+   ],
+   "actions": {
+    "IDENT": {
+     "kind": "shift",
+     "to": 19
+    },
+    "NUMBER": {
+     "kind": "shift",
+     "to": 20
+    },
+    "KW_TRANSPOSE": {
+     "kind": "shift",
+     "to": 21
+    },
+    "KW_IDENTITY": {
+     "kind": "shift",
+     "to": 22
+    },
+    "KW_ZEROS": {
+     "kind": "shift",
+     "to": 23
+    },
+    "KW_ONES": {
+     "kind": "shift",
+     "to": 24
+    },
+    "KW_INPUT": {
+     "kind": "shift",
+     "to": 25
+    },
+    "'-'": {
+     "kind": "shift",
+     "to": 26
+    },
+    "'('": {
+     "kind": "shift",
+     "to": 27
+    },
+    "'{'": {
+     "kind": "shift",
+     "to": 28
+    }
+   },
+   "default": null,
+   "gotos": {
+    "expr": 65,
+    "matrix_literal": 30
+   },
+   "resolved": []
+  },
+  {
+   "id": 48,
+   "items": [
+    {
+     "rule": 16,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
      "rule": 17,
      "dot": 0,
      "lookahead": []
@@ -3244,6 +3614,21 @@ window.MATRIXLANG_GRAMMAR = {
      "rule": 28,
      "dot": 0,
      "lookahead": []
+    },
+    {
+     "rule": 29,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 30,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 31,
+     "dot": 0,
+     "lookahead": []
     }
    ],
    "actions": {
@@ -3271,28 +3656,32 @@ window.MATRIXLANG_GRAMMAR = {
      "kind": "shift",
      "to": 24
     },
-    "'-'": {
+    "KW_INPUT": {
      "kind": "shift",
      "to": 25
     },
-    "'('": {
+    "'-'": {
      "kind": "shift",
      "to": 26
     },
-    "'{'": {
+    "'('": {
      "kind": "shift",
      "to": 27
+    },
+    "'{'": {
+     "kind": "shift",
+     "to": 28
     }
    },
    "default": null,
    "gotos": {
-    "expr": 63,
-    "matrix_literal": 29
+    "expr": 66,
+    "matrix_literal": 30
    },
    "resolved": []
   },
   {
-   "id": 47,
+   "id": 49,
    "items": [
     {
      "rule": 14,
@@ -3309,7 +3698,7 @@ window.MATRIXLANG_GRAMMAR = {
    "resolved": []
   },
   {
-   "id": 48,
+   "id": 50,
    "items": [
     {
      "rule": 9,
@@ -3325,7 +3714,7 @@ window.MATRIXLANG_GRAMMAR = {
    "actions": {
     "','": {
      "kind": "shift",
-     "to": 64
+     "to": 67
     }
    },
    "default": null,
@@ -3333,7 +3722,7 @@ window.MATRIXLANG_GRAMMAR = {
    "resolved": []
   },
   {
-   "id": 49,
+   "id": 51,
    "items": [
     {
      "rule": 11,
@@ -3359,19 +3748,19 @@ window.MATRIXLANG_GRAMMAR = {
    "actions": {
     "'+'": {
      "kind": "shift",
-     "to": 44
+     "to": 46
     },
     "'-'": {
      "kind": "shift",
-     "to": 45
+     "to": 47
     },
     "'*'": {
      "kind": "shift",
-     "to": 46
+     "to": 48
     },
     "';'": {
      "kind": "shift",
-     "to": 65
+     "to": 68
     }
    },
    "default": null,
@@ -3379,7 +3768,7 @@ window.MATRIXLANG_GRAMMAR = {
    "resolved": []
   },
   {
-   "id": 50,
+   "id": 52,
    "items": [
     {
      "rule": 13,
@@ -3405,84 +3794,19 @@ window.MATRIXLANG_GRAMMAR = {
    "actions": {
     "'+'": {
      "kind": "shift",
-     "to": 44
+     "to": 46
     },
     "'-'": {
      "kind": "shift",
-     "to": 45
+     "to": 47
     },
     "'*'": {
      "kind": "shift",
-     "to": 46
+     "to": 48
     },
     "';'": {
      "kind": "shift",
-     "to": 66
-    }
-   },
-   "default": null,
-   "gotos": {},
-   "resolved": []
-  },
-  {
-   "id": 51,
-   "items": [
-    {
-     "rule": 15,
-     "dot": 4,
-     "lookahead": []
-    }
-   ],
-   "actions": {
-    "';'": {
-     "kind": "shift",
-     "to": 67
-    }
-   },
-   "default": null,
-   "gotos": {},
-   "resolved": []
-  },
-  {
-   "id": 52,
-   "items": [
-    {
-     "rule": 16,
-     "dot": 1,
-     "lookahead": []
-    },
-    {
-     "rule": 17,
-     "dot": 1,
-     "lookahead": []
-    },
-    {
-     "rule": 18,
-     "dot": 1,
-     "lookahead": []
-    },
-    {
-     "rule": 20,
-     "dot": 3,
-     "lookahead": []
-    }
-   ],
-   "actions": {
-    "'+'": {
-     "kind": "shift",
-     "to": 44
-    },
-    "'-'": {
-     "kind": "shift",
-     "to": 45
-    },
-    "'*'": {
-     "kind": "shift",
-     "to": 46
-    },
-    "')'": {
-     "kind": "shift",
-     "to": 68
+     "to": 69
     }
    },
    "default": null,
@@ -3493,42 +3817,15 @@ window.MATRIXLANG_GRAMMAR = {
    "id": 53,
    "items": [
     {
-     "rule": 16,
-     "dot": 1,
-     "lookahead": []
-    },
-    {
-     "rule": 17,
-     "dot": 1,
-     "lookahead": []
-    },
-    {
-     "rule": 18,
-     "dot": 1,
-     "lookahead": []
-    },
-    {
-     "rule": 21,
-     "dot": 3,
+     "rule": 15,
+     "dot": 4,
      "lookahead": []
     }
    ],
    "actions": {
-    "'+'": {
+    "';'": {
      "kind": "shift",
-     "to": 44
-    },
-    "'-'": {
-     "kind": "shift",
-     "to": 45
-    },
-    "'*'": {
-     "kind": "shift",
-     "to": 46
-    },
-    "')'": {
-     "kind": "shift",
-     "to": 69
+     "to": 70
     }
    },
    "default": null,
@@ -3554,7 +3851,7 @@ window.MATRIXLANG_GRAMMAR = {
      "lookahead": []
     },
     {
-     "rule": 22,
+     "rule": 20,
      "dot": 3,
      "lookahead": []
     }
@@ -3562,19 +3859,19 @@ window.MATRIXLANG_GRAMMAR = {
    "actions": {
     "'+'": {
      "kind": "shift",
-     "to": 44
+     "to": 46
     },
     "'-'": {
      "kind": "shift",
-     "to": 45
+     "to": 47
     },
     "'*'": {
      "kind": "shift",
-     "to": 46
+     "to": 48
     },
-    "','": {
+    "')'": {
      "kind": "shift",
-     "to": 70
+     "to": 71
     }
    },
    "default": null,
@@ -3600,7 +3897,7 @@ window.MATRIXLANG_GRAMMAR = {
      "lookahead": []
     },
     {
-     "rule": 23,
+     "rule": 21,
      "dot": 3,
      "lookahead": []
     }
@@ -3608,19 +3905,19 @@ window.MATRIXLANG_GRAMMAR = {
    "actions": {
     "'+'": {
      "kind": "shift",
-     "to": 44
+     "to": 46
     },
     "'-'": {
      "kind": "shift",
-     "to": 45
+     "to": 47
     },
     "'*'": {
      "kind": "shift",
-     "to": 46
+     "to": 48
     },
-    "','": {
+    "')'": {
      "kind": "shift",
-     "to": 71
+     "to": 72
     }
    },
    "default": null,
@@ -3631,16 +3928,45 @@ window.MATRIXLANG_GRAMMAR = {
    "id": 56,
    "items": [
     {
-     "rule": 24,
+     "rule": 16,
+     "dot": 1,
+     "lookahead": []
+    },
+    {
+     "rule": 17,
+     "dot": 1,
+     "lookahead": []
+    },
+    {
+     "rule": 18,
+     "dot": 1,
+     "lookahead": []
+    },
+    {
+     "rule": 22,
      "dot": 3,
      "lookahead": []
     }
    ],
-   "actions": {},
-   "default": {
-    "kind": "reduce",
-    "rule": 24
+   "actions": {
+    "'+'": {
+     "kind": "shift",
+     "to": 46
+    },
+    "'-'": {
+     "kind": "shift",
+     "to": 47
+    },
+    "'*'": {
+     "kind": "shift",
+     "to": 48
+    },
+    "','": {
+     "kind": "shift",
+     "to": 73
+    }
    },
+   "default": null,
    "gotos": {},
    "resolved": []
   },
@@ -3663,32 +3989,30 @@ window.MATRIXLANG_GRAMMAR = {
      "lookahead": []
     },
     {
-     "rule": 32,
-     "dot": 1,
-     "lookahead": [
-      "','",
-      "'}'"
-     ]
+     "rule": 23,
+     "dot": 3,
+     "lookahead": []
     }
    ],
    "actions": {
     "'+'": {
      "kind": "shift",
-     "to": 44
+     "to": 46
     },
     "'-'": {
      "kind": "shift",
-     "to": 45
+     "to": 47
     },
     "'*'": {
      "kind": "shift",
-     "to": 46
+     "to": 48
+    },
+    "','": {
+     "kind": "shift",
+     "to": 74
     }
    },
-   "default": {
-    "kind": "reduce",
-    "rule": 32
-   },
+   "default": null,
    "gotos": {},
    "resolved": []
   },
@@ -3696,24 +4020,29 @@ window.MATRIXLANG_GRAMMAR = {
    "id": 58,
    "items": [
     {
-     "rule": 31,
-     "dot": 2,
+     "rule": 24,
+     "dot": 3,
      "lookahead": []
     },
     {
-     "rule": 33,
-     "dot": 1,
+     "rule": 25,
+     "dot": 3,
+     "lookahead": []
+    },
+    {
+     "rule": 26,
+     "dot": 3,
      "lookahead": []
     }
    ],
    "actions": {
-    "','": {
+    "'('": {
      "kind": "shift",
-     "to": 72
+     "to": 75
     },
-    "'}'": {
+    "')'": {
      "kind": "shift",
-     "to": 73
+     "to": 76
     }
    },
    "default": null,
@@ -3724,33 +4053,7 @@ window.MATRIXLANG_GRAMMAR = {
    "id": 59,
    "items": [
     {
-     "rule": 30,
-     "dot": 2,
-     "lookahead": []
-    },
-    {
-     "rule": 31,
-     "dot": 0,
-     "lookahead": []
-    }
-   ],
-   "actions": {
-    "'{'": {
-     "kind": "shift",
-     "to": 41
-    }
-   },
-   "default": null,
-   "gotos": {
-    "row": 74
-   },
-   "resolved": []
-  },
-  {
-   "id": 60,
-   "items": [
-    {
-     "rule": 28,
+     "rule": 27,
      "dot": 3,
      "lookahead": []
     }
@@ -3758,13 +4061,132 @@ window.MATRIXLANG_GRAMMAR = {
    "actions": {},
    "default": {
     "kind": "reduce",
-    "rule": 28
+    "rule": 27
+   },
+   "gotos": {},
+   "resolved": []
+  },
+  {
+   "id": 60,
+   "items": [
+    {
+     "rule": 16,
+     "dot": 1,
+     "lookahead": []
+    },
+    {
+     "rule": 17,
+     "dot": 1,
+     "lookahead": []
+    },
+    {
+     "rule": 18,
+     "dot": 1,
+     "lookahead": []
+    },
+    {
+     "rule": 35,
+     "dot": 1,
+     "lookahead": [
+      "','",
+      "'}'"
+     ]
+    }
+   ],
+   "actions": {
+    "'+'": {
+     "kind": "shift",
+     "to": 46
+    },
+    "'-'": {
+     "kind": "shift",
+     "to": 47
+    },
+    "'*'": {
+     "kind": "shift",
+     "to": 48
+    }
+   },
+   "default": {
+    "kind": "reduce",
+    "rule": 35
    },
    "gotos": {},
    "resolved": []
   },
   {
    "id": 61,
+   "items": [
+    {
+     "rule": 34,
+     "dot": 2,
+     "lookahead": []
+    },
+    {
+     "rule": 36,
+     "dot": 1,
+     "lookahead": []
+    }
+   ],
+   "actions": {
+    "','": {
+     "kind": "shift",
+     "to": 77
+    },
+    "'}'": {
+     "kind": "shift",
+     "to": 78
+    }
+   },
+   "default": null,
+   "gotos": {},
+   "resolved": []
+  },
+  {
+   "id": 62,
+   "items": [
+    {
+     "rule": 33,
+     "dot": 2,
+     "lookahead": []
+    },
+    {
+     "rule": 34,
+     "dot": 0,
+     "lookahead": []
+    }
+   ],
+   "actions": {
+    "'{'": {
+     "kind": "shift",
+     "to": 43
+    }
+   },
+   "default": null,
+   "gotos": {
+    "row": 79
+   },
+   "resolved": []
+  },
+  {
+   "id": 63,
+   "items": [
+    {
+     "rule": 31,
+     "dot": 3,
+     "lookahead": []
+    }
+   ],
+   "actions": {},
+   "default": {
+    "kind": "reduce",
+    "rule": 31
+   },
+   "gotos": {},
+   "resolved": []
+  },
+  {
+   "id": 64,
    "items": [
     {
      "rule": 16,
@@ -3797,7 +4219,7 @@ window.MATRIXLANG_GRAMMAR = {
    "actions": {
     "'*'": {
      "kind": "shift",
-     "to": 46
+     "to": 48
     }
    },
    "default": {
@@ -3827,7 +4249,7 @@ window.MATRIXLANG_GRAMMAR = {
    ]
   },
   {
-   "id": 62,
+   "id": 65,
    "items": [
     {
      "rule": 16,
@@ -3860,7 +4282,7 @@ window.MATRIXLANG_GRAMMAR = {
    "actions": {
     "'*'": {
      "kind": "shift",
-     "to": 46
+     "to": 48
     }
    },
    "default": {
@@ -3890,7 +4312,7 @@ window.MATRIXLANG_GRAMMAR = {
    ]
   },
   {
-   "id": 63,
+   "id": 66,
    "items": [
     {
      "rule": 16,
@@ -3949,7 +4371,7 @@ window.MATRIXLANG_GRAMMAR = {
    ]
   },
   {
-   "id": 64,
+   "id": 67,
    "items": [
     {
      "rule": 9,
@@ -3965,7 +4387,7 @@ window.MATRIXLANG_GRAMMAR = {
    "actions": {
     "NUMBER": {
      "kind": "shift",
-     "to": 75
+     "to": 80
     }
    },
    "default": null,
@@ -3973,7 +4395,7 @@ window.MATRIXLANG_GRAMMAR = {
    "resolved": []
   },
   {
-   "id": 65,
+   "id": 68,
    "items": [
     {
      "rule": 11,
@@ -3990,7 +4412,7 @@ window.MATRIXLANG_GRAMMAR = {
    "resolved": []
   },
   {
-   "id": 66,
+   "id": 69,
    "items": [
     {
      "rule": 13,
@@ -4007,7 +4429,7 @@ window.MATRIXLANG_GRAMMAR = {
    "resolved": []
   },
   {
-   "id": 67,
+   "id": 70,
    "items": [
     {
      "rule": 15,
@@ -4024,7 +4446,7 @@ window.MATRIXLANG_GRAMMAR = {
    "resolved": []
   },
   {
-   "id": 68,
+   "id": 71,
    "items": [
     {
      "rule": 20,
@@ -4041,7 +4463,7 @@ window.MATRIXLANG_GRAMMAR = {
    "resolved": []
   },
   {
-   "id": 69,
+   "id": 72,
    "items": [
     {
      "rule": 21,
@@ -4058,7 +4480,7 @@ window.MATRIXLANG_GRAMMAR = {
    "resolved": []
   },
   {
-   "id": 70,
+   "id": 73,
    "items": [
     {
      "rule": 16,
@@ -4129,6 +4551,21 @@ window.MATRIXLANG_GRAMMAR = {
      "rule": 28,
      "dot": 0,
      "lookahead": []
+    },
+    {
+     "rule": 29,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 30,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 31,
+     "dot": 0,
+     "lookahead": []
     }
    ],
    "actions": {
@@ -4156,28 +4593,32 @@ window.MATRIXLANG_GRAMMAR = {
      "kind": "shift",
      "to": 24
     },
-    "'-'": {
+    "KW_INPUT": {
      "kind": "shift",
      "to": 25
     },
-    "'('": {
+    "'-'": {
      "kind": "shift",
      "to": 26
     },
-    "'{'": {
+    "'('": {
      "kind": "shift",
      "to": 27
+    },
+    "'{'": {
+     "kind": "shift",
+     "to": 28
     }
    },
    "default": null,
    "gotos": {
-    "expr": 76,
-    "matrix_literal": 29
+    "expr": 81,
+    "matrix_literal": 30
    },
    "resolved": []
   },
   {
-   "id": 71,
+   "id": 74,
    "items": [
     {
      "rule": 16,
@@ -4248,6 +4689,21 @@ window.MATRIXLANG_GRAMMAR = {
      "rule": 28,
      "dot": 0,
      "lookahead": []
+    },
+    {
+     "rule": 29,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 30,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 31,
+     "dot": 0,
+     "lookahead": []
     }
    ],
    "actions": {
@@ -4275,28 +4731,192 @@ window.MATRIXLANG_GRAMMAR = {
      "kind": "shift",
      "to": 24
     },
-    "'-'": {
+    "KW_INPUT": {
      "kind": "shift",
      "to": 25
     },
-    "'('": {
+    "'-'": {
      "kind": "shift",
      "to": 26
     },
-    "'{'": {
+    "'('": {
      "kind": "shift",
      "to": 27
+    },
+    "'{'": {
+     "kind": "shift",
+     "to": 28
     }
    },
    "default": null,
    "gotos": {
-    "expr": 77,
-    "matrix_literal": 29
+    "expr": 82,
+    "matrix_literal": 30
    },
    "resolved": []
   },
   {
-   "id": 72,
+   "id": 75,
+   "items": [
+    {
+     "rule": 16,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 17,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 18,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 19,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 20,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 21,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 22,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 23,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 24,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 25,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 25,
+     "dot": 4,
+     "lookahead": []
+    },
+    {
+     "rule": 26,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 26,
+     "dot": 4,
+     "lookahead": []
+    },
+    {
+     "rule": 27,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 28,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 29,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 30,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 31,
+     "dot": 0,
+     "lookahead": []
+    }
+   ],
+   "actions": {
+    "IDENT": {
+     "kind": "shift",
+     "to": 19
+    },
+    "NUMBER": {
+     "kind": "shift",
+     "to": 20
+    },
+    "KW_TRANSPOSE": {
+     "kind": "shift",
+     "to": 21
+    },
+    "KW_IDENTITY": {
+     "kind": "shift",
+     "to": 22
+    },
+    "KW_ZEROS": {
+     "kind": "shift",
+     "to": 23
+    },
+    "KW_ONES": {
+     "kind": "shift",
+     "to": 24
+    },
+    "KW_INPUT": {
+     "kind": "shift",
+     "to": 25
+    },
+    "'-'": {
+     "kind": "shift",
+     "to": 26
+    },
+    "'('": {
+     "kind": "shift",
+     "to": 27
+    },
+    "'{'": {
+     "kind": "shift",
+     "to": 28
+    }
+   },
+   "default": null,
+   "gotos": {
+    "expr": 83,
+    "matrix_literal": 30
+   },
+   "resolved": []
+  },
+  {
+   "id": 76,
+   "items": [
+    {
+     "rule": 24,
+     "dot": 4,
+     "lookahead": []
+    }
+   ],
+   "actions": {},
+   "default": {
+    "kind": "reduce",
+    "rule": 24
+   },
+   "gotos": {},
+   "resolved": []
+  },
+  {
+   "id": 77,
    "items": [
     {
      "rule": 16,
@@ -4364,7 +4984,22 @@ window.MATRIXLANG_GRAMMAR = {
      "lookahead": []
     },
     {
-     "rule": 33,
+     "rule": 29,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 30,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 31,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 36,
      "dot": 2,
      "lookahead": []
     }
@@ -4394,31 +5029,35 @@ window.MATRIXLANG_GRAMMAR = {
      "kind": "shift",
      "to": 24
     },
-    "'-'": {
+    "KW_INPUT": {
      "kind": "shift",
      "to": 25
     },
-    "'('": {
+    "'-'": {
      "kind": "shift",
      "to": 26
     },
-    "'{'": {
+    "'('": {
      "kind": "shift",
      "to": 27
+    },
+    "'{'": {
+     "kind": "shift",
+     "to": 28
     }
    },
    "default": null,
    "gotos": {
-    "expr": 78,
-    "matrix_literal": 29
+    "expr": 84,
+    "matrix_literal": 30
    },
    "resolved": []
   },
   {
-   "id": 73,
+   "id": 78,
    "items": [
     {
-     "rule": 31,
+     "rule": 34,
      "dot": 3,
      "lookahead": []
     }
@@ -4426,16 +5065,16 @@ window.MATRIXLANG_GRAMMAR = {
    "actions": {},
    "default": {
     "kind": "reduce",
-    "rule": 31
+    "rule": 34
    },
    "gotos": {},
    "resolved": []
   },
   {
-   "id": 74,
+   "id": 79,
    "items": [
     {
-     "rule": 30,
+     "rule": 33,
      "dot": 3,
      "lookahead": []
     }
@@ -4443,13 +5082,13 @@ window.MATRIXLANG_GRAMMAR = {
    "actions": {},
    "default": {
     "kind": "reduce",
-    "rule": 30
+    "rule": 33
    },
    "gotos": {},
    "resolved": []
   },
   {
-   "id": 75,
+   "id": 80,
    "items": [
     {
      "rule": 9,
@@ -4465,7 +5104,7 @@ window.MATRIXLANG_GRAMMAR = {
    "actions": {
     "']'": {
      "kind": "shift",
-     "to": 79
+     "to": 85
     }
    },
    "default": null,
@@ -4473,7 +5112,7 @@ window.MATRIXLANG_GRAMMAR = {
    "resolved": []
   },
   {
-   "id": 76,
+   "id": 81,
    "items": [
     {
      "rule": 16,
@@ -4499,19 +5138,19 @@ window.MATRIXLANG_GRAMMAR = {
    "actions": {
     "'+'": {
      "kind": "shift",
-     "to": 44
+     "to": 46
     },
     "'-'": {
      "kind": "shift",
-     "to": 45
+     "to": 47
     },
     "'*'": {
      "kind": "shift",
-     "to": 46
+     "to": 48
     },
     "')'": {
      "kind": "shift",
-     "to": 80
+     "to": 86
     }
    },
    "default": null,
@@ -4519,7 +5158,7 @@ window.MATRIXLANG_GRAMMAR = {
    "resolved": []
   },
   {
-   "id": 77,
+   "id": 82,
    "items": [
     {
      "rule": 16,
@@ -4545,19 +5184,19 @@ window.MATRIXLANG_GRAMMAR = {
    "actions": {
     "'+'": {
      "kind": "shift",
-     "to": 44
+     "to": 46
     },
     "'-'": {
      "kind": "shift",
-     "to": 45
+     "to": 47
     },
     "'*'": {
      "kind": "shift",
-     "to": 46
+     "to": 48
     },
     "')'": {
      "kind": "shift",
-     "to": 81
+     "to": 87
     }
    },
    "default": null,
@@ -4565,7 +5204,7 @@ window.MATRIXLANG_GRAMMAR = {
    "resolved": []
   },
   {
-   "id": 78,
+   "id": 83,
    "items": [
     {
      "rule": 16,
@@ -4583,7 +5222,62 @@ window.MATRIXLANG_GRAMMAR = {
      "lookahead": []
     },
     {
-     "rule": 33,
+     "rule": 25,
+     "dot": 5,
+     "lookahead": []
+    },
+    {
+     "rule": 26,
+     "dot": 5,
+     "lookahead": []
+    }
+   ],
+   "actions": {
+    "'+'": {
+     "kind": "shift",
+     "to": 46
+    },
+    "'-'": {
+     "kind": "shift",
+     "to": 47
+    },
+    "'*'": {
+     "kind": "shift",
+     "to": 48
+    },
+    "','": {
+     "kind": "shift",
+     "to": 88
+    },
+    "')'": {
+     "kind": "shift",
+     "to": 89
+    }
+   },
+   "default": null,
+   "gotos": {},
+   "resolved": []
+  },
+  {
+   "id": 84,
+   "items": [
+    {
+     "rule": 16,
+     "dot": 1,
+     "lookahead": []
+    },
+    {
+     "rule": 17,
+     "dot": 1,
+     "lookahead": []
+    },
+    {
+     "rule": 18,
+     "dot": 1,
+     "lookahead": []
+    },
+    {
+     "rule": 36,
      "dot": 3,
      "lookahead": [
       "','",
@@ -4594,26 +5288,26 @@ window.MATRIXLANG_GRAMMAR = {
    "actions": {
     "'+'": {
      "kind": "shift",
-     "to": 44
+     "to": 46
     },
     "'-'": {
      "kind": "shift",
-     "to": 45
+     "to": 47
     },
     "'*'": {
      "kind": "shift",
-     "to": 46
+     "to": 48
     }
    },
    "default": {
     "kind": "reduce",
-    "rule": 33
+    "rule": 36
    },
    "gotos": {},
    "resolved": []
   },
   {
-   "id": 79,
+   "id": 85,
    "items": [
     {
      "rule": 9,
@@ -4629,11 +5323,11 @@ window.MATRIXLANG_GRAMMAR = {
    "actions": {
     "';'": {
      "kind": "shift",
-     "to": 82
+     "to": 90
     },
     "'='": {
      "kind": "shift",
-     "to": 83
+     "to": 91
     }
    },
    "default": null,
@@ -4641,7 +5335,7 @@ window.MATRIXLANG_GRAMMAR = {
    "resolved": []
   },
   {
-   "id": 80,
+   "id": 86,
    "items": [
     {
      "rule": 22,
@@ -4658,7 +5352,7 @@ window.MATRIXLANG_GRAMMAR = {
    "resolved": []
   },
   {
-   "id": 81,
+   "id": 87,
    "items": [
     {
      "rule": 23,
@@ -4675,7 +5369,164 @@ window.MATRIXLANG_GRAMMAR = {
    "resolved": []
   },
   {
-   "id": 82,
+   "id": 88,
+   "items": [
+    {
+     "rule": 16,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 17,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 18,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 19,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 20,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 21,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 22,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 23,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 24,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 25,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 26,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 26,
+     "dot": 6,
+     "lookahead": []
+    },
+    {
+     "rule": 27,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 28,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 29,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 30,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 31,
+     "dot": 0,
+     "lookahead": []
+    }
+   ],
+   "actions": {
+    "IDENT": {
+     "kind": "shift",
+     "to": 19
+    },
+    "NUMBER": {
+     "kind": "shift",
+     "to": 20
+    },
+    "KW_TRANSPOSE": {
+     "kind": "shift",
+     "to": 21
+    },
+    "KW_IDENTITY": {
+     "kind": "shift",
+     "to": 22
+    },
+    "KW_ZEROS": {
+     "kind": "shift",
+     "to": 23
+    },
+    "KW_ONES": {
+     "kind": "shift",
+     "to": 24
+    },
+    "KW_INPUT": {
+     "kind": "shift",
+     "to": 25
+    },
+    "'-'": {
+     "kind": "shift",
+     "to": 26
+    },
+    "'('": {
+     "kind": "shift",
+     "to": 27
+    },
+    "'{'": {
+     "kind": "shift",
+     "to": 28
+    }
+   },
+   "default": null,
+   "gotos": {
+    "expr": 92,
+    "matrix_literal": 30
+   },
+   "resolved": []
+  },
+  {
+   "id": 89,
+   "items": [
+    {
+     "rule": 25,
+     "dot": 6,
+     "lookahead": []
+    }
+   ],
+   "actions": {
+    "')'": {
+     "kind": "shift",
+     "to": 93
+    }
+   },
+   "default": null,
+   "gotos": {},
+   "resolved": []
+  },
+  {
+   "id": 90,
    "items": [
     {
      "rule": 9,
@@ -4692,7 +5543,7 @@ window.MATRIXLANG_GRAMMAR = {
    "resolved": []
   },
   {
-   "id": 83,
+   "id": 91,
    "items": [
     {
      "rule": 10,
@@ -4763,6 +5614,21 @@ window.MATRIXLANG_GRAMMAR = {
      "rule": 28,
      "dot": 0,
      "lookahead": []
+    },
+    {
+     "rule": 29,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 30,
+     "dot": 0,
+     "lookahead": []
+    },
+    {
+     "rule": 31,
+     "dot": 0,
+     "lookahead": []
     }
    ],
    "actions": {
@@ -4790,28 +5656,95 @@ window.MATRIXLANG_GRAMMAR = {
      "kind": "shift",
      "to": 24
     },
-    "'-'": {
+    "KW_INPUT": {
      "kind": "shift",
      "to": 25
     },
-    "'('": {
+    "'-'": {
      "kind": "shift",
      "to": 26
     },
-    "'{'": {
+    "'('": {
      "kind": "shift",
      "to": 27
+    },
+    "'{'": {
+     "kind": "shift",
+     "to": 28
     }
    },
    "default": null,
    "gotos": {
-    "expr": 84,
-    "matrix_literal": 29
+    "expr": 94,
+    "matrix_literal": 30
    },
    "resolved": []
   },
   {
-   "id": 84,
+   "id": 92,
+   "items": [
+    {
+     "rule": 16,
+     "dot": 1,
+     "lookahead": []
+    },
+    {
+     "rule": 17,
+     "dot": 1,
+     "lookahead": []
+    },
+    {
+     "rule": 18,
+     "dot": 1,
+     "lookahead": []
+    },
+    {
+     "rule": 26,
+     "dot": 7,
+     "lookahead": []
+    }
+   ],
+   "actions": {
+    "'+'": {
+     "kind": "shift",
+     "to": 46
+    },
+    "'-'": {
+     "kind": "shift",
+     "to": 47
+    },
+    "'*'": {
+     "kind": "shift",
+     "to": 48
+    },
+    "')'": {
+     "kind": "shift",
+     "to": 95
+    }
+   },
+   "default": null,
+   "gotos": {},
+   "resolved": []
+  },
+  {
+   "id": 93,
+   "items": [
+    {
+     "rule": 25,
+     "dot": 7,
+     "lookahead": []
+    }
+   ],
+   "actions": {},
+   "default": {
+    "kind": "reduce",
+    "rule": 25
+   },
+   "gotos": {},
+   "resolved": []
+  },
+  {
+   "id": 94,
    "items": [
     {
      "rule": 10,
@@ -4837,19 +5770,19 @@ window.MATRIXLANG_GRAMMAR = {
    "actions": {
     "'+'": {
      "kind": "shift",
-     "to": 44
+     "to": 46
     },
     "'-'": {
      "kind": "shift",
-     "to": 45
+     "to": 47
     },
     "'*'": {
      "kind": "shift",
-     "to": 46
+     "to": 48
     },
     "';'": {
      "kind": "shift",
-     "to": 85
+     "to": 96
     }
    },
    "default": null,
@@ -4857,7 +5790,26 @@ window.MATRIXLANG_GRAMMAR = {
    "resolved": []
   },
   {
-   "id": 85,
+   "id": 95,
+   "items": [
+    {
+     "rule": 26,
+     "dot": 8,
+     "lookahead": []
+    }
+   ],
+   "actions": {
+    "')'": {
+     "kind": "shift",
+     "to": 97
+    }
+   },
+   "default": null,
+   "gotos": {},
+   "resolved": []
+  },
+  {
+   "id": 96,
    "items": [
     {
      "rule": 10,
@@ -4869,6 +5821,23 @@ window.MATRIXLANG_GRAMMAR = {
    "default": {
     "kind": "reduce",
     "rule": 10
+   },
+   "gotos": {},
+   "resolved": []
+  },
+  {
+   "id": 97,
+   "items": [
+    {
+     "rule": 26,
+     "dot": 9,
+     "lookahead": []
+    }
+   ],
+   "actions": {},
+   "default": {
+    "kind": "reduce",
+    "rule": 26
    },
    "gotos": {},
    "resolved": []
@@ -4991,118 +5960,125 @@ window.MATRIXLANG_GRAMMAR = {
    },
    {
     "n": 12,
+    "pattern": "\"input\"",
+    "symbol": "KW_INPUT",
+    "kind": "token",
+    "category": "INPUT"
+   },
+   {
+    "n": 13,
     "pattern": "{REALLIT}",
     "symbol": "NUMBER",
     "kind": "token",
     "category": "NUMBER"
    },
    {
-    "n": 13,
+    "n": 14,
     "pattern": "{INTLIT}",
     "symbol": "NUMBER",
     "kind": "token",
     "category": "NUMBER"
    },
    {
-    "n": 14,
+    "n": 15,
     "pattern": "{IDENT}",
     "symbol": "IDENT",
     "kind": "token",
     "category": "IDENTIFIER"
    },
    {
-    "n": 15,
+    "n": 16,
     "pattern": "\"+\"",
     "symbol": "'+'",
     "kind": "token",
     "category": "PLUS"
    },
    {
-    "n": 16,
+    "n": 17,
     "pattern": "\"-\"",
     "symbol": "'-'",
     "kind": "token",
     "category": "MINUS"
    },
    {
-    "n": 17,
+    "n": 18,
     "pattern": "\"*\"",
     "symbol": "'*'",
     "kind": "token",
     "category": "MULTIPLY"
    },
    {
-    "n": 18,
+    "n": 19,
     "pattern": "\"=\"",
     "symbol": "'='",
     "kind": "token",
     "category": "ASSIGN"
    },
    {
-    "n": 19,
+    "n": 20,
     "pattern": "\"[\"",
     "symbol": "'['",
     "kind": "token",
     "category": "LBRACKET"
    },
    {
-    "n": 20,
+    "n": 21,
     "pattern": "\"]\"",
     "symbol": "']'",
     "kind": "token",
     "category": "RBRACKET"
    },
    {
-    "n": 21,
+    "n": 22,
     "pattern": "\"(\"",
     "symbol": "'('",
     "kind": "token",
     "category": "LPAREN"
    },
    {
-    "n": 22,
+    "n": 23,
     "pattern": "\")\"",
     "symbol": "')'",
     "kind": "token",
     "category": "RPAREN"
    },
    {
-    "n": 23,
+    "n": 24,
     "pattern": "\"{\"",
     "symbol": "'{'",
     "kind": "token",
     "category": "LBRACE"
    },
    {
-    "n": 24,
+    "n": 25,
     "pattern": "\"}\"",
     "symbol": "'}'",
     "kind": "token",
     "category": "RBRACE"
    },
    {
-    "n": 25,
+    "n": 26,
     "pattern": "\",\"",
     "symbol": "','",
     "kind": "token",
     "category": "COMMA"
    },
    {
-    "n": 26,
+    "n": 27,
     "pattern": "\";\"",
     "symbol": "';'",
     "kind": "token",
     "category": "SEMICOLON"
    },
    {
-    "n": 27,
+    "n": 28,
     "pattern": "{DIGIT}+{LETTER}({LETTER}|{DIGIT})*",
     "symbol": null,
     "kind": "error",
     "category": null
    },
    {
-    "n": 28,
+    "n": 29,
     "pattern": ".",
     "symbol": null,
     "kind": "error",

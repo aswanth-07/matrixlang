@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#172c3b">
-  <meta name="description" content="Edit MatrixLang programs, inspect compiler stages, and compare strict and algebraic optimization.">
+  <meta name="description" content="Edit MatrixLang programs, inspect every compiler stage, and see which floating-point guarantee each output keeps under the strict, bounded and algebraic contracts.">
   <title>MatrixLang — Compiler workspace</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="workspace.css">
@@ -40,7 +40,7 @@
   </header>
   <div class="app-layout">
     <aside class="sidebar" aria-label="Example programs">
-      <div class="sidebar-heading"><h2>Examples</h2><span>5</span></div>
+      <div class="sidebar-heading"><h2>Examples</h2><span id="example-count">8</span></div>
       <div id="examples" class="example-list"></div>
       <div class="sidebar-bottom">
         <div class="connection"><span class="connection-dot" id="connection-dot"></span><span id="connection-label">Recorded examples</span></div>
@@ -55,15 +55,18 @@
       </div>
       <div class="controlbar">
         <fieldset class="contract-switch"><legend>Numerical contract</legend><div>
-          <button type="button" id="strict" aria-pressed="true">Strict</button>
-          <button type="button" id="algebraic" aria-pressed="false">Algebraic</button>
+          <button type="button" id="strict" aria-pressed="true" title="Apply only rewrites proved bit-identical">Strict</button>
+          <button type="button" id="bounded" aria-pressed="false" title="Also apply rewrites that keep the source-order error bound">Bounded</button>
+          <button type="button" id="algebraic" aria-pressed="false" title="Apply any rewrite valid over the reals">Algebraic</button>
         </div></fieldset>
+        <label class="seed-field" for="seed"><span>Input seed</span><input id="seed" type="number" inputmode="numeric" min="1" max="2147483647" step="1" value="1" aria-describedby="seed-note"></label>
+        <span id="seed-note" class="visually-hidden">Seeds the values drawn for every input declaration.</span>
         <div class="actions">
-          <button type="button" id="compare" class="button secondary"><svg class="icon"><use href="#i-compare"/></svg>Compare modes</button>
+          <button type="button" id="compare" class="button secondary"><svg class="icon"><use href="#i-compare"/></svg>Compare contracts</button>
           <button type="button" id="compile" class="button primary"><svg class="icon"><use href="#i-play"/></svg><span id="compile-label">Compile &amp; run</span></button>
         </div>
       </div>
-      <p id="contract-note" class="contract-note">Strict retains arithmetic order. Algebraic permits rewrites that can change floating-point output.</p>
+      <p id="contract-note" class="contract-note">Strict applies a value-changing rewrite only when the declared input domains prove it bit-identical to the source program.</p>
       <div id="notice" class="notice" role="status" hidden></div>
       <div class="workpanes">
         <section class="source-pane" aria-labelledby="source-heading">
@@ -86,6 +89,7 @@
           <details class="language-help"><summary>Language reference</summary><div>
             <p><code>matrix A[2,3];</code> declares a zero matrix. <code>matrix C = A * B;</code> infers its shape.</p>
             <p>Construct values with <code>{{1,2},{3,4}}</code>, <code>zeros(r,c)</code>, <code>ones(r,c)</code> and <code>identity(n)</code>. Use <code>transpose(A)</code> and <code>print(A)</code>.</p>
+            <p><code>matrix A[40,2] = input(int8);</code> declares a run-time input. Domains: <code>bool</code>, <code>uint8</code>, <code>int8</code>, <code>uint16</code>, <code>int16</code>, <code>int32</code>, <code>int(lo,hi)</code>, <code>real</code>, <code>real(B)</code>, <code>real(lo,hi)</code>. The optimizer sees only the domain; values are checked against it before execution.</p>
             <p>Products require matching inner dimensions. Addition and subtraction require equal shapes. Dimensions are static; the language has no loops or functions.</p>
           </div></details>
         </section>
@@ -96,6 +100,7 @@
             <div class="stage-heading"><h3 id="stage-title">Shape check</h3><button id="show-stages" class="text-button" type="button" hidden>Back to stages</button><span id="stage-state"></span></div>
             <div id="shape-strip" class="shape-strip"></div>
             <div id="cost-summary" class="cost-summary" hidden></div>
+            <div id="guarantee-panel" class="guarantee-panel" hidden></div>
             <div id="diagnostic-links" class="diagnostic-links"></div>
             <pre id="output" class="compiler-output" tabindex="0" aria-label="Compiler output"></pre>
             <div id="comparison-panel" hidden></div>
@@ -107,7 +112,7 @@
         <div><h2 id="observation-title">Shapes inferred before execution</h2><p id="observation-text">Inspect the compiler output to follow this program through each stage.</p></div>
         <a href="guide.html">Demonstration flow <svg class="icon"><use href="#i-arrow"/></svg></a>
       </section>
-      <footer class="workspace-footer"><span>Flex / Bison · C11 · Typed matrix VM</span><span>Arithmetic cost is modeled work, not measured runtime.</span></footer>
+      <footer class="workspace-footer"><span>Flex / Bison · C11 · Typed matrix VM · binary64</span><span>Arithmetic cost is modeled work, not measured runtime.</span></footer>
     </main>
   </div>
   <noscript><p class="notice">Enable JavaScript to use the workspace. The <a href="https://github.com/aswanth-07/matrixlang">repository</a> includes the CLI demonstrations.</p></noscript>

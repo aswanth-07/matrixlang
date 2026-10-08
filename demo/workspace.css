@@ -6,6 +6,7 @@
   --accent: #086b59; --accent-soft: #e7f4ef;
   --error: #a22e38; --error-soft: #fbecef;
   --warning: #855a13; --warning-soft: #fbf3df;
+  --bound: #2c5a86; --bound-soft: #e9f1f9;
   --code: #162936; --code-text: #e0eaf0; --focus: #128873;
   --sans: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
   --mono: "Cascadia Code", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
@@ -67,6 +68,10 @@ h1 { margin: 0; font-size: 26px; font-weight: 600; line-height: 1.25; letter-spa
 .contract-switch button { border: 0; background: transparent; color: var(--muted); padding: 6px 13px; font-size: 12px; border-radius: 4px; font-weight: 600; }
 .contract-switch button[aria-pressed="true"] { color: var(--accent); background: var(--surface); }
 .contract-switch button:hover { color: var(--ink); }
+.seed-field { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); margin-right: auto; }
+.seed-field input { width: 104px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--ink); font: 12px var(--mono); font-variant-numeric: tabular-nums; }
+.seed-field input:focus-visible { outline-offset: 1px; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .actions { display: flex; gap: 8px; }
 .button { border: 1px solid var(--line); border-radius: 6px; padding: 9px 14px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 12px; font-weight: 600; white-space: nowrap; }
 .button.primary { background: var(--accent); color: white; border-color: var(--accent); }
@@ -110,7 +115,7 @@ summary { cursor: pointer; color: var(--ink); font-weight: 600; }
 .pane-heading .verdict { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 4px 9px; border-radius: 4px; background: var(--accent-soft); color: var(--accent); white-space: nowrap; }
 .verdict.error { color: var(--error); background: var(--error-soft); }
 .verdict.pending { color: var(--warning); background: var(--warning-soft); }
-.stage-tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; padding: 8px; background: #f8fafb; border-bottom: 1px solid var(--line); }
+.stage-tabs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1px; padding: 8px; background: #f8fafb; border-bottom: 1px solid var(--line); }
 .stage-tab { border: 0; background: transparent; color: var(--muted); padding: 8px 2px; font-size: 12px; line-height: 1.4; border-radius: 4px; white-space: nowrap; }
 .stage-tab:hover { background: #e8eef2; }
 .stage-tab[aria-selected="true"] { background: #dcece6; color: #075d4f; font-weight: 600; }
@@ -146,15 +151,52 @@ summary { cursor: pointer; color: var(--ink); font-weight: 600; }
 .cost-table td:last-child { color: var(--accent); font-weight: 600; }
 .association { font: 12px/1.8 var(--mono); color: var(--accent); margin: 12px 0 0; }
 .comparison-summary { font-size: 12px; margin: 0 0 16px; color: var(--muted); }
-.comparison-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.comparison-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.comparison-side .comparison-cost { margin: 0 0 2px; color: var(--ink); }
+.comparison-side .comparison-cost b { font-variant-numeric: tabular-nums; font-weight: 650; }
+.comparison-outputs { list-style: none; margin: 6px 0 10px; padding: 0; display: grid; gap: 5px; font-size: 12px; }
+.comparison-outputs li { display: flex; align-items: center; gap: 8px; }
+.comparison-outputs code { font: 600 12px var(--mono); min-width: 70px; }
+.comparison-outputs span:last-child { margin-left: auto; color: var(--muted); }
+.comparison-outputs .same { color: var(--accent) !important; }
+.comparison-outputs .differs { color: var(--bound) !important; }
 .comparison-side { min-width: 0; }
 .comparison-side h4 { margin: 0 0 9px; font-size: 12px; font-weight: 600; }
 .comparison-active { float: right; color: var(--accent); font-size: 12px; font-weight: 400; }
-.comparison-side pre { margin: 0; background: #f3f7f9; color: #2a4252; padding: 12px; overflow: auto; max-height: 235px; font: 12px/1.8 var(--mono); border-radius: 4px; }
+.comparison-side pre { margin: 0; background: #f3f7f9; color: #2a4252; padding: 12px; overflow: auto; max-height: 180px; font: 12px/1.8 var(--mono); border-radius: 4px; }
 .selected-contract pre { background: var(--accent-soft); }
 .comparison-side p { margin: 8px 0 0; font-size: 12px; color: var(--muted); }
 .comparison-label { display: inline-block; color: var(--accent); font-size: 12px; margin-bottom: 8px; }
 .comparison-label.different { color: var(--warning); }
+.guarantee-panel { margin: 0 0 16px; }
+.promise { margin: 0 0 14px; font-size: 12px; color: var(--muted); }
+.promise b { color: var(--ink); font-weight: 600; }
+.inputs { border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; margin: 0 0 14px; }
+.inputs h4, .guarantee-list h4 { margin: 0 0 8px; font-size: 12px; font-weight: 600; }
+.inputs ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.inputs li { display: grid; grid-template-columns: 34px 68px 70px minmax(0, 1fr); gap: 10px; align-items: baseline; font-size: 12px; font-variant-numeric: tabular-nums; }
+.inputs li code { font-weight: 600; color: var(--ink); }
+.inputs li b { font: 600 12px var(--mono); color: var(--accent); }
+.input-meaning { color: var(--muted); }
+.inputs p { margin: 8px 0 0; font-size: 12px; color: var(--muted); }
+.guarantee-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.guarantee { border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 6px; padding: 12px 14px; font-size: 12px; }
+.guarantee-bound-preserving { border-left-color: var(--bound); }
+.guarantee-relaxed { border-left-color: var(--warning); }
+.guarantee-head { display: flex; align-items: center; gap: 10px; }
+.guarantee-head code { font: 600 13px var(--mono); }
+.level { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; background: var(--accent-soft); color: var(--accent); }
+.level-bound-preserving { background: var(--bound-soft); color: var(--bound); }
+.level-relaxed { background: var(--warning-soft); color: var(--warning); }
+.guarantee-meaning { margin: 6px 0 0; color: var(--muted); }
+.reasons { margin: 8px 0 0; padding-left: 18px; color: var(--ink); }
+.reasons li { margin: 2px 0; font-family: var(--mono); font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
+.run-check { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; color: var(--muted); }
+.run-check .icon { width: 14px; height: 14px; }
+.run-check.same { color: var(--accent); }
+.run-check.differs { color: var(--bound); }
+.run-check.violation { color: var(--error); font-weight: 600; }
+.compiler-output.secondary-output { max-height: 220px; min-height: 0; }
 .observation { display: flex; align-items: flex-start; gap: 13px; padding: 21px 0 19px; margin-top: 5px; }
 .observation-icon { color: var(--accent); margin-top: 1px; width: 18px; height: 18px; }
 .observation h2 { margin: 0 0 5px; font-size: 12px; font-weight: 600; }
@@ -184,6 +226,7 @@ summary { cursor: pointer; color: var(--ink); font-weight: 600; }
   .app-layout { grid-template-columns: 184px minmax(0, 1fr); }
   .workspace { padding: 26px 24px 16px; }
   .language-label, .contract-switch legend { display: none; }
+  .comparison-grid { grid-template-columns: 1fr; }
   .pane-heading > div:first-child { gap: 8px; }
   #source-file { max-width: 94px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .observation > a { display: none; }
@@ -217,7 +260,11 @@ summary { cursor: pointer; color: var(--ink); font-weight: 600; }
   .controlbar { align-items: flex-start; flex-wrap: wrap; gap: 12px; }
   .actions { margin-left: auto; }
   .button { font-size: 12px; padding: 8px 10px; gap: 6px; }
-  .contract-switch button { padding: 5px 11px; font-size: 12px; }
+  .contract-switch button { padding: 5px 9px; font-size: 12px; }
+  .stage-tabs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .seed-field { margin-right: 0; }
+  .inputs li { grid-template-columns: 34px 60px minmax(0, 1fr); }
+  .input-meaning { grid-column: 1 / -1; }
   .contract-note { line-height: 1.6; margin-bottom: 16px; }
   .workpanes { grid-template-columns: 1fr; gap: 18px; }
   .editor-shell { height: 292px; }

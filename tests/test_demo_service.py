@@ -44,17 +44,66 @@ class CompilerAdapterTests(unittest.TestCase):
                 self.assertTrue(any(error["phase"] == phase for error in result["diagnostics"]))
 
     def test_contracts_have_distinct_costs(self):
-        source = "matrix A[100,2]; matrix B[2,100]; matrix C[100,2]; matrix R=A*B*C; print(R);"
-        strict, algebraic = [demo.compile_source(source, mode) for mode in ("strict", "algebraic")]
+        # Real-valued products round, so only the bounded and algebraic
+        # contracts may reorder this chain.
+        source = ("matrix A[100,2]=input(real(1)); matrix B[2,100]=input(real(1)); "
+                  "matrix C[100,2]=input(real(1)); matrix R=A*B*C; print(R);")
+        strict, bounded, algebraic = [demo.compile_source(source, mode) for mode in demo.CONTRACTS]
         self.assertEqual(strict["metrics"]["after"], 69800)
+        self.assertEqual(bounded["metrics"]["after"], 1396)
         self.assertEqual(algebraic["metrics"]["after"], 1396)
-        self.assertEqual(strict["metrics"]["instructionsAfter"], algebraic["metrics"]["instructionsAfter"])
+        self.assertEqual(strict["guarantees"]["outputs"][0]["level"], "bit-identical")
+        self.assertEqual(bounded["guarantees"]["outputs"][0]["level"], "bound-preserving")
+
+    def test_strict_reorders_a_chain_it_proves_exact(self):
+        source = ("matrix A[40,2]=input(int8); matrix B[2,40]=input(int8); "
+                  "matrix C[40,2]=input(int8); matrix R=A*B*C; print(R);")
+        result = demo.compile_source(source, "strict", 7)
+        self.assertEqual((result["metrics"]["before"], result["metrics"]["after"]), (11120, 556))
+        self.assertEqual(result["seed"], 7)
+        self.assertEqual([item["domain"] for item in result["inputs"]], ["int8"] * 3)
+        self.assertEqual(result["inputs"][0]["rows"], 40)
+        output = result["guarantees"]["outputs"][0]
+        self.assertEqual((output["label"], output["level"], output["identical"]), ("R", "bit-identical", True))
+        self.assertIn("exact", output["reasons"][0])
+        self.assertTrue(result["comparison"]["identical"])
+
+    def test_every_certificate_is_checked_against_execution(self):
+        source = ("matrix A[24,2]=input(int16); matrix B[2,24]=input(int16); matrix C[24,2]=input(int16); "
+                  "matrix X[24,2]=input(real(1)); matrix R=A*B*C; matrix S=X*B*C; print(R); print(S);")
+        for mode in demo.CONTRACTS:
+            for seed in (1, 2, 3):
+                with self.subTest(mode=mode, seed=seed):
+                    result = demo.compile_source(source, mode, seed)
+                    outputs = result["guarantees"]["outputs"]
+                    self.assertEqual([item["label"] for item in outputs], ["R", "S"])
+                    for item in outputs:
+                        self.assertIsNotNone(item["identical"])
+                        if item["level"] == "bit-identical":
+                            self.assertTrue(item["identical"])
+                    self.assertEqual(outputs[0]["level"], "bit-identical")
+                    self.assertEqual(outputs[1]["level"], "bit-identical" if mode == "strict" else "bound-preserving")
+
+    def test_unbounded_reals_are_reordered_only_as_relaxed(self):
+        source = ("matrix A[40,2]=input(real); matrix B[2,40]=input(real); "
+                  "matrix C[40,2]=input(real); matrix R=A*B*C; print(R);")
+        results = {mode: demo.compile_source(source, mode) for mode in demo.CONTRACTS}
+        self.assertEqual([results[mode]["metrics"]["after"] for mode in demo.CONTRACTS], [11120, 11120, 556])
+        self.assertEqual([results[mode]["guarantees"]["outputs"][0]["level"] for mode in demo.CONTRACTS],
+                         ["bit-identical", "bit-identical", "relaxed"])
+
+    def test_seed_validation(self):
+        for seed in (0, -1, 2**31, 1.5, "3", True):
+            with self.subTest(seed=seed), self.assertRaises(demo.DemoError):
+                demo.compile_source("scalar x=1; print(x);", "strict", seed)
 
     def test_signed_zero_comparison_is_exact(self):
         source = "scalar x=-2; scalar y=x*0; print(y);"
-        strict, algebraic = [demo.compile_source(source, mode) for mode in ("strict", "algebraic")]
+        strict, bounded, algebraic = [demo.compile_source(source, mode) for mode in demo.CONTRACTS]
         self.assertTrue(strict["comparison"]["identical"])
+        self.assertFalse(bounded["comparison"]["identical"])
         self.assertFalse(algebraic["comparison"]["identical"])
+        self.assertEqual(bounded["guarantees"]["outputs"][0]["level"], "bound-preserving")
         self.assertIn("-0x0p+0", strict["comparison"]["optimized"])
         self.assertIn("0x0p+0", algebraic["comparison"]["optimized"])
 
@@ -99,11 +148,12 @@ class CompilerAdapterTests(unittest.TestCase):
     def test_recorded_examples_replay(self):
         text = (ROOT / "demo/workspace-data.js").read_text(encoding="utf-8")
         data = json.loads(text.split("window.MATRIXLANG_WORKSPACE = ", 1)[1].rstrip(";\n"))
-        self.assertEqual(len(data["examples"]), 5)
+        self.assertEqual(len(data["examples"]), 8)
         for example in data["examples"]:
+            self.assertEqual(sorted(example["captures"]), sorted(demo.CONTRACTS))
             for mode, capture in example["captures"].items():
                 with self.subTest(example=example["id"], mode=mode):
-                    self.assertEqual(capture, demo.compile_source(example["source"], mode))
+                    self.assertEqual(capture, demo.compile_source(example["source"], mode, data["seed"]))
 
 
 class HttpBoundaryTests(unittest.TestCase):
@@ -131,6 +181,7 @@ class HttpBoundaryTests(unittest.TestCase):
         status, health = self.request("GET", "/api/health")
         self.assertEqual(status, 200)
         self.assertTrue(health["available"])
+        self.assertEqual(health["contracts"], ["strict", "bounded", "algebraic"])
         self.assertIn(b"Compiler workspace", self.request("GET", "/")[1])
 
     def test_compilation_request(self):
@@ -138,6 +189,9 @@ class HttpBoundaryTests(unittest.TestCase):
         self.assertEqual(status, 200)
         self.assertEqual(result["status"], "accepted")
         self.assertIn("7", result["stages"][-1]["text"])
+        status, result = self.request("POST", "/api/compile", json.dumps({"source": "scalar x=7; print(x);", "mode": "bounded", "seed": 9}), {"Content-Type": "application/json"})
+        self.assertEqual((status, result["mode"], result["seed"]), (200, "bounded", 9))
+        self.assertEqual(self.request("POST", "/api/compile", json.dumps({"source": "scalar x=7;", "seed": 0}), {"Content-Type": "application/json"})[0], 400)
 
     def test_invalid_json_type_and_content_type(self):
         for body, headers, expected in [("{", {"Content-Type": "application/json"}, 400), ("[]", {"Content-Type": "application/json"}, 400), ("{}", {}, 415)]:
