@@ -37,7 +37,7 @@ omission.
 ### Keywords
 
 ```
-matrix   scalar   print   transpose   identity   zeros   ones
+matrix   scalar   print   transpose   identity   zeros   ones   input
 ```
 
 All are reserved.
@@ -127,6 +127,9 @@ expression     -> expression '+' expression
                 | 'identity'  '(' expression ')'
                 | 'zeros'     '(' expression ',' expression ')'
                 | 'ones'      '(' expression ',' expression ')'
+                | 'input' '(' IDENT ')'                                   bool ... int32, real
+                | 'input' '(' IDENT '(' expression ')' ')'                real(B)
+                | 'input' '(' IDENT '(' expression ',' expression ')' ')' int(lo,hi), real(lo,hi)
                 | '(' expression ')'
                 | matrix_literal
                 | NUMBER
@@ -249,6 +252,11 @@ naming both operands, the rule, and what was actually found.
 | `row N of this matrix literal has X entries, expected Y` | ragged literal |
 | `... must be a constant known at compile time` | a dimension from a variable |
 | `... must be a whole number` / `must be at least 1` | a bad dimension |
+| `unknown value domain 'd'` | `input(d)` with a domain name the language does not define |
+| `int(lo, hi) needs lo <= hi` | inverted domain bounds |
+| `input matrix 'A' needs a declared shape` | `matrix A = input(...)` without `[r,c]` |
+| `input(...) may only initialise a declaration` | `input` used inside an expression |
+| `input 'A' entry (i,j) = v is outside its declared domain d` | run time: a supplied value violates its domain (exit status 1, before execution) |
 
 ### Warnings — program still accepted
 
@@ -292,12 +300,42 @@ The machine performs **no dimension checking**. Every operation it executes was
 proved shape-correct before the code was generated; if a shape error could
 reach the VM, the compiler would be broken.
 
-## 7. Numerical optimizer contracts
+## 7. Inputs and value domains
 
-Strict mode is the default and retains matrix-product association. It disables
-real-algebra identity/zero rewrites. `--fp-algebraic` permits those rewrites and
-chain reordering, with possible changes in rounding, signed zero and non-finite
-propagation. `--exact-output` prints hexadecimal values for output comparisons.
+The grammar accepts `input(...)` as an expression; the semantic pass allows it
+only as the whole initialiser of a declaration, resolves the domain name, and
+requires a matrix input to declare its shape. The compiler never sees input values,
+only their domain:
+
+| Domain | Values |
+| --- | --- |
+| `bool` | 0 or 1 |
+| `uint8`, `int8`, `uint16`, `int16`, `int32` | integers of that range |
+| `int(lo,hi)` | integers in [lo, hi], with \|lo\|, \|hi\| <= 2^53 |
+| `real` | any finite binary64 value |
+| `real(B)` | finite values in [-B, B] |
+| `real(lo,hi)` | finite values in [lo, hi] |
+
+Bounds are constant-folded like dimensions. Values are supplied with
+`--input NAME=FILE` (numbers in row-major order; commas, braces, brackets and
+semicolons separate, so a matrix literal is a valid file; hexadecimal floats are
+accepted) or drawn with `--random-inputs SEED` (one reproducible stream per
+input). Before execution every input is checked: finite, integral for integer
+domains, within bounds. Integer and non-negative domains store `-0` as `+0`.
+`--symbols` lists the declared inputs after the symbol table.
+
+## 8. Numerical optimizer contracts
+
+`--fp-strict` (the default) applies a value-changing rewrite only when facts
+derived from the input domains prove it bit-identical. `--fp-bounded` also
+applies rewrites that keep the source order's standard-model worst-case error
+bound and its NaN and infinity behaviour. `--fp-algebraic` applies any rewrite
+valid over the reals, with possible changes in rounding, signed zero and
+non-finite propagation. `--certificate` prints each output's guarantee:
+bit-identical, bound-preserving or relaxed. `--no-proofs` disables the facts and
+admits no value-changing rewrite under strict. `--exact-output` prints
+hexadecimal values for output comparisons. [design.md](design.md#numerical-contracts)
+explains how rewrites are proved.
 Tests target printed values in a fixed floating-point environment and do not
 inspect exception flags, NaN payloads or allocation failures. Detailed pass rules
 and the conventional arithmetic objective are in [phase3-optimization.md](phase3-optimization.md).

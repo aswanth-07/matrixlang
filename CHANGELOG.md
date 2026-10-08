@@ -1,5 +1,26 @@
 # Changelog
 
+## Numerical contracts and the contracts paper
+
+- Added run-time inputs with declared value domains (`input(int8)`,
+  `input(real(1))`, ...), loaded from files or seeded draws and checked before
+  execution.
+- Added the grid-magnitude fact analysis, three numerical contracts
+  (`--fp-strict`, `--fp-bounded`, `--fp-algebraic`), segmented chain ordering
+  and per-output guarantee certificates (`--certificate`); `--no-proofs`
+  reproduces the earlier strict optimizer.
+- Fixed `2 * identity(n)` being folded to a scalar under algebraic rewriting.
+- Fixed a certificate that could claim bit-identical for a result that relied
+  on a weaker rewrite's facts; rewrites now inherit the weakest guarantee of
+  the definitions their proof reads.
+- Added the contracts study (`make contracts`): recovery, soundness, threshold
+  tightness, GCC kernels, mutation adequacy and a preregistered accuracy study,
+  with every paper number generated from raw observations.
+- Replaced the manuscript with the contracts paper; the teaching-compiler paper
+  is archived under `paper/archive/`.
+- The workspace offers three contracts, an input seed, a Guarantees stage and an
+  Evaluation page with an exactness-threshold explorer.
+
 ## Compiler workspace
 
 - Added an editable source/results workspace with all compiler stages, five examples, diagnostic line links and a presentation view.

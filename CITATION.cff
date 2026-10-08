@@ -28,7 +28,7 @@ keywords:
   - code optimization
 preferred-citation:
   type: report
-  title: "MatrixLang: Connecting Shape, Cost, and Numerical Contracts in a Teaching Compiler"
+  title: "Exact, Bounded, or Relaxed: Proving Which Floating-Point Guarantee a Compiler Rewrite Keeps"
   authors:
     - family-names: "Aswanth Raj"
       given-names: "A"

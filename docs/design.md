@@ -130,7 +130,63 @@ the variable and then another at every operator above it.
 
 ---
 
+## Numerical contracts
+
+A floating-point rewrite keeps one of three guarantees: **bit-identical**
+(every output equals the unoptimized program's, bit for bit, for every input in
+the declared domains), **bound-preserving** (outputs stay within the source
+order's standard-model worst-case error bound, and NaN and infinity occur exactly
+where they did), or **relaxed** (an identity over the reals only). A contract
+names the weakest guarantee it admits: strict, bounded, algebraic.
+
+**Facts** (`src/ir/facts.c`). Every value carries a grid `g` (every entry is a
+multiple of 2^g, g >= -1074), a magnitude bound, and whether it is finite,
+non-negative and free of `-0`. Integer domains give g = 0; bounded reals give
+g = -1074 and their bound; unbounded reals give `DBL_MAX`. Transfer functions
+round bounds upward. A matrix-product entry is never `-0`, because the VM's
+accumulator starts at `+0` and a running sum from `+0` never becomes `-0`.
+
+**Exactness.** A value that is a multiple of 2^g with magnitude at most
+2^(g+53) is representable, so arithmetic producing it does not round. A chain is
+exact under every bracketing when every contiguous sub-chain's bound (the
+product of operand magnitudes and inner dimensions) fits above its grid. Every
+sub-chain must be checked: a zero operand makes the whole chain's bound 0 while
+a sub-product can overflow, and Inf * 0 = NaN.
+
+**Bound invariance.** Every bracketing of a chain contracts each inner dimension
+exactly once, so the standard componentwise bound
+(prod over inner dimensions of (1 + gamma_p) - 1) |A1|...|Ak| is the same for
+every bracketing. The bounded contract therefore needs only a range condition:
+no intermediate of any bracketing can overflow.
+
+**Segmented chain ordering** (`src/ir/chain.c`). After any source-order prefix
+product, a segment may use its cheapest bracketing if its level is admitted.
+Ties prefer the stronger guarantee. Only segment roots carry a guarantee.
+
+**Side conditions** (`src/ir/optimize.c`). `x * 1 = x` for scalars always holds.
+`A * I = A` is bit-identical when `A` is finite and free of `-0`, bound-preserving
+when finite. `x + 0 = x` is bit-identical when `x` is free of `-0`. `A * 0 = 0`
+for products needs the other operand finite. `0 * A` for scalings needs both
+factors non-negative and finite to be bit-identical.
+
+**Certificates.** Each instruction records the weakest guarantee of the rewrites
+applied to it; an output's certificate is the weakest level in its dependency
+cone. A rewrite also inherits the weakest level in the cone of the operands its
+proof read (see the bug below).
+
+---
+
 ## Bugs worth remembering
+
+**A certificate claimed bit-identical for a bound-preserving result.** In
+`R = 0 * (1 * transpose(0 * N))` with `N = -A`, the bounded contract rewrote the
+inner `0 * N`, which may be `-0`, to `+0`. The outer `0 * T` was then provably
+`+0`, a bit-identical rewrite, but only because of the inner one. The outer
+rewrite removed every use of the inner product, dead-code elimination removed
+the inner instruction, and its weaker label went with it. The soundness
+experiment found it (24 outputs of four generated programs). A rewrite now
+inherits the weakest guarantee in its operands' dependency cone;
+`examples/contracts/inherited_guarantee.ml` is the regression.
 
 **The optimizer's log read the instruction after rewriting it.**
 `rewrite_to_copy()` clears `a2` and changes `op`, so two log messages printed
