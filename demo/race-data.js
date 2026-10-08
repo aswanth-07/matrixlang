@@ -32,14 +32,14 @@ window.MATRIXLANG_RACES = {
   {
    "title": "Zero has a sign",
    "left": {
-    "code": "0.0 * 1.0",
-    "repr": "0.0",
-    "bits": "0000000000000000"
-   },
-   "right": {
-    "code": "0.0 * -1.0",
+    "code": "(-1.0) * 0.0",
     "repr": "-0.0",
     "bits": "8000000000000000"
+   },
+   "right": {
+    "code": "0.0  # x * 0 rewritten to 0",
+    "repr": "0.0",
+    "bits": "0000000000000000"
    }
   },
   {

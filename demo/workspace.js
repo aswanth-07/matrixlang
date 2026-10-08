@@ -24,9 +24,9 @@
     "bound-preserving": "Within the source order's worst-case error bound; the bits may differ.",
     "relaxed": "Valid over the reals only; no floating-point guarantee is kept.",
   };
-  const stageNames = [["tokens", "Tokens"], ["ast", "Syntax tree"], ["symbols", "Symbols"],
-    ["check", "Shape check"], ["tac", "TAC"], ["optimize", "Optimization"], ["guarantees", "Guarantees"],
-    ["target", "VM code"], ["execute", "Execution"]];
+  const stageNames = [["tokens", "Tokens"], ["ast", "AST"], ["symbols", "Symbols"],
+    ["check", "Shapes"], ["tac", "TAC"], ["optimize", "Optimize"], ["guarantees", "Guarantees"],
+    ["target", "VM code"], ["execute", "Run"]];
   const recordedSeed = data.seed || 1;
   let example = examples[0], mode = "strict", stage = "check", live = false, busy = false;
   let results = {}, origin = "recorded", revision = 0, compiledSource = "", compiledSeed = recordedSeed, comparing = false;
@@ -214,7 +214,7 @@
         <dt>unoptimized</dt><dd>${Bits.strip(pa, null, {legend: false, size: "md"})}<span class="bit-value">${escape(Bits.describe(pa))}</span></dd>
         <dt>${escape(contractNames[result.mode].toLowerCase())}</dt><dd>${Bits.strip(pb, pa, {size: "md"})}<span class="bit-value">${escape(Bits.describe(pb))}</span></dd>
       </dl>
-      <p class="bits-summary">Entry (${row + 1},${col + 1}) of <code>${escape(a.label)}</code>: <b>${Bits.differing(pa, pb)} of 64 bits differ</b>. Across the output, <b>${number(differ)} of ${number(a.values.length)}</b> entries differ${level ? `; certified <b>${escape(level.level)}</b>` : ""}.</p>`;
+      <p class="bits-summary">Entry (${row + 1},${col + 1}) of <code>${escape(a.label)}</code>: <b>${Bits.differing(pa, pb)} of 64 bits differ</b>, ${escape(Bits.ulpText(pa, pb))}; exponent field ${escape(Bits.exponentOf(pb))}. Across the output, <b>${number(differ)} of ${number(a.values.length)}</b> entries differ${level ? `; certified <b>${escape(level.level)}</b>` : ""}.</p>`;
   }
 
   function renderComparison() {
@@ -254,8 +254,9 @@
   }
 
   function statusBar(result, pending) {
+    $("status-file").textContent = example.file.split("/").pop();
     $("status-contract").textContent = `contract ${mode}`;
-    $("status-contract").className = `status-item lvl-${mode === "strict" ? "bit-identical" : mode === "bounded" ? "bound-preserving" : "relaxed"}`;
+    $("status-contract").className = `status-item status-ws lvl-${mode === "strict" ? "bit-identical" : mode === "bounded" ? "bound-preserving" : "relaxed"}`;
     $("status-seed").textContent = `seed ${number(compiledSeed)}`;
     const m = result && result.metrics;
     $("status-cost").textContent = !pending && m && m.before != null ? `${number(m.before)} → ${number(m.after)} modeled operations` : "cost pending";
@@ -268,7 +269,7 @@
     contracts.forEach((item) => $(item).setAttribute("aria-pressed", String(mode === item)));
     $("contract-note").textContent = contractNotes[mode];
     $("result-origin").textContent = origin === "live" ? `Local C compiler · ${contractNames[mode]}` : origin === "browser" ? "Browser scanner / parser only" : `Recorded C compiler output · ${contractNames[mode]}`;
-    $("source-note").textContent = dirty ? "Source changed. Compile to update the results." : "Edit the source, then compile to update every stage.";
+    $("source-note").textContent = dirty ? "Changed: compile to update" : "";
     const pending = dirty || !result;
     $("verdict").textContent = pending ? "Needs compilation" : result.status === "accepted" ? "Accepted" : result.status === "parsed" ? "Syntax accepted" : "Rejected";
     $("verdict").className = "verdict" + (pending || result.status === "parsed" ? " pending" : result.status !== "accepted" ? " error" : "");

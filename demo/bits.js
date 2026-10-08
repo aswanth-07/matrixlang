@@ -76,10 +76,27 @@
     const f = fields(pattern);
     const label = `binary64 ${describe(pattern)}: sign ${f.sign}, exponent ${f.exponent}, fraction ${f.fraction}` +
       (c !== null ? `; ${differ} of 64 bits differ from the reference` : "");
-    const words = o.size === "md" ? ["s", "exp 11", "fraction 52"] : ["sign", "exponent · 11", "fraction · 52"];
+    /* Brackets sized to their cell groups in CSS (var(--cell)); the sign's
+     * label sits one row lower, so no label overlaps another at any size. */
     const legend = o.legend === false ? "" :
-      `<span class="bit-legend"><span class="f-sign">${words[0]}</span><span class="f-exp">${words[1]}</span><span class="f-frac">${words[2]}</span></span>`;
+      `<span class="bit-legend" aria-hidden="true"><i class="br f-sign"></i><i class="br f-exp"></i><i class="br f-frac"></i>` +
+      `<b class="lb f-exp">exponent 11</b><b class="lb f-frac">fraction 52</b><b class="lb lb-sign f-sign">sign 1</b></span>`;
     return `<span class="bits${o.size ? " bits-" + o.size : ""}" role="img" aria-label="${label}"><span class="bit-row">${html}</span>${legend}</span>`;
+  }
+
+  /* Units in the last place between two finite values: the count of binary64
+   * values from one to the other, from their bit patterns. */
+  function ulps(a, b) {
+    const order = (p) => (p >> 63n) ? -(p & ((1n << 63n) - 1n)) : p;
+    const fin = (p) => ((p >> 52n) & 0x7ffn) !== 0x7ffn;
+    if (!fin(a) || !fin(b)) return null;
+    const d = order(a) - order(b);
+    return d < 0n ? -d : d;
+  }
+
+  function exponentOf(pattern) {
+    const e = Number((pattern >> 52n) & 0x7ffn);
+    return e === 0 ? "subnormal or zero" : e === 0x7ff ? "all ones: infinity or NaN" : `${e} − 1023 = ${e - 1023}`;
   }
 
   function differing(a, b) {
@@ -104,5 +121,12 @@
     return blocks;
   }
 
-  root.Bits = {fromHex, fromPattern, toNumber, describe, strip, differing, parseOutputs};
+  function ulpText(a, b) {
+    const u = ulps(a, b);
+    if (u === null) return "not finite";
+    if (u === 0n) return a === b ? "identical" : "equal value, different sign of zero";
+    return `${u.toLocaleString("en-US")} ulp${u === 1n ? "" : "s"} apart`;
+  }
+
+  root.Bits = {fromHex, fromPattern, toNumber, describe, strip, differing, parseOutputs, ulps, ulpText, exponentOf};
 }(typeof globalThis !== "undefined" ? globalThis : this));

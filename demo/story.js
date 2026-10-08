@@ -10,7 +10,13 @@
   function show(name, push = true) {
     if (!views.includes(name)) return;
     view = name;
+    document.body.dataset.view = name;
     views.forEach((v) => { $(`view-${v}`).hidden = v !== name; });
+    const rec = window.MATRIXLANG_RACES && MATRIXLANG_RACES.races && MATRIXLANG_RACES.races[0] && MATRIXLANG_RACES.races[0].runs["1"];
+    const when = rec && rec.machine ? `recorded ${rec.machine.measured}` : "recorded";
+    $("status-other").textContent = name === "opener"
+      ? `Opener · Python ${(window.MATRIXLANG_RACES || {}).python || ""} · four comparisons, evaluated by tools/build-race.py`
+      : `Results · five kernels · one thread for every contestant · ${when} on ${rec && rec.machine ? rec.machine.cpu : "this laptop"}`;
     document.querySelectorAll("[data-view]").forEach((b) => {
       if (b.dataset.view === name) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
     });
@@ -25,13 +31,14 @@
     const notes = [
       "The same three numbers, grouped differently: the last bit of the fraction moves.",
       "Adding 0.1 ten times, left to right, misses 1.0; a correctly rounded sum lands on it.",
-      "IEEE 754 has two zeros. A rewrite x * 0 = 0 silently flips the sign bit.",
+      "IEEE 754 has two zeros. The rewrite x * 0 → 0 turns (−1.0) * 0.0, which is −0.0, into +0.0: the sign bit flips.",
       "Dividing before multiplying stays finite; multiplying first overflows to infinity.",
     ];
     $("opener-list").innerHTML = races.opener.map((f, i) => {
       const a = Bits.fromPattern(f.left.bits), b = Bits.fromPattern(f.right.bits);
       const same = a === b;
-      return `<li class="fact"><div><h2>${escape(f.title)}</h2><p class="fact-note">${escape(notes[i] || "")}</p></div>
+      const apart = same ? "identical" : Bits.ulpText(a, b);
+      return `<li class="fact"><div><h2>${escape(f.title)}</h2><p class="fact-note">${escape(notes[i] || "")}</p><p class="fact-ulp">${escape(Bits.differing(a, b))} of 64 bits differ · ${escape(apart)}</p></div>
         <div class="fact-rows">
           <div class="fact-row"><code>${escape(f.left.code)}</code><span class="bit-value">${escape(f.left.repr)}</span>${Bits.strip(a, null, {legend: false})}</div>
           <div class="fact-row"><code>${escape(f.right.code)}</code><span class="bit-value${same ? "" : " changed"}">${escape(f.right.repr)}</span>${Bits.strip(b, a)}</div>

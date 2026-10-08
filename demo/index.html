@@ -83,7 +83,7 @@
         <div class="opener">
           <div class="opener-head">
             <h1 id="opener-title">Python disagrees with itself</h1>
-            <p>Each pair below is the same arithmetic in a different order, evaluated by <span id="opener-python">Python</span> on this machine. Every result is drawn as its 64 bits; the bits that differ are drawn white.</p>
+            <p>Each pair below computes the same value two ways, evaluated by <span id="opener-python">Python</span> on this machine: in a different order, or after a rewrite a compiler would like to make. Every result is drawn as its 64 bits; the bits that differ are drawn white.</p>
           </div>
           <ol class="opener-list" id="opener-list"></ol>
           <div class="opener-close">
@@ -125,7 +125,7 @@
             <label class="seed-field" for="seed"><span>Seed</span><input id="seed" type="number" inputmode="numeric" min="1" max="2147483647" step="1" value="1" aria-describedby="seed-note"></label>
             <span id="seed-note" class="visually-hidden">Seeds the values drawn for every input declaration.</span>
             <span class="toolbar-gap"></span>
-            <button type="button" id="compare" class="button secondary"><svg class="icon"><use href="#i-compare"/></svg>Compare contracts</button>
+            <button type="button" id="compare" class="button secondary" title="Compile under all three contracts (Ctrl Shift Enter)"><svg class="icon"><use href="#i-compare"/></svg>Compare contracts</button>
             <button type="button" id="compile" class="button primary"><svg class="icon"><use href="#i-play"/></svg><span id="compile-label">Compile &amp; run</span></button>
           </div>
           <p id="contract-note" class="contract-note">Strict applies a value-changing rewrite only when the declared input domains prove it bit-identical to the source program.</p>
@@ -146,7 +146,7 @@
               <textarea id="source" aria-label="MatrixLang source" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off" aria-describedby="source-note"></textarea>
             </div>
           </div>
-          <div class="editor-footer"><span id="cursor">Ln 1, Col 1</span><span id="source-note">Edit the source, then compile to update every stage.</span><span><kbd>Ctrl</kbd> <kbd>Enter</kbd> compile · <kbd>Ctrl</kbd> <kbd>Shift</kbd> <kbd>Enter</kbd> compare</span></div>
+          <div class="editor-footer"><span id="cursor">Ln 1, Col 1</span><span id="source-note"></span><span><kbd>Ctrl</kbd> <kbd>Enter</kbd> compile</span></div>
         </section>
 
         <section class="inspector" aria-labelledby="result-heading" aria-busy="false">
@@ -244,10 +244,13 @@
   </div>
 
   <footer class="statusbar" id="statusbar">
-    <span class="status-item" id="status-contract">strict</span>
-    <span class="status-item" id="status-seed">seed 1</span>
-    <span class="status-item" id="status-cost">—</span>
-    <span class="status-chips" id="status-chips"></span>
+    <span class="status-item status-ws" id="status-file">program.ml</span>
+    <span class="status-item status-ws" id="status-contract">strict</span>
+    <span class="status-item status-ws" id="status-seed">seed 1</span>
+    <span class="status-item status-ws" id="status-cost">—</span>
+    <span class="status-chips status-ws" id="status-chips"></span>
+    <span class="status-item status-race" id="status-race"></span>
+    <span class="status-item status-other" id="status-other"></span>
     <span class="status-gap"></span>
     <span class="status-item" id="connection-detail">Run make serve for live compilation and races.</span>
   </footer>

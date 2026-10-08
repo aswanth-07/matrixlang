@@ -43,13 +43,13 @@
     const b = c.bits;
     if (!b || !b.comparable) return {cls: "chip-differ", icon: "i-approx", text: "not comparable"};
     const level = c.guarantees && c.guarantees.levels && c.guarantees.levels[0] && c.guarantees.levels[0].level;
-    if (b.identical) return {cls: "chip-same", icon: "i-check", text: c.id === "gcc-o3" ? "reference bits" : "identical bits"};
+    if (b.identical) return {cls: "chip-same", icon: "i-check", text: c.id === "gcc-o3" ? "the reference bits" : "measured: identical bits"};
     const w = b.worst || {};
     const broke = w.value && !isFinite(patternValue(w.value)) && isFinite(patternValue(w.reference));
-    if (broke) return {cls: "chip-broken", icon: "i-cross", text: `returns ${Bits.describe(Bits.fromPattern(w.value))}${level ? " · labelled " + level : " · no warning"}`};
-    if (level === "bound-preserving") return {cls: "chip-bound", icon: "i-approx", text: "bits differ · within certified bound"};
-    if (level === "relaxed") return {cls: "chip-broken", icon: "i-approx", text: "bits differ · certified relaxed"};
-    return {cls: "chip-differ", icon: "i-neq", text: "bits differ · no guarantee"};
+    if (broke) return {cls: "chip-broken", icon: "i-cross", text: `measured: returns ${Bits.describe(Bits.fromPattern(w.value))}${level ? "" : ", no warning"}`};
+    if (level === "bound-preserving") return {cls: "chip-bound", icon: "i-approx", text: "measured: bits differ, within the bound"};
+    if (level === "relaxed") return {cls: "chip-broken", icon: "i-approx", text: "measured: bits differ"};
+    return {cls: "chip-differ", icon: "i-neq", text: "measured: bits differ, no guarantee"};
   }
 
   function laneHTML(c, scale) {
@@ -59,7 +59,7 @@
     const speed = ref ? "1× · reference" : c.speedup_vs_source != null ? `${fmtX(c.speedup_vs_source)} vs as written` : "";
     const width = c.median_ns ? scale(c.median_ns) : 0;
     const level = c.guarantees && c.guarantees.levels && c.guarantees.levels[0];
-    const proofs = c.guarantees ? `<span class="level level-${escape(level ? level.level : "bit-identical")}" title="The compiler's certificate, issued before the run">${escape(level ? "certified " + level.level : "no output")}</span>` : "";
+    const proofs = c.guarantees ? `<span class="level level-${escape(level ? level.level : "bit-identical")}" title="The compiler's certificate, issued before the run">${escape(level ? "proved: " + level.level : "no output")}</span>` : "";
     return `<li class="lane" role="option" tabindex="0" data-lane="${escape(c.id)}" data-width="${width.toFixed(2)}" data-ns="${c.median_ns || 0}" aria-selected="${c.id === selectedLane}">
       <div class="lane-top"><span class="lane-name">${escape(c.label)}</span><span class="lane-detail">${escape(c.detail)}</span>
         <span class="lane-time">${c.error ? "—" : `${t.value}<small>${t.unit}</small>`}</span></div>
@@ -127,6 +127,8 @@
     $("race-provenance").innerHTML = `<b>${live ? "Measured just now" : "Recorded " + escape(m.measured || "")}</b> on ${escape(m.cpu || "this machine")} · ${escape((m.gcc || "gcc").replace(/\s*\(.*?\)/, ""))} · ${escape(npy)} · <b>${threads} thread${threads > 1 ? "s" : ""}</b> for every contestant (OpenMP for C, OpenBLAS for NumPy) · input seed ${r.seed} · compute section only, median of repeated runs.`;
     fill(animate);
     bitsView();
+    const st = document.getElementById("status-race");
+    if (st) st.textContent = `Race · ${current.title} · ${threads} thread${threads > 1 ? "s" : ""} for every contestant · reference: GCC -O3 as written · ${live ? "measured just now" : "recorded " + (m.measured || "")}`;
   }
 
   function fill(animate) {
@@ -155,7 +157,7 @@
     const outs = c.bits.outputs || [];
     const differ = outs.reduce((s, o) => s + o.differ, 0), total = outs.reduce((s, o) => s + o.entries, 0);
     box.innerHTML = `<h3>Bit check · ${escape(c.label)}</h3>
-      <p>${n ? `The most different entry, <code>${escape(w.output)}</code>[${w.index}], against the program as written: <b>${n} of 64 bits differ</b>. ${total ? `${differ.toLocaleString("en-US")} of ${total.toLocaleString("en-US")} output entries differ.` : ""}` : `Every one of ${total.toLocaleString("en-US")} output entries carries the same 64 bits as the program as written. Entry <code>${escape(w.output)}</code>[${w.index}] shown.`} Select a lane to inspect its bits.</p>
+      <p>${n ? `The most different entry, <code>${escape(w.output)}</code>[${w.index}], against the program as written: <b>${n} of 64 bits differ</b>, ${escape(Bits.ulpText(ref, got))}. ${total ? `${differ.toLocaleString("en-US")} of ${total.toLocaleString("en-US")} output entries differ.` : ""}` : `Every one of ${total.toLocaleString("en-US")} output entries carries the same 64 bits as the program as written. Entry <code>${escape(w.output)}</code>[${w.index}] shown.`} Select a lane to inspect its bits.</p>
       <dl class="bit-pair"><dt>as written</dt><dd>${Bits.strip(ref, null, {legend: false})}<span class="bit-value">${escape(Bits.describe(ref))}</span></dd>
       <dt>${escape(c.label.replace(/^MatrixLang · /, "MatrixLang ").replace(/^NumPy\s+/, "NumPy "))}</dt><dd>${Bits.strip(got, ref)}<span class="bit-value">${escape(Bits.describe(got))}</span></dd></dl>`;
   }
