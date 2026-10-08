@@ -275,11 +275,21 @@ static int keeps_zero_product(Fact zero, Fact other, int matmul, const char *os,
 
 /* --- applying or declining a rewrite -------------------------------------- */
 
+/* The weakest guarantee in the dependency cone of the instruction being
+ * rewritten, set by pass_algebraic before it tries a rule. A rewrite's proof
+ * reads facts of its operands, and those facts may hold only because an
+ * earlier, weaker rewrite produced them: 0 * (0 * X) is proved +0 only after
+ * the inner product was rewritten to +0. When the rewrite also drops the
+ * dependency, dead-code elimination would remove the weaker instruction and
+ * its guarantee with it, so the result inherits the cone's level here. */
+static int upstream_cert = NG_BITWISE;
+
 static void record(Tac *t, int level, const char *law, const char *why)
 {
     char line[320];
 
     if (level > t->cert) t->cert = level;
+    if (upstream_cert > t->cert) t->cert = upstream_cert;
     if (use_proofs && why && !t->proof) {
         snprintf(line, sizeof line, "%s (%s)", law, why);
         t->proof = tac_intern(line);
@@ -366,6 +376,8 @@ static int fold_scalar_constants(Tac *t, char *what, size_t whatsz)
 
 static int is_zero_prop(Prop p) { return p == P_ZERO_MAT || p == P_SCALAR_ZERO; }
 
+static int upstream_level(int idx);
+
 static int pass_algebraic(void)
 {
     int i, changed = 0;
@@ -391,6 +403,7 @@ static int pass_algebraic(void)
         pb = operand_prop(t->a2);
         fa = facts_operand(i, 1);
         fb = facts_operand(i, 2);
+        upstream_cert = upstream_level(i);
 
         switch (t->op) {
         case TAC_ADD:
@@ -911,6 +924,21 @@ static void cone_walk(int idx, char *seen, Cone *c)
     cone_walk(d, seen, c);
     d = def_before(t->a2, idx);
     cone_walk(d, seen, c);
+}
+
+/* The weakest guarantee among the definitions instruction idx reads. */
+static int upstream_level(int idx)
+{
+    int n = tac_count();
+    char *seen = (char *)xcalloc((size_t)(n ? n : 1), 1);
+    Tac *t = tac_at(idx);
+    Cone c;
+
+    memset(&c, 0, sizeof c);
+    cone_walk(def_before(t->a1, idx), seen, &c);
+    cone_walk(def_before(t->a2, idx), seen, &c);
+    free(seen);
+    return c.level;
 }
 
 void optimize_guarantees(FILE *out)

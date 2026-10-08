@@ -8,8 +8,11 @@
 #   make deck      build-deck.py, deckkit.py             standard library
 #   make measure   plot_reduction.py                     matplotlib
 #   (figure)       build-architecture-figure.py          Pillow
+#   make contracts tools/contracts/accuracy.py           numpy
+#                  tools/contracts/analyze.py            matplotlib (figures)
 #
-# So a reader who only wants to reproduce the measurements needs nothing here.
+# The earlier measurements need nothing here; the contracts study needs numpy.
 
 matplotlib==3.10.9
+numpy==2.2.6
 Pillow==12.3.0

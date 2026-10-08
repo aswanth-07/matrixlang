@@ -148,7 +148,7 @@ class CompilerAdapterTests(unittest.TestCase):
     def test_recorded_examples_replay(self):
         text = (ROOT / "demo/workspace-data.js").read_text(encoding="utf-8")
         data = json.loads(text.split("window.MATRIXLANG_WORKSPACE = ", 1)[1].rstrip(";\n"))
-        self.assertEqual(len(data["examples"]), 8)
+        self.assertEqual(len(data["examples"]), 9)
         for example in data["examples"]:
             self.assertEqual(sorted(example["captures"]), sorted(demo.CONTRACTS))
             for mode, capture in example["captures"].items():

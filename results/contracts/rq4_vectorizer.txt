@@ -1,0 +1,24 @@
+== strict: -std=c11 -O3 -march=native -ffp-contract=off -fopenmp
+C:/Lenovo_data/Compiler Design/bench/licensed/kernels.c:69:24: optimized: loop vectorized using 32 byte vectors
+C:/Lenovo_data/Compiler Design/bench/licensed/kernels.c:77:24: optimized: loop vectorized using 32 byte vectors
+C:/Lenovo_data/Compiler Design/bench/licensed/kernels.c:87:28: optimized: loop vectorized using 32 byte vectors
+C:/Lenovo_data/Compiler Design/bench/licensed/kernels.c:101:32: optimized: loop vectorized using 32 byte vectors
+C:/Lenovo_data/Compiler Design/bench/licensed/kernels.c:115:28: optimized: loop vectorized using 32 byte vectors
+C:/Lenovo_data/Compiler Design/bench/licensed/kernels.c:157:44: optimized: loop vectorized using 32 byte vectors
+C:/Lenovo_data/Compiler Design/bench/licensed/kernels.c:157:44: optimized: loop vectorized using 16 byte vectors
+C:/Lenovo_data/Compiler Design/bench/licensed/kernels.c:69:24: optimized: loop vectorized using 32 byte vectors
+C:/Lenovo_data/Compiler Design/bench/licensed/kernels.c:222:27: optimized: loop vectorized using 32 byte vectors
+C:/Lenovo_data/Compiler Design/bench/licensed/kernels.c:186:32: optimized: loop vectorized using 32 byte vectors
+
+== licensed: -std=c11 -O3 -march=native -ffp-contract=off -fopenmp -fassociative-math -fno-signed-zeros -fno-trapping-math
+C:/Lenovo_data/Compiler Design/bench/licensed/kernels.c:69:24: optimized: loop vectorized using 32 byte vectors
+C:/Lenovo_data/Compiler Design/bench/licensed/kernels.c:77:24: optimized: loop vectorized using 32 byte vectors
+C:/Lenovo_data/Compiler Design/bench/licensed/kernels.c:87:28: optimized: loop vectorized using 32 byte vectors
+C:/Lenovo_data/Compiler Design/bench/licensed/kernels.c:101:32: optimized: loop vectorized using 32 byte vectors
+C:/Lenovo_data/Compiler Design/bench/licensed/kernels.c:115:28: optimized: loop vectorized using 32 byte vectors
+C:/Lenovo_data/Compiler Design/bench/licensed/kernels.c:135:24: optimized: loop vectorized using 32 byte vectors
+C:/Lenovo_data/Compiler Design/bench/licensed/kernels.c:157:44: optimized: loop vectorized using 32 byte vectors
+C:/Lenovo_data/Compiler Design/bench/licensed/kernels.c:157:44: optimized: loop vectorized using 16 byte vectors
+C:/Lenovo_data/Compiler Design/bench/licensed/kernels.c:69:24: optimized: loop vectorized using 32 byte vectors
+C:/Lenovo_data/Compiler Design/bench/licensed/kernels.c:222:27: optimized: loop vectorized using 32 byte vectors
+C:/Lenovo_data/Compiler Design/bench/licensed/kernels.c:186:32: optimized: loop vectorized using 32 byte vectors

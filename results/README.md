@@ -57,3 +57,23 @@ Known limitations include designed workload distributions, a shared frontend
 and VM between execution paths, one evaluated platform, bounded small-chain
 enumeration and no classroom study. The paper reports those limits beside the
 results. GitHub distributes the data; no persistent archival DOI is claimed.
+
+## Numerical contracts study
+
+`contracts/` holds the raw observations behind the contracts paper, written by
+`tools/contracts/*.py` (`make contracts`) and summarised by
+`tools/contracts/analyze.py` into `contracts/summary.json`, the paper's
+`paper/generated/contracts.tex` and tables, and `demo/evaluation-data.js`.
+
+| File | Unit and fields |
+| --- | --- |
+| `rq1_recovery.jsonl` | One compilation: seed, index, profile, value domain, arm (no proofs, strict, bounded, algebraic), modeled arithmetic before/after, chains reordered, rewrites per guarantee level, declined arithmetic, per-output certificate levels, wall time |
+| `rq2_soundness.jsonl` | One execution: program, input seed, arm, per-output bit equality with the unoptimized run, and the certificate level of each output |
+| `rq3_tightness.jsonl` | One witness run: chain family, domain bound m, compiler threshold m*, whether strict reorders, witness kind, and bit equality of strict and of forced reordering |
+| `rq4_bench.jsonl`, `rq4_threads.jsonl` | One kernel process: build (strict or licensed), median and quartiles of 21 repetitions in ns, result bits, distinct results; and the same per OpenMP thread count |
+| `rq4_vectorizer.txt` | GCC's report of the loops it vectorized in each build |
+| `rq5_mutation.jsonl` | One test execution: population, test, input draw, and the mutants it kills |
+| `rq6_accuracy.jsonl`, `rq6_validation.jsonl` | One real-valued chain: dimensions, costs, error of source, cost-optimal and equal-cost bracketings in units of u, bound coefficient; and the bit-for-bit validation of the VM emulation against matrixc |
+| `*_env.json` | Platform, CPU, compiler and source hashes, parameters of each run |
+
+Programs, seeds and inputs are generated; no dataset or benchmark suite is used.

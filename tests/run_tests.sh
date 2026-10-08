@@ -390,6 +390,10 @@ expect_contains "N may hold -0, and -0 + 0 = +0"
 run_case "the bounded contract applies them and labels them" 0 "$MATRIXC" --fp-bounded --certificate examples/contracts/signed_zero.ml
 expect_contains "2. bound-preserving  print(Q)"
 expect_contains "3. bound-preserving  print(V)"
+run_case "a proof that reads a weaker rewrite's facts inherits its guarantee" 0 "$MATRIXC" --fp-bounded --certificate examples/contracts/inherited_guarantee.ml
+expect_contains "1. bound-preserving  print(R)"
+run_case "strict declines the inner rewrite, so the output stays bit-identical" 0 "$MATRIXC" --certificate examples/contracts/inherited_guarantee.ml
+expect_contains "1. bit-identical     print(R)"
 
 run_case "a scaled identity is not a multiplicative unit" 0 "$MATRIXC" -q --fp-algebraic --optimize --run examples/optimize/scaled_identity.ml
 expect_contains "T = Matrix<3x3>"

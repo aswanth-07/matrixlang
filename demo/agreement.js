@@ -3,10 +3,10 @@
    demo/lexer.js and demo/parser.js against bin/matrixc over
    every program in examples/. */
 window.MATRIXLANG_AGREEMENT = {
- "programs": 44,
- "accepted": 41,
+ "programs": 45,
+ "accepted": 42,
  "rejected": 3,
- "tokens": 2067,
+ "tokens": 2119,
  "diagnostics": 10,
  "disagreements": 0,
  "compiler": "matrixc.exe"

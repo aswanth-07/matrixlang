@@ -1,0 +1,12 @@
+\begin{tabular}{lrrrc}
+\toprule
+Kernel & strict ($\mu$s) & licensed ($\mu$s) & speedup & same bits\\
+\midrule
+\texttt{dot\_i16} & 414.6 & 337.8 & 1.23$\times$ & yes\\
+\texttt{sum\_i32} & 830.9 & 337.8 & 2.46$\times$ & yes\\
+\texttt{matvec\_u8\_i16} & 2,504.4 & 1,460.3 & 1.71$\times$ & yes\\
+\texttt{gemm\_i8} & 4,095.1 & 1,259.3 & 3.25$\times$ & yes\\
+\texttt{fdot\_i8} & 91.6 & 14.0 & 6.54$\times$ & yes\\
+\texttt{dot\_real} & 412.4 & 341.5 & 1.21$\times$ & no\\
+\bottomrule
+\end{tabular}

@@ -14,6 +14,7 @@ EXAMPLES = [
     ("outputs", "Per-output guarantees", "Certify two outputs of one program at different guarantee levels.", "examples/demo/two_outputs.ml", "guarantees"),
     ("unbounded", "Unbounded reals", "Reorder only under algebraic, where no error bound is kept, and certify the output as relaxed.", "examples/demo/unbounded_chain.ml", "guarantees"),
     ("numerics", "Signed zero", "Remove a zero product only where the contract permits -0 to become +0.", "examples/demo/signed_zero.ml", "guarantees"),
+    ("inherited", "Inherited guarantee", "Keep a weaker guarantee when a later proof relies on the facts it produced.", "examples/contracts/inherited_guarantee.ml", "guarantees"),
     ("mismatch", "Shape mismatch", "Inspect a dimension error before code generation.", "examples/errors/mul_mismatch.ml", "check"),
     ("reuse", "Expression reuse", "Inspect common subexpressions and intermediate code.", "examples/optimize/cse.ml", "optimize"),
 ]

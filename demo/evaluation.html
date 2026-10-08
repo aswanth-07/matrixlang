@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#172c3b">
+  <meta name="description" content="Measured results for MatrixLang's numerical contracts: recovery, soundness, threshold tightness, licensed reassociation, mutation adequacy and accuracy.">
+  <title>MatrixLang — Evaluation</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="workspace.css">
+  <link rel="stylesheet" href="evaluation.css">
+  <script src="evaluation-data.js" defer></script>
+  <script src="evaluation.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="MatrixLang workspace">
+      <svg class="brand-mark" width="29" height="29" viewBox="0 0 32 32" aria-hidden="true"><path d="M7 3H3v26h4M25 3h4v26h-4"/><path d="M11 10h3m5 0h3m-11 12h3m5 0h3"/></svg>
+      <span>MatrixLang</span>
+    </a>
+    <nav class="primary-nav" aria-label="Main navigation">
+      <a href="./">Workspace</a>
+      <a href="evaluation.html" aria-current="page">Evaluation</a>
+      <a href="walkthrough.html#machine">Front end</a>
+      <a href="guide.html">Demo guide</a>
+    </nav>
+  </header>
+  <main class="eval-main">
+    <section class="eval-intro">
+      <h1>Evaluation</h1>
+      <p>Every number on this page is computed by <code>tools/contracts/analyze.py</code> from the raw observations in <code>results/contracts/</code>; <code>make contracts</code> repeats the measurements and <code>make contracts-analyze</code> regenerates this page's data. Modeled arithmetic is the compiler's cost model, not runtime; runtime appears only in the C kernel study.</p>
+      <p id="eval-missing" class="notice" hidden>Evaluation data is unavailable. Run make contracts-analyze and reload the page.</p>
+    </section>
+
+    <section class="eval-section" aria-labelledby="explorer-title">
+      <div class="eval-heading"><h2 id="explorer-title">Exactness threshold explorer</h2><span>Theorem 1, evaluated in the browser</span></div>
+      <p>For a chain over <code>int(0,m)</code>, every intermediate of every bracketing is exact in binary64 when each contiguous sub-chain satisfies <code>m<sup>k</sup> · n<sub>1</sub>⋯n<sub>k−1</sub> ≤ 2<sup>53</sup></code>, where the n are its inner dimensions. Strict reorders a segment only when that holds. Enter shapes and a bound to see the test the compiler applies.</p>
+      <form id="explorer" class="explorer" novalidate>
+        <label><span>Dimensions</span><input id="ex-dims" value="100, 2, 100, 2" inputmode="numeric" aria-describedby="ex-dims-note"></label>
+        <label><span>Domain bound m</span><input id="ex-m" value="35578" inputmode="numeric"></label>
+        <p id="ex-dims-note" class="field-note">Dimensions d<sub>0</sub>, …, d<sub>k</sub> of a k-operand chain: operand i is d<sub>i−1</sub> × d<sub>i</sub>.</p>
+      </form>
+      <div id="ex-result" class="explorer-result" role="status" aria-live="polite"></div>
+      <div id="ex-measured" class="explorer-measured"></div>
+    </section>
+
+    <section class="eval-section" aria-labelledby="rq1-title">
+      <div class="eval-heading"><h2 id="rq1-title">RQ1 · How much optimization does each contract recover?</h2><span id="rq1-meta"></span></div>
+      <p>Modeled arithmetic removed per value domain under each contract. <b>No proofs</b> is the previous strict optimizer, which refused every value-changing rewrite; <b>recovery</b> is the share of the algebraic saving that a contract obtains with proofs.</p>
+      <div id="rq1-chart" class="bars"></div>
+    </section>
+
+    <section class="eval-section" aria-labelledby="rq2-title">
+      <div class="eval-heading"><h2 id="rq2-title">RQ2 · Are the certificates sound?</h2><span id="rq2-meta"></span></div>
+      <p>Each output of each executed program is compared, bit for bit, with the unoptimized program on the same drawn inputs, and with the guarantee the certificate states for it.</p>
+      <div id="rq2-table" class="table-wrap"></div>
+      <p class="eval-note">This study found one defect, since fixed: a rewrite proved bit-identical from facts that held only because an earlier bound-preserving rewrite produced them, after which dead-code elimination removed the weaker rewrite and its label. Rewrites now inherit the weakest guarantee of the definitions their proof reads; the <a href="./?example=inherited">Inherited guarantee</a> example shows the case.</p>
+    </section>
+
+    <section class="eval-section" aria-labelledby="rq3-title">
+      <div class="eval-heading"><h2 id="rq3-title">RQ3 · How tight is the 53-bit threshold?</h2><span id="rq3-meta"></span></div>
+      <p>The compiler's threshold, found by binary search on its own certificates, against the closed form; then witness inputs (all-maximum, near-maximum, seeded) on which reordering changes the printed bits.</p>
+      <div id="rq3-table" class="table-wrap"></div>
+    </section>
+
+    <section class="eval-section" aria-labelledby="rq4-title">
+      <div class="eval-heading"><h2 id="rq4-title">RQ4 · What is a certificate worth to a C compiler?</h2><span id="rq4-meta"></span></div>
+      <p>The same reductions compiled by GCC with strict IEEE semantics and with reassociation licensed (<code>-fassociative-math -fno-signed-zeros -fno-trapping-math</code>). On certified integer-valued data the two builds print identical bits; on the real-valued control they do not.</p>
+      <div id="rq4-chart" class="bars"></div>
+      <div id="rq4-threads" class="table-wrap"></div>
+    </section>
+
+    <section class="eval-section" aria-labelledby="rq5-title">
+      <div class="eval-heading"><h2 id="rq5-title">RQ5 · Which tests notice a missing side condition?</h2><span id="rq5-meta"></span></div>
+      <p>Tests killed per mutant: each mutant removes one proof obligation of the strict contract. Small-integer (dyadic) programs are exact under every association, so they cannot notice a compiler that reorders without proof.</p>
+      <div id="rq5-table" class="table-wrap"></div>
+    </section>
+
+    <section class="eval-section" aria-labelledby="rq6-title">
+      <div class="eval-heading"><h2 id="rq6-title">RQ6 · Is the cheaper bracketing more accurate?</h2><span id="rq6-meta"></span></div>
+      <p>Preregistered study: real-valued chains with exact integer references, evaluated in the compiler's own summation order (validated bit for bit against matrixc). Paired two-sided sign tests with Holm correction; median error ratio with seed-cluster bootstrap 95% intervals. The equal-cost ablation pairs bracketings of identical modeled cost.</p>
+      <div id="rq6-table" class="table-wrap"></div>
+    </section>
+    <footer class="workspace-footer"><span>Intel Core Ultra 9 275HX · GCC 15.2 · Windows 11</span><a href="./">Return to workspace</a></footer>
+  </main>
+</body>
+</html>

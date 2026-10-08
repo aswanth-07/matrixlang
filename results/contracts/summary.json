@@ -1,0 +1,1169 @@
+{
+  "rq1": {
+    "domains": {
+      "bool": {
+        "algebraic": {
+          "bitwise": 1892,
+          "bounded": 119,
+          "chains": 1025,
+          "declined_flops": 0,
+          "outputs": {
+            "bit-identical": 5871,
+            "bound-preserving": 129
+          },
+          "programs": 1500,
+          "relaxed": 0,
+          "saving": 0.22821497946636882
+        },
+        "bounded": {
+          "bitwise": 1892,
+          "bounded": 119,
+          "chains": 1025,
+          "declined_flops": 0,
+          "outputs": {
+            "bit-identical": 5871,
+            "bound-preserving": 129
+          },
+          "programs": 1500,
+          "recovery": 1.0,
+          "relaxed": 0,
+          "saving": 0.22821497946636882
+        },
+        "exact_chain_share": 0.9970731707317073,
+        "noproof": {
+          "bitwise": 0,
+          "bounded": 0,
+          "chains": 0,
+          "declined_flops": 374082549,
+          "outputs": {
+            "bit-identical": 6000
+          },
+          "programs": 1500,
+          "relaxed": 0,
+          "saving": 0.003930868671181548
+        },
+        "strict": {
+          "bitwise": 1879,
+          "bounded": 0,
+          "chains": 1022,
+          "declined_flops": 1062575,
+          "outputs": {
+            "bit-identical": 6000
+          },
+          "programs": 1500,
+          "recovery": 0.9881195072151616,
+          "relaxed": 0,
+          "saving": 0.2255503737063127
+        }
+      },
+      "broad": {
+        "algebraic": {
+          "bitwise": 827,
+          "bounded": 1265,
+          "chains": 1074,
+          "declined_flops": 0,
+          "outputs": {
+            "bit-identical": 4625,
+            "bound-preserving": 1375
+          },
+          "programs": 1500,
+          "relaxed": 0,
+          "saving": 0.19814299385136602
+        },
+        "bounded": {
+          "bitwise": 827,
+          "bounded": 1265,
+          "chains": 1074,
+          "declined_flops": 0,
+          "outputs": {
+            "bit-identical": 4625,
+            "bound-preserving": 1375
+          },
+          "programs": 1500,
+          "recovery": 1.0,
+          "relaxed": 0,
+          "saving": 0.19814299385136602
+        },
+        "exact_chain_share": 0.00558659217877095,
+        "noproof": {
+          "bitwise": 0,
+          "bounded": 0,
+          "chains": 0,
+          "declined_flops": 349402384,
+          "outputs": {
+            "bit-identical": 6000
+          },
+          "programs": 1500,
+          "relaxed": 0,
+          "saving": 0.0016410365578733948
+        },
+        "strict": {
+          "bitwise": 774,
+          "bounded": 0,
+          "chains": 6,
+          "declined_flops": 348405616,
+          "outputs": {
+            "bit-identical": 6000
+          },
+          "programs": 1500,
+          "recovery": 0.28090989342548434,
+          "relaxed": 0,
+          "saving": 0.05684038043908748
+        }
+      },
+      "dyadic": {
+        "algebraic": {
+          "bitwise": 1830,
+          "bounded": 220,
+          "chains": 1022,
+          "declined_flops": 0,
+          "outputs": {
+            "bit-identical": 5770,
+            "bound-preserving": 230
+          },
+          "programs": 1500,
+          "relaxed": 0,
+          "saving": 0.2226871528247688
+        },
+        "bounded": {
+          "bitwise": 1830,
+          "bounded": 220,
+          "chains": 1022,
+          "declined_flops": 0,
+          "outputs": {
+            "bit-identical": 5770,
+            "bound-preserving": 230
+          },
+          "programs": 1500,
+          "recovery": 1.0,
+          "relaxed": 0,
+          "saving": 0.2226871528247688
+        },
+        "exact_chain_share": 0.9843444227005871,
+        "noproof": {
+          "bitwise": 0,
+          "bounded": 0,
+          "chains": 0,
+          "declined_flops": 379642326,
+          "outputs": {
+            "bit-identical": 6000
+          },
+          "programs": 1500,
+          "relaxed": 0,
+          "saving": 0.0011450191875282177
+        },
+        "strict": {
+          "bitwise": 1802,
+          "bounded": 0,
+          "chains": 1006,
+          "declined_flops": 49250717,
+          "outputs": {
+            "bit-identical": 6000
+          },
+          "programs": 1500,
+          "recovery": 0.9010324837295318,
+          "relaxed": 0,
+          "saving": 0.20076167810943096
+        }
+      },
+      "int16": {
+        "algebraic": {
+          "bitwise": 1082,
+          "bounded": 977,
+          "chains": 1038,
+          "declined_flops": 0,
+          "outputs": {
+            "bit-identical": 4948,
+            "bound-preserving": 1052
+          },
+          "programs": 1500,
+          "relaxed": 0,
+          "saving": 0.2213307286297806
+        },
+        "bounded": {
+          "bitwise": 1082,
+          "bounded": 977,
+          "chains": 1038,
+          "declined_flops": 0,
+          "outputs": {
+            "bit-identical": 4948,
+            "bound-preserving": 1052
+          },
+          "programs": 1500,
+          "recovery": 1.0,
+          "relaxed": 0,
+          "saving": 0.2213307286297806
+        },
+        "exact_chain_share": 0.430635838150289,
+        "noproof": {
+          "bitwise": 0,
+          "bounded": 0,
+          "chains": 0,
+          "declined_flops": 426643613,
+          "outputs": {
+            "bit-identical": 6000
+          },
+          "programs": 1500,
+          "relaxed": 0,
+          "saving": 0.002777306188840893
+        },
+        "strict": {
+          "bitwise": 1230,
+          "bounded": 0,
+          "chains": 447,
+          "declined_flops": 422600500,
+          "outputs": {
+            "bit-identical": 6000
+          },
+          "programs": 1500,
+          "recovery": 0.346244936580793,
+          "relaxed": 0,
+          "saving": 0.07845032208141932
+        }
+      },
+      "int32": {
+        "algebraic": {
+          "bitwise": 838,
+          "bounded": 1232,
+          "chains": 1066,
+          "declined_flops": 0,
+          "outputs": {
+            "bit-identical": 4646,
+            "bound-preserving": 1354
+          },
+          "programs": 1500,
+          "relaxed": 0,
+          "saving": 0.193765297660123
+        },
+        "bounded": {
+          "bitwise": 838,
+          "bounded": 1232,
+          "chains": 1066,
+          "declined_flops": 0,
+          "outputs": {
+            "bit-identical": 4646,
+            "bound-preserving": 1354
+          },
+          "programs": 1500,
+          "recovery": 1.0,
+          "relaxed": 0,
+          "saving": 0.193765297660123
+        },
+        "exact_chain_share": 0.006566604127579738,
+        "noproof": {
+          "bitwise": 0,
+          "bounded": 0,
+          "chains": 0,
+          "declined_flops": 329747637,
+          "outputs": {
+            "bit-identical": 6000
+          },
+          "programs": 1500,
+          "relaxed": 0,
+          "saving": 0.0026020504609842693
+        },
+        "strict": {
+          "bitwise": 781,
+          "bounded": 0,
+          "chains": 7,
+          "declined_flops": 329711645,
+          "outputs": {
+            "bit-identical": 6000
+          },
+          "programs": 1500,
+          "recovery": 0.35940314885495833,
+          "relaxed": 0,
+          "saving": 0.07130672344969352
+        }
+      },
+      "int8": {
+        "algebraic": {
+          "bitwise": 1624,
+          "bounded": 453,
+          "chains": 1032,
+          "declined_flops": 0,
+          "outputs": {
+            "bit-identical": 5526,
+            "bound-preserving": 474
+          },
+          "programs": 1500,
+          "relaxed": 0,
+          "saving": 0.18715500098832336
+        },
+        "bounded": {
+          "bitwise": 1624,
+          "bounded": 453,
+          "chains": 1032,
+          "declined_flops": 0,
+          "outputs": {
+            "bit-identical": 5526,
+            "bound-preserving": 474
+          },
+          "programs": 1500,
+          "recovery": 1.0,
+          "relaxed": 0,
+          "saving": 0.18715500098832336
+        },
+        "exact_chain_share": 0.8788759689922481,
+        "noproof": {
+          "bitwise": 0,
+          "bounded": 0,
+          "chains": 0,
+          "declined_flops": 441702568,
+          "outputs": {
+            "bit-identical": 6000
+          },
+          "programs": 1500,
+          "relaxed": 0,
+          "saving": 0.005307359116089218
+        },
+        "strict": {
+          "bitwise": 1671,
+          "bounded": 0,
+          "chains": 907,
+          "declined_flops": 123262496,
+          "outputs": {
+            "bit-identical": 6000
+          },
+          "programs": 1500,
+          "recovery": 0.8445138646297771,
+          "relaxed": 0,
+          "saving": 0.15888021392742133
+        }
+      },
+      "mixed": {
+        "algebraic": {
+          "bitwise": 991,
+          "bounded": 1060,
+          "chains": 1056,
+          "declined_flops": 0,
+          "outputs": {
+            "bit-identical": 4847,
+            "bound-preserving": 1153
+          },
+          "programs": 1500,
+          "relaxed": 0,
+          "saving": 0.15976481176458512
+        },
+        "bounded": {
+          "bitwise": 991,
+          "bounded": 1060,
+          "chains": 1056,
+          "declined_flops": 0,
+          "outputs": {
+            "bit-identical": 4847,
+            "bound-preserving": 1153
+          },
+          "programs": 1500,
+          "recovery": 1.0,
+          "relaxed": 0,
+          "saving": 0.15976481176458512
+        },
+        "exact_chain_share": 0.3191287878787879,
+        "noproof": {
+          "bitwise": 0,
+          "bounded": 0,
+          "chains": 0,
+          "declined_flops": 375635826,
+          "outputs": {
+            "bit-identical": 6000
+          },
+          "programs": 1500,
+          "relaxed": 0,
+          "saving": 0.0037657475588646484
+        },
+        "strict": {
+          "bitwise": 1072,
+          "bounded": 0,
+          "chains": 337,
+          "declined_flops": 314238222,
+          "outputs": {
+            "bit-identical": 6000
+          },
+          "programs": 1500,
+          "recovery": 0.37127234561251854,
+          "relaxed": 0,
+          "saving": 0.06168388603988038
+        }
+      },
+      "real": {
+        "algebraic": {
+          "bitwise": 564,
+          "bounded": 1454,
+          "chains": 1037,
+          "declined_flops": 0,
+          "outputs": {
+            "bit-identical": 4504,
+            "bound-preserving": 1496
+          },
+          "programs": 1500,
+          "relaxed": 0,
+          "saving": 0.25098256807375247
+        },
+        "bounded": {
+          "bitwise": 564,
+          "bounded": 1454,
+          "chains": 1037,
+          "declined_flops": 0,
+          "outputs": {
+            "bit-identical": 4504,
+            "bound-preserving": 1496
+          },
+          "programs": 1500,
+          "recovery": 1.0,
+          "relaxed": 0,
+          "saving": 0.25098256807375247
+        },
+        "exact_chain_share": 0.0028929604628736743,
+        "noproof": {
+          "bitwise": 0,
+          "bounded": 0,
+          "chains": 0,
+          "declined_flops": 398782238,
+          "outputs": {
+            "bit-identical": 6000
+          },
+          "programs": 1500,
+          "relaxed": 0,
+          "saving": 0.013863222324335761
+        },
+        "strict": {
+          "bitwise": 559,
+          "bounded": 0,
+          "chains": 3,
+          "declined_flops": 398623999,
+          "outputs": {
+            "bit-identical": 6000
+          },
+          "programs": 1500,
+          "recovery": 0.2598985528619644,
+          "relaxed": 0,
+          "saving": 0.07549019714018496
+        }
+      },
+      "realx": {
+        "algebraic": {
+          "bitwise": 504,
+          "bounded": 389,
+          "chains": 1066,
+          "declined_flops": 0,
+          "outputs": {
+            "bit-identical": 4388,
+            "bound-preserving": 296,
+            "relaxed": 1316
+          },
+          "programs": 1500,
+          "relaxed": 1199,
+          "saving": 0.2723589926679739
+        },
+        "bounded": {
+          "bitwise": 481,
+          "bounded": 392,
+          "chains": 5,
+          "declined_flops": 448681762,
+          "outputs": {
+            "bit-identical": 5632,
+            "bound-preserving": 368
+          },
+          "programs": 1500,
+          "recovery": 0.21247484074186987,
+          "relaxed": 0,
+          "saving": 0.05978257071666931
+        },
+        "exact_chain_share": 0.004690431519699813,
+        "noproof": {
+          "bitwise": 0,
+          "bounded": 0,
+          "chains": 0,
+          "declined_flops": 449288244,
+          "outputs": {
+            "bit-identical": 6000
+          },
+          "programs": 1500,
+          "relaxed": 0,
+          "saving": 0.0024293028640858445
+        },
+        "strict": {
+          "bitwise": 408,
+          "bounded": 0,
+          "chains": 5,
+          "declined_flops": 448681762,
+          "outputs": {
+            "bit-identical": 6000
+          },
+          "programs": 1500,
+          "recovery": 0.08411319587777234,
+          "relaxed": 0,
+          "saving": 0.025133951735786614
+        }
+      },
+      "uint8": {
+        "algebraic": {
+          "bitwise": 1521,
+          "bounded": 463,
+          "chains": 1051,
+          "declined_flops": 0,
+          "outputs": {
+            "bit-identical": 5488,
+            "bound-preserving": 512
+          },
+          "programs": 1500,
+          "relaxed": 0,
+          "saving": 0.17768322433043893
+        },
+        "bounded": {
+          "bitwise": 1521,
+          "bounded": 463,
+          "chains": 1051,
+          "declined_flops": 0,
+          "outputs": {
+            "bit-identical": 5488,
+            "bound-preserving": 512
+          },
+          "programs": 1500,
+          "recovery": 1.0,
+          "relaxed": 0,
+          "saving": 0.17768322433043893
+        },
+        "exact_chain_share": 0.8496669838249287,
+        "noproof": {
+          "bitwise": 0,
+          "bounded": 0,
+          "chains": 0,
+          "declined_flops": 384668329,
+          "outputs": {
+            "bit-identical": 6000
+          },
+          "programs": 1500,
+          "relaxed": 0,
+          "saving": 0.0054914597988227915
+        },
+        "strict": {
+          "bitwise": 1709,
+          "bounded": 0,
+          "chains": 893,
+          "declined_flops": 138905730,
+          "outputs": {
+            "bit-identical": 6000
+          },
+          "programs": 1500,
+          "recovery": 0.7768217977690463,
+          "relaxed": 0,
+          "saving": 0.13925377588329713
+        }
+      }
+    },
+    "e01_lead_with_exactness": true,
+    "failures": 0,
+    "programs": 15000,
+    "seconds_median": {
+      "algebraic": 0.05905,
+      "bounded": 0.059305,
+      "noproof": 0.06963,
+      "strict": 0.0625
+    }
+  },
+  "rq2": {
+    "arms": {
+      "algebraic": {
+        "compared": 14400,
+        "differ": 10763,
+        "errors": 0,
+        "level_differ": {
+          "bit-identical": 0,
+          "bound-preserving": 9160,
+          "relaxed": 1603
+        },
+        "levels": {
+          "bit-identical": 43920,
+          "bound-preserving": 11787,
+          "relaxed": 1893
+        },
+        "outputs": 57600,
+        "runs": 14400
+      },
+      "bounded": {
+        "compared": 14400,
+        "differ": 9160,
+        "errors": 0,
+        "level_differ": {
+          "bit-identical": 0,
+          "bound-preserving": 9160
+        },
+        "levels": {
+          "bit-identical": 45708,
+          "bound-preserving": 11892
+        },
+        "outputs": 57600,
+        "runs": 14400
+      },
+      "noproof": {
+        "compared": 14400,
+        "differ": 0,
+        "errors": 0,
+        "level_differ": {},
+        "levels": {},
+        "outputs": 57600,
+        "runs": 14400
+      },
+      "strict": {
+        "compared": 14400,
+        "differ": 0,
+        "errors": 0,
+        "level_differ": {
+          "bit-identical": 0
+        },
+        "levels": {
+          "bit-identical": 57600
+        },
+        "outputs": 57600,
+        "runs": 14400
+      }
+    },
+    "programs": 4800,
+    "runs": 57600
+  },
+  "rq3": {
+    "families": {
+      "100x2": {
+        "first_witness": 39135,
+        "first_witness_ratio": 1.099977514194165,
+        "m_star": 35578,
+        "m_star_closed_form": 35578,
+        "m_star_closed_form_first3": 35578,
+        "m_star_compiler": 35578,
+        "regions": {
+          "above-1.1": {
+            "runs": 68,
+            "strict_differ": 0,
+            "strict_reorders": 0,
+            "values": 4,
+            "witnessed": 4
+          },
+          "at-or-below": {
+            "runs": 68,
+            "strict_differ": 0,
+            "strict_reorders": 68,
+            "values": 4,
+            "witnessed": 0
+          },
+          "up-to-1.01": {
+            "runs": 85,
+            "strict_differ": 0,
+            "strict_reorders": 0,
+            "values": 5,
+            "witnessed": 0
+          },
+          "up-to-1.1": {
+            "runs": 17,
+            "strict_differ": 0,
+            "strict_reorders": 0,
+            "values": 1,
+            "witnessed": 1
+          }
+        }
+      },
+      "24x3x4": {
+        "first_witness": 50014,
+        "first_witness_ratio": 1.0000199948013517,
+        "m_star": 50013,
+        "m_star_closed_form": 2541,
+        "m_star_closed_form_first3": 50013,
+        "m_star_compiler": 50013,
+        "regions": {
+          "above-1.1": {
+            "runs": 68,
+            "strict_differ": 0,
+            "strict_reorders": 0,
+            "values": 4,
+            "witnessed": 4
+          },
+          "at-or-below": {
+            "runs": 68,
+            "strict_differ": 0,
+            "strict_reorders": 68,
+            "values": 4,
+            "witnessed": 0
+          },
+          "up-to-1.01": {
+            "runs": 85,
+            "strict_differ": 0,
+            "strict_reorders": 0,
+            "values": 5,
+            "witnessed": 5
+          },
+          "up-to-1.1": {
+            "runs": 17,
+            "strict_differ": 0,
+            "strict_reorders": 0,
+            "values": 1,
+            "witnessed": 1
+          }
+        }
+      },
+      "40x8": {
+        "first_witness": 33460,
+        "first_witness_ratio": 1.0999704132285741,
+        "m_star": 30419,
+        "m_star_closed_form": 30419,
+        "m_star_closed_form_first3": 30419,
+        "m_star_compiler": 30419,
+        "regions": {
+          "above-1.1": {
+            "runs": 68,
+            "strict_differ": 0,
+            "strict_reorders": 0,
+            "values": 4,
+            "witnessed": 4
+          },
+          "at-or-below": {
+            "runs": 68,
+            "strict_differ": 0,
+            "strict_reorders": 68,
+            "values": 4,
+            "witnessed": 0
+          },
+          "up-to-1.01": {
+            "runs": 85,
+            "strict_differ": 0,
+            "strict_reorders": 0,
+            "values": 5,
+            "witnessed": 0
+          },
+          "up-to-1.1": {
+            "runs": 17,
+            "strict_differ": 0,
+            "strict_reorders": 0,
+            "values": 1,
+            "witnessed": 1
+          }
+        }
+      },
+      "50x4": {
+        "first_witness": 39135,
+        "first_witness_ratio": 1.099977514194165,
+        "m_star": 35578,
+        "m_star_closed_form": 35578,
+        "m_star_closed_form_first3": 35578,
+        "m_star_compiler": 35578,
+        "regions": {
+          "above-1.1": {
+            "runs": 68,
+            "strict_differ": 0,
+            "strict_reorders": 0,
+            "values": 4,
+            "witnessed": 4
+          },
+          "at-or-below": {
+            "runs": 68,
+            "strict_differ": 0,
+            "strict_reorders": 68,
+            "values": 4,
+            "witnessed": 0
+          },
+          "up-to-1.01": {
+            "runs": 85,
+            "strict_differ": 0,
+            "strict_reorders": 0,
+            "values": 5,
+            "witnessed": 0
+          },
+          "up-to-1.1": {
+            "runs": 17,
+            "strict_differ": 0,
+            "strict_reorders": 0,
+            "values": 1,
+            "witnessed": 1
+          }
+        }
+      }
+    },
+    "runs": 952,
+    "strict_differ_total": 0
+  },
+  "rq4": {
+    "guard_fraction": 0.9507959479015919,
+    "kernels": {
+      "dot_i16": {
+        "identical": true,
+        "licensed": {
+          "checksums": [
+            "425724490b650000"
+          ],
+          "median_ns": 337800.0,
+          "q1_ns": 333700.0,
+          "q3_ns": 348200.0
+        },
+        "speedup": 1.2273534635879217,
+        "strict": {
+          "checksums": [
+            "425724490b650000"
+          ],
+          "median_ns": 414600.0,
+          "q1_ns": 407600.0,
+          "q3_ns": 440900.0
+        }
+      },
+      "dot_real": {
+        "identical": false,
+        "licensed": {
+          "checksums": [
+            "c05f7cfe43d84c30"
+          ],
+          "median_ns": 341500.0,
+          "q1_ns": 337900.0,
+          "q3_ns": 352000.0
+        },
+        "speedup": 1.2076134699853587,
+        "strict": {
+          "checksums": [
+            "c05f7cfe43d847bf"
+          ],
+          "median_ns": 412400.0,
+          "q1_ns": 405500.0,
+          "q3_ns": 433800.0
+        }
+      },
+      "fdot_i8": {
+        "identical": true,
+        "licensed": {
+          "checksums": [
+            "43114610022df164"
+          ],
+          "median_ns": 14000.0,
+          "q1_ns": 14000.0,
+          "q3_ns": 14000.0
+        },
+        "speedup": 6.542857142857143,
+        "strict": {
+          "checksums": [
+            "43114610022df164"
+          ],
+          "median_ns": 91600.0,
+          "q1_ns": 91600.0,
+          "q3_ns": 91800.0
+        }
+      },
+      "gemm_i8": {
+        "identical": true,
+        "licensed": {
+          "checksums": [
+            "4331a0822d800000"
+          ],
+          "median_ns": 1259300.0,
+          "q1_ns": 1242400.0,
+          "q3_ns": 1275900.0
+        },
+        "speedup": 3.25188596839514,
+        "strict": {
+          "checksums": [
+            "4331a0822d800000"
+          ],
+          "median_ns": 4095100.0,
+          "q1_ns": 4086700.0,
+          "q3_ns": 4113100.0
+        }
+      },
+      "guard_i16": {
+        "identical": true,
+        "licensed": {
+          "checksums": [
+            "0000000000000000"
+          ],
+          "median_ns": 394200.0,
+          "q1_ns": 380500.0,
+          "q3_ns": 442300.0
+        },
+        "speedup": 5.02105530187722,
+        "strict": {
+          "checksums": [
+            "0000000000000000"
+          ],
+          "median_ns": 1979300.0,
+          "q1_ns": 1975700.0,
+          "q3_ns": 1991300.0
+        }
+      },
+      "matvec_u8_i16": {
+        "identical": true,
+        "licensed": {
+          "checksums": [
+            "433f7a7dac34e000"
+          ],
+          "median_ns": 1460300.0,
+          "q1_ns": 1367000.0,
+          "q3_ns": 1544500.0
+        },
+        "speedup": 1.714990070533452,
+        "strict": {
+          "checksums": [
+            "433f7a7dac34e000"
+          ],
+          "median_ns": 2504400.0,
+          "q1_ns": 2267400.0,
+          "q3_ns": 2616100.0
+        }
+      },
+      "sum_i32": {
+        "identical": true,
+        "licensed": {
+          "checksums": [
+            "4261201468d66000"
+          ],
+          "median_ns": 337800.0,
+          "q1_ns": 333800.0,
+          "q3_ns": 357500.0
+        },
+        "speedup": 2.4597394908229724,
+        "strict": {
+          "checksums": [
+            "4261201468d66000"
+          ],
+          "median_ns": 830900.0,
+          "q1_ns": 819100.0,
+          "q3_ns": 871400.0
+        }
+      }
+    },
+    "threads": {
+      "omp_dot_i16": {
+        "counts": [
+          1,
+          2,
+          4,
+          8,
+          12,
+          16,
+          24
+        ],
+        "max_distinct_per_count": 1,
+        "median_ns": {
+          "licensed-1": 343900.0,
+          "licensed-12": 101000.0,
+          "licensed-16": 96300.0,
+          "licensed-2": 182600.0,
+          "licensed-24": 96800.0,
+          "licensed-4": 113600.0,
+          "licensed-8": 75900.0,
+          "strict-1": 429500.0,
+          "strict-12": 106300.0,
+          "strict-16": 93400.0,
+          "strict-2": 224500.0,
+          "strict-24": 113700.0,
+          "strict-4": 128400.0,
+          "strict-8": 86500.0
+        },
+        "results": 1
+      },
+      "omp_dot_real": {
+        "counts": [
+          1,
+          2,
+          4,
+          8,
+          12,
+          16,
+          24
+        ],
+        "max_distinct_per_count": 9,
+        "median_ns": {
+          "licensed-1": 340700.0,
+          "licensed-12": 87200.0,
+          "licensed-16": 83800.0,
+          "licensed-2": 184800.0,
+          "licensed-24": 101500.0,
+          "licensed-4": 103800.0,
+          "licensed-8": 75500.0,
+          "strict-1": 439100.0,
+          "strict-12": 113700.0,
+          "strict-16": 99500.0,
+          "strict-2": 224800.0,
+          "strict-24": 114100.0,
+          "strict-4": 144700.0,
+          "strict-8": 90800.0
+        },
+        "results": 13
+      }
+    }
+  },
+  "rq5": {
+    "invalid": 0,
+    "killed_by_any": [
+      1,
+      2,
+      4,
+      6,
+      7,
+      8,
+      9
+    ],
+    "mutants": {
+      "1": {
+        "broad": 51,
+        "domain": 246,
+        "dyadic": 0,
+        "extreme": 95,
+        "fixtures": 2,
+        "witness": 2
+      },
+      "2": {
+        "broad": 0,
+        "domain": 0,
+        "dyadic": 0,
+        "extreme": 0,
+        "fixtures": 0,
+        "witness": 1
+      },
+      "3": {
+        "broad": 0,
+        "domain": 0,
+        "dyadic": 0,
+        "extreme": 0,
+        "fixtures": 0,
+        "witness": 0
+      },
+      "4": {
+        "broad": 0,
+        "domain": 9,
+        "dyadic": 3,
+        "extreme": 22,
+        "fixtures": 0,
+        "witness": 1
+      },
+      "5": {
+        "broad": 0,
+        "domain": 0,
+        "dyadic": 0,
+        "extreme": 0,
+        "fixtures": 0,
+        "witness": 0
+      },
+      "6": {
+        "broad": 1,
+        "domain": 6,
+        "dyadic": 1,
+        "extreme": 21,
+        "fixtures": 1,
+        "witness": 2
+      },
+      "7": {
+        "broad": 0,
+        "domain": 0,
+        "dyadic": 0,
+        "extreme": 3,
+        "fixtures": 0,
+        "witness": 2
+      },
+      "8": {
+        "broad": 7,
+        "domain": 45,
+        "dyadic": 4,
+        "extreme": 47,
+        "fixtures": 1,
+        "witness": 1
+      },
+      "9": {
+        "broad": 1,
+        "domain": 15,
+        "dyadic": 4,
+        "extreme": 20,
+        "fixtures": 0,
+        "witness": 3
+      }
+    },
+    "populations": {
+      "broad": 90,
+      "domain": 720,
+      "dyadic": 90,
+      "extreme": 720,
+      "fixtures": 15,
+      "witness": 7
+    }
+  },
+  "rq6": {
+    "ablation": {
+      "heterogeneous": {
+        "by_intermediates": 1,
+        "first_better": 27,
+        "p": 0.6029232012571503,
+        "pairs": 64,
+        "second_better": 32,
+        "unequal": 59
+      },
+      "narrow": {
+        "by_intermediates": 0,
+        "first_better": 199,
+        "p": 0.016340436317813425,
+        "pairs": 363,
+        "second_better": 153,
+        "unequal": 352
+      },
+      "pooled": {
+        "by_intermediates": 1,
+        "first_better": 652,
+        "p": 0.8458373220588892,
+        "pairs": 1327,
+        "second_better": 644,
+        "unequal": 1296
+      },
+      "square": {
+        "by_intermediates": 0,
+        "first_better": 426,
+        "p": 0.2820686046864743,
+        "pairs": 900,
+        "second_better": 459,
+        "unequal": 885
+      }
+    },
+    "ablation_removes_effect": true,
+    "bound_exceeded": 0,
+    "chains": 2700,
+    "max_err_over_bound": 0.4907619248448148,
+    "prediction_holds": true,
+    "profiles": {
+      "heterogeneous": {
+        "chains": 648,
+        "median_ratio": 0.8922002761913175,
+        "optimal_better": 411,
+        "p": 1.0483240235329214e-13,
+        "p_holm": 3.1449720705987644e-13,
+        "ratio_ci": [
+          0.8634898167672034,
+          0.9126105872149602
+        ],
+        "source_better": 224,
+        "unequal": 635
+      },
+      "narrow": {
+        "chains": 606,
+        "median_ratio": 0.9794846453219994,
+        "optimal_better": 317,
+        "p": 0.05752157744246858,
+        "p_holm": 0.05752157744246858,
+        "ratio_ci": [
+          0.9536107170198085,
+          1.0
+        ],
+        "source_better": 270,
+        "unequal": 587
+      },
+      "pooled": {
+        "chains": 1254,
+        "median_ratio": 0.9407066759717222,
+        "optimal_better": 728,
+        "p": 2.3043331205698123e-11,
+        "p_holm": 4.6086662411396247e-11,
+        "ratio_ci": [
+          0.9250442640186564,
+          0.9549286199084344
+        ],
+        "source_better": 494,
+        "unequal": 1222
+      }
+    },
+    "validation": {
+      "bracketings": 120,
+      "identical": 120
+    }
+  }
+}
