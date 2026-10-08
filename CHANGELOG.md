@@ -1,5 +1,15 @@
 # Changelog
 
+## Implementation review deck
+
+- Added `docs/submission/MatrixLang-Implementation-Review.pptx` (`make
+  review-deck`): seven slides on black whose every transition is PowerPoint
+  Morph. It covers the compiler's stages, the three guarantees, the two
+  theorems, progress since the last review, and the evidence as charts against
+  two baselines, GCC's `-ffast-math` and the optimizer without proofs, with
+  speaker notes. Every number comes from `results/contracts/` or a run of
+  `bin/matrixc`.
+
 ## Correctly rounded chains, C output, and the final paper
 
 - The strict contract now accepts a chain whose proper sub-chains are exact and

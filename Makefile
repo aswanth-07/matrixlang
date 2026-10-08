@@ -63,7 +63,7 @@ MATRIXC  := $(BINDIR)/matrixc
 MUTANTS  := $(BINDIR)/matrixc-mutants
 MUT_OBJ  := $(patsubst $(SRCDIR)/%.c,$(BUILDDIR)/mutants/%.o,$(CORE_SRC))
 
-.PHONY: all clean test test-demo dirs toolchain demo1 demo2 demo3 deck web serve serve-static measure research analyze paper verify-research mutants contracts contracts-analyze bench
+.PHONY: all clean test test-demo dirs toolchain demo1 demo2 demo3 deck review-deck web serve serve-static measure research analyze paper verify-research mutants contracts contracts-analyze bench
 
 all: dirs $(MATRIXC)
 
@@ -141,6 +141,11 @@ measure: all
 
 deck:
 	"$(PYTHON)" tools/build-deck.py docs/submission/MatrixLang-Deck.pptx
+
+# The implementation review deck: Morph transitions, built with pptxgenjs and
+# qrcode from npm, and pdftoppm for the paper's pages.
+review-deck:
+	node tools/build-review-deck.js docs/submission/MatrixLang-Implementation-Review.pptx
 
 # The public manuscript is always the build input.
 paper:
