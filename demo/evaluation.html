@@ -33,11 +33,11 @@
     </section>
 
     <section class="eval-section" aria-labelledby="explorer-title">
-      <div class="eval-heading"><h2 id="explorer-title">Exactness threshold explorer</h2><span>Theorem 1, evaluated in the browser</span></div>
-      <p>For a chain over <code>int(0,m)</code>, every intermediate of every bracketing is exact in binary64 when each contiguous sub-chain satisfies <code>m<sup>k</sup> · n<sub>1</sub>⋯n<sub>k−1</sub> ≤ 2<sup>53</sup></code>, where the n are its inner dimensions. Strict reorders a segment only when that holds. Enter shapes and a bound to see the test the compiler applies.</p>
+      <div class="eval-heading"><h2 id="explorer-title">Exactness threshold explorer</h2><span>The chain theorem, evaluated in the browser</span></div>
+      <p>For a chain over <code>int(0,m)</code>, every proper sub-chain must be exact in binary64: <code>m<sup>k</sup> · n<sub>1</sub>⋯n<sub>k−1</sub> ≤ 2<sup>53</sup></code>, where the n are its inner dimensions. The whole chain may round once, in its final sums, if for every split every sum of all but one of the last product's terms still fits. Every bracketing, in any order of summation, then prints the correctly rounded product. Strict reorders a segment only when that holds. Enter shapes and a bound to see the test the compiler applies.</p>
       <form id="explorer" class="explorer" novalidate>
         <label><span>Dimensions</span><input id="ex-dims" value="100, 2, 100, 2" inputmode="numeric" aria-describedby="ex-dims-note"></label>
-        <label><span>Domain bound m</span><input id="ex-m" value="35578" inputmode="numeric"></label>
+        <label><span>Domain bound m</span><input id="ex-m" value="35697" inputmode="numeric"></label>
         <p id="ex-dims-note" class="field-note">Dimensions d<sub>0</sub>, …, d<sub>k</sub> of a k-operand chain: operand i is d<sub>i−1</sub> × d<sub>i</sub>.</p>
       </form>
       <div id="ex-result" class="explorer-result" role="status" aria-live="polite"></div>
@@ -58,13 +58,16 @@
     </section>
 
     <section class="eval-section" aria-labelledby="rq3-title">
-      <div class="eval-heading"><h2 id="rq3-title">RQ3 · How tight is the 53-bit threshold?</h2><span id="rq3-meta"></span></div>
-      <p>The compiler's threshold, found by binary search on its own certificates, against the closed form; then witness inputs (all-maximum, near-maximum, seeded) on which reordering changes the printed bits.</p>
+      <div class="eval-heading"><h2 id="rq3-title">RQ3 · How tight is the threshold?</h2><span id="rq3-meta"></span></div>
+      <p>The compiler's threshold, found by binary search on its own certificates, against the closed form and against the earlier condition that the whole chain be exact; then witness inputs on which the refused bracketing prints different bits. Besides all-maximum, near-maximum and seeded inputs, a search emulates the virtual machine's arithmetic and lowers a few maximal entries so that a partial sum before the last is odd and above 2<sup>53</sup>; every witness is confirmed by matrixc.</p>
       <div id="rq3-table" class="table-wrap"></div>
     </section>
 
     <section class="eval-section" aria-labelledby="rq4-title">
       <div class="eval-heading"><h2 id="rq4-title">RQ4 · What is a certificate worth to a C compiler?</h2><span id="rq4-meta"></span></div>
+      <p>Six kernels written as the mathematics is written, compiled by matrixc to C (<code>--emit-c</code>) and by GCC. Proved chain reorderings carry the speed; the reduction clauses the facts license keep every build's bits identical on integer data.</p>
+      <div id="rq4-e2e" class="table-wrap"></div>
+      <h3 class="eval-sub">Hand-written reductions</h3>
       <p>The same reductions compiled by GCC with strict IEEE semantics and with reassociation licensed (<code>-fassociative-math -fno-signed-zeros -fno-trapping-math</code>). On certified integer-valued data the two builds print identical bits; on the real-valued control they do not.</p>
       <div id="rq4-chart" class="bars"></div>
       <div id="rq4-threads" class="table-wrap"></div>

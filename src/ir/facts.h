@@ -10,9 +10,11 @@
  * Grid and magnitude together decide exactness. A sum or product of values on
  * the grid 2^g whose magnitude stays at or below 2^(g+53) is an integer count
  * of grid steps that fits in binary64's 53-bit significand, so the operation
- * is computed without rounding. A matrix product chain whose every sub-chain
- * satisfies that bound is computed exactly under every bracketing, so
- * reordering it cannot change a single output bit (facts_chain_exact).
+ * is computed without rounding. A matrix product chain whose every proper
+ * sub-chain satisfies that bound, and whose final sums round at most once, is
+ * computed as the correctly rounded exact product under every bracketing and
+ * every summation order, so reordering it cannot change a single output bit
+ * (facts_chain_exact).
  *
  * The grid survives rounding: rounding a multiple of 2^g to binary64 yields a
  * multiple of 2^g whenever g >= -1074. That is why the analysis can keep a
@@ -67,11 +69,29 @@ typedef struct {
     int bits;            /* the largest significand requirement found         */
     int first, last;     /* the sub-chain that set it (or that failed)        */
     int min_grid;        /* the finest grid of any sub-chain product          */
+    int rounded;         /* 1 when the final sums may round (once)            */
 } ChainCheck;
 
-/* Every bracketing computes every intermediate exactly: outputs are
- * bit-identical whichever bracketing is chosen. */
+/* Every bracketing, with every order of summation inside each product,
+ * returns the correctly rounded exact product: outputs are bit-identical
+ * whichever bracketing is chosen.
+ *
+ * Every proper sub-chain is an operand of some later product in some
+ * bracketing, so it must be exact. The whole chain need not be: a bracketing
+ * whose last product contracts dimension d computes each output entry as a
+ * sum of d exact terms, and if every sum of at most d - 1 of them is exact,
+ * the only rounding is the final addition, which rounds the exact entry once.
+ * why->rounded says whether that final rounding can occur. */
 int facts_chain_exact(const Fact *ops, const int *dim, int k, ChainCheck *why);
+
+/* One product L * R with shared dimension `inner` gives the same bits for
+ * every order of summation (a vectorized or parallel reduction, say): every
+ * term and every partial sum short of the whole is exact. */
+int facts_product_reassociable(Fact a, Fact b, int inner);
+
+/* No partial sum of L * R can overflow, in any order of summation: every order
+ * keeps the standard inner-product bound gamma_inner |a|^T |b|. */
+int facts_product_range(Fact a, Fact b, int inner);
 
 /* Every operand is finite and no sub-chain product can overflow under any
  * bracketing: the precondition of the bracketing-invariant error bound. */

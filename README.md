@@ -10,7 +10,7 @@ matrix R = A * B * C;            // 11,120 modeled operations as written, 556 as
 print(R);
 ```
 
-Under the default strict contract the compiler reorders this chain, because every intermediate of every bracketing fits in binary64's 53 significand bits, and certifies `print(R)` as bit-identical. Over `input(real(1))` the bits would change, and only the bounded contract reorders it, certifying that the source order's worst-case error bound still holds. The pipeline is inspectable end to end: tokens, syntax tree, symbols, shape diagnostics, three-address code, optimization, guarantees, typed stack-machine code, and execution.
+Under the default strict contract the compiler reorders this chain, because every intermediate of every bracketing fits in binary64's 53 significand bits, and certifies `print(R)` as bit-identical. `--emit-c` hands the same program to a C compiler, with an OpenMP reduction clause on exactly the sums the facts prove may be reordered. Over `input(real(1))` the bits would change, and only the bounded contract reorders it, certifying that the source order's worst-case error bound still holds. The pipeline is inspectable end to end: tokens, syntax tree, symbols, shape diagnostics, three-address code, optimization, guarantees, typed stack-machine code, and execution.
 
 ## Build and test
 
@@ -49,11 +49,19 @@ bin/matrixc -q --optimize --run --exact-output --random-inputs 7 examples/contra
 
 **Input domains.** `matrix A[r,c] = input(DOMAIN);` and `scalar s = input(DOMAIN);` declare run-time inputs. Domains: `bool`, `uint8`, `int8`, `uint16`, `int16`, `int32`, `int(lo,hi)`, `real` (any finite value), `real(B)` and `real(lo,hi)`. Values come from `--input NAME=FILE` or `--random-inputs SEED` and are checked against the domain before execution; integer and non-negative domains store `-0` as `+0`. That check is what makes the optimizer's facts sound.
 
-**How rewrites are proved.** A grid–magnitude analysis tracks, for every value, a power of two that divides every entry, a magnitude bound, finiteness and the possibility of `-0`. A matrix chain is reordered under strict only when every contiguous sub-chain's magnitude bound fits in 53 bits above its grid, which makes every bracketing exact (the exactness theorem). Under bounded, any bracketing is admitted when no intermediate can overflow, because the standard componentwise error bound of a chain is the same for every bracketing (the invariance theorem). Identity and zero rewrites carry IEEE side conditions: `A * I = A` needs `A` finite and free of `-0`, `x + 0 = x` needs `x` free of `-0`, and so on. [docs/design.md](docs/design.md#numerical-contracts) has the details.
+**How rewrites are proved.** A grid–magnitude analysis tracks, for every value, a power of two that divides every entry, a magnitude bound, finiteness and the possibility of `-0`. A matrix chain is reordered under strict only when every proper sub-chain's magnitude bound fits in 53 bits above its grid and the whole chain's final sums round at most once; every bracketing, with any order of summation, then returns the correctly rounded product (the correctly-rounded-chain theorem). For `int(0,m)` chains `100x2 * 2x100 * 100x2` that admits m up to 35,697, and at 35,698 there are inputs on which the bracketings differ. Under bounded, any bracketing is admitted when no intermediate can overflow, because the standard componentwise error bound of a chain is the same for every bracketing (the invariance theorem). Identity and zero rewrites carry IEEE side conditions: `A * I = A` needs `A` finite and free of `-0`, `x + 0 = x` needs `x` free of `-0`, and so on. [docs/design.md](docs/design.md#numerical-contracts) has the details.
 
 **Certificates.** `--certificate` prints, for every `print`, the weakest guarantee among the rewrites that reach it and the reasons. A rewrite inherits the weakest guarantee of the definitions its proof read, so a proof that relies on a weaker rewrite's facts cannot certify more than that rewrite. `--no-proofs` disables the analysis and reproduces the earlier strict optimizer for comparison. `--exact-output` prints hexadecimal values, which distinguish every binary64 value including `-0`.
 
-The cost model counts `m*p*(2*n-1)` scalar operations per product and ignores movement, allocation and the VM's initial accumulator additions. It does not predict runtime; the runtime study uses C kernels compiled by GCC.
+The cost model counts `m*p*(2*n-1)` scalar operations per product and ignores movement, allocation and the VM's initial accumulator additions. It does not predict runtime; the runtime study compiles the emitted C with GCC.
+
+**C output.** `--emit-c FILE` writes the (optimized) program as C11 and `--dump-inputs FILE` writes its checked inputs. Every sum keeps the VM's order except products whose order of summation the contract leaves free (proved order-independent under strict, overflow-free under bounded), which carry `#pragma omp simd reduction(+:acc)`; `--no-license` keeps the VM's order everywhere. `tools/check_emit_c.py` (part of `make test`) requires GCC's build of the emitted C to print the VM's bits.
+
+```bash
+bin/matrixc -q --optimize --random-inputs 1 --emit-c walks.c --dump-inputs walks.bin examples/kernels/walks.ml
+gcc -std=c11 -O3 -march=native -ffp-contract=off -fopenmp-simd walks.c -o walks -lm
+./walks walks.bin 10
+```
 
 ## Inspect the phases
 
@@ -76,13 +84,13 @@ The language has static dimensions, scalar and matrix values, mutable variables,
 
 Authors: **A Aswanth Raj**, **Dr. RANJITHKUMAR S**, School of Computer Science and Engineering, VIT Vellore, India.
 
-The manuscript proves the two theorems above and measures six questions on generated, domain-typed workloads:
+The manuscript proves the two theorems above and measures six questions on generated, domain-typed workloads and six application kernels:
 
-- **Recovery** (15,000 programs): strict with proofs recovers 84.5% of the algebraic saving on `int8` data with bit-identical output; bounded recovers all of it wherever values are bounded.
+- **Recovery** (15,000 programs): strict with proofs recovers 83.6% of the algebraic saving on `int8` data with bit-identical output; bounded recovers all of it wherever values are bounded.
 - **Soundness** (57,600 executions per contract): no output certified bit-identical differed from the unoptimized program. This check found one unsound certificate in an earlier version, now fixed.
-- **Tightness**: the compiler's exactness threshold equals the closed form on every chain family tested, with zero strict differences around it.
-- **Production compiler**: GCC builds licensed to reassociate print identical bits on certified data and run 1.23–6.54× faster; a certified OpenMP reduction gives one result for 1–24 threads.
-- **Test adequacy**: small-integer tests cannot notice a compiler that reorders without proof; targeted witnesses kill 7 of 9 side-condition mutants.
+- **Tightness**: on four chain families the compiler's threshold equals the theorem's closed form; one step above it (two for the four-operand chain, where a parity argument rules out one) there are inputs on which the refused bracketing prints different bits, and no input at or below it differs.
+- **Production compiler**: compiled to C and by GCC, proved reorderings make the kernels 278× (graph walks) and 4.98× (quantized layers) faster with identical bits, and the bounded contract 469× and 277× on real-valued kernels within the source order's error bound; `-ffast-math` gains at most 1.13×. Hand-written reductions licensed by a certificate run 1.23–6.54× faster with identical bits, and a certified OpenMP reduction gives one result for 1–24 threads.
+- **Test adequacy**: small-integer tests cannot notice a compiler that reorders without proof, and no random or domain-bound input notices a 54-bit threshold; witnesses built at the threshold kill it. Nine of ten side-condition mutants are killed.
 - **Accuracy** (preregistered, 2,700 real-valued chains): the cheaper bracketing is more accurate than source order (median error ratio 0.941, Holm p = 4.6×10⁻¹¹).
 
 ```bash
@@ -112,14 +120,14 @@ make test-demo    # local service, compiler integration and recorded-example rep
 | --- | --- |
 | `src/frontend`, `src/analysis` | Scanner/parser, syntax tree, types, symbols, input domains, semantic analysis |
 | `src/ir` | Three-address code, facts (`facts.c`), contracts and certificates (`optimize.c`), segmented chain ordering (`chain.c`), mutants for the adequacy study |
-| `src/backend`, `src/support` | Cost model, code generation, VM, input loading and checks, diagnostics |
-| `examples`, `tests`, `demos` | Accepted/rejected programs, contract examples, acceptance checks, review demonstrations |
+| `src/backend`, `src/support` | Cost model, VM code generation, VM, C output (`emit_c.c`), input loading and checks, diagnostics |
+| `examples`, `tests`, `demos` | Accepted/rejected programs, contract examples, application kernels (`examples/kernels`), acceptance checks, review demonstrations |
 | `tools/contracts`, `results/contracts`, `bench/licensed` | Contracts study scripts, raw observations, C kernels |
 | `paper` | Manuscript, generated macros and tables, figures, evidence map |
 | `demo`, `docs` | Browser workspace and evaluation page, laboratory and teaching materials |
 
 ## Limitations
 
-The language is straight-line and statically shaped. Exactness proofs apply to integer and dyadic data, not general reals. The bounded contract promises the standard-model bound and does not cover gradual underflow. Workloads are generated, not drawn from applications; runtime results come from hand-written kernels on one machine with one compiler. Shared front end and VM paths can share defects. Numerical checks do not cover exception flags, NaN payloads or alternate rounding modes.
+The language is straight-line and statically shaped. Exactness proofs apply to integer and dyadic data, not general reals. The bounded contract promises the standard-model bound and does not cover gradual underflow. Workloads are generated or written for the study, not drawn from applications; runtime results come from one machine with one compiler. The C backend checks the VM's arithmetic independently but shares its front end and optimizer. Numerical checks do not cover exception flags, NaN payloads or alternate rounding modes.
 
 The [MIT license](LICENSE) covers code and original artifacts. Use [CITATION.cff](CITATION.cff) for citation metadata. [CONTRIBUTING.md](CONTRIBUTING.md) describes verification, and [CHANGELOG.md](CHANGELOG.md) records changes.

@@ -1,0 +1,5174 @@
+{
+ "programs": 83,
+ "required_mismatches": 0,
+ "rows": [
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "examples/contracts/boundary_exact.ml"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 1 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "examples/contracts/boundary_inexact.ml"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "examples/contracts/boundary_refused.ml"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "examples/contracts/boundary_rounded.ml"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "examples/contracts/exact_chain.ml"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 1 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 1 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 1 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "examples/contracts/file_input.ml"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "examples/contracts/inherited_guarantee.ml"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 4 of 4",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 4 of 4",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 2 of 5",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "examples/contracts/mixed.ml"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": false,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": false,
+      "same_as_unoptimized": false
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": false,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": false,
+      "same_as_unoptimized": false
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 0 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "examples/contracts/real_chain.ml"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 0 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "examples/contracts/signed_zero.ml"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "examples/demo/exact_chain.ml"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": false,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": false,
+      "same_as_unoptimized": false
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": false,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": false,
+      "same_as_unoptimized": false
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 0 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "examples/demo/real_chain.ml"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "examples/demo/signed_zero.ml"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 3 of 3",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 3 of 3",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 2 of 4",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "examples/demo/two_outputs.ml"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": false,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": false,
+      "same_as_unoptimized": false
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 0 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 0 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "examples/demo/unbounded_chain.ml"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 3 of 3",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 3 of 3",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 0 of 3",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "examples/kernels/diffusion.ml"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "examples/kernels/image.ml"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "examples/kernels/layers.ml"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 0 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "examples/kernels/lowrank.ml"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "examples/kernels/normal.ml"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 3 of 3",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 3 of 3",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 3 of 3",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "examples/kernels/walks.ml"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "examples/optimize/algebra.ml"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "examples/optimize/chain_order.ml"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "examples/optimize/chain_values.ml"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 1 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 1 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 1 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "examples/optimize/cse.ml"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 1 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 1 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 1 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "examples/optimize/dce.ml"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "examples/optimize/literal_identity.ml"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "examples/optimize/scaled_identity.ml"
+  },
+  {
+   "program": "examples/phase1/bad.ml",
+   "skipped": "rejected or failed in the machine"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true,
+      "stderr": "ml-check-ns 200\nml-times-ns 100\n"
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true,
+      "stderr": "ml-check-ns 100\nml-times-ns 0\n"
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true,
+      "stderr": "ml-check-ns 100\nml-times-ns 0\n"
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true,
+      "stderr": "ml-check-ns 100\nml-times-ns 0\n"
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true,
+      "stderr": "ml-check-ns 100\nml-times-ns 0\n"
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true,
+      "stderr": "ml-check-ns 0\nml-times-ns 0\n"
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true,
+      "stderr": "ml-check-ns 0\nml-times-ns 0\n"
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true,
+      "stderr": "ml-check-ns 200\nml-times-ns 0\n"
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true,
+      "stderr": "ml-check-ns 100\nml-times-ns 100\n"
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true,
+      "stderr": "ml-check-ns 100\nml-times-ns 100\n"
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true,
+      "stderr": "ml-check-ns 100\nml-times-ns 0\n"
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true,
+      "stderr": "ml-check-ns 0\nml-times-ns 0\n"
+     }
+    }
+   },
+   "program": "examples/phase1/declare.ml"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 1 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 1 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 1 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "examples/phase1/precedence.ml"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 1 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 1 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 1 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "examples/valid/chain.ml"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "examples/valid/dimension_boundaries.ml"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 1 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 1 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 1 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "examples/valid/multiply.ml"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "examples/valid/scalars.ml"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 1 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 1 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 1 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "examples/valid/transpose.ml"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 8 of 8",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 8 of 8",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 8 of 8",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/exec-heterogeneous-bool-0"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 1 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 1 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 1 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/cost-heterogeneous-int8-1"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 8 of 8",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 8 of 8",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 4 of 8",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/exec-heterogeneous-int16-2"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 8 of 8",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 8 of 8",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 0 of 11",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/cost-heterogeneous-real-3"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 4 of 4",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 0 of 4",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 0 of 4",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/exec-heterogeneous-realx-4"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 9 of 9",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 9 of 9",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 5 of 9",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/cost-heterogeneous-mixed-5"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 8 of 8",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 8 of 8",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 8 of 8",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/exec-narrow-bool-6"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 5 of 5",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 5 of 5",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 3 of 5",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/cost-narrow-int8-7"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 10 of 10",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 10 of 10",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 6 of 10",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/exec-narrow-int16-8"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 11 of 11",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 11 of 11",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 0 of 11",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/cost-narrow-real-9"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 10 of 10",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 0 of 10",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 0 of 10",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/exec-narrow-realx-10"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 7 of 7",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 7 of 7",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 2 of 7",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/cost-narrow-mixed-11"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 3 of 3",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 3 of 3",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 3 of 3",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/exec-balanced-bool-12"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/cost-balanced-int8-13"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 4 of 4",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 4 of 4",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 3 of 4",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/exec-balanced-int16-14"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 1 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 1 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 0 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/cost-balanced-real-15"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 2 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 0 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 0 of 2",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/exec-balanced-realx-16"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 3 of 3",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 3 of 3",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 0 of 3",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/cost-balanced-mixed-17"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 5 of 5",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 5 of 5",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 5 of 5",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/exec-algebraic-bool-18"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/cost-algebraic-int8-19"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/exec-algebraic-int16-20"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 0 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/cost-algebraic-real-21"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 5 of 5",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 0 of 5",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 0 of 5",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/exec-algebraic-realx-22"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 5 of 5",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": false,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": false,
+      "same_as_unoptimized": false
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 5 of 5",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": false,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": false,
+      "same_as_unoptimized": false
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 1 of 5",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/cost-algebraic-mixed-23"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 7 of 7",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 7 of 7",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 7 of 7",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/exec-heterogeneous-bool-24"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 6 of 6",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 6 of 6",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 6 of 6",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/cost-heterogeneous-int8-25"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 14 of 14",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 14 of 14",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 8 of 15",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/exec-heterogeneous-int16-26"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 14 of 14",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": false,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": false,
+      "same_as_unoptimized": false
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 14 of 14",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": false,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": false,
+      "same_as_unoptimized": false
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 0 of 14",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/cost-heterogeneous-real-27"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 9 of 9",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 0 of 9",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 0 of 9",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/exec-heterogeneous-realx-28"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 5 of 5",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 5 of 5",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 2 of 5",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/cost-heterogeneous-mixed-29"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 13 of 13",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 13 of 13",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 13 of 13",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/exec-narrow-bool-30"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 9 of 9",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 9 of 9",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 9 of 9",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/cost-narrow-int8-31"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 7 of 7",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 7 of 7",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 5 of 7",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/exec-narrow-int16-32"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 7 of 7",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 7 of 7",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 0 of 7",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/cost-narrow-real-33"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 14 of 14",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 0 of 15",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 0 of 15",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/exec-narrow-realx-34"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 10 of 10",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 10 of 10",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 0 of 9",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/cost-narrow-mixed-35"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 3 of 3",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 3 of 3",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 3 of 3",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/exec-balanced-bool-36"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 1 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 1 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 1 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/cost-balanced-int8-37"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 7 of 7",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 7 of 7",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 5 of 8",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/exec-balanced-int16-38"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 4 of 4",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": false,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": false,
+      "same_as_unoptimized": false
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 4 of 4",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": false,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": false,
+      "same_as_unoptimized": false
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 0 of 4",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/cost-balanced-real-39"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/exec-balanced-realx-40"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 1 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 1 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 1 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/cost-balanced-mixed-41"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 0 of 0",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 1 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/exec-algebraic-bool-42"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 1 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 1 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 1 of 1",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/cost-algebraic-int8-43"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 3 of 3",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 3 of 3",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 2 of 4",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/exec-algebraic-int16-44"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 4 of 4",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 4 of 4",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 0 of 5",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/cost-algebraic-real-45"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 5 of 5",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": false
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 0 of 5",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 0 of 5",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/exec-algebraic-realx-46"
+  },
+  {
+   "contracts": {
+    "algebraic": {
+     "free_products": "* Contract: algebraic. Products whose order of summation is free: 4 of 4",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "bounded": {
+     "free_products": "* Contract: bounded. Products whose order of summation is free: 4 of 4",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    },
+    "strict": {
+     "free_products": "* Contract: strict. Products whose order of summation is free: 0 of 4",
+     "ordered": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "plain": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "simd": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     },
+     "threads": {
+      "same_as_optimized": true,
+      "same_as_unoptimized": true
+     }
+    }
+   },
+   "program": "generated/cost-algebraic-mixed-47"
+  }
+ ],
+ "simd_differs_from_unoptimized": {
+  "algebraic": 33,
+  "bounded": 27,
+  "strict": 0
+ },
+ "skipped": 1
+}

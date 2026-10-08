@@ -4,8 +4,8 @@
 
 Runs, in order: corpus.py (RQ1, RQ2), tightness.py (RQ3), width.py (RQ1 by
 domain width), mutation.py (RQ5), accuracy.py (RQ6), overhead.py (compile
-time), bench.py (RQ4, last, so that nothing else competes for the CPU while it
-times), and analyze.py. The interpreter running this script runs
+time), bench.py and e2e.py (RQ4, last, so that nothing else competes for the
+CPU while they time), and analyze.py. e2e.py needs gcc on PATH. The interpreter running this script runs
 them all, so it needs numpy and matplotlib (requirements.txt). Raw output goes
 to results/contracts/; the paper's tables, macros and figures and the
 workspace's evaluation data are regenerated from it.
@@ -17,10 +17,15 @@ import sys
 import time
 
 HERE = Path(__file__).resolve().parent
-STEPS = ["corpus.py", "tightness.py", "width.py", "mutation.py", "accuracy.py", "overhead.py", "bench.py", "analyze.py"]
+STEPS = ["corpus.py", "tightness.py", "width.py", "mutation.py", "accuracy.py", "overhead.py", "bench.py", "e2e.py", "analyze.py"]
 
 
 def main():
+    # The C backend against the virtual machine, with its summary kept as evidence.
+    code = subprocess.call([sys.executable, str(HERE.parent / "check_emit_c.py"),
+                            "--out", str(HERE.parents[1] / "results" / "contracts" / "emit_check.json")])
+    if code:
+        sys.exit(f"check_emit_c.py failed with exit status {code}")
     for step in STEPS:
         started = time.perf_counter()
         print(f"== {step}", flush=True)

@@ -113,6 +113,38 @@ static int continues_chain(int idx)
 
 /* --- the chain and its facts ----------------------------------------------- */
 
+/* ones(), zeros() and identity() read nothing, so an instruction built from
+ * one can move anywhere earlier in the block. */
+static int is_constructor(const Tac *t)
+{
+    return t->op == TAC_ONES || t->op == TAC_ZEROS || t->op == TAC_IDENTITY;
+}
+
+/* An operand written as ones(n,1) inside a chain is defined just before its
+ * use, which leaves a gap between the chain's products. When every gap holds
+ * only such constructors, they are moved above the chain's first product so
+ * that the products occupy contiguous slots. Anything else in a gap may read
+ * or write a chain operand; the chain is then left as it is and declined. */
+static void hoist_constructors(int *slot, int k)
+{
+    int i, g;
+
+    for (i = 1; i < k - 1; i++)
+        for (g = slot[i - 1] + 1; g < slot[i]; g++) {
+            Tac *t = tac_at(g);
+            if (!t->removed && !is_constructor(t)) return;
+        }
+
+    for (i = 1; i < k - 1; i++)
+        while (slot[i] != slot[i - 1] + 1) {
+            int j, gap = slot[i] - 1, head = slot[0];
+            Tac moved = *tac_at(gap);
+            for (j = gap; j > head; j--) *tac_at(j) = *tac_at(j - 1);
+            *tac_at(head) = moved;
+            for (j = 0; j < i; j++) slot[j]++;
+        }
+}
+
 typedef struct {
     int         k;                      /* number of operands */
     const char *operand[MAX_CHAIN];
@@ -381,6 +413,8 @@ static int reorder_one(int head, int max_level, int use_proofs)
 
     if (c.k < 3) return 0;
 
+    hoist_constructors(c.slot, c.k);
+
     /* Reusing slots may move a leaf earlier. A gap can contain the leaf's
      * definition or a variable write; decline that chain rather than move
      * a computation across it without dependency analysis. */
@@ -452,7 +486,12 @@ static int reorder_one(int head, int max_level, int use_proofs)
 
             if (s->m > 2) {
                 render_sub(&c, start, 0, s->m - 1, ops, sizeof ops);
-                if (s->level == NG_BITWISE)
+                if (s->level == NG_BITWISE && s->check.rounded)
+                    snprintf(why, sizeof why, "%s is correctly rounded under every "
+                             "bracketing: only the final sum can round, and every "
+                             "other intermediate needs at most %d of 53 significand bits",
+                             ops, s->check.bits);
+                else if (s->level == NG_BITWISE)
                     snprintf(why, sizeof why, "%s is exact: every intermediate of "
                              "every bracketing needs at most %d of 53 significand bits",
                              ops, s->check.bits);

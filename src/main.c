@@ -20,6 +20,7 @@
 #include "ast.h"
 #include "codegen.h"
 #include "diag.h"
+#include "emit_c.h"
 #include "cost.h"
 #include "inputs.h"
 #include "optimize.h"
@@ -88,6 +89,15 @@ static void usage(FILE *out, const char *prog)
         "Inputs (declared in source with input(domain)):\n"
         "  --input NAME=FILE     read NAME's values from FILE, in row-major order\n"
         "  --random-inputs SEED  draw every input from its declared domain\n"
+        "  --dump-inputs FILE    write the loaded, checked inputs to FILE as raw\n"
+        "                        binary64, for a program written by --emit-c\n"
+        "\n"
+        "C code (the program as a C translation unit, for a production compiler):\n"
+        "  --emit-c FILE   write the (optimized) program as C to FILE. A matrix\n"
+        "                  product whose order of summation the contract leaves\n"
+        "                  free carries an OpenMP reduction clause; every other\n"
+        "                  sum keeps the virtual machine's order\n"
+        "  --no-license    with --emit-c, keep the machine's order everywhere\n"
         "\n"
         "Other:\n"
         "  --cost          arithmetic cost, in scalar operations, before and\n"
@@ -109,6 +119,8 @@ int main(int argc, char **argv)
     int want_tac = 0, want_opt = 0, want_explain = 0, want_report = 0;
     int want_target = 0, want_run = 0, want_trace = 0, want_stats = 0, want_cost = 0;
     int want_cert = 0;
+    const char *emit_path = NULL, *dump_path = NULL;
+    int no_license = 0;
     int quiet = 0, chose = 0, phase1_only = 0;
     int passes = 0;
     int contract = 0;           /* 0 strict, 1 bounded, 2 algebraic */
@@ -158,6 +170,16 @@ int main(int argc, char **argv)
         else if (!strcmp(a, "--no-proofs"))     { no_proofs = 1; }
         else if (!strcmp(a, "--certificate"))   { want_cert = want_opt = chose = 1; }
         else if (!strcmp(a, "--exact-output"))  { value_set_exact_output(1); }
+        else if (!strcmp(a, "--no-license"))    { no_license = 1; }
+        else if (!strcmp(a, "--emit-c") || !strcmp(a, "--dump-inputs")) {
+            const char *arg = (i + 1 < argc) ? argv[++i] : NULL;
+            if (!arg) {
+                fprintf(stderr, "matrixc: %s needs a file name\n", a);
+                return 2;
+            }
+            if (!strcmp(a, "--emit-c")) emit_path = arg; else dump_path = arg;
+            chose = 1;
+        }
 
         else if (!strcmp(a, "--input") || !strcmp(a, "--random-inputs")) {
             const char *arg = (i + 1 < argc) ? argv[++i] : NULL;
@@ -331,6 +353,22 @@ int main(int argc, char **argv)
                 printf("  Every term is fixed by a shape the type system "
                        "already carries.\n");
             }
+        }
+
+        if (emit_path) {
+            FILE *f = fopen(emit_path, "w");
+            if (!f) {
+                fprintf(stderr, "matrixc: cannot write '%s'\n", emit_path);
+                status = 1;
+            } else {
+                emit_c(f, path, no_license ? -1 : contract, !no_proofs);
+                fclose(f);
+            }
+        }
+
+        if (dump_path && emit_c_dump_inputs(dump_path) != 0) {
+            status = 1;
+            if (!quiet) diag_print_all(stdout);
         }
 
         if (want_target || want_run) {

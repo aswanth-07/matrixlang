@@ -2,9 +2,9 @@
 % ACM acmart SIGPLAN format. Every number is a macro generated from
 % results/contracts/ by tools/contracts/analyze.py (generated/contracts.tex).
 \ifdefined\AnonymousDraft
-  \documentclass[sigplan,review,anonymous,nonacm]{acmart}
+  \documentclass[sigplan,10pt,review,anonymous,nonacm]{acmart}
 \else
-  \documentclass[sigplan,review,nonacm]{acmart}
+  \documentclass[sigplan,10pt,review,nonacm]{acmart}
 \fi
 \usepackage{booktabs}
 \usepackage{graphicx}
@@ -35,29 +35,26 @@
 \begin{document}
 \begin{abstract}
 Compilers offer a binary choice for floating-point code: strict IEEE~754
-semantics, or ``fast-math'' permissions under which reassociation and
-identity rewrites may change results. The choice conflates three different
-guarantees. A rewrite may be \emph{bit-identical} because every value it
-touches is exact; it may change bits while keeping the source program's
-worst-case error bound; or it may hold only over the real numbers. We show
-that a compiler can prove, per rewrite, which of the three it keeps, and can
-report the weakest one reaching each output as a certificate. The proofs come
-from declared input domains through a grid--magnitude abstraction: we prove that
-a matrix chain whose every contiguous sub-chain fits in 53 significand bits is
-exact under every bracketing, and that the standard componentwise error bound of
-a chain is identical for all bracketings, which licenses bound-preserving
-reassociation under a range condition alone. We implement three contracts and
-per-output certificates in a matrix-language compiler. On \RqOnePrograms{}
-generated programs, the strict contract recovers \RqOneRecoveryIntEightStrict\%
-of the algebraic saving on \texttt{int8} data with bit-identical output, and the
-bounded contract all of it on bounded real data. Across \RqTwoRuns{} executions,
-no output certified bit-identical differed from the unoptimized program; this
-check found, and we fixed, one unsound certificate in an earlier version. In GCC,
-the reassociation such a certificate licenses speeds integer-valued reductions
-by up to \RqFourFdotIEightSpeedup$\times$ with identical bits and makes OpenMP
-reductions reproducible across thread counts. A preregistered study on
-\RqSixChains{} real-valued chains finds the cheaper bracketing more accurate than
-source order (median error ratio \RqSixPooledRatio).
+semantics, or ``fast-math'' permissions under which reassociation and identity
+rewrites may change results. The choice conflates three guarantees. A rewrite
+may be \emph{bit-identical}, because every value it touches is exact or rounded
+once; it may change bits while keeping the source program's worst-case error
+bound; or it may hold only over the real numbers. We show that a compiler can
+prove, per rewrite, which of the three it keeps, from declared input domains,
+and can certify every output with the weakest guarantee that reaches it. A
+grid--magnitude abstraction proves that a matrix chain whose proper sub-chains
+fit in 53 significand bits, and whose final sums round at most once, returns the
+correctly rounded product under every bracketing and every order of summation;
+one step above this threshold, inputs exist on which bracketings differ. The
+standard componentwise error bound of a chain is the same for every bracketing,
+which licenses bound-preserving reassociation under a range condition alone.
+In a matrix-language compiler that emits C, the proved reorderings make
+GCC-compiled kernels up to \RqEtoeWalksStrict$\times$ faster with identical bits,
+and up to \RqEtoeLowrankBoundedLicensed$\times$ faster within the source order's
+error bound on real data, where \texttt{-ffast-math} gains at most
+\RqEtoeFastMathHi$\times$. Across \RqTwoRuns{} executions no output certified
+bit-identical differed from the unoptimized program; this check found, and we
+fixed, one unsound certificate in an earlier version.
 \end{abstract}
 \keywords{floating-point arithmetic, compiler optimization, fast-math,
 reassociation, abstract interpretation, numerical contracts, matrix chains}
@@ -68,24 +65,24 @@ Floating-point addition and multiplication are not associative, and
 $x\cdot 0 = 0$, $x + 0 = x$ and $x \cdot I = x$ fail for signed zeros, NaN and
 infinities~\cite{goldberg,ieee754}. Compilers therefore forbid such rewrites
 by default and offer permissions that enable them: GCC's
-\texttt{-ffast-math} and its components, or LLVM's per-instruction fast-math
-flags~\cite{llvm-fmf}. A permission states what the compiler \emph{may} do. It
-does not state what the result \emph{is}: after \texttt{-fassociative-math} a
-programmer cannot tell which outputs still equal the strict program, which
-changed within a known error bound, and which changed arbitrarily.
+\texttt{-ffast-math} and its components~\cite{gcc-opts}, or LLVM's
+per-instruction fast-math flags~\cite{llvm-fmf}. A permission states what the
+compiler \emph{may} do. It does not state what the result \emph{is}: after
+\texttt{-fassociative-math} a programmer cannot tell which outputs still equal
+the strict program, which changed within a known error bound, and which changed
+arbitrarily.
 
 These are three different guarantees, and a single switch conflates them.
 Consider the chain $R = ABC$ with $A, C \in \mathbb{R}^{100\times2}$ and
 $B \in \mathbb{R}^{2\times100}$. Source order costs 69,800 scalar operations;
 $A(BC)$ costs 1,396. If $A$, $B$ and $C$ hold 8-bit integers, every product
 and partial sum of either bracketing is an integer of at most 29 bits, so both
-bracketings compute the same bits: the rewrite is not merely safe but
-\emph{bit-identical}, and a strict compiler should apply it. If the matrices
-hold real values in $[-1,1]$, the bits change, yet we show that the textbook
-componentwise error bound of the chain is the same for every bracketing: the
-rewrite is \emph{bound-preserving}. Only if values are unbounded, so that one
-bracketing may overflow where the other does not, is the rewrite merely
-\emph{relaxed}, valid over the reals and nowhere else.
+bracketings compute the same bits: the rewrite is \emph{bit-identical}, and a
+strict compiler may apply it. If the matrices hold real values in $[-1,1]$, the
+bits change, yet the textbook componentwise error bound of the chain is the same
+for every bracketing: the rewrite is \emph{bound-preserving}. If values are
+unbounded, one bracketing may overflow where the other does not, and the rewrite
+is \emph{relaxed}: valid over the reals and nowhere else.
 
 \begin{table}[t]
 \caption{One chain $R=ABC$ ($40\times2$, $2\times40$, $40\times2$) over three
@@ -95,38 +92,44 @@ and the certificate of \texttt{print(R)}, as our compiler reports them.}
 \input{generated/tab-intro.tex}
 \end{table}
 The difference between these cases is not in the program text but in the
-values the program will see (Table~\ref{tab:intro}). We make that knowledge explicit: program inputs
-declare a value domain (\texttt{input(int8)}, \texttt{input(real(1))}), the
-runtime checks each input against its domain before execution, and the compiler
-derives from the domains facts precise enough to decide, rewrite by rewrite,
-which guarantee holds. Each output is then certified with the weakest guarantee
-among the rewrites that reach it.
+values the program will see (Table~\ref{tab:intro}). We make that knowledge
+explicit: program inputs declare a value domain (\texttt{input(int8)},
+\texttt{input(real(1))}), the runtime checks each input against its domain
+before execution, and the compiler derives from the domains facts precise enough
+to decide, rewrite by rewrite, which guarantee holds. Each output is then
+certified with the weakest guarantee among the rewrites that reach it, and the
+same facts tell a C compiler which sums it may reorder.
 
 \paragraph{Contributions.}
 \begin{itemize}
 \item A lattice of three numerical contracts (strict, bounded, algebraic) whose
-proof obligations are per rewrite, and per-output guarantee certificates that
-compose them, including the inheritance rule that keeps certificates sound when a
-proof reads facts produced by a weaker rewrite (Section~\ref{sec:contracts}).
-\item A grid--magnitude abstract domain and an exactness theorem for matrix
-chains: if every contiguous sub-chain fits in 53 significand bits, every
-bracketing is exact and bit-identical, including the sign of zero
-(Section~\ref{sec:exact}).
+proof obligations are per rewrite, and per-output certificates that compose
+them, including the inheritance rule that keeps certificates sound when a proof
+reads facts produced by a weaker rewrite (Section~\ref{sec:contracts}).
+\item A grid--magnitude abstract domain and a theorem for matrix chains: if every
+proper sub-chain fits in 53 significand bits and the final sums round at most
+once, every bracketing and every order of summation returns the correctly
+rounded product, including the sign of zero (Section~\ref{sec:exact}). The
+threshold it gives is the true boundary on three of the four families we
+measured and one step from it on the fourth.
 \item A proof that the standard componentwise bound of a chain is invariant
 under bracketing, which reduces bound-preserving reassociation to a range check
 (Section~\ref{sec:bound}), and a segmented chain-ordering algorithm that applies
 the cheapest bracketing each contract admits (Section~\ref{sec:chain}).
-\item An implementation in a compiler with an executable workspace, and an
-evaluation of recovery, certificate soundness, threshold tightness, value in a
-production C compiler, test adequacy by mutation, and a preregistered accuracy
-study (Section~\ref{sec:eval}).
+\item Certificates as code: a C backend that marks exactly the sums the facts
+let a production compiler reorder, as standard OpenMP reduction clauses, and
+that doubles as a second implementation of the machine's arithmetic
+(Section~\ref{sec:codegen}).
+\item An evaluation of recovery, certificate soundness, threshold tightness,
+end-to-end value under GCC, test adequacy by mutation, and a preregistered
+accuracy study (Section~\ref{sec:eval}).
 \end{itemize}
 
 \section{Setting}\label{sec:setting}
 MatrixLang is a statically shaped, straight-line language over binary64
 matrices and scalars. Its compiler (flex, bison, C11) performs shape checking,
 lowers to three-address code (TAC), optimizes, and executes on a typed stack
-virtual machine. A matrix product entry is evaluated as
+virtual machine (VM). A matrix product entry is evaluated as
 $c_{ij} = (\cdots((+0 + a_{i1}b_{1j}) + a_{i2}b_{2j}) \cdots) + a_{in}b_{nj}$:
 the accumulator starts at $+0$, each term is one rounded multiplication and one
 rounded addition in round-to-nearest, and no fused multiply-add is used
@@ -226,39 +229,66 @@ two in range. Otherwise $e\ge g+53$, the spacing $2^{e-52}$ is a multiple of
 $2^g$, and so is every representable neighbor of $x$.
 \end{proof}
 
+\begin{lemma}[Sums from $+0$]\label{lem:zero}
+In round-to-nearest, a sum of two multiples of $2^{-1074}$ is $-0$ only if both
+addends are $-0$. Hence a summation tree with a $+0$ leaf never returns $-0$.
+\end{lemma}
+\begin{proof}
+An exact zero sum of addends that are not both $-0$ is $+0$, and a non-zero
+multiple of $2^{-1074}$ never rounds to zero. By induction, a subtree is $-0$
+only if every leaf is.
+\end{proof}
+
 Let $A_1\cdots A_k$ be a chain with $A_l\in\mathbb{R}^{d_{l-1}\times d_l}$ and
 facts $(g_l, m_l)$. For $i\le j$ let $G_{ij}=\sum_{l=i}^{j}g_l$ and
-$M_{ij}=\prod_{l=i}^{j}m_l\cdot\prod_{l=i}^{j-1}d_l$.
+$M_{ij}=\prod_{l=i}^{j}m_l\cdot\prod_{l=i}^{j-1}d_l$, which bounds every entry of
+$\abs{A_i}\cdots\abs{A_j}$. Sub-chain $i..j$ \emph{fits} if $M_{ij}=0$, or
+$G_{ij}\ge-1074$ and $M_{ij}\le2^{G_{ij}+53}$.
 
-\begin{theorem}[Exact chains]\label{thm:exact}
-If every operand is finite and, for all $1\le i\le j\le k$, either $M_{ij}=0$ or
-$G_{ij}\ge-1074$ and $M_{ij}\le2^{G_{ij}+53}$, then every bracketing of
-$A_1\cdots A_k$, evaluated in the VM's order, rounds no operation, computes the
-exact product, and produces no $-0$ entry. All bracketings therefore produce
-bit-identical results.
+\begin{theorem}[Correctly rounded chains]\label{thm:exact}
+Let every operand be finite and every proper sub-chain $i..j\ne1..k$ fit. Let
+the whole chain fit, or satisfy $G_{1k}\ge-1074$, $M_{1k}\le$
+\texttt{DBL\_MAX} and $(d_s-1)\,M_{1s}M_{s+1,k}\le2^{G_{1k}+53}$ for every split
+$1\le s<k$. Then every bracketing, with the terms of every product entry summed
+in any order from a $+0$ accumulator, returns $\fl(A_1\cdots A_k)$ entrywise, and
+no entry is $-0$. All such evaluations are bit-identical.
 \end{theorem}
 \begin{proof}
-By induction on the bracketing tree, every node $T$ for the sub-chain $i..j$
-computes exactly $P_{ij}=A_i\cdots A_j$, whose entries are bounded by $M_{ij}$
-and are multiples of $2^{G_{ij}}$. Leaves hold by assumption. At a node
-$T=LR$ splitting after $s$, the children are exact by hypothesis. Every scalar
-product $\ell_{ab}r_{bc}$ is a multiple of $2^{G_{is}+G_{s+1,j}}=2^{G_{ij}}$,
-and every partial sum of the $d_s$ terms has magnitude at most
-$d_s M_{is} M_{s+1,j}=M_{ij}\le2^{G_{ij}+53}$. By Lemma~\ref{lem:grid} each
-product and each addition is exact. If $M_{ij}=0$, some operand of $i..j$ is
-zero, all products are exact zeros of finite factors, and the result is $0$.
-Finally, in round-to-nearest a sum is $-0$ only if both addends are $-0$; an
-accumulator starting at $+0$ is therefore never $-0$, and neither is any entry of
-any bracketing. Exact values with the same sign convention for zero have the same
-bits.
+Every non-root node $T$ of a bracketing computes its proper sub-chain
+$P_{ij}=A_i\cdots A_j$ exactly. By induction on $T=LR$ splitting after $s$: the
+children are exact, every term $\ell_{ab}r_{bc}$ is a multiple of
+$2^{G_{is}+G_{s+1,j}}=2^{G_{ij}}$, and the sum of any subset of the $d_s$ terms
+has magnitude at most $d_sM_{is}M_{s+1,j}=M_{ij}\le2^{G_{ij}+53}$, so by
+Lemma~\ref{lem:grid} every product and every addition, in any order, is exact.
+If $M_{ij}=0$, every term is an exact zero of finite factors.
+
+The root, split after $s$, has exact children. If the whole chain fits, the root
+is exact as well. Otherwise every term is at most $M_{1s}M_{s+1,k}$ and every sum
+of at most $d_s-1$ terms at most $(d_s-1)M_{1s}M_{s+1,k}\le2^{G_{1k}+53}$, so all
+of them are exact (when $d_s=1$, the single product is correctly rounded by
+IEEE~754). In any summation tree, the lowest node whose subtree holds all $d_s$
+terms adds two exact partial sums and returns $\fl(c)$ for the exact entry $c$;
+any addition above it adds only the accumulator's $+0$. Lemma~\ref{lem:zero}
+excludes $-0$. Every bracketing and every order thus returns
+$\fl(A_1\cdots A_k)$.
 \end{proof}
-The condition must hold for every contiguous sub-chain, not only the whole
-chain. If the last operand is a zero matrix, $M_{1k}=0$, yet $A_1A_2$ may
-overflow to $\infty$ and $\infty\cdot0=\mathrm{NaN}$ in source order, while the
-reordered chain computes $0$; our mutation study contains this witness
+A proper sub-chain must be exact because some bracketing uses it as an operand,
+and a rounded operand changes everything computed from it. Checking the whole
+chain alone is unsound: if the last operand is a zero matrix, $M_{1k}=0$, yet $A_1A_2$ may overflow to
+$\infty$ and $\infty\cdot0=\mathrm{NaN}$ in source order, while the reordered
+chain computes $0$; our mutation study contains this witness
 (Section~\ref{sec:rq5}). For \texttt{int(0,m)} chains of shape
-$100\times2\cdot2\times100\cdot100\times2$ the largest admissible bound is
-$m^\star=35{,}578$, since $200\cdot35578^3\le2^{53}<200\cdot35579^3$.
+$100\times2\cdot2\times100\cdot100\times2$ the binding condition is the source
+order's last product, and the largest admissible bound is $m^\star=35{,}697$,
+since $198\cdot35697^3\le2^{53}<198\cdot35698^3$. Requiring the whole chain to be
+exact stops at $35{,}578$; Section~\ref{sec:rq3} shows that $35{,}697$ is the
+true boundary.
+
+\begin{corollary}[Free reductions]\label{cor:reduce}
+A product $LR$ with inner dimension $d$, finite operands, $g_L+g_R\ge-1074$ and
+$(d-1)\,m_Lm_R\le2^{g_L+g_R+53}$ gives the same bits for every order of
+summation of every entry.
+\end{corollary}
 
 \section{Bound-preserving reassociation}\label{sec:bound}
 In the standard model $\fl(a\circ b)=(a\circ b)(1+\delta)$, $\abs{\delta}\le
@@ -290,17 +320,18 @@ $\hat L\hat R-P_LP_R=E_LP_R+P_LE_R+E_LE_R$. Using $\abs{P_\cdot}\le\abs{A}_\cdot
 Every inner dimension is contracted at exactly one node of any bracketing, so
 $\Pi_T=\prod_{l}(1+\gamma_{d_l})$ for every $T$.
 \end{proof}
-The bound coefficient does not depend on the bracketing, so a rewrite between
-bracketings preserves it whenever both are evaluated without overflow, and
-NaN and infinity cannot arise in either. The bounded contract therefore admits a
-reordering when every sub-chain's magnitude bound stays below $2^{1020}$
-(leaving slack for the $\Pi$ factors). This is why \texttt{real(1)} chains are
-reordered under the bounded contract while chains over unbounded \texttt{real}
-are not: there no fact excludes overflow. Theorem~\ref{thm:bound} also explains
-why an earlier attempt to trade cost against worst-case accuracy in the chain
-dynamic program was degenerate: all bracketings tie. Underflow adds an absolute
-term to the standard model; we do not claim that term is bracketing-invariant
-(Section~\ref{sec:limits}).
+The bound coefficient depends neither on the bracketing nor, since $\gamma_d$
+holds for every order, on the order of summation inside each product, so a
+rewrite between bracketings preserves it whenever both are evaluated without
+overflow, and NaN and infinity cannot arise in either. The bounded contract
+therefore admits a reordering when every sub-chain's magnitude bound stays below
+$2^{1020}$ (leaving slack for the $\Pi$ factors). This is why \texttt{real(1)}
+chains are reordered under the bounded contract while chains over unbounded
+\texttt{real} are not: there no fact excludes overflow.
+Theorem~\ref{thm:bound} also explains why an earlier attempt to trade cost
+against worst-case accuracy in the chain dynamic program was degenerate: all
+bracketings tie. Underflow adds an absolute term to the standard model; we do not
+claim that term is bracketing-invariant (Section~\ref{sec:limits}).
 
 \section{Segmented chain ordering}\label{sec:chain}
 A contract may admit a cheaper bracketing for part of a chain but not the whole.
@@ -311,17 +342,19 @@ For a chain $A_1\cdots A_k$ and source-order prefixes $P_i=A_1\cdots A_i$
 \]
 where a segment of two operands is the source step, always legal, and a longer
 segment may use its cheapest bracketing (the classical $O(k^3)$
-program~\cite{hu-shing}) if its level is admitted: exact by
-Theorem~\ref{thm:exact} for strict, exact or range-safe for bounded, anything
-for algebraic. Segment facts use the facts of $P_i$ as their first operand.
-Ties prefer the stronger guarantee, so an exact tree is chosen over a
+program~\cite{hu-shing}) if its level is admitted: bit-identical by
+Theorem~\ref{thm:exact} for strict, bit-identical or range-safe for bounded,
+anything for algebraic. Segment facts use the facts of $P_i$ as their first
+operand. Ties prefer the stronger guarantee, so an exact tree is chosen over a
 bound-preserving tree of equal cost. Only segment roots carry a guarantee:
 interior products have no counterpart in the source program, and labelling them
 let common subexpression elimination spread one chain's proof to an unrelated
 output. On a four-operand \texttt{int(0,m)} chain $24\times3\cdot3\times24\cdot24
-\times3\cdot3\times24$, the whole chain is exact only for $m\le2{,}541$, but its
-first three operands are exact up to $m=50{,}013$, and the strict contract
-reorders that segment (Section~\ref{sec:rq3}).
+\times3\cdot3\times24$, the whole chain is bit-identical only for $m\le2{,}568$,
+but its first three operands are up to $m=50{,}727$, and the strict contract
+reorders that segment (Section~\ref{sec:rq3}). Operands built in place, such as
+\texttt{ones(n,1)} in $A^3\mathbf 1$, read nothing and are moved above the
+chain so that its products are contiguous.
 
 \section{IEEE side conditions of identity rewrites}
 \begin{table}[t]
@@ -347,38 +380,77 @@ $-0$ to $+0$ and $\infty$ to NaN through $\infty\cdot0$. Adding $+0$ maps $-0$
 to $+0$. A scaling takes the sign of each factor, so $0\cdot(-3)=-0$. The rule
 $0-x\to-x$ is absent: it maps $+0-(+0)=+0$ to $-0$ and saves no arithmetic.
 
+\section{Certificates as code}\label{sec:codegen}
+A guarantee is worth most when a production compiler can act on it.
+\texttt{matrixc --emit-c} writes the optimized program as a C11 translation
+unit that GCC or Clang compiles like any other. Every instruction becomes a loop
+nest that performs the VM's arithmetic. A product entry is summed from $+0$ over
+$k$ ascending, written $i$-$k$-$j$ with literal trip counts so that the C
+compiler may still vectorize across $j$, interchange loops, or run rows on
+separate threads: none of these changes any entry's order of summation. The
+program reads its inputs from a file, checks them against their domains as the
+VM does, and prints every output in hexadecimal.
+
+For each product the facts decide the weakest level at which its sums may be
+reordered: bit-identical by Corollary~\ref{cor:reduce}; bound-preserving when no
+partial sum can overflow, since every order keeps the bound $\gamma_d\abs{a}^{\mathsf T}\abs{b}$;
+relaxed otherwise. When the contract admits that level and the output is narrow
+(at most four columns), the emitter writes the product as dot products under
+\texttt{\#pragma omp simd reduction(+:acc)}. OpenMP leaves the order in which
+such partial results are combined unspecified~\cite{openmp}, so the clause is a
+standard, portable license to reassociate exactly that sum and no other.
+Compiled without OpenMP, the pragmas are ignored and every sum keeps the VM's
+order. The emitted comment states the level and its reason:
+\begin{lstlisting}
+/* t5 = A * t3  order of summation free,
+   bit-identical: every term and partial sum is
+   exact, so every order gives the same bits */
+\end{lstlisting}
+
+The backend is also a second implementation of the VM's arithmetic, compiled by
+a different compiler. On \RqEmitPrograms{} programs (every example and generated
+programs over all domains), under each contract, GCC's build of the emitted C
+printed exactly the VM's output for the same optimized program, with and
+without OpenMP SIMD; under the strict contract it printed the
+\emph{unoptimized} program's output also with every licensed reduction split
+across vector lanes and across four threads (\RqEmitMismatches{} mismatches
+in all). Under the bounded and algebraic contracts, licensed reductions changed
+the output of \RqEmitChangedBounded{} and \RqEmitChangedAlgebraic{} programs.
+
 \section{Implementation}
 The compiler is \RqImplLoc{} lines of C11, flex and bison. The fact domain and
 the segmented chain pass take \RqImplFactsLoc{} of them (\texttt{facts.c},
 \texttt{chain.c}); input domains and their load-time checks take
 \RqImplInputsLoc{} (\texttt{domain.c}, \texttt{inputs.c}); contracts, side
-conditions and certificates are part of \texttt{optimize.c}. The command line selects \texttt{--fp-strict} (default),
+conditions and certificates are part of \texttt{optimize.c}, and the C backend
+is \texttt{emit\_c.c}. The command line selects \texttt{--fp-strict} (default),
 \texttt{--fp-bounded} or \texttt{--fp-algebraic}; \texttt{--no-proofs} disables
 facts and reproduces the previous strict optimizer; \texttt{--certificate} prints
-per-output guarantees; and \texttt{--random-inputs}~\textit{seed} draws
-inputs reproducibly.
-A browser workspace runs the same compiler locally, shows the three contracts and
-each output's certificate, checks every certificate against an unoptimized run,
-and presents the measurements of Section~\ref{sec:eval}.
+per-output guarantees; \texttt{--random-inputs}~\textit{seed} draws inputs
+reproducibly; and \texttt{--emit-c} writes C. A browser workspace runs the same
+compiler locally, shows the three contracts and each output's certificate,
+checks every certificate against an unoptimized run, and presents the
+measurements of Section~\ref{sec:eval}.
 
 \section{Evaluation}\label{sec:eval}
 We ask: (RQ1) how much of the algebraic optimization each contract recovers with
-proofs; (RQ2) whether certificates are sound; (RQ3) how close the exactness
-threshold is to the true boundary; (RQ4) what a certificate is worth to a
-production compiler; (RQ5) which tests notice a missing side condition; and (RQ6)
-whether cheaper bracketings are more accurate. All scripts, seeds and raw
-observations are in the artifact (\texttt{make contracts}); every number below is
-generated from them. Experiments ran on an Intel Core Ultra 9 275HX (24 cores,
-AVX2) under Windows 11 with GCC 15.2.
+proofs; (RQ2) whether certificates are sound; (RQ3) how close the threshold of
+Theorem~\ref{thm:exact} is to the true boundary; (RQ4) what certificates are
+worth to a production compiler; (RQ5) which tests notice a missing side
+condition; and (RQ6) whether cheaper bracketings are more accurate. All scripts,
+seeds and raw observations are in the artifact (\texttt{make contracts}); every
+number below is generated from them. Experiments ran on an Intel Core Ultra 9
+275HX (24 cores, AVX2) under Windows 11 with GCC 15.2.
 
 \paragraph{Workloads.} No benchmark suite or dataset could be downloaded for this
-study, so workloads are generated: straight-line programs whose matrices are
+study. RQ1, RQ2 and RQ5 use generated straight-line programs whose matrices are
 inputs over one value domain (\texttt{bool} to \texttt{int32}, \texttt{real(1)},
 unbounded \texttt{real}, or a per-matrix mixture), with six shape profiles
 (heterogeneous, square, narrow, balanced, elementwise, and an algebraic profile
 that adds identity, zero, negation and negative-scaling expressions). Two literal
 populations reproduce an earlier study: small integers (``dyadic'') and values
-spread over $10^{-12}$..$10^{12}$ (``broad'').
+spread over $10^{-12}$..$10^{12}$ (``broad''). RQ4 uses six kernels written as
+the mathematics is written, on generated data.
 
 \subsection{RQ1: Recovery}
 \begin{table*}[t]
@@ -395,23 +467,22 @@ saving on \texttt{bool}, \RqOneRecoveryIntEightStrict\% on \texttt{int8} and
 \RqOneRecoveryUintEightStrict\% on \texttt{uint8} while keeping every output
 bit-identical; on \texttt{int16} and \texttt{int32} the 53-bit budget is
 exhausted by longer chains and recovery falls to \RqOneRecoveryIntOneSixStrict\%
-and \RqOneRecoveryIntThreeTwoStrict\%, mostly from identity and zero rewrites.
-The bounded contract recovers the entire saving on every domain with a magnitude
-bound, and \RqOneRecoveryRealxBounded\% on unbounded \texttt{real}, where it
-cannot exclude overflow. On the earlier study's dyadic literals the strict
-contract recovers \RqOneRecoveryDyadicStrict\%: those programs were exact all
-along, which explains why an earlier algebraic mode never changed their output.
-How far the proofs reach depends on the domain's width. Recompiling
-\RqWidthPrograms{} heterogeneous and narrow programs with every matrix over
-$\mathtt{int}(-(2^b-1), 2^b-1)$, the strict contract proves exact
-\RqWidthShareThree\% of the chain reorderings the algebraic contract applies at
-$b=3$, \RqWidthShareSeven\% at $b=7$, \RqWidthShareOneFive\% at $b=15$,
-\RqWidthShareOneSeven\% at $b=17$, and none from $b=\RqWidthZeroFrom$: a product
-of three such operands already needs more than 53 bits.
-The proofs are cheap: compiled one at a time, a sample of \RqOverheadPrograms{}
-of these programs took a median \RqOverheadStrictMs{}~ms end to end under strict
-against \RqOverheadNoproofMs{}~ms without proofs (median ratio
-\RqOverheadRatio, largest \RqOverheadMaxRatio), a time dominated by process
+and \RqOneRecoveryIntThreeTwoStrict\%. The bounded contract recovers the entire
+saving on every domain with a magnitude bound, and \RqOneRecoveryRealxBounded\% on
+unbounded \texttt{real}, where it cannot exclude overflow. On the earlier study's
+dyadic literals the strict contract recovers \RqOneRecoveryDyadicStrict\%: those
+programs were exact all along, which explains why an earlier algebraic mode never
+changed their output. How far the proofs reach depends on the domain's width.
+Recompiling \RqWidthPrograms{} heterogeneous and narrow programs with every
+matrix over $\mathtt{int}(-(2^b-1), 2^b-1)$, the strict contract proves
+bit-identical \RqWidthShareThree\% of the chain reorderings the algebraic
+contract applies at $b=3$, \RqWidthShareSeven\% at $b=7$, \RqWidthShareOneFive\%
+at $b=15$, \RqWidthShareOneSeven\% at $b=17$, and none from
+$b=\RqWidthZeroFrom$: a product of three such operands already needs more than
+53 bits. The proofs are cheap: compiled one at a time, a sample of
+\RqOverheadPrograms{} of these programs took a median \RqOverheadStrictMs{}~ms
+end to end under strict against \RqOverheadNoproofMs{}~ms without proofs (median
+ratio \RqOverheadRatio, largest \RqOverheadMaxRatio), a time dominated by process
 start-up.
 \begin{figure}[t]
 \centering\includegraphics[width=\columnwidth]{figures/contracts-recovery.pdf}
@@ -441,66 +512,125 @@ below bit-identical, \RqTwoPessimisticBounded{} (\RqTwoPessimisticPctBounded\%)
 printed the unoptimized bits on all three draws; the certificate bounds what may
 change, not what will.
 
-\subsection{RQ3: Tightness of the exactness threshold}\label{sec:rq3}
-\begin{table*}[t]
-\caption{RQ3. Threshold found by binary search on the compiler's certificates
-versus the closed form, and witnesses on which reordering changes the printed
-bits (all-maximum, six near-maximum and ten seeded inputs per $m$).}
-\label{tab:tightness}\centering\small\input{generated/tab-tightness.tex}
-\end{table*}
-For four chain families we found the largest $m$ for which strict reorders
-\texttt{int(0,m)} data by binary search on the compiler's certificates, then ran
-seventeen witness inputs at 14 values of $m$ around it under a contract that
-always reorders (Table~\ref{tab:tightness}). The compiler's threshold equals the
-closed form of Theorem~\ref{thm:exact} in every family; for the four-operand chain
-it is the threshold of its first segment. None of \RqThreeRuns{} strict runs
-differed from unoptimized output. For the four-operand chain a witness exists at
-$m^\star+1$, so the certificate is tight there. For three-operand chains, no
-witness appeared below about $1.1\,m^\star$: the magnitude bound assumes every
-partial sum reaches its maximum, which these inputs did not produce, so the
-certificate is conservative by up to ten percent of the domain there.
-
-\subsection{RQ4: Value in a production compiler}
+\subsection{RQ3: Tightness of the threshold}\label{sec:rq3}
 \begin{table}[t]
-\caption{RQ4. C kernels on integer-valued binary64 (binary32 for \texttt{fdot}),
-sized so every partial sum is exact, compiled by GCC 15.2 \texttt{-O3
--march=native} strict and with reassociation licensed. Medians of 7 processes
-$\times$ 21 repetitions, one thread.}\label{tab:bench}
+\caption{RQ3. Largest $m$ for which strict reorders \texttt{int(0,m)} chains:
+under the exact-only condition, by Theorem~\ref{thm:exact} in closed form, and
+found by binary search on the compiler's certificates; the smallest $m$ with a
+confirmed witness; strict runs that differed from unoptimized output.}
+\label{tab:tightness}\centering\footnotesize\setlength{\tabcolsep}{3.5pt}
+\input{generated/tab-tightness.tex}
+\end{table}
+For four chain families over \texttt{int(0,m)} we found the largest $m$ for
+which strict reorders by binary search on the compiler's certificates
+(Table~\ref{tab:tightness}). It equals the closed form of
+Theorem~\ref{thm:exact} in every family; for the four-operand chain it is the
+threshold of the first segment. Allowing one final rounding raises every
+threshold over the exact-only condition, by \RqThreeRaiseLo--\RqThreeRaiseHi\%.
+We then looked for witnesses at \RqThreeValuesPerFamily{} values of $m$ per
+family, from $m^\star-3$ to $2m^\star$:
+inputs on which the refused bracketing, written out explicitly and run
+unoptimized, prints different bits from the source order. Besides generic
+inputs (all-maximum, six near-maximum and ten seeded draws), a search emulates
+the VM's arithmetic on one output entry and tries inputs at the maximum with a
+few entries lowered, so that a partial sum before the last one is odd and above
+$2^{53}$ and therefore rounds; every witness it finds is confirmed in the VM.
+No input at or below a threshold separated the bracketings
+(\RqThreeWitnessedBelow{} witnesses), and none of the \RqThreeRuns{} strict runs
+differed from unoptimized output. For the three three-operand families a witness
+exists at $m^\star+1$: the threshold is the true boundary. For the four-operand
+chain the first witness is at $m^\star+2$, and none can exist at $m^\star+1$:
+that maximum is even, so an odd partial sum needs a lowered entry in the first
+operand's row, which brings the sum below $2^{53}$. Generic inputs alone found
+their first witness no lower than $\RqThreeGenericFirstLo\,m^\star$, which is why
+an earlier version of this study, which lacked the search, reported up to ten
+percent of slack.
+
+\subsection{RQ4: Value in a production compiler}\label{sec:rq4}
+\begin{table*}[t]
+\caption{RQ4. Six kernels compiled by \texttt{matrixc} to C and by GCC 15.2
+(\texttt{-O3 -march=native -ffp-contract=off}): median time of the program as
+written, and speedups over it of the same C under \texttt{-ffast-math}; of the
+strict contract; of strict with licensed reductions (\texttt{-fopenmp-simd});
+of the bounded contract with licensed reductions; and of strict with licensed
+reductions on eight threads. $^\dagger$ marks outputs that differ from the
+source program. Results counts distinct outputs over eleven builds, including
+SSE2-only builds and the algebraic contract.}
+\label{tab:e2e}\centering\small\input{generated/tab-e2e.tex}
+\end{table*}
+Table~\ref{tab:e2e} compiles six kernels written as one would write the
+mathematics: walk counts $A^3\mathbf 1$ in a 1,024-vertex graph (\texttt{bool}
+adjacency), two stacked quantized layers $W_2W_1x$, row and column profiles of a
+$2{,}048^2$ 8-bit image, the normal equations $X^{\mathsf T}X$, $X^{\mathsf T}y$
+of an integer-coded regression, and, as real-valued controls, a rank-16 update
+$BAx$ and three diffusion steps $P^3v$. Times are medians of 50 runs in five
+processes. The source build printed the VM's unoptimized output on every kernel.
+
+Fast-math gains at most \RqEtoeFastMathHi$\times$: GCC reassociates scalar sums
+but does not reorder matrix chains. The strict contract proves the reorderings of
+\texttt{walks} and \texttt{layers} bit-identical and gains
+\RqEtoeWalksStrict$\times$ and \RqEtoeLayersStrict$\times$ with identical bits.
+It declines the real-valued chains, which the bounded contract reorders within
+the source order's error bound for \RqEtoeLowrankBoundedLicensed$\times$ and
+\RqEtoeDiffusionBoundedLicensed$\times$. Licensed reductions add little on these
+kernels (\RqEtoeLicenseGainLo--\RqEtoeLicenseGainHi$\times$ over strict on one
+thread). The products they apply to are matrix--vector products, which use each
+matrix entry once, so data movement rather than the order of additions bounds
+their speed. Every integer kernel printed one result across all eleven builds,
+from SSE2 to eight threads, as Theorem~\ref{thm:exact} guarantees. Each
+real-valued kernel printed two: the source order's, and the reordered chain's,
+which the bounded and algebraic builds shared on this machine although nothing
+guarantees it.
+
+\begin{table}[t]
+\caption{RQ4, hand-written reductions on integer-valued binary64 (binary32 for
+\texttt{fdot}), sized so every partial sum is exact, compiled by GCC 15.2
+\texttt{-O3 -march=native} strict and with reassociation licensed. Medians of 7
+processes $\times$ 21 repetitions, one thread.}\label{tab:bench}
 \centering\footnotesize\setlength{\tabcolsep}{4pt}\input{generated/tab-bench.tex}
 \end{table}
-A certificate is useful beyond our compiler if it licenses something a production
-compiler would otherwise refuse. We compiled six reductions twice with GCC:
-strict, and with \texttt{-fassociative-math}, \texttt{-fno-signed-zeros} and
+The license pays where a reduction is the only parallelism. We compiled six
+hand-written reductions twice with GCC: strict, and with
+\texttt{-fassociative-math}, \texttt{-fno-signed-zeros} and
 \texttt{-fno-trapping-math}, which let GCC reassociate and vectorize them
 (Table~\ref{tab:bench}). On certified data both builds printed identical bits,
 and the licensed build was faster by \RqFourDotIOneSixSpeedup$\times$ (an
 \texttt{int16} dot product, memory-bound) to \RqFourFdotIEightSpeedup$\times$
 (an \texttt{int8} dot product in binary32, compute-bound). The real-valued
 control changed bits for a comparable speedup. A run-time domain check over both
-inputs of the \texttt{int16} dot product, for data that arrives untyped, costs
-\RqFourGuardPct\% of the strict kernel; MatrixLang performs it once at load time.
-With OpenMP, whose reduction combines partial sums in an unspecified order, the
-certified dot product gave one result for every thread count from 1 to 24 and
-every repetition, while the real-valued one gave thirteen distinct results.
+inputs of the \texttt{int16} dot product costs \RqFourGuardPct\% of the strict
+kernel; MatrixLang performs it once at load time. With OpenMP, whose reduction
+combines partial sums in an unspecified order, the certified dot product gave
+one result for every thread count from 1 to 24 and every repetition, while the
+real-valued one gave thirteen distinct results.
 
 \subsection{RQ5: Test adequacy by mutation}\label{sec:rq5}
 \begin{table*}[t]
 \caption{RQ5. Tests that kill each mutant (number of tests per population in
 parentheses). A test kills a mutant when the mutant's strict-optimized output
 differs from the correct unoptimized output.}\label{tab:mutation}
-\centering\small\input{generated/tab-mutation.tex}
+\centering\footnotesize\setlength{\tabcolsep}{4.5pt}\input{generated/tab-mutation.tex}
 \end{table*}
-Nine mutants each drop one side condition (Table~\ref{tab:mutation}). Small-integer
-programs, the population an earlier differential study relied on, kill no test of
-mutant~1, which reorders without any proof: by Theorem~\ref{thm:exact} those
-programs are exact under every bracketing, so the population is structurally blind
-to the defect. Broad-valued literals kill it in most programs. Side conditions on
-$-0$ and non-finite values are rarely exercised by random programs; one witness
-program per condition, written from Table~\ref{tab:side}, kills mutants 1, 2, 4, 6,
-7, 8 and 9. Mutant~5 is equivalent: a non-finite fact never carries ``no $-0$'', so
-the $-0$ condition already blocks every rewrite it would admit. Mutant~3, which
-accepts 54 bits, survived every population including all-maximum inputs, consistent
-with the slack RQ3 measured near the threshold.
+Ten mutants each drop one side condition (Table~\ref{tab:mutation}).
+Small-integer programs, the population an earlier differential study relied on,
+kill no test of mutant~1, which reorders without any proof: by
+Theorem~\ref{thm:exact} those programs are bit-identical under every bracketing,
+so the population is structurally blind to the defect. Broad-valued literals kill
+it in most programs. Side conditions on $-0$ and non-finite values are rarely
+exercised by random programs; one witness program per condition, written from
+Table~\ref{tab:side}, kills mutants 1, 2, 4, 6, 7, 8 and 9. Mutant~5 is
+equivalent: a non-finite fact never carries ``no $-0$'', so the $-0$ condition
+already blocks every rewrite it would admit. Mutant~2, which checks only the
+whole chain, and mutant~10, which lets every sub-chain round once instead of
+only the whole chain, are each killed by a few random programs
+(\RqFiveKillTwoBroad{} broad-valued and \RqFiveKillTwoDomain{} domain tests for
+mutant~2, \RqFiveKillOneZeroBroad{} and \RqFiveKillOneZeroDomain{} for
+mutant~10). Mutant~3, which accepts 54 bits, survives every population whose
+inputs are drawn at random or at the domain's bounds, all-maximum inputs
+included. Only the boundary population, the witnesses of RQ3's search placed
+just above each threshold, kills it (\RqFiveKillThreeBoundary{} of
+\RqFiveTestsBoundary{} tests). A test suite for a numerical optimizer needs
+inputs constructed from its proof obligations.
 
 \subsection{RQ6: Accuracy of cheaper bracketings}
 \begin{table*}[t]
@@ -544,93 +674,132 @@ chains whose cheaper bracketing differs from source order.}
 \end{figure}
 
 \section{Related work}
-\paragraph{Fast-math semantics.} LLVM attaches fast-math permissions to individual
-instructions (\texttt{reassoc}, \texttt{nsz}, \texttt{nnan}, \texttt{ninf} and
-others)~\cite{llvm-fmf}; permissions are finer than a global switch but still state
-what may change, not what holds. Icing gives fast-math style optimizations a
-semantics in a verified compiler, with optimizations allowed where the program
-permits them and error analysis on top~\cite{icing}. Our certificates are derived,
-not granted: a rewrite's level follows from input domains, and a strict program
-gets reassociation where exactness is proved. Alive and Alive-FP verify peephole
-optimizations, including floating-point preconditions on signed zeros and
-non-finite values~\cite{alive,alive-fp}; Alive-Infer infers such
-preconditions~\cite{alive-infer}. Our side conditions (Table~\ref{tab:side}) are of
-this kind; our contribution is their organisation into guarantee levels and their
-discharge from domain facts. Boldo et al.\ verify that CompCert preserves
-floating-point semantics exactly~\cite{compcert-fp}; Monniaux catalogues why
-compiled floating-point code is hard to reason about~\cite{monniaux}.
+\paragraph{Fast-math semantics.} GCC's \texttt{-fassociative-math} requires
+\texttt{-fno-signed-zeros} and \texttt{-fno-trapping-math}~\cite{gcc-opts}, and
+LLVM attaches \texttt{reassoc}, \texttt{nsz}, \texttt{nnan} and other permissions
+to individual instructions~\cite{llvm-fmf}. Permissions are finer than a global
+switch but still state what may change, not what holds. Icing gives fast-math
+style optimizations a semantics in a verified compiler~\cite{icing}, and RealCake
+verifies such optimizations against a real-valued semantics with a proved error
+bound~\cite{realcake}; there the program opts in and the bound is the guarantee.
+Our levels are derived rather than granted, so a strict program gets
+reassociation exactly where it is provably bit-identical. Alive and Alive-FP
+verify peephole optimizations, including floating-point preconditions on signed
+zeros and non-finite values~\cite{alive,alive-fp}; Alive-Infer infers such
+preconditions~\cite{alive-infer}; Alive2 validates LLVM translations~\cite{alive2}.
+Our side conditions (Table~\ref{tab:side}) are preconditions of this kind; our
+contribution is their organisation into guarantee levels, their discharge from
+domain facts, and per-output certificates. Boldo et al.\ verify that CompCert
+preserves floating-point semantics exactly~\cite{compcert-fp}; Monniaux
+catalogues why compiled floating-point code is hard to reason
+about~\cite{monniaux}.
+
+\paragraph{Value facts in production compilers.} GCC's ranger tracks
+floating-point ranges together with whether a value may be NaN and the sign of
+its zeros~\cite{gcc-frange}, and LLVM's \texttt{KnownFPClass} analysis, since
+LLVM~17, tracks whether a value may be NaN, infinite or $-0$~\cite{llvm-kfpc}.
+Both can discharge side conditions like those of Table~\ref{tab:side} for
+single instructions. LLVM also folds floating-point arithmetic on
+integer-to-float conversions into integer arithmetic when both are
+exact~\cite{llvm-intcast}, a one-operation instance of our exactness argument.
+None of these tracks the grid of a value, proves a reassociation bit-identical,
+or certifies outputs.
 
 \paragraph{Accuracy analysis and repair.} Rosa and Daisy compile real-valued
 specifications to finite precision under error bounds~\cite{rosa,daisy}; FPTaylor
 bounds round-off of expressions~\cite{fptaylor}; Herbie rewrites expressions for
-accuracy~\cite{herbie}. These tools bound or improve error for chosen precision; we
-decide, for a fixed precision, which compiler rewrites keep bits or keep the
-source program's bound, and certify each output.
+accuracy~\cite{herbie}. CIGEN searches for input ranges on which optimization
+levels make results differ~\cite{cigen}; we prove, for declared ranges, which
+rewrites cannot.
 
-\paragraph{Exactness and reproducibility.} Exact integer linear algebra over
-floating-point units bounds intermediates below $2^{53}$, for example to choose
-recursion depths in FFLAS-FFPACK~\cite{fflas}; error-free transformations make sums
-exact or accurate~\cite{ogita}; reproducible summation makes parallel reductions
-order-independent at a cost~\cite{demmel-nguyen}. Bitwidth analysis computes value
-ranges to size hardware~\cite{bitwidth}. Theorem~\ref{thm:exact} applies this kind
-of reasoning as a compiler legality criterion over chains of any bracketing, with
-signed zeros and sub-chains, and RQ4 shows that it yields reproducibility for free
-where it applies. The bracketing invariance of Theorem~\ref{thm:bound} follows from
-the standard analysis of inner products~\cite{higham}; we claim its use as a
-contract, not the inequality.
+\paragraph{Exactness and reproducibility.} The Ozaki scheme splits floating-point
+matrices into slices whose products are computed without error~\cite{ozaki} and
+emulates binary64 GEMM on integer units~\cite{ootomo,ozaki2}; FFLAS-FFPACK bounds
+intermediates below $2^{53}$ to do exact integer linear algebra on floating-point
+units~\cite{fflas}. These libraries rest on the arithmetic fact that
+Theorem~\ref{thm:exact} turns into a compiler legality criterion over chains of
+any bracketing, with signed zeros, sub-chains and one final rounding.
+Error-free transformations make sums exact or accurate~\cite{ogita};
+reproducible summation makes results independent of order at a
+cost~\cite{demmel-nguyen,reproblas}; Intel's oneMKL reproduces results run to run
+for a fixed thread count and code path~\cite{mkl-cnr}; FPRev shows that
+libraries' accumulation orders differ~\cite{fprev}. Where our certificates
+apply, reproducibility across thread counts and vector widths costs nothing.
+Bitwidth analysis computes value ranges to size hardware~\cite{bitwidth}. The
+bracketing invariance of Theorem~\ref{thm:bound} follows from the standard
+analysis of inner products~\cite{higham}; we claim its use as a contract, not
+the inequality.
 
 \paragraph{Matrix chains and testing.} Optimal chain ordering is classical
 \cite{hu-shing}; Linnea generates linear-algebra code with property-aware cost
-models~\cite{linnea}. Neither certifies numerical guarantees per output. Csmith-style
-differential testing~\cite{csmith} and mutation analysis~\cite{mutation-survey} are
-established; RQ5 shows a structural reason why value-blind differential testing
-misses reassociation defects.
+models~\cite{linnea}. Neither certifies numerical guarantees per output.
+Csmith-style differential testing~\cite{csmith} and mutation
+analysis~\cite{mutation-survey} are established; RQ5 shows a structural reason
+why value-blind differential testing misses reassociation defects.
 
 \section{Limitations}\label{sec:limits}
 MatrixLang is straight-line and statically shaped; loops would need the facts to
 reach a fixed point, which the lattice permits but we have not implemented. The
 bounded contract promises the standard-model bound; with gradual underflow both
 orders need an absolute error term, which we do not show to be invariant. Grids
-of real-valued data are $2^{-1074}$, so exactness proofs apply to integer and
+of real-valued data are $2^{-1074}$, so bit-identity proofs apply to integer and
 dyadic data, not to general reals. Domains are trusted declarations checked at
 load time; a domain that is wider than the data loses opportunities, never
-soundness. Workloads are generated, not drawn from applications, because no
-dataset or benchmark suite was available offline; RQ4's speedups come from
-hand-written kernels compiled by one compiler on one machine. The equal-cost
-ablation in RQ6 cannot discriminate between two mechanisms. All evaluation shares
-one front end and one VM with the optimizer; RQ6 validates its emulation against
-the VM but not against an independent implementation of IEEE arithmetic.
+soundness. The threshold is the true boundary for the chain families of RQ3, not
+in general: magnitude bounds cannot see, for instance, that every input is even.
+Workloads are generated or written by us, not drawn from applications, because
+no dataset or benchmark suite was available offline, and RQ4 measures one
+compiler on one machine. The equal-cost ablation in RQ6 cannot discriminate
+between two mechanisms. The C backend checks the VM's arithmetic independently
+but shares its front end and optimizer.
 
 \section{Conclusion}
 A floating-point rewrite keeps one of three guarantees, and which one is often
 provable from the values a program will see. Declared input domains, a
-grid--magnitude analysis and two theorems let a compiler apply reassociation under
-strict semantics where it is exact, under a bounded contract where the error bound
-is unchanged, and report the guarantee of every output. Certificates checked
-against execution caught a real defect, and the exactness they establish is worth
-up to a \RqFourFdotIEightSpeedup$\times$ speedup and reproducible parallel
-reductions to a production compiler.
+grid--magnitude analysis and two theorems let a compiler reorder chains under
+strict semantics where every order returns the correctly rounded product, under a
+bounded contract where the error bound is unchanged, and report the guarantee of
+every output. The same facts tell a production compiler which sums it may
+reorder. Checking certificates against execution found a real defect, and
+inputs built from the proof obligations killed a mutant that random inputs
+missed. Under GCC the licensed reorderings made one integer kernel
+\RqEtoeWalksStrict{} times faster with identical bits and two real-valued kernels
+\RqEtoeDiffusionBoundedLicensed{} and \RqEtoeLowrankBoundedLicensed{} times
+faster within the source order's error bound, where \texttt{-ffast-math} gained
+at most \RqEtoeFastMathHi$\times$.
 
 \section*{Data availability}
 The compiler, experiment scripts, raw observations and workspace are in the
 artifact repository. \texttt{make contracts} repeats every measurement and
 \texttt{make contracts-analyze} regenerates every number, table and figure.
 
-\begin{thebibliography}{24}
+\begin{thebibliography}{40}
 \bibitem{goldberg} David Goldberg. 1991. What Every Computer Scientist Should Know
 About Floating-Point Arithmetic. \textit{ACM Comput. Surv.} 23, 1 (1991), 5--48.
 \url{https://doi.org/10.1145/103162.103163}
 \bibitem{ieee754} IEEE. 2019. \textit{IEEE Standard for Floating-Point Arithmetic}.
 IEEE Std 754-2019.
+\bibitem{gcc-opts} Free Software Foundation. GCC Manual: Options That Control
+Optimization (\texttt{-fassociative-math}, \texttt{-fno-signed-zeros},
+\texttt{-fno-trapping-math}).
+\url{https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html}
 \bibitem{llvm-fmf} LLVM Project. LLVM Language Reference Manual: Fast-Math Flags.
 \url{https://llvm.org/docs/LangRef.html#fast-math-flags}
+\bibitem{openmp} OpenMP Architecture Review Board. 2021. \textit{OpenMP
+Application Programming Interface, Version 5.2}, Section 5.5.6, Reduction
+Scoping Clauses. \url{https://www.openmp.org/spec-html/5.2/openmpsu50.html}
 \bibitem{higham} Nicholas J. Higham. 2002. \textit{Accuracy and Stability of
 Numerical Algorithms} (2nd ed.). SIAM.
 \bibitem{hu-shing} T. C. Hu and M. T. Shing. 1982. Computation of Matrix Chain
 Products. Part I. \textit{SIAM J. Comput.} 11, 2 (1982), 362--373.
 \bibitem{icing} Heiko Becker, Eva Darulova, Magnus O. Myreen, and Zachary Tatlock.
 2019. Icing: Supporting Fast-Math Style Optimizations in a Verified Compiler. In
-\textit{CAV 2019}. \url{https://doi.org/10.1007/978-3-030-25543-5_10}
+\textit{CAV 2019}, 155--173. \url{https://doi.org/10.1007/978-3-030-25543-5_10}
+\bibitem{realcake} Heiko Becker, Robert Rabe, Eva Darulova, Magnus O. Myreen,
+Zachary Tatlock, Ramana Kumar, Yong Kiam Tan, and Anthony Fox. 2022. Verified
+Compilation and Optimization of Floating-Point Programs in CakeML. In
+\textit{ECOOP 2022}, LIPIcs 222, 1:1--1:28.
+\url{https://doi.org/10.4230/LIPIcs.ECOOP.2022.1}
 \bibitem{alive} Nuno P. Lopes, David Menendez, Santosh Nagarakatte, and John
 Regehr. 2015. Provably Correct Peephole Optimizations with Alive. In \textit{PLDI}.
 \bibitem{alive-fp} David Menendez, Santosh Nagarakatte, and Aarti Gupta. 2016.
@@ -639,11 +808,25 @@ LLVM. In \textit{SAS}.
 \bibitem{alive-infer} David Menendez and Santosh Nagarakatte. 2017. Alive-Infer:
 Data-Driven Precondition Inference for Peephole Optimizations in LLVM. In
 \textit{PLDI}.
+\bibitem{alive2} Nuno P. Lopes, Juneyoung Lee, Chung-Kil Hur, Zhengyang Liu, and
+John Regehr. 2021. Alive2: Bounded Translation Validation for LLVM. In
+\textit{PLDI}, 65--79. \url{https://doi.org/10.1145/3453483.3454030}
 \bibitem{compcert-fp} Sylvie Boldo, Jacques-Henri Jourdan, Xavier Leroy, and
 Guillaume Melquiond. 2015. Verified Compilation of Floating-Point Computations.
 \textit{J. Autom. Reason.} 54, 2 (2015), 135--163.
 \bibitem{monniaux} David Monniaux. 2008. The Pitfalls of Verifying Floating-Point
 Computations. \textit{ACM Trans. Program. Lang. Syst.} 30, 3 (2008).
+\bibitem{gcc-frange} Aldy Hernandez. 2023. How We Expanded GCC Value Range
+Propagation for Floats. Red Hat Developer.
+\url{https://developers.redhat.com/articles/2023/01/18/how-we-expanded-gcc-value-range-propagation-floats}
+\bibitem{llvm-kfpc} LLVM Project. 2023. \texttt{computeKnownFPClass} and
+\texttt{KnownFPClass}, \texttt{llvm/include/llvm/Analysis/ValueTracking.h},
+release 17.
+\url{https://github.com/llvm/llvm-project/blob/release/17.x/llvm/include/llvm/Analysis/ValueTracking.h}
+\bibitem{llvm-intcast} LLVM Project. 2024. InstCombine
+\texttt{foldFBinOpOfIntCasts}, \texttt{llvm/lib/Transforms/InstCombine}, release
+18.
+\url{https://github.com/llvm/llvm-project/tree/release/18.x/llvm/lib/Transforms/InstCombine}
 \bibitem{rosa} Eva Darulova and Viktor Kuncak. 2014. Sound Compilation of Reals. In
 \textit{POPL}.
 \bibitem{daisy} Eva Darulova, Anastasiia Izycheva, Fariha Nasir, Fabian Ritter,
@@ -655,13 +838,36 @@ with Symbolic Taylor Expansions. In \textit{FM}.
 \bibitem{herbie} Pavel Panchekha, Alex Sanchez-Stern, James R. Wilcox, and Zachary
 Tatlock. 2015. Automatically Improving Accuracy for Floating Point Expressions. In
 \textit{PLDI}.
+\bibitem{cigen} Dolores Miao, Ignacio Laguna, and Cindy Rubio-Gonz\'alez. 2024.
+Input Range Generation for Compiler-Induced Numerical Inconsistencies. In
+\textit{ICS '24}, 201--212. \url{https://doi.org/10.1145/3650200.3656618}
+\bibitem{ozaki} Katsuhisa Ozaki, Takeshi Ogita, Shin'ichi Oishi, and Siegfried M.
+Rump. 2012. Error-Free Transformations of Matrix Multiplication by Using Fast
+Routines of Matrix Multiplication and Its Applications. \textit{Numer. Algorithms}
+59, 1 (2012), 95--118. \url{https://doi.org/10.1007/s11075-011-9478-1}
+\bibitem{ootomo} Hiroyuki Ootomo, Katsuhisa Ozaki, and Rio Yokota. 2024. DGEMM on
+Integer Matrix Multiplication Unit. \textit{Int. J. High Perform. Comput. Appl.}
+38, 4 (2024), 297--313. \url{https://doi.org/10.1177/10943420241239588}
+\bibitem{ozaki2} Katsuhisa Ozaki, Yuki Uchino, and Toshiyuki Imamura. 2026. Ozaki
+Scheme II: A GEMM-Oriented Emulation of Floating-Point Matrix Multiplication Using
+an Integer Modular Technique. \textit{Int. J. High Perform. Comput. Appl.}
+\url{https://doi.org/10.1177/10943420261467787}
 \bibitem{fflas} Jean-Guillaume Dumas, Pascal Giorgi, and Cl\'ement Pernet. 2008.
 Dense Linear Algebra over Word-Size Prime Fields: the FFLAS and FFPACK Packages.
 \textit{ACM Trans. Math. Softw.} 35, 3 (2008).
 \bibitem{ogita} Takeshi Ogita, Siegfried M. Rump, and Shin'ichi Oishi. 2005.
 Accurate Sum and Dot Product. \textit{SIAM J. Sci. Comput.} 26, 6 (2005).
 \bibitem{demmel-nguyen} James Demmel and Hong Diep Nguyen. 2013. Fast Reproducible
-Floating-Point Summation. In \textit{ARITH}.
+Floating-Point Summation. In \textit{ARITH}, 163--172.
+\bibitem{reproblas} Willow Ahrens, James Demmel, and Hong Diep Nguyen. 2020.
+Algorithms for Efficient Reproducible Floating Point Summation. \textit{ACM Trans.
+Math. Softw.} 46, 3 (2020). \url{https://doi.org/10.1145/3389360}
+\bibitem{mkl-cnr} Intel. 2025. oneMKL Developer Guide: Obtaining Numerically
+Reproducible Results.
+\url{https://www.intel.com/content/www/us/en/docs/onemkl/developer-guide-linux/2025-2/obtaining-numerically-reproducible-results.html}
+\bibitem{fprev} Peichen Xie, Yanjie Gao, Yang Wang, and Jilong Xue. 2025.
+Revealing Floating-Point Accumulation Orders in Software/Hardware
+Implementations. In \textit{USENIX ATC '25}, 1425--1440.
 \bibitem{bitwidth} Mark Stephenson, Jonathan Babb, and Saman Amarasinghe. 2000.
 Bitwidth Analysis with Application to Silicon Compilation. In \textit{PLDI}.
 \bibitem{linnea} Henrik Barthels, Christos Psarras, and Paolo Bientinesi. 2021.

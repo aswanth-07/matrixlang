@@ -11,9 +11,13 @@ unoptimized output. Five populations are compared:
     extreme   input-domain programs on inputs at the domain bounds, with -0
     fixtures  the hand-written numerical fixtures of tools/check_numerics.py
     witness   one program per side condition, written from the condition
-              (tools/contracts/witnesses/); mutant 3 has none, and mutant 5
-              is equivalent: a non-finite fact never carries "no -0", so the
-              -0 condition already blocks every rewrite mutant 5 would admit
+              (tools/contracts/witnesses/); mutant 5 is equivalent: a
+              non-finite fact never carries "no -0", so the -0 condition
+              already blocks every rewrite mutant 5 would admit
+    boundary  the int(0,m) chain families of RQ3 at values of m just above
+              the correct threshold, each on witness inputs found by the RQ3
+              search: inputs at the maximum on which some cheaper bracketing
+              prints different bits from the source order
 
     python tools/contracts/mutation.py
 
@@ -31,9 +35,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import common  # noqa: E402
 import genprog  # noqa: E402
+import tightness  # noqa: E402
 from check_numerics import FIXTURES  # noqa: E402
 
-MUTANTS = list(range(1, 10))
+MUTANTS = list(range(1, 11))
 PROFILES = ["heterogeneous", "balanced", "algebraic"]
 SEEDS = range(1, 6)
 PER_CELL = 6
@@ -57,6 +62,48 @@ def extreme_inputs(source, workdir, tag, draw):
     return flags
 
 
+BOUNDARY_STEPS = [1, 2, 5]
+BOUNDARY_FACTORS = [1.05, 1.15, 1.25]
+
+
+def boundary_tests(workdir):
+    """Chain families just above their thresholds, on witness inputs."""
+    for family, shapes, segment in tightness.FAMILIES:
+        dims = [shapes[0][0]] + [c for _, c in shapes]
+        cheapest = _cheapest_tree(dims)
+        last = 2 if len(shapes) > 3 else None
+        starts = {tightness.closed_form(shapes, 0, last), tightness.closed_form(shapes)}
+        ms = sorted({m0 + d for m0 in starts for d in BOUNDARY_STEPS} |
+                    {int(m0 * f) for m0 in starts for f in BOUNDARY_FACTORS})
+        for m in ms:
+            sets = []
+            for which, alt in (("segment", segment), ("cheapest", cheapest)):
+                mats, _ = tightness.search(shapes, alt, m, random.Random(f"{family}/{m}/{which}"))
+                if mats is not None:
+                    sets.append(tightness.input_flags(shapes, workdir, f"bnd_{family}_{m}_{which}", mats=mats))
+            if sets:
+                yield "boundary", f"boundary_{family}_{m}", tightness.program(shapes, m), sets
+
+
+def _cheapest_tree(dims):
+    k = len(dims) - 1
+    cost, split = {}, {}
+    for i in range(k):
+        cost[(i, i)] = 0
+    for length in range(2, k + 1):
+        for i in range(k - length + 1):
+            j = i + length - 1
+            best = None
+            for s in range(i, j):
+                q = cost[(i, s)] + cost[(s + 1, j)] + dims[i] * dims[j + 1] * (2 * dims[s + 1] - 1)
+                if best is None or q < best:
+                    best, cost[(i, j)], split[(i, j)] = q, q, s
+
+    def tree(i, j):
+        return i if i == j else (tree(i, split[(i, j)]), tree(split[(i, j)] + 1, j))
+    return tree(0, k - 1)
+
+
 def tests():
     """Yields (population, tag, source, list of input-flag lists)."""
     for seed in SEEDS:
@@ -74,6 +121,11 @@ def tests():
         yield "fixtures", "fixture_" + name, src, [[]]
     for path in sorted(WITNESSES.glob("*.ml")):
         yield "witness", "witness_" + path.stem, path.read_text(encoding="utf-8"), [[]]
+
+
+def all_tests(workdir):
+    yield from tests()
+    yield from boundary_tests(workdir)
 
 
 def evaluate(test, workdir):
@@ -107,12 +159,13 @@ def main():
     with tempfile.TemporaryDirectory(prefix="mutation-") as workdir:
         # A correct build must kill nothing; mutant 0 is the unmutated binary.
         with ThreadPoolExecutor(max_workers=20) as pool:
-            for result in pool.map(lambda t: evaluate(t, workdir), list(tests())):
+            for result in pool.map(lambda t: evaluate(t, workdir), list(all_tests(workdir))):
                 rows.extend(result)
     common.write_jsonl(common.RESULTS / "rq5_mutation.jsonl", rows)
     common.write_json(common.RESULTS / "rq5_env.json", common.environment(
         {"mutants": MUTANTS, "profiles": PROFILES, "seeds": list(SEEDS), "per_cell": PER_CELL,
          "input_seeds": list(INPUT_SEEDS), "extreme_draws": EXTREME_DRAWS,
+         "boundary_steps": BOUNDARY_STEPS, "boundary_factors": BOUNDARY_FACTORS,
          "mutants_sha256": common.sha256_file(common.MUTANTS)}))
     print(f"RQ5: {len(rows)} test executions")
 

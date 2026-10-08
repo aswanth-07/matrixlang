@@ -18,6 +18,7 @@ bootstrap 95% intervals (2,000 resamples, fixed seed).
 import collections
 import json
 import math
+import re
 from pathlib import Path
 import random
 import statistics
@@ -161,29 +162,32 @@ def rq2(rows):
 # -- RQ3 ----------------------------------------------------------------------
 
 def rq3(rows, env):
-    out = {"families": {}, "runs": len(rows)}
+    """Per family: the compiler's threshold, the closed forms, and the smallest
+    m at which a confirmed witness separates the refused bracketing from the
+    source order. Below the threshold no witness may exist."""
+    out = {"families": {}, "runs": len([r for r in rows if r["alt_same"] is not None])}
     thresholds = env.get("thresholds", {})
-    for family in sorted({r["family"] for r in rows}):
-        rs = [r for r in rows if r["family"] == family]
+    for family in sorted({r["family"] for r in rows}, key=lambda f: [r["family"] for r in rows].index(f)):
+        rs = [r for r in rows if r["family"] == family and r["alt_same"] is not None]
         m_star = rs[0]["m_star"]
-
-        def region(r):
-            ratio = r["m"] / m_star
-            return ("at-or-below" if r["m"] <= m_star else "up-to-1.01" if ratio <= 1.01
-                    else "up-to-1.1" if ratio <= 1.1 else "above-1.1")
-        regions = {}
-        for name in ["at-or-below", "up-to-1.01", "up-to-1.1", "above-1.1"]:
-            sel = [r for r in rs if region(r) == name]
-            ms = sorted({r["m"] for r in sel})
-            witnessed = sorted({r["m"] for r in sel if not r["reordered_same"]})
-            regions[name] = {"values": len(ms), "witnessed": len(witnessed), "runs": len(sel),
-                             "strict_differ": sum(not r["strict_same"] for r in sel),
-                             "strict_reorders": sum(r["strict_reorders"] for r in sel)}
-        first = min((r["m"] for r in rs if not r["reordered_same"]), default=None)
-        out["families"][family] = {"m_star": m_star, **thresholds.get(family, {}), "regions": regions,
-                                   "first_witness": first,
-                                   "first_witness_ratio": first / m_star if first else None}
-    out["strict_differ_total"] = sum(not r["strict_same"] for r in rows)
+        witnessed = sorted({r["m"] for r in rs if not r["alt_same"]})
+        above = sorted({r["m"] for r in rs if r["m"] > m_star})
+        first = min((m for m in witnessed if m > m_star), default=None)
+        by_kind = collections.Counter(r["witness"].split("-")[0] for r in rs if not r["alt_same"])
+        generic = min((r["m"] for r in rs if not r["alt_same"] and r["m"] > m_star
+                       and not r["witness"].startswith("search")), default=None)
+        out["families"][family] = {
+            "m_star": m_star, **thresholds.get(family, {}),
+            "witnessed_at_or_below": sum(1 for m in witnessed if m <= m_star),
+            "first_witness": first, "first_witness_offset": (first - m_star) if first else None,
+            "above_values": len(above), "above_witnessed": sum(1 for m in above if m in witnessed),
+            "witness_kinds": dict(by_kind), "values": len({r["m"] for r in rs}),
+            "first_generic_ratio": generic / m_star if generic else None,
+            "strict_differ": sum(not r["strict_same"] for r in rs),
+            "strict_reorders_at_or_below": sum(r["strict_reorders"] for r in rs if r["m"] <= m_star),
+        }
+    out["strict_differ_total"] = sum(not r["strict_same"] for r in rows if r["strict_same"] is not None)
+    out["witnessed_at_or_below_total"] = sum(c["witnessed_at_or_below"] for c in out["families"].values())
     return out
 
 
@@ -215,16 +219,57 @@ def rq4(rows, threads):
     return out
 
 
+# -- RQ4b: generated code ---------------------------------------------------------
+
+KERNEL_INPUTS = {"walks": "bool", "layers": "int8, uint8", "image": "uint8", "normal": "int8, int16",
+                 "lowrank": "real(1)", "diffusion": "real(0,1)"}
+
+
+def rq4b(rows):
+    out = {"kernels": {}}
+    for kernel in [k for k in KERNEL_INPUTS if any(r["kernel"] == k for r in rows)]:
+        rs = {r["config"]: r for r in rows if r["kernel"] == kernel}
+        base = rs["source"]["median_ns"]
+        cell = {"inputs": KERNEL_INPUTS[kernel], "source_ms": base / 1e6,
+                "source_matches_vm": rs["source"]["source_matches_vm"],
+                "flops": {c: rs[c]["modeled_flops"] for c in ("source", "strict", "bounded-licensed")},
+                "configs": {}}
+        for c, r in rs.items():
+            cell["configs"][c] = {"speedup": base / r["median_ns"], "same": r["same_as_source"],
+                                  "median_us": r["median_ns"] / 1e3, "iqr_us": [r["p25_ns"] / 1e3, r["p75_ns"] / 1e3],
+                                  "deterministic": r["deterministic"]}
+        cell["distinct_results"] = len({r["output_sha"] for r in rs.values()})
+        cell["strict_results"] = len({r["output_sha"] for c, r in rs.items() if c.startswith("strict")})
+        cell["algebraic_results"] = len({r["output_sha"] for c, r in rs.items() if c.startswith("algebraic")})
+        cell["license_gain"] = rs["strict"]["median_ns"] / rs["strict-licensed"]["median_ns"]
+        cell["license_gain_8t"] = rs["strict-8t"]["median_ns"] / rs["strict-licensed-8t"]["median_ns"]
+        out["kernels"][kernel] = cell
+    ks = out["kernels"].values()
+    out["license_gain_range"] = [min(c["license_gain"] for c in ks), max(c["license_gain"] for c in ks)]
+    out["license_gain_8t_range"] = [min(c["license_gain_8t"] for c in ks), max(c["license_gain_8t"] for c in ks)]
+    out["fast_math_range"] = [min(c["configs"]["source-fast-math"]["speedup"] for c in ks),
+                              max(c["configs"]["source-fast-math"]["speedup"] for c in ks)]
+    out["all_source_match_vm"] = all(c["source_matches_vm"] for c in ks)
+    return out
+
+
 # -- RQ5 ----------------------------------------------------------------------
 
+MUTANT_IDS = list(range(1, 11))
+MUTANT_NAMES = {1: "reorder without proof", 2: "whole chain only", 3: "54-bit threshold",
+                4: "$A I$: ignore $-0$", 5: "$A I$: ignore non-finite", 6: "$A+0$: ignore $-0$",
+                7: "$A 0$: ignore non-finite", 8: "$0 A$: ignore sign", 9: "negation yields no $-0$",
+                10: "one rounding in every sub-chain"}
+
+
 def rq5(rows):
-    pops = ["dyadic", "broad", "domain", "extreme", "fixtures", "witness"]
+    pops = ["dyadic", "broad", "domain", "extreme", "fixtures", "witness", "boundary"]
     out = {"populations": {}, "mutants": {}}
     valid = [r for r in rows if r["valid"]]
     for p in pops:
         tests = {r["test"] for r in valid if r["population"] == p}
         out["populations"][p] = len(tests)
-    for m in range(1, 10):
+    for m in MUTANT_IDS:
         cell = {}
         for p in pops:
             killed = collections.defaultdict(bool)
@@ -233,7 +278,9 @@ def rq5(rows):
                     killed[r["test"]] |= m in r["killed"]
             cell[p] = sum(killed.values())
         out["mutants"][m] = cell
-    out["killed_by_any"] = [m for m in range(1, 10) if any(out["mutants"][m].values())]
+    out["killed_by_any"] = [m for m in MUTANT_IDS if any(out["mutants"][m].values())]
+    out["killed_without_boundary"] = [m for m in MUTANT_IDS
+                                      if any(v for p, v in out["mutants"][m].items() if p != "boundary")]
     out["invalid"] = sum(not r["valid"] for r in rows)
     return out
 
@@ -325,15 +372,52 @@ def write_macros(s):
     if three:
         m["ThreeRuns"] = num(three["runs"])
         m["ThreeStrictDiffer"] = num(three["strict_differ_total"])
+        m["ThreeWitnessedBelow"] = num(three["witnessed_at_or_below_total"])
+        raises = [c["m_star_closed_form"] / c["m_star_exact_only"] - 1 for c in three["families"].values()]
+        m["ThreeRaiseLo"] = pct(min(raises))
+        m["ThreeRaiseHi"] = pct(max(raises))
+        generic = [c["first_generic_ratio"] for c in three["families"].values() if c["first_generic_ratio"]]
+        if generic:
+            m["ThreeGenericFirstLo"] = f"{min(generic):.3f}"
+        m["ThreeValuesPerFamily"] = num(min(c["values"] for c in three["families"].values()))
+    emit = s.get("emit")
+    if emit:
+        m["EmitPrograms"] = num(emit["programs"])
+        m["EmitMismatches"] = num(emit["required_mismatches"])
+        m["EmitChangedBounded"] = num(emit["changed"]["bounded"])
+        m["EmitChangedAlgebraic"] = num(emit["changed"]["algebraic"])
+        m["EmitProductsStrict"] = num(emit["products"]["strict"])
+        m["EmitFreeStrict"] = num(emit["free"]["strict"])
+        m["EmitFreeBounded"] = num(emit["free"]["bounded"])
     four = s.get("rq4")
     if four and four.get("kernels"):
         for k, cell in four["kernels"].items():
             m["Four" + k.replace("_", " ").title().replace(" ", "") + "Speedup"] = f"{cell['speedup']:.2f}"
         if "guard_fraction" in four:
             m["FourGuardPct"] = pct(four["guard_fraction"])
+    e2e = s.get("rq4b")
+    if e2e:
+        for k, cell in e2e["kernels"].items():
+            key = k.capitalize()
+            for c in ("source-fast-math", "strict", "strict-licensed", "bounded-licensed", "algebraic-licensed",
+                      "strict-licensed-8t"):
+                name = "".join(part.capitalize() for part in c.split("-"))
+                sp = cell["configs"][c]["speedup"]
+                m[f"Etoe{key}{name}"] = f"{sp:.0f}" if sp >= 100 else f"{sp:.1f}" if sp >= 10 else f"{sp:.2f}"
+            m[f"Etoe{key}SourceMs"] = f"{cell['source_ms']:.1f}"
+            m[f"Etoe{key}Results"] = str(cell["distinct_results"])
+        m["EtoeLicenseGainLo"] = f"{e2e['license_gain_range'][0]:.2f}"
+        m["EtoeLicenseGainHi"] = f"{e2e['license_gain_range'][1]:.2f}"
+        m["EtoeLicenseGainEightLo"] = f"{e2e['license_gain_8t_range'][0]:.2f}"
+        m["EtoeLicenseGainEightHi"] = f"{e2e['license_gain_8t_range'][1]:.2f}"
+        m["EtoeFastMathHi"] = f"{e2e['fast_math_range'][1]:.2f}"
+        m["EtoeFastMathLo"] = f"{e2e['fast_math_range'][0]:.2f}"
     five = s.get("rq5")
     if five:
         m["FiveKilledAny"] = str(len(five["killed_by_any"]))
+        for mut, cell in five["mutants"].items():
+            for p, kills in cell.items():
+                m[f"FiveKill{mut}{p.capitalize()}"] = num(kills)
         for p, n in five["populations"].items():
             m["FiveTests" + p.capitalize()] = num(n)
     width = s.get("width")
@@ -410,15 +494,14 @@ def write_tables(s):
     three = s.get("rq3")
     if three:
         lines = ["\\begin{tabular}{lrrrrr}", "\\toprule",
-                 "Chain & $m^\\star$ (compiler) & closed form & first witness & witnessed $m$ in $(m^\\star, 1.1m^\\star]$ & strict differ\\\\",
+                 "Chain & exact only & Thm.~1 & compiler & witness & differ\\\\",
                  "\\midrule"]
         for f, c in three["families"].items():
-            near = c["regions"]["up-to-1.01"]["witnessed"] + c["regions"]["up-to-1.1"]["witnessed"]
-            nvals = c["regions"]["up-to-1.01"]["values"] + c["regions"]["up-to-1.1"]["values"]
-            closed = c.get("m_star_closed_form_first3") if f == "24x3x4" else c.get("m_star_closed_form")
-            ratio = f"{c['first_witness_ratio']:.4f}$m^\\star$" if c["first_witness_ratio"] else "--"
-            strict = sum(r["strict_differ"] for r in c["regions"].values())
-            lines.append(f"{f} & {num(c['m_star'])} & {num(closed) if closed else '--'} & {ratio} & {near}/{nvals} & {strict}\\\\")
+            off = c["first_witness_offset"]
+            first = f"$m^\\star{{+}}{off}$" if off else "--"
+            name = f.replace("x", "$\\times$")
+            lines.append(f"{name} & {num(c['m_star_exact_only'])} & {num(c['m_star_closed_form'])} & "
+                         f"{num(c['m_star'])} & {first} & {c['strict_differ']}\\\\")
         lines += ["\\bottomrule", "\\end{tabular}"]
         (gen / "tab-tightness.tex").write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
     four = s.get("rq4")
@@ -434,16 +517,31 @@ def write_tables(s):
                          f"{'yes' if c['identical'] else 'no'}\\\\")
         lines += ["\\bottomrule", "\\end{tabular}"]
         (gen / "tab-bench.tex").write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
+    e2e = s.get("rq4b")
+    if e2e:
+        cols = [("source-fast-math", "fast-math"), ("strict", "strict"), ("strict-licensed", "+ clauses"),
+                ("bounded-licensed", "bounded"), ("strict-licensed-8t", "8 threads")]
+        lines = ["\\begin{tabular}{llr" + "r" * len(cols) + "r}", "\\toprule",
+                 "Kernel & Inputs & Source & \\multicolumn{" + str(len(cols)) + "}{c}{Speedup over source} & Results\\\\",
+                 "\\cmidrule(lr){4-" + str(3 + len(cols)) + "}",
+                 " & & (ms) & " + " & ".join(label for _, label in cols) + " & \\\\", "\\midrule"]
+
+        def fmt(c):
+            sp = c["speedup"]
+            text = f"{sp:,.0f}" if sp >= 100 else f"{sp:.1f}" if sp >= 10 else f"{sp:.2f}"
+            return text if c["same"] else text + "$^\\dagger$"
+        for k, cell in e2e["kernels"].items():
+            lines.append(f"\\texttt{{{k}}} & \\texttt{{{cell['inputs']}}} & {cell['source_ms']:.3g} & " +
+                         " & ".join(fmt(cell["configs"][c]) for c, _ in cols) + f" & {cell['distinct_results']}\\\\")
+        lines += ["\\bottomrule", "\\end{tabular}"]
+        (gen / "tab-e2e.tex").write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
     five = s.get("rq5")
     if five:
-        pops = ["dyadic", "broad", "domain", "extreme", "fixtures", "witness"]
-        names = {1: "reorder without proof", 2: "whole chain only", 3: "54-bit threshold", 4: "$A I$: ignore $-0$",
-                 5: "$A I$: ignore non-finite", 6: "$A+0$: ignore $-0$", 7: "$A 0$: ignore non-finite",
-                 8: "$0 A$: ignore sign", 9: "negation yields no $-0$"}
+        pops = ["dyadic", "broad", "domain", "extreme", "fixtures", "witness", "boundary"]
         lines = ["\\begin{tabular}{rl" + "r" * len(pops) + "}", "\\toprule",
                  " & Mutant & " + " & ".join(f"{p} ({five['populations'][p]})" for p in pops) + "\\\\", "\\midrule"]
-        for m in range(1, 10):
-            lines.append(f"{m} & {names[m]} & " + " & ".join(str(five["mutants"][m][p]) for p in pops) + "\\\\")
+        for m in MUTANT_IDS:
+            lines.append(f"{m} & {MUTANT_NAMES[m]} & " + " & ".join(str(five["mutants"][m][p]) for p in pops) + "\\\\")
         lines += ["\\bottomrule", "\\end{tabular}"]
         (gen / "tab-mutation.tex").write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
     six = s.get("rq6")
@@ -546,6 +644,20 @@ def main():
         summary["rq3"] = rq3(load("rq3_tightness.jsonl"), env)
     if (R / "rq4_bench.jsonl").exists():
         summary["rq4"] = rq4(load("rq4_bench.jsonl"), load("rq4_threads.jsonl"))
+    if (R / "e2e.jsonl").exists():
+        summary["rq4b"] = rq4b(load("e2e.jsonl"))
+    if (R / "emit_check.json").exists():
+        data = json.loads((R / "emit_check.json").read_text(encoding="utf-8"))
+        products, free = collections.Counter(), collections.Counter()
+        for row in data["rows"]:
+            for contract, res in row.get("contracts", {}).items():
+                found = re.search(r"free: (\d+) of (\d+)", res["free_products"])
+                if found:
+                    free[contract] += int(found.group(1))
+                    products[contract] += int(found.group(2))
+        summary["emit"] = {"programs": data["programs"], "required_mismatches": data["required_mismatches"],
+                           "changed": data["simd_differs_from_unoptimized"],
+                           "products": dict(products), "free": dict(free)}
     if (R / "rq5_mutation.jsonl").exists():
         summary["rq5"] = rq5(load("rq5_mutation.jsonl"))
     if (R / "rq6_accuracy.jsonl").exists():

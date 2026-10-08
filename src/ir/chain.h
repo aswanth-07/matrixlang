@@ -12,9 +12,10 @@
  * may do so is a question about the numerical contract, and the answer is a
  * proof obligation rather than a switch:
  *
- *   strict      any bracketing is allowed when every intermediate of every
- *               bracketing is exact (facts_chain_exact): output bits cannot
- *               change.
+ *   strict      any bracketing is allowed when every bracketing returns the
+ *               correctly rounded exact product (facts_chain_exact): every
+ *               intermediate is exact and only the final sums may round, so
+ *               output bits cannot change.
  *   bounded     any bracketing is allowed when no intermediate can overflow:
  *               every bracketing then satisfies the same componentwise error
  *               bound, (prod (1 + gamma_p) - 1) |A1|...|Ak|.

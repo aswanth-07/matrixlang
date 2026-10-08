@@ -40,3 +40,25 @@ Reference inspection followed the closest accessible primary texts: Schwartzbach
 | [Curated semantic mutants, 2026](https://doi.org/10.1145/3841644.3842688), [author text](https://www.jonbell.net/preprint/splashe26-mutants.pdf) | Full text | Specification-aware testing and classroom deployment. MatrixLang has executable numerical fixtures but no student-test or feedback study. |
 
 The surviving contribution is the executable teaching artifact and its measured connection between objective, workload, and legality. The paper's findings are local empirical results with controlled negative cases. It does not describe the technique combination as unprecedented.
+
+## Contracts paper: sources verified on 2026-10-08
+
+The contracts manuscript cites the following additions, each checked against a primary source (publisher or Crossref record, official documentation, release-branch source, or the author's own article). Items that could not be verified were left out of the manuscript.
+
+| Topic | Source | How it was checked |
+| --- | --- | --- |
+| GCC floating-point ranges (ranger, frange) | A. Hernandez, Red Hat Developer article, 2023 | Author's article; the GCC 13 release notes do not describe the feature |
+| LLVM `KnownFPClass` / `computeKnownFPClass` | `ValueTracking.h`, release/17.x (absent in release/16.x) | Release-branch headers |
+| LLVM `foldFBinOpOfIntCasts` | `InstCombineInternal.h`, release/18.x (absent in release/17.x) | Release-branch headers |
+| Ozaki scheme | Ozaki, Ogita, Oishi, Rump, Numer. Algorithms 59(1):95–118, 2012 | Crossref |
+| FP64 GEMM on integer units | Ootomo, Ozaki, Yokota, IJHPCA 38(4):297–313, 2024; Ozaki, Uchino, Imamura, Ozaki Scheme II, IJHPCA 2026 | Crossref, arXiv |
+| Reproducible summation | Ahrens, Demmel, Nguyen, ACM TOMS 46(3), 2020 | Crossref |
+| Intel oneMKL CNR | oneMKL Developer Guide, "Obtaining Numerically Reproducible Results" | Official page |
+| FPRev | Xie, Gao, Wang, Xue, USENIX ATC '25, 1425–1440 | USENIX page |
+| RealCake | Becker et al., ECOOP 2022, LIPIcs 222 | Dagstuhl page |
+| CIGEN | Miao, Laguna, Rubio-González, ICS '24, 201–212 | Crossref |
+| Alive2 | Lopes et al., PLDI 2021, 65–79 | Crossref |
+| Icing | Becker et al., CAV 2019, 155–173 | Crossref (LNCS volume not settled, so not cited) |
+| OpenMP reduction order | OpenMP 5.2, Section 5.5.6: combination order unspecified | Specification |
+| GCC `-fassociative-math` prerequisites | GCC manual, Optimize Options | Official manual |
+| CC 2026 call (precedent for CC 2027) | conf.researchr.org, CC 2026 calls | Official page; no CC 2027 call posted on 2026-10-08 |

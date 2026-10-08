@@ -1,5 +1,25 @@
 # Changelog
 
+## Correctly rounded chains, C output, and the final paper
+
+- The strict contract now accepts a chain whose proper sub-chains are exact and
+  whose final sums round at most once: every bracketing and every order of
+  summation then returns the correctly rounded product. Thresholds rise (for
+  int(0,m) chains 100x2 * 2x100 * 100x2, from 35,578 to 35,697), and the
+  threshold study now constructs witnesses showing that one step above it the
+  bracketings can differ.
+- Added `--emit-c`, `--dump-inputs` and `--no-license`: the program as C11, with
+  an OpenMP reduction clause on exactly the products whose order of summation
+  the contract leaves free. `tools/check_emit_c.py` requires GCC's build of the
+  emitted C to print the virtual machine's bits.
+- The chain pass moves `ones()`, `zeros()` and `identity()` operands above a
+  chain, so `A * A * A * ones(n,1)` is reordered.
+- Added six application kernels (`examples/kernels/`) and an end-to-end GCC
+  study (`tools/contracts/e2e.py`); the mutation study gains a tenth mutant and
+  a boundary population built from the threshold witnesses.
+- The manuscript states the correctly-rounded-chain theorem, adds the C backend
+  and the end-to-end results, and cites verified related work.
+
 ## Numerical contracts and the contracts paper
 
 - Added run-time inputs with declared value domains (`input(int8)`,

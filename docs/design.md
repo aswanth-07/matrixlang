@@ -146,12 +146,22 @@ g = -1074 and their bound; unbounded reals give `DBL_MAX`. Transfer functions
 round bounds upward. A matrix-product entry is never `-0`, because the VM's
 accumulator starts at `+0` and a running sum from `+0` never becomes `-0`.
 
-**Exactness.** A value that is a multiple of 2^g with magnitude at most
-2^(g+53) is representable, so arithmetic producing it does not round. A chain is
-exact under every bracketing when every contiguous sub-chain's bound (the
-product of operand magnitudes and inner dimensions) fits above its grid. Every
-sub-chain must be checked: a zero operand makes the whole chain's bound 0 while
-a sub-product can overflow, and Inf * 0 = NaN.
+**Exactness and correct rounding.** A value that is a multiple of 2^g with
+magnitude at most 2^(g+53) is representable, so arithmetic producing it does not
+round. Every proper contiguous sub-chain must fit that way: some bracketing uses
+it as an operand, and a rounded operand changes everything computed from it.
+The whole chain may round once. A bracketing whose last product contracts
+dimension d sums d exact terms per entry; if every sum of at most d - 1 of them
+fits, only the final addition rounds, and every bracketing, with any order of
+summation inside each product, returns the correctly rounded product
+(`facts_chain_exact`, which reports `rounded` when that final rounding can
+occur). For int(0,m) chains 100x2 * 2x100 * 100x2 this admits m up to 35,697
+(198 m^3 <= 2^53), where requiring an exact product would stop at 35,578; at
+35,698 there are inputs on which the two bracketings print different bits
+(`tests/data/witness35698_*.txt`). Every sub-chain must be checked: a zero
+operand makes the whole chain's bound 0 while a sub-product can overflow, and
+Inf * 0 = NaN. `facts_product_reassociable` is the same rule for one product: it
+decides whether a vectorized or parallel reduction may reorder its sums.
 
 **Bound invariance.** Every bracketing of a chain contracts each inner dimension
 exactly once, so the standard componentwise bound
@@ -173,6 +183,22 @@ factors non-negative and finite to be bit-identical.
 applied to it; an output's certificate is the weakest level in its dependency
 cone. A rewrite also inherits the weakest level in the cone of the operands its
 proof read (see the bug below).
+
+**C code** (`src/backend/emit_c.c`). `--emit-c FILE` writes the (optimized)
+program as C11. Every instruction becomes a loop nest with literal trip counts
+that performs the VM's arithmetic; a product entry is summed from +0 over k
+ascending, written i-k-j, so the C compiler can vectorize across j or run rows
+on threads without changing any entry's order. For each product the facts give
+the weakest level at which its sums may be reordered: bit-identical by the rule
+above, bound-preserving when no partial sum can overflow (every order keeps the
+inner-product bound gamma_d |a|^T |b|), relaxed otherwise. When the contract
+admits that level and the output has at most four columns, the product is
+written as dot products under `#pragma omp simd reduction(+:acc)`, a standard
+license to reorder exactly that sum. Without OpenMP the pragmas are ignored.
+`--dump-inputs FILE` writes the checked inputs for the emitted program, which
+checks them again at load. `tools/check_emit_c.py` compiles the emitted C with
+GCC for every example and generated programs, under each contract, with and
+without OpenMP, and requires the VM's bits.
 
 ---
 

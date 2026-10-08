@@ -286,6 +286,64 @@ static void check_init(ChainCheck *why)
     why->bits = 0;
     why->first = why->last = -1;
     why->min_grid = FACT_GRID_ANY;
+    why->rounded = 0;
+}
+
+static int bits_needed(double m, int g)
+{
+    if (m == 0.0) return 0;
+    return isinf(m) ? 9999 : ceil_log2(m) - g;
+}
+
+/* Records one requirement of the exactness proof: `need` significand bits
+ * for sub-chain a..b, met or not. A failure always outranks a success, and
+ * among failures (or among successes) the largest requirement is kept. */
+static void note(ChainCheck *why, int met, int need, int a, int b)
+{
+    if (!met) {
+        if (why->ok || need > why->bits) {
+            why->bits = need;
+            why->first = a;
+            why->last = b;
+        }
+        why->ok = 0;
+    } else if (why->ok && need > why->bits) {
+        why->bits = need;
+        why->first = a;
+        why->last = b;
+    }
+}
+
+/* The final product of a bracketing that splits a..b after operand s sums
+ * dim[s+1] terms, each an entry of A_a..A_s times one of A_(s+1)..A_b. Every
+ * sum of at most dim[s+1] - 1 terms, in any order, is bounded by that many
+ * times the term bound; when those fit, only the last addition rounds.
+ * Returns whether every split of a..b passes and the bits the worst needs. */
+static int root_rounds_once(const Fact *ops, const int *dim, int a, int b, int *need)
+{
+    int s, ok = 1;
+
+    *need = 0;
+    for (s = a; s < b; s++) {
+        double ml, mr, term, part;
+        int gl, gr, g, bits;
+
+        sub_chain(ops, dim, a, s, &ml, &gl);
+        sub_chain(ops, dim, s + 1, b, &mr, &gr);
+        if (ml == 0.0 || mr == 0.0) continue;
+        g = gl + gr;
+        term = mul_up(ml, mr);
+        part = mul_up(term, (double)(dim[s + 1] - 1));
+        if (isinf(term)) {
+            *need = 9999;
+            ok = 0;
+            continue;
+        }
+        bits = bits_needed(part, g);
+        if (bits > *need) *need = bits;
+        if (g < -1074 || !fits(part, g)) ok = 0;
+    }
+    return ok;
 }
 
 int facts_chain_exact(const Fact *ops, const int *dim, int k, ChainCheck *why)
@@ -306,27 +364,59 @@ int facts_chain_exact(const Fact *ops, const int *dim, int k, ChainCheck *why)
 
     for (a = 0; a < k; a++)
         for (b = a + 1; b < k; b++) {
+            int whole = (a == 0 && b == k - 1);
             double m;
-            int g, bits;
-            if (mutant_active(2) && !(a == 0 && b == k - 1)) continue;
+            int g, need;
+
+            if (mutant_active(2) && !whole) continue;
             sub_chain(ops, dim, a, b, &m, &g);
             if (m == 0.0) continue;
             if (g < why->min_grid) why->min_grid = g;
-            bits = isinf(m) ? 9999 : ceil_log2(m) - g;
-            if (!fits(m, g) || isinf(m)) {
-                if (why->ok || bits > why->bits) {
-                    why->bits = bits;
-                    why->first = a;
-                    why->last = b;
-                }
-                why->ok = 0;
-            } else if (why->ok && bits > why->bits) {
-                why->bits = bits;
-                why->first = a;
-                why->last = b;
+
+            if (!isinf(m) && fits(m, g)) {
+                note(why, 1, bits_needed(m, g), a, b);
+                continue;
             }
+            /* Not exact. Only the whole chain may still round once: a proper
+             * sub-chain is an operand of a later product in some bracketing,
+             * and a rounded operand changes everything computed from it.
+             * (Mutant 10 extends the one-rounding rule to every sub-chain.) */
+            if ((whole || mutant_active(10)) && !isinf(m) && m <= DBL_MAX) {
+                if (root_rounds_once(ops, dim, a, b, &need)) {
+                    note(why, 1, need, a, b);
+                    if (whole) why->rounded = 1;
+                } else {
+                    note(why, 0, need, a, b);   /* the partial sum that fails */
+                }
+                continue;
+            }
+            note(why, 0, bits_needed(m, g), a, b);
         }
     return why->ok;
+}
+
+int facts_product_reassociable(Fact a, Fact b, int inner)
+{
+    double term, part;
+    int g;
+
+    if (!a.finite || !b.finite) return 0;
+    if (a.mag == 0.0 || b.mag == 0.0) return 1;   /* every term is an exact zero */
+    g = a.grid + b.grid;
+    if (g < -1074) return 0;
+    term = mul_up(a.mag, b.mag);
+    if (isinf(term) || !fits(term, g)) return inner <= 1 && !isinf(term);
+    part = mul_up(term, (double)(inner - 1));
+    return !isinf(part) && fits(part, g);
+}
+
+int facts_product_range(Fact a, Fact b, int inner)
+{
+    double m;
+
+    if (!a.finite || !b.finite) return 0;
+    m = mul_up(mul_up(a.mag, b.mag), (double)inner);
+    return m <= ldexp(1.0, 1020);
 }
 
 int facts_chain_range(const Fact *ops, const int *dim, int k, ChainCheck *why)

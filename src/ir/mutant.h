@@ -16,6 +16,7 @@
  *   7  A*0 -> 0 (matrix product) without requiring that A is finite
  *   8  0*A -> 0 (scaling) as bit-identical without the sign condition
  *   9  negation and scaling are assumed never to produce -0
+ *  10  every sub-chain, not only the whole chain, may round in its final sum
  */
 #ifndef MATRIXLANG_MUTANT_H
 #define MATRIXLANG_MUTANT_H

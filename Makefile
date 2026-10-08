@@ -209,6 +209,7 @@ test: all
 	@echo
 	@"$(PYTHON)" tools/check-demo-engines.py --optional
 	@"$(PYTHON)" -m unittest discover -s tests -p 'test_demo_service.py'
+	@"$(PYTHON)" tools/check_emit_c.py --generated 12
 
 clean:
 	rm -rf $(BUILDDIR) $(BINDIR)

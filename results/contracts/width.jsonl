@@ -665,7 +665,7 @@
 {"algebraic_chains":1,"algebraic_saved":1444080,"bits":7,"cost_before":2172096,"index":4,"profile":"heterogeneous","seed":4,"strict_chains":1,"strict_saved":1444080}
 {"algebraic_chains":1,"algebraic_saved":2661888,"bits":7,"cost_before":5396000,"index":5,"profile":"heterogeneous","seed":4,"strict_chains":1,"strict_saved":73968}
 {"algebraic_chains":3,"algebraic_saved":46947,"bits":7,"cost_before":51354,"index":6,"profile":"heterogeneous","seed":4,"strict_chains":3,"strict_saved":20822}
-{"algebraic_chains":1,"algebraic_saved":72783,"bits":7,"cost_before":93924,"index":7,"profile":"heterogeneous","seed":4,"strict_chains":1,"strict_saved":72776}
+{"algebraic_chains":1,"algebraic_saved":72783,"bits":7,"cost_before":93924,"index":7,"profile":"heterogeneous","seed":4,"strict_chains":2,"strict_saved":72783}
 {"algebraic_chains":0,"algebraic_saved":0,"bits":7,"cost_before":3607344,"index":8,"profile":"heterogeneous","seed":4,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":0,"algebraic_saved":0,"bits":7,"cost_before":974376,"index":9,"profile":"heterogeneous","seed":4,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":0,"algebraic_saved":1,"bits":7,"cost_before":1857,"index":10,"profile":"heterogeneous","seed":4,"strict_chains":0,"strict_saved":1}
@@ -1056,7 +1056,7 @@
 {"algebraic_chains":1,"algebraic_saved":101664,"bits":11,"cost_before":304016,"index":15,"profile":"heterogeneous","seed":3,"strict_chains":1,"strict_saved":101664}
 {"algebraic_chains":0,"algebraic_saved":0,"bits":11,"cost_before":15348,"index":16,"profile":"heterogeneous","seed":3,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":1,"algebraic_saved":380685,"bits":11,"cost_before":405725,"index":17,"profile":"heterogeneous","seed":3,"strict_chains":1,"strict_saved":279000}
-{"algebraic_chains":3,"algebraic_saved":1014505,"bits":11,"cost_before":1043259,"index":18,"profile":"heterogeneous","seed":3,"strict_chains":1,"strict_saved":1770}
+{"algebraic_chains":3,"algebraic_saved":1014505,"bits":11,"cost_before":1043259,"index":18,"profile":"heterogeneous","seed":3,"strict_chains":2,"strict_saved":1777}
 {"algebraic_chains":2,"algebraic_saved":4887090,"bits":11,"cost_before":5235452,"index":19,"profile":"heterogeneous","seed":3,"strict_chains":2,"strict_saved":3812130}
 {"algebraic_chains":2,"algebraic_saved":72957,"bits":11,"cost_before":79297,"index":0,"profile":"heterogeneous","seed":4,"strict_chains":2,"strict_saved":67533}
 {"algebraic_chains":2,"algebraic_saved":1482,"bits":11,"cost_before":5346,"index":1,"profile":"heterogeneous","seed":4,"strict_chains":2,"strict_saved":1482}
@@ -1119,7 +1119,7 @@
 {"algebraic_chains":1,"algebraic_saved":276,"bits":11,"cost_before":7660,"index":18,"profile":"narrow","seed":1,"strict_chains":1,"strict_saved":276}
 {"algebraic_chains":2,"algebraic_saved":4810,"bits":11,"cost_before":22160,"index":19,"profile":"narrow","seed":1,"strict_chains":1,"strict_saved":346}
 {"algebraic_chains":1,"algebraic_saved":3708,"bits":11,"cost_before":12537,"index":0,"profile":"narrow","seed":2,"strict_chains":0,"strict_saved":1701}
-{"algebraic_chains":2,"algebraic_saved":1120,"bits":11,"cost_before":11308,"index":1,"profile":"narrow","seed":2,"strict_chains":1,"strict_saved":1000}
+{"algebraic_chains":2,"algebraic_saved":1120,"bits":11,"cost_before":11308,"index":1,"profile":"narrow","seed":2,"strict_chains":2,"strict_saved":1120}
 {"algebraic_chains":1,"algebraic_saved":915,"bits":11,"cost_before":10353,"index":2,"profile":"narrow","seed":2,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":2,"algebraic_saved":2727,"bits":11,"cost_before":16098,"index":3,"profile":"narrow","seed":2,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":1,"algebraic_saved":380,"bits":11,"cost_before":27782,"index":4,"profile":"narrow","seed":2,"strict_chains":0,"strict_saved":0}
@@ -1217,7 +1217,7 @@
 {"algebraic_chains":0,"algebraic_saved":0,"bits":13,"cost_before":27880,"index":16,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":2,"algebraic_saved":1167760,"bits":13,"cost_before":1279260,"index":17,"profile":"heterogeneous","seed":1,"strict_chains":2,"strict_saved":1023970}
 {"algebraic_chains":1,"algebraic_saved":24264,"bits":13,"cost_before":66480,"index":18,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":0}
-{"algebraic_chains":2,"algebraic_saved":288145,"bits":13,"cost_before":343649,"index":19,"profile":"heterogeneous","seed":1,"strict_chains":1,"strict_saved":53298}
+{"algebraic_chains":2,"algebraic_saved":288145,"bits":13,"cost_before":343649,"index":19,"profile":"heterogeneous","seed":1,"strict_chains":2,"strict_saved":53377}
 {"algebraic_chains":1,"algebraic_saved":289710,"bits":13,"cost_before":6374830,"index":0,"profile":"heterogeneous","seed":2,"strict_chains":1,"strict_saved":62100}
 {"algebraic_chains":1,"algebraic_saved":259776,"bits":13,"cost_before":360992,"index":1,"profile":"heterogeneous","seed":2,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":1,"algebraic_saved":11665,"bits":13,"cost_before":49825,"index":2,"profile":"heterogeneous","seed":2,"strict_chains":1,"strict_saved":11665}
@@ -1282,7 +1282,7 @@
 {"algebraic_chains":3,"algebraic_saved":156025,"bits":13,"cost_before":177372,"index":1,"profile":"heterogeneous","seed":5,"strict_chains":1,"strict_saved":32844}
 {"algebraic_chains":0,"algebraic_saved":0,"bits":13,"cost_before":4780,"index":2,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":1,"algebraic_saved":1472,"bits":13,"cost_before":34327,"index":3,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":2209}
-{"algebraic_chains":1,"algebraic_saved":79,"bits":13,"cost_before":314720,"index":4,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}
+{"algebraic_chains":1,"algebraic_saved":79,"bits":13,"cost_before":314720,"index":4,"profile":"heterogeneous","seed":5,"strict_chains":1,"strict_saved":79}
 {"algebraic_chains":1,"algebraic_saved":238,"bits":13,"cost_before":1615,"index":5,"profile":"heterogeneous","seed":5,"strict_chains":1,"strict_saved":238}
 {"algebraic_chains":2,"algebraic_saved":90829,"bits":13,"cost_before":227261,"index":6,"profile":"heterogeneous","seed":5,"strict_chains":1,"strict_saved":75601}
 {"algebraic_chains":2,"algebraic_saved":1452,"bits":13,"cost_before":2540,"index":7,"profile":"heterogeneous","seed":5,"strict_chains":1,"strict_saved":1428}
@@ -1417,7 +1417,7 @@
 {"algebraic_chains":0,"algebraic_saved":0,"bits":15,"cost_before":27880,"index":16,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":2,"algebraic_saved":1167760,"bits":15,"cost_before":1279260,"index":17,"profile":"heterogeneous","seed":1,"strict_chains":1,"strict_saved":49410}
 {"algebraic_chains":1,"algebraic_saved":24264,"bits":15,"cost_before":66480,"index":18,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":0}
-{"algebraic_chains":2,"algebraic_saved":288145,"bits":15,"cost_before":343649,"index":19,"profile":"heterogeneous","seed":1,"strict_chains":1,"strict_saved":53298}
+{"algebraic_chains":2,"algebraic_saved":288145,"bits":15,"cost_before":343649,"index":19,"profile":"heterogeneous","seed":1,"strict_chains":2,"strict_saved":53377}
 {"algebraic_chains":1,"algebraic_saved":289710,"bits":15,"cost_before":6374830,"index":0,"profile":"heterogeneous","seed":2,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":1,"algebraic_saved":259776,"bits":15,"cost_before":360992,"index":1,"profile":"heterogeneous","seed":2,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":1,"algebraic_saved":11665,"bits":15,"cost_before":49825,"index":2,"profile":"heterogeneous","seed":2,"strict_chains":1,"strict_saved":11665}
@@ -1482,8 +1482,8 @@
 {"algebraic_chains":3,"algebraic_saved":156025,"bits":15,"cost_before":177372,"index":1,"profile":"heterogeneous","seed":5,"strict_chains":1,"strict_saved":32844}
 {"algebraic_chains":0,"algebraic_saved":0,"bits":15,"cost_before":4780,"index":2,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":1,"algebraic_saved":1472,"bits":15,"cost_before":34327,"index":3,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":2209}
-{"algebraic_chains":1,"algebraic_saved":79,"bits":15,"cost_before":314720,"index":4,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}
-{"algebraic_chains":1,"algebraic_saved":238,"bits":15,"cost_before":1615,"index":5,"profile":"heterogeneous","seed":5,"strict_chains":1,"strict_saved":119}
+{"algebraic_chains":1,"algebraic_saved":79,"bits":15,"cost_before":314720,"index":4,"profile":"heterogeneous","seed":5,"strict_chains":1,"strict_saved":79}
+{"algebraic_chains":1,"algebraic_saved":238,"bits":15,"cost_before":1615,"index":5,"profile":"heterogeneous","seed":5,"strict_chains":1,"strict_saved":238}
 {"algebraic_chains":2,"algebraic_saved":90829,"bits":15,"cost_before":227261,"index":6,"profile":"heterogeneous","seed":5,"strict_chains":1,"strict_saved":75601}
 {"algebraic_chains":2,"algebraic_saved":1452,"bits":15,"cost_before":2540,"index":7,"profile":"heterogeneous","seed":5,"strict_chains":1,"strict_saved":1428}
 {"algebraic_chains":2,"algebraic_saved":1590,"bits":15,"cost_before":3257,"index":8,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}
@@ -1683,7 +1683,7 @@
 {"algebraic_chains":0,"algebraic_saved":0,"bits":16,"cost_before":4780,"index":2,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":1,"algebraic_saved":1472,"bits":16,"cost_before":34327,"index":3,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":2209}
 {"algebraic_chains":1,"algebraic_saved":79,"bits":16,"cost_before":314720,"index":4,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}
-{"algebraic_chains":1,"algebraic_saved":238,"bits":16,"cost_before":1615,"index":5,"profile":"heterogeneous","seed":5,"strict_chains":1,"strict_saved":119}
+{"algebraic_chains":1,"algebraic_saved":238,"bits":16,"cost_before":1615,"index":5,"profile":"heterogeneous","seed":5,"strict_chains":1,"strict_saved":238}
 {"algebraic_chains":2,"algebraic_saved":90829,"bits":16,"cost_before":227261,"index":6,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":1}
 {"algebraic_chains":2,"algebraic_saved":1452,"bits":16,"cost_before":2540,"index":7,"profile":"heterogeneous","seed":5,"strict_chains":1,"strict_saved":1428}
 {"algebraic_chains":2,"algebraic_saved":1590,"bits":16,"cost_before":3257,"index":8,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}
@@ -1865,7 +1865,7 @@
 {"algebraic_chains":1,"algebraic_saved":1444080,"bits":17,"cost_before":2172096,"index":4,"profile":"heterogeneous","seed":4,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":1,"algebraic_saved":2661888,"bits":17,"cost_before":5396000,"index":5,"profile":"heterogeneous","seed":4,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":3,"algebraic_saved":46947,"bits":17,"cost_before":51354,"index":6,"profile":"heterogeneous","seed":4,"strict_chains":3,"strict_saved":14748}
-{"algebraic_chains":1,"algebraic_saved":72783,"bits":17,"cost_before":93924,"index":7,"profile":"heterogeneous","seed":4,"strict_chains":0,"strict_saved":0}
+{"algebraic_chains":1,"algebraic_saved":72783,"bits":17,"cost_before":93924,"index":7,"profile":"heterogeneous","seed":4,"strict_chains":1,"strict_saved":17460}
 {"algebraic_chains":0,"algebraic_saved":0,"bits":17,"cost_before":3607344,"index":8,"profile":"heterogeneous","seed":4,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":0,"algebraic_saved":0,"bits":17,"cost_before":974376,"index":9,"profile":"heterogeneous","seed":4,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":0,"algebraic_saved":1,"bits":17,"cost_before":1857,"index":10,"profile":"heterogeneous","seed":4,"strict_chains":0,"strict_saved":1}
@@ -1883,7 +1883,7 @@
 {"algebraic_chains":0,"algebraic_saved":0,"bits":17,"cost_before":4780,"index":2,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":1,"algebraic_saved":1472,"bits":17,"cost_before":34327,"index":3,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":2209}
 {"algebraic_chains":1,"algebraic_saved":79,"bits":17,"cost_before":314720,"index":4,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}
-{"algebraic_chains":1,"algebraic_saved":238,"bits":17,"cost_before":1615,"index":5,"profile":"heterogeneous","seed":5,"strict_chains":1,"strict_saved":119}
+{"algebraic_chains":1,"algebraic_saved":238,"bits":17,"cost_before":1615,"index":5,"profile":"heterogeneous","seed":5,"strict_chains":1,"strict_saved":238}
 {"algebraic_chains":2,"algebraic_saved":90829,"bits":17,"cost_before":227261,"index":6,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":1}
 {"algebraic_chains":2,"algebraic_saved":1452,"bits":17,"cost_before":2540,"index":7,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":2,"algebraic_saved":1590,"bits":17,"cost_before":3257,"index":8,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}
@@ -2003,7 +2003,7 @@
 {"algebraic_chains":1,"algebraic_saved":12388,"bits":19,"cost_before":16232,"index":2,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":1760}
 {"algebraic_chains":0,"algebraic_saved":0,"bits":19,"cost_before":6490,"index":3,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":3,"algebraic_saved":748551,"bits":19,"cost_before":787392,"index":4,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":1}
-{"algebraic_chains":2,"algebraic_saved":8402,"bits":19,"cost_before":17104,"index":5,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":0}
+{"algebraic_chains":2,"algebraic_saved":8402,"bits":19,"cost_before":17104,"index":5,"profile":"heterogeneous","seed":1,"strict_chains":1,"strict_saved":7}
 {"algebraic_chains":2,"algebraic_saved":217231,"bits":19,"cost_before":703321,"index":6,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":1}
 {"algebraic_chains":0,"algebraic_saved":0,"bits":19,"cost_before":3753,"index":7,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":2,"algebraic_saved":1852516,"bits":19,"cost_before":2059999,"index":8,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":128281}
@@ -2083,7 +2083,7 @@
 {"algebraic_chains":0,"algebraic_saved":0,"bits":19,"cost_before":4780,"index":2,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":1,"algebraic_saved":1472,"bits":19,"cost_before":34327,"index":3,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":2209}
 {"algebraic_chains":1,"algebraic_saved":79,"bits":19,"cost_before":314720,"index":4,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}
-{"algebraic_chains":1,"algebraic_saved":238,"bits":19,"cost_before":1615,"index":5,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}
+{"algebraic_chains":1,"algebraic_saved":238,"bits":19,"cost_before":1615,"index":5,"profile":"heterogeneous","seed":5,"strict_chains":1,"strict_saved":119}
 {"algebraic_chains":2,"algebraic_saved":90829,"bits":19,"cost_before":227261,"index":6,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":1}
 {"algebraic_chains":2,"algebraic_saved":1452,"bits":19,"cost_before":2540,"index":7,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":2,"algebraic_saved":1590,"bits":19,"cost_before":3257,"index":8,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}
@@ -2203,7 +2203,7 @@
 {"algebraic_chains":1,"algebraic_saved":12388,"bits":21,"cost_before":16232,"index":2,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":1760}
 {"algebraic_chains":0,"algebraic_saved":0,"bits":21,"cost_before":6490,"index":3,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":3,"algebraic_saved":748551,"bits":21,"cost_before":787392,"index":4,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":1}
-{"algebraic_chains":2,"algebraic_saved":8402,"bits":21,"cost_before":17104,"index":5,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":0}
+{"algebraic_chains":2,"algebraic_saved":8402,"bits":21,"cost_before":17104,"index":5,"profile":"heterogeneous","seed":1,"strict_chains":1,"strict_saved":7}
 {"algebraic_chains":2,"algebraic_saved":217231,"bits":21,"cost_before":703321,"index":6,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":1}
 {"algebraic_chains":0,"algebraic_saved":0,"bits":21,"cost_before":3753,"index":7,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":2,"algebraic_saved":1852516,"bits":21,"cost_before":2059999,"index":8,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":128281}
@@ -2283,7 +2283,7 @@
 {"algebraic_chains":0,"algebraic_saved":0,"bits":21,"cost_before":4780,"index":2,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":1,"algebraic_saved":1472,"bits":21,"cost_before":34327,"index":3,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":2209}
 {"algebraic_chains":1,"algebraic_saved":79,"bits":21,"cost_before":314720,"index":4,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}
-{"algebraic_chains":1,"algebraic_saved":238,"bits":21,"cost_before":1615,"index":5,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}
+{"algebraic_chains":1,"algebraic_saved":238,"bits":21,"cost_before":1615,"index":5,"profile":"heterogeneous","seed":5,"strict_chains":1,"strict_saved":119}
 {"algebraic_chains":2,"algebraic_saved":90829,"bits":21,"cost_before":227261,"index":6,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":1}
 {"algebraic_chains":2,"algebraic_saved":1452,"bits":21,"cost_before":2540,"index":7,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":2,"algebraic_saved":1590,"bits":21,"cost_before":3257,"index":8,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}
@@ -2403,7 +2403,7 @@
 {"algebraic_chains":1,"algebraic_saved":12388,"bits":23,"cost_before":16232,"index":2,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":1760}
 {"algebraic_chains":0,"algebraic_saved":0,"bits":23,"cost_before":6490,"index":3,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":3,"algebraic_saved":748551,"bits":23,"cost_before":787392,"index":4,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":1}
-{"algebraic_chains":2,"algebraic_saved":8402,"bits":23,"cost_before":17104,"index":5,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":0}
+{"algebraic_chains":2,"algebraic_saved":8402,"bits":23,"cost_before":17104,"index":5,"profile":"heterogeneous","seed":1,"strict_chains":1,"strict_saved":7}
 {"algebraic_chains":2,"algebraic_saved":217231,"bits":23,"cost_before":703321,"index":6,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":1}
 {"algebraic_chains":0,"algebraic_saved":0,"bits":23,"cost_before":3753,"index":7,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":2,"algebraic_saved":1852516,"bits":23,"cost_before":2059999,"index":8,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":128281}
@@ -2483,7 +2483,7 @@
 {"algebraic_chains":0,"algebraic_saved":0,"bits":23,"cost_before":4780,"index":2,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":1,"algebraic_saved":1472,"bits":23,"cost_before":34327,"index":3,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":2209}
 {"algebraic_chains":1,"algebraic_saved":79,"bits":23,"cost_before":314720,"index":4,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}
-{"algebraic_chains":1,"algebraic_saved":238,"bits":23,"cost_before":1615,"index":5,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}
+{"algebraic_chains":1,"algebraic_saved":238,"bits":23,"cost_before":1615,"index":5,"profile":"heterogeneous","seed":5,"strict_chains":1,"strict_saved":119}
 {"algebraic_chains":2,"algebraic_saved":90829,"bits":23,"cost_before":227261,"index":6,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":1}
 {"algebraic_chains":2,"algebraic_saved":1452,"bits":23,"cost_before":2540,"index":7,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":2,"algebraic_saved":1590,"bits":23,"cost_before":3257,"index":8,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}
@@ -2603,7 +2603,7 @@
 {"algebraic_chains":1,"algebraic_saved":12388,"bits":25,"cost_before":16232,"index":2,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":1760}
 {"algebraic_chains":0,"algebraic_saved":0,"bits":25,"cost_before":6490,"index":3,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":3,"algebraic_saved":748551,"bits":25,"cost_before":787392,"index":4,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":1}
-{"algebraic_chains":2,"algebraic_saved":8402,"bits":25,"cost_before":17104,"index":5,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":0}
+{"algebraic_chains":2,"algebraic_saved":8402,"bits":25,"cost_before":17104,"index":5,"profile":"heterogeneous","seed":1,"strict_chains":1,"strict_saved":7}
 {"algebraic_chains":2,"algebraic_saved":217231,"bits":25,"cost_before":703321,"index":6,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":1}
 {"algebraic_chains":0,"algebraic_saved":0,"bits":25,"cost_before":3753,"index":7,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":2,"algebraic_saved":1852516,"bits":25,"cost_before":2059999,"index":8,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":128281}
@@ -2683,7 +2683,7 @@
 {"algebraic_chains":0,"algebraic_saved":0,"bits":25,"cost_before":4780,"index":2,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":1,"algebraic_saved":1472,"bits":25,"cost_before":34327,"index":3,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":2209}
 {"algebraic_chains":1,"algebraic_saved":79,"bits":25,"cost_before":314720,"index":4,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}
-{"algebraic_chains":1,"algebraic_saved":238,"bits":25,"cost_before":1615,"index":5,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}
+{"algebraic_chains":1,"algebraic_saved":238,"bits":25,"cost_before":1615,"index":5,"profile":"heterogeneous","seed":5,"strict_chains":1,"strict_saved":119}
 {"algebraic_chains":2,"algebraic_saved":90829,"bits":25,"cost_before":227261,"index":6,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":1}
 {"algebraic_chains":2,"algebraic_saved":1452,"bits":25,"cost_before":2540,"index":7,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":2,"algebraic_saved":1590,"bits":25,"cost_before":3257,"index":8,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}
@@ -2803,7 +2803,7 @@
 {"algebraic_chains":1,"algebraic_saved":12388,"bits":26,"cost_before":16232,"index":2,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":1760}
 {"algebraic_chains":0,"algebraic_saved":0,"bits":26,"cost_before":6490,"index":3,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":3,"algebraic_saved":748551,"bits":26,"cost_before":787392,"index":4,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":1}
-{"algebraic_chains":2,"algebraic_saved":8402,"bits":26,"cost_before":17104,"index":5,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":0}
+{"algebraic_chains":2,"algebraic_saved":8402,"bits":26,"cost_before":17104,"index":5,"profile":"heterogeneous","seed":1,"strict_chains":1,"strict_saved":7}
 {"algebraic_chains":2,"algebraic_saved":217231,"bits":26,"cost_before":703321,"index":6,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":1}
 {"algebraic_chains":0,"algebraic_saved":0,"bits":26,"cost_before":3753,"index":7,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":2,"algebraic_saved":1852516,"bits":26,"cost_before":2059999,"index":8,"profile":"heterogeneous","seed":1,"strict_chains":0,"strict_saved":128281}
@@ -2883,7 +2883,7 @@
 {"algebraic_chains":0,"algebraic_saved":0,"bits":26,"cost_before":4780,"index":2,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":1,"algebraic_saved":1472,"bits":26,"cost_before":34327,"index":3,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":2209}
 {"algebraic_chains":1,"algebraic_saved":79,"bits":26,"cost_before":314720,"index":4,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}
-{"algebraic_chains":1,"algebraic_saved":238,"bits":26,"cost_before":1615,"index":5,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}
+{"algebraic_chains":1,"algebraic_saved":238,"bits":26,"cost_before":1615,"index":5,"profile":"heterogeneous","seed":5,"strict_chains":1,"strict_saved":119}
 {"algebraic_chains":2,"algebraic_saved":90829,"bits":26,"cost_before":227261,"index":6,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":1}
 {"algebraic_chains":2,"algebraic_saved":1452,"bits":26,"cost_before":2540,"index":7,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}
 {"algebraic_chains":2,"algebraic_saved":1590,"bits":26,"cost_before":3257,"index":8,"profile":"heterogeneous","seed":5,"strict_chains":0,"strict_saved":0}

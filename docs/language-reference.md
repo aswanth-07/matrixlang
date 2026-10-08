@@ -336,6 +336,25 @@ bit-identical, bound-preserving or relaxed. `--no-proofs` disables the facts and
 admits no value-changing rewrite under strict. `--exact-output` prints
 hexadecimal values for output comparisons. [design.md](design.md#numerical-contracts)
 explains how rewrites are proved.
+
+## 9. C output
+
+`--emit-c FILE` writes the program (after `--optimize`, if given) as a C11
+translation unit; `--dump-inputs FILE` writes the loaded and checked inputs as
+raw binary64 in declaration order. Build and run the result with
+
+```bash
+gcc -std=c11 -O3 -ffp-contract=off -fopenmp-simd prog.c -o prog -lm
+./prog inputs.bin 10
+```
+
+The program checks its inputs against their domains, runs the computation the
+given number of times, prints every output as `--exact-output` does, and reports
+each run's time on standard error. Every sum keeps the virtual machine's order,
+except products whose order of summation the contract leaves free, which carry
+an OpenMP reduction clause; `--no-license` keeps the machine's order
+everywhere. Compiling without `-ffp-contract=off` lets the C compiler fuse
+multiplications and additions, which changes results.
 Tests target printed values in a fixed floating-point environment and do not
 inspect exception flags, NaN payloads or allocation failures. Detailed pass rules
 and the conventional arithmetic objective are in [phase3-optimization.md](phase3-optimization.md).

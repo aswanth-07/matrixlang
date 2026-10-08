@@ -367,9 +367,31 @@ expect_contains "1. bound-preserving  print(R)"
 
 run_case "53 bits exactly is still exact" 0 "$MATRIXC" --explain examples/contracts/boundary_exact.ml
 expect_contains "needs at most 53 of 53 significand bits"
-run_case "one more bit is not provable" 0 "$MATRIXC" --explain examples/contracts/boundary_inexact.ml
+run_case "a chain whose final sums round once is still bit-identical" 0 "$MATRIXC" --explain --certificate examples/contracts/boundary_rounded.ml
+expect_contains "chain order      : A * B * C  ->  A * (B * C)"
+expect_contains "is correctly rounded under every bracketing"
+expect_contains "1. bit-identical     print(R)"
+run_case "one more step is not provable" 0 "$MATRIXC" --explain examples/contracts/boundary_inexact.ml
 expect_contains "may need 54 significand bits"
 expect_contains "chain kept"
+
+W="--input A=tests/data/witness35698_A.txt --input B=tests/data/witness35698_B.txt --input C=tests/data/witness35698_C.txt"
+src_bits=$("$MATRIXC" -q --exact-output --run $W examples/contracts/boundary_inexact.ml 2>&1)
+alt_bits=$("$MATRIXC" -q --exact-output --run $W examples/contracts/boundary_refused.ml 2>&1)
+opt_bits=$("$MATRIXC" -q --exact-output --optimize --run $W examples/contracts/boundary_inexact.ml 2>&1)
+if [ "$src_bits" != "$alt_bits" ] && [ "$src_bits" == "$opt_bits" ]; then
+    ok "the refused bracketing changes bits on a witness; strict output does not"
+else
+    bad "the boundary witness no longer separates the two bracketings"
+fi
+N="--input A=tests/data/near35697_A.txt --input B=tests/data/near35697_B.txt --input C=tests/data/near35697_C.txt"
+plain=$("$MATRIXC" -q --exact-output --run $N examples/contracts/boundary_rounded.ml 2>&1)
+opt=$("$MATRIXC" -q --exact-output --optimize --run $N examples/contracts/boundary_rounded.ml 2>&1)
+if [ "$plain" == "$opt" ]; then
+    ok "a near-maximum input at the threshold keeps every bit under strict reordering"
+else
+    bad "strict reordering at the threshold changed the output"
+fi
 
 run_case "a partially provable chain is reordered in its proved segment" 0 "$MATRIXC" --explain examples/contracts/mixed.ml
 expect_contains "(A * (B * C)) * D"
@@ -402,6 +424,7 @@ section "Contracts -- strict output is bit-identical for drawn inputs"
 
 for f in examples/contracts/exact_chain.ml examples/contracts/real_chain.ml \
          examples/contracts/boundary_exact.ml examples/contracts/boundary_inexact.ml \
+         examples/contracts/boundary_rounded.ml \
          examples/contracts/signed_zero.ml examples/contracts/mixed.ml; do
     same=1
     for seed in 1 2 3 4 5; do

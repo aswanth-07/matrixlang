@@ -1,18 +1,19 @@
 # Venue strategy
 
-Checked on 2026-10-08 for the contracts paper (*Exact, Bounded, or Relaxed*). The earlier recommendation of SPLASH-E applied to the archived teaching-compiler paper and no longer fits this manuscript, which is a compiler-optimization and floating-point paper.
+Checked on 2026-10-08 for the contracts paper (*Exact, Bounded, or Relaxed*), a compiler-optimization and floating-point paper with an implementation and an evaluation.
 
 ## Verified
 
-- **CGO 2027** (IEEE/ACM Code Generation and Optimization), Salt Lake City, 20–24 March 2027, co-located with HPCA, PPoPP and CC 2027. Two submission rounds: 11 June 2026 and 10 September 2026; **both have closed**. Papers use the ACM format, up to 11 pages excluding references; tool papers require a successful artifact evaluation. Source: the [official CGO 2027 call](https://2027.cgo.org/track/cgo-2027-papers), read 2026-10-08.
+- **CGO 2027** (IEEE/ACM Code Generation and Optimization), Salt Lake City, Utah, USA, 20–24 March 2027, co-located with HPCA, PPoPP and CC 2027. Two submission rounds, 11 June 2026 and 10 September 2026; **both have closed**. Papers use the ACM format, up to 11 pages excluding references. Source: the [CGO 2027 call](https://conf.researchr.org/track/cgo-2027/cgo-2027-papers), read 2026-10-08.
+- **CC 2026**, the most recent CC call, as the precedent: full papers due 11 November 2025 (AoE), notification 10 December 2025; at most **10 pages of text, references excluded**; ACM `acmart` with `sigplan,10pt,review,anonymous`; **double-blind**; artifacts encouraged, required for tool papers. Source: the [CC 2026 call](https://conf.researchr.org/track/CC-2026/calls), read 2026-10-08.
 
 ## Not verified
 
-- **CC 2027** (ACM SIGPLAN Compiler Construction) is listed as co-located with CGO 2027 in Salt Lake City, but no CC 2027 call for papers could be found on 2026-10-08. Earlier editions set full-paper deadlines in November (CC 2026: 10 November 2025, per a [third-party aggregator](https://www.myhuiban.com/conference/259?lang=en-us); CC 2021: 10 November 2020, per its [call](https://www.sigarch.org/call-contributions/compiler-construction-cc-2021/)). A November 2026 deadline is an inference, not a date. Check [conf.researchr.org/series/CC](https://conf.researchr.org/series/CC) before planning.
+- **CC 2027** is listed with CGO, HPCA and PPoPP in Salt Lake City (20–24 March 2027), but no CC 2027 call was posted on 2026-10-08 ([series page](https://conf.researchr.org/series/CC) lists editions up to 2026). A deadline in November 2026 follows the pattern of earlier editions; it is an inference, not a date.
 
 ## Recommendation
 
-1. **CC 2027**, if its call opens with a deadline that allows the remaining work: the paper's scope (an analysis, a contract design, an implementation in a compiler, and an evaluation) matches CC's research papers, and the 8-page draft fits a typical CC limit. Confirm the page limit and format from the call.
-2. **CGO 2028**, first round (expected around June 2027 if CGO keeps its two-round model; not announced). The RQ4 results with GCC are the part closest to CGO's interests; a CGO submission would be stronger with the exactness check implemented as an LLVM pass on real loop reductions.
+1. **CC 2027**, when its call appears. The paper's scope (an analysis, a contract design, a theorem, an implementation with a C backend, and an evaluation under GCC) is CC's research-paper scope. The manuscript is formatted as CC 2026 required (`sigplan,10pt,review,anonymous`); check the body against the 10-page limit of the new call.
+2. **CGO 2028**, first round (expected around June 2027 if CGO keeps two rounds; not announced). The end-to-end GCC results and the reduction clauses are the parts closest to CGO; an LLVM implementation would strengthen a CGO submission.
 
-What would most strengthen either submission: evaluation on real programs or benchmark kernels with integer-valued data (PolyBench, image and signal processing, quantized inference), which this machine could not download; an LLVM prototype; and a second author pass over the related work for any recent fast-math semantics papers the bounded search missed. No acceptance probability is claimed.
+What would most strengthen either submission: kernels from existing applications or benchmark suites with integer-valued data (graph analytics, quantized inference, image processing), which this machine could not download; an LLVM prototype of the per-reduction license; and a second author pass over related work. No acceptance probability is claimed.

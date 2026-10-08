@@ -1,0 +1,14 @@
+\begin{tabular}{llrrrrrrr}
+\toprule
+Kernel & Inputs & Source & \multicolumn{5}{c}{Speedup over source} & Results\\
+\cmidrule(lr){4-8}
+ & & (ms) & fast-math & strict & + clauses & bounded & 8 threads & \\
+\midrule
+\texttt{walks} & \texttt{bool} & 342 & 1.12 & 278 & 288 & 288 & 1,202 & 1\\
+\texttt{layers} & \texttt{int8, uint8} & 1.14 & 0.99 & 4.98 & 5.47 & 5.44 & 14.6 & 1\\
+\texttt{image} & \texttt{uint8} & 4.61 & 1.02 & 0.98 & 1.02 & 1.05 & 1.87 & 1\\
+\texttt{normal} & \texttt{int8, int16} & 0.0288 & 1.09 & 1.27 & 1.28 & 1.24 & 1.31 & 1\\
+\texttt{lowrank} & \texttt{real(1)} & 11.8 & 1.01 & 1.00 & 0.93 & 469$^\dagger$ & 6.51 & 2\\
+\texttt{diffusion} & \texttt{real(0,1)} & 325 & 1.13 & 1.06 & 1.05 & 277$^\dagger$ & 5.06 & 2\\
+\bottomrule
+\end{tabular}
