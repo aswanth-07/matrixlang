@@ -16,13 +16,12 @@
  *   !!kl1..3       their labels
  *   !!e1..7        the slide number, written as a one-hot vector
  *   !!logo !!title !!kicker !!repo   the type that carries over
- *   !!p01..12      MatrixLang tokens drifting through the empty space
- *   !!r<t>_<k>     code rain, parked above slide t and below slide t+1,
- *                  so it falls across the screen during that transition
+ *   !!p01..12      faint MatrixLang tokens resting in the empty space
  *
  * Every slide's transition is Morph (PowerPoint 2019, 2021 and 365);
- * older versions fall back to a fade. The rain is invisible in the
- * slide sorter and in exported PDFs because it rests off the slide.
+ * older versions fall back to a fade. The palette is deliberately quiet:
+ * black, white and greys, with muted green, amber and red kept for the
+ * three guarantee levels, and no glow or other effects.
  *
  * Build:  node tools/build-review-deck.js docs/submission/MatrixLang-Implementation-Review.pptx
  * Needs:  pptxgenjs and qrcode from npm; pdftoppm (poppler) renders the
@@ -55,9 +54,9 @@ const THEME = {
   headFontFace: "Segoe UI Semibold",
   bodyFontFace: "Segoe UI",
   colors: {
-    dk1: "000000", lt1: "FFFFFF", dk2: "06200F", lt2: "E6EDE8",
-    accent1: "00FF41", accent2: "FFB000", accent3: "FF3B5C", accent4: "8A948D",
-    accent5: "00B83A", accent6: "0E3B1C", hlink: "00FF41", folHlink: "00B83A",
+    dk1: "000000", lt1: "F2F4F3", dk2: "16291F", lt2: "D5DAD7",
+    accent1: "52B788", accent2: "D9A54C", accent3: "D96C6C", accent4: "8E9590",
+    accent5: "3E8F68", accent6: "16291F", hlink: "52B788", folHlink: "3E8F68",
   },
 };
 const HEX = THEME.colors;
@@ -83,11 +82,11 @@ const P = {
 };
 // Shades the theme has no slot for.
 const T = {
-  dim: "4D5750", faint: "232B26", line: "1A2820", panel: "040906", well: "030805",
-  green3: "16803A", greenTint: "05240F", amberTint: "2B2000", redTint: "2E0911", keptTint: "0A0D0B",
-  newFill: "03160A", rowFill: "03140A",
+  dim: "4A514D", faint: "242A27", line: "1F2523", panel: "0A0C0B", well: "070908",
+  green3: "3F6F57", greenTint: "0F1D16", amberTint: "211A0E", redTint: "211212", keptTint: "0B0D0C",
+  newFill: "0D1712", rowFill: "0D1110",
 };
-const CODE = { builtin: "8FE3AE", domain: "5FD98B", number: "D8E0DA", ident: "F2F5F3", punct: "8A948D", comment: "5C6860" };
+const CODE = { builtin: "9CC9B2", domain: "7DB597", number: "D5DAD7", ident: "E6EAE8", punct: "8E9590", comment: "5C6560" };
 
 const LEVEL = [
   { name: "bit-identical", color: P.green, hex: HEX.accent1, tint: T.greenTint },
@@ -166,7 +165,7 @@ function panel(slide, si, x, y, w, h, o = {}) {
 // edge of the right one.
 function brackets(slide, si, x1, x2, y, h, o = {}) {
   const arm = Math.max(0.18, Math.min(0.3, h * 0.09));
-  const line = { color: P.green, width: o.width || 2.25 };
+  const line = { color: P.green2, width: o.width || 1.75 };
   slide.addShape(pres.shapes.CUSTOM_GEOMETRY, {
     x: x1, y, w: arm, h, line: Object.assign({}, line), objectName: "!!brL",
     points: [{ x: arm, y: 0 }, { x: 0, y: 0 }, { x: 0, y: h }, { x: arm, y: h }],
@@ -240,16 +239,15 @@ function progress(slide, si) {
     slide.addText(on ? "1" : "0", {
       x: x0 + i * step, y, w: 0.16, h, margin: 0, isTextBox: true, align: "center", valign: "middle",
       fontFace: MONO, fontSize: 12, bold: on, color: on ? P.green : T.dim, objectName: `!!e${i + 1}`,
-      glow: on ? { size: 6, opacity: 0.5, color: HEX.accent1 } : undefined,
     });
   }
   reserve(si, 11.2, y, 1.38, h);
 }
 
-function logoRuns(lit) {
+function logoRuns() {
   return [
     { text: "Matrix", options: { color: P.white } },
-    { text: "Lang", options: Object.assign({ color: P.green }, lit ? { glow: { size: 16, opacity: 0.35, color: HEX.accent1 } } : {}) },
+    { text: "Lang", options: { color: P.green } },
   ];
 }
 
@@ -259,7 +257,7 @@ function repoLink(slide, si, o) {
 }
 
 function footer(slide, si) {
-  text(slide, si, logoRuns(false), { x: 0.75, y: 6.98, w: 2.2, h: 0.3, fontFace: HEAVY, fontSize: 13, valign: "middle", objectName: "!!logo" });
+  text(slide, si, logoRuns(), { x: 0.75, y: 6.98, w: 2.2, h: 0.3, fontFace: HEAVY, fontSize: 13, valign: "middle", objectName: "!!logo" });
   repoLink(slide, si, { x: 8.38, y: 6.98, w: 4.2, h: 0.3, align: "right" });
 }
 
@@ -305,7 +303,7 @@ function slide1() {
   kicker(s, si, "IMPLEMENTATION REVIEW  //  COMPILER DESIGN LAB");
   progress(s, si);
 
-  s.addText(logoRuns(true), { placeholder: "title", objectName: "!!logo" });
+  s.addText(logoRuns(), { placeholder: "title", objectName: "!!logo" });
   reserve(si, 0.68, 1.42, 7.0, 1.45);
   text(s, si, [
     run("A dimension-aware compiler that "),
@@ -377,7 +375,7 @@ function slide2() {
       run(String(i + 1).padStart(2, "0"), { fontFace: MONO, fontSize: 10, color: fresh ? P.green : P.gray, breakLine: true }),
       run(name, { fontFace: SEMI, fontSize: 13, color: P.white, breakLine: true, paraSpaceBefore: 3 }),
       run(file, { fontFace: MONO, fontSize: 10, color: fresh ? P.green2 : P.gray, paraSpaceBefore: 3 }),
-    ], { fill: fresh ? T.newFill : "050806", line: fresh ? P.green : T.line, lineWidth: fresh ? 1 : 0.75, margin: [7, 5, 6, 7] });
+    ], { fill: fresh ? T.newFill : T.panel, line: fresh ? P.green2 : T.line, lineWidth: fresh ? 1 : 0.75, margin: [7, 5, 6, 7] });
     if (fresh) {
       text(s, si, "NEW", { x: cx(i) + cw - 0.52, y: y + 0.08, w: 0.44, h: 0.2, fontFace: MONO, fontSize: 10, bold: true, color: P.green, align: "right", reserve: false });
     }
@@ -460,8 +458,8 @@ function slide3() {
   const x0 = 7.33, cw = 1.55, gap = 0.1, cx = (c) => x0 + c * (cw + gap);
   const flags = ["--fp-strict", "--fp-bounded", "--fp-algebraic"];
   flags.forEach((f, k) => {
-    actor(s, si, k, cx(k), 1.72, cw, 0.42, { radius: 0.21 });
-    text(s, si, f, { x: cx(k), y: 1.72, w: cw, h: 0.42, fontFace: MONO, fontSize: 12, bold: true, color: P.black, align: "center", valign: "middle", objectName: `!!kl${k + 1}` });
+    actor(s, si, k, cx(k), 1.72, cw, 0.42, { radius: 0.21, fill: LEVEL[k].tint, line: LEVEL[k].color });
+    text(s, si, f, { x: cx(k), y: 1.72, w: cw, h: 0.42, fontFace: MONO, fontSize: 12, bold: true, color: LEVEL[k].color, align: "center", valign: "middle", objectName: `!!kl${k + 1}` });
   });
   brackets(s, si, 6.95, 12.58, 2.28, 3.44);
   const rows = ["input(int8)", "input(real(1))", "input(real)"];
@@ -479,7 +477,7 @@ function slide3() {
       cell(s, si, ri * 3 + ci + 1, cx(ci), y, cw, 1.0, [
         run(v, { fontFace: MONO, fontSize: 24, bold: true, color: kept ? P.gray : L.color, breakLine: true }),
         run(kept ? "kept order" : L.name, { fontFace: MONO, fontSize: 10.5, color: kept ? P.gray : P.ink, paraSpaceBefore: 2 }),
-      ], { fill: kept ? T.keptTint : L.tint, line: kept ? T.faint : L.color, lineWidth: kept ? 0.75 : 1, align: "center", valign: "middle", margin: [3, 3, 3, 3] });
+      ], { fill: kept ? T.keptTint : L.tint, line: kept ? T.faint : L.color, lineWidth: 0.75, align: "center", valign: "middle", margin: [3, 3, 3, 3] });
     });
   });
   text(s, si, "Operations left after optimization, and the certificate of print(R), as matrixc reports them for R = A·B·C with shapes 40×2, 2×40 and 40×2.", {
@@ -556,8 +554,8 @@ function slide4() {
   // The levels form a chain: each admits everything below it.
   const lat = [[7.17, 1.42], [8.9, 1.78], [10.99, 1.0]];
   lat.forEach(([x, w], k) => {
-    actor(s, si, k, x, 5.95, w, 0.38, { radius: 0.19 });
-    text(s, si, LEVEL[k].name, { x, y: 5.95, w, h: 0.38, fontFace: MONO, fontSize: 11, bold: true, color: P.black, align: "center", valign: "middle", objectName: `!!kl${k + 1}` });
+    actor(s, si, k, x, 5.95, w, 0.38, { radius: 0.19, fill: LEVEL[k].tint, line: LEVEL[k].color });
+    text(s, si, LEVEL[k].name, { x, y: 5.95, w, h: 0.38, fontFace: MONO, fontSize: 11, bold: true, color: LEVEL[k].color, align: "center", valign: "middle", objectName: `!!kl${k + 1}` });
     if (k < 2) text(s, si, "<", { x: x + w + 0.02, y: 5.95, w: 0.25, h: 0.38, fontFace: MONO, fontSize: 14, color: P.gray, align: "center", valign: "middle" });
   });
   s.addNotes(NOTES[3]);
@@ -583,7 +581,7 @@ function slide5() {
   tiles.forEach(([big, label, was], i) => {
     const x = 0.75 + i * 3.01;
     cell(s, si, i + 1, x, 1.72, 2.8, 1.44, [
-      run(big, { fontFace: HEAVY, fontSize: 34, color: P.green, breakLine: true }),
+      run(big, { fontFace: HEAVY, fontSize: 34, color: P.white, breakLine: true }),
       run(label, { fontFace: SANS, fontSize: 12.5, color: P.ink, breakLine: true }),
       run(was, { fontFace: MONO, fontSize: 11, color: P.gray, paraSpaceBefore: 3 }),
     ], { fill: T.panel, line: T.line, margin: [12, 8, 6, 6] });
@@ -620,9 +618,9 @@ function chartStyle(o) {
   return Object.assign({
     barDir: "bar", barGrouping: "clustered", barGapWidthPct: 55, catAxisOrientation: "maxMin",
     showLegend: false, showTitle: false, valAxisHidden: true, valGridLine: { style: "none" }, catGridLine: { style: "none" },
-    catAxisLabelColor: "AEB6B0", catAxisLabelFontSize: 11, catAxisLabelFontFace: "+mn-lt",
-    catAxisLineShow: true, catAxisLineColor: "3A443D", catAxisLineSize: 1, catAxisMajorTickMark: "none",
-    showValue: true, dataLabelPosition: "outEnd", dataLabelColor: "E6EDE8", dataLabelFontSize: 10, dataLabelFontFace: "+mn-lt", dataLabelFontBold: true,
+    catAxisLabelColor: "A3AAA6", catAxisLabelFontSize: 11, catAxisLabelFontFace: "+mn-lt",
+    catAxisLineShow: true, catAxisLineColor: "3A403D", catAxisLineSize: 1, catAxisMajorTickMark: "none",
+    showValue: true, dataLabelPosition: "outEnd", dataLabelColor: "D5DAD7", dataLabelFontSize: 10, dataLabelFontFace: "+mn-lt", dataLabelFontBold: true,
   }, o);
 }
 
@@ -645,7 +643,7 @@ function slide6() {
   legend.forEach((L) => {
     if (L.k >= 0) actor(s, si, L.k, L.x, 1.705, 0.16, 0.16);
     else {
-      s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: L.x, y: 1.705, w: 0.16, h: 0.16, rectRadius: 0.08, fill: { color: "6B756E" }, line: { type: "none" } });
+      s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: L.x, y: 1.705, w: 0.16, h: 0.16, rectRadius: 0.08, fill: { color: "6B716D" }, line: { type: "none" } });
       reserve(si, L.x, 1.705, 0.16, 0.16);
     }
     text(s, si, L.label, { x: L.x + 0.24, y: 1.62, w: L.w, h: 0.33, fontFace: MONO, fontSize: 11.5, color: P.ink, valign: "middle", objectName: L.k >= 0 ? `!!kl${L.k + 1}` : undefined });
@@ -682,7 +680,7 @@ function slide6() {
     { name: "bounded + proofs", labels: domains, values: [19.6, 22.3, 25.1] },
   ], chartStyle({
     x: 7.96, y: 2.86, w: 4.16, h: 2.74, objectName: "chart-recovery",
-    chartColors: ["6B756E", HEX.accent1, HEX.accent2],
+    chartColors: ["6B716D", HEX.accent1, HEX.accent2],
     valAxisMinVal: 0, valAxisMaxVal: 32,
     dataLabelFormatCode: '0.0"%"',
     altText: "Modeled arithmetic removed. int8: no proofs 0.5%, strict 16.5%, bounded 19.6%. int16: 0.3%, 7.8%, 22.3%. real(1): 1.4%, 7.5%, 25.1%.",
@@ -717,7 +715,7 @@ function slide7(qr, pages) {
   cell(s, si, 1, 0.75, 4.5, 8.2, 1.95, "", { fill: T.panel, line: T.line, radius: 0.08 });
   cell(s, si, 2, 9.45, 1.18, 3.13, 3.62, "", { fill: T.panel, line: T.line, radius: 0.08 });
 
-  s.addText([run("Thank you", { glow: { size: 18, opacity: 0.22, color: HEX.accent1 } })], { placeholder: "title", objectName: "!!title" });
+  s.addText("Thank you", { placeholder: "title", objectName: "!!title" });
   reserve(si, 1.22, 1.36, 7.5, 1.5);
   brackets(s, si, 0.75, 8.95, 1.3, 3.0);
   const lines = ["print(thank_you)", "print(questions)", "print(feedback)"];
@@ -741,7 +739,7 @@ function slide7(qr, pages) {
   text(s, si, "ACM SIGPLAN format  ·  10 pages  ·  target CC 2027", { x: tx, y: 5.98, w: tw, h: 0.26, fontFace: MONO, fontSize: 10.5, color: P.green, reserve: false });
 
   const qx = 9.45 + (3.13 - 2.46) / 2;
-  s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: qx, y: 1.32, w: 2.46, h: 2.46, rectRadius: 0.12, fill: { color: HEX.accent1 }, line: { type: "none" }, objectName: "qr-tile" });
+  s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: qx, y: 1.32, w: 2.46, h: 2.46, rectRadius: 0.12, fill: { color: "FFFFFF" }, line: { type: "none" }, objectName: "qr-tile" });
   s.addImage({ data: qr, x: qx + 0.08, y: 1.4, w: 2.3, h: 2.3, altText: "QR code linking to " + REPO, hyperlink: { url: REPO, tooltip: "Open the MatrixLang repository" } });
   repoLink(s, si, { x: 9.45, y: 3.95, w: 3.13, h: 0.32, fontSize: 11, align: "center", reserve: false });
   text(s, si, "code  ·  paper  ·  raw data  ·  workspace", { x: 9.45, y: 4.27, w: 3.13, h: 0.3, fontSize: 11, color: P.gray, align: "center", reserve: false });
@@ -755,7 +753,7 @@ function slide7(qr, pages) {
     if (i < 7) cell(s, si, i + 3, x, y, 0.105, 0.105, "", { fill, radius: 0.015, margin: 0 });
     else s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y, w: 0.105, h: 0.105, rectRadius: 0.015, fill: { color: fill }, line: { type: "none" } });
   }
-  text(s, si, logoRuns(false), { x: 1.24, y: 6.62, w: 2.6, h: 0.48, fontFace: HEAVY, fontSize: 22, valign: "middle", objectName: "!!logo" });
+  text(s, si, logoRuns(), { x: 1.24, y: 6.62, w: 2.6, h: 0.48, fontFace: HEAVY, fontSize: 22, valign: "middle", objectName: "!!logo" });
   text(s, si, [
     run("A Aswanth Raj", { color: P.white }), run("  ·  24BAI0044        "),
     run("Supervisor  ", { color: P.green2 }), run("Dr. Ranjithkumar S", { color: P.white }),
@@ -767,9 +765,9 @@ function slide7(qr, pages) {
 /* ---------------------------------------------------------------- drifting tokens */
 
 const TOKENS = [
-  ["Matrix<40x2>", 12, "1A7F38"], ["A * (B * C)", 12, "17733A"], ["2^53", 20, "0E4A22"], ["fl(x)", 13, "1A7F38"],
-  ["-0 != +0", 11, "3A4A40"], ["inf * 0 = NaN", 11, "17733A"], ["{{1,0},{0,1}}", 12, "125E2C"], ["0x1p+53", 12, "3A4A40"],
-  ["input(int8)", 11, "1A7F38"], ["(a+b)+c", 13, "125E2C"], ["transpose(A)", 11, "3A4A40"], ["print(R);", 12, "17733A"],
+  ["Matrix<40x2>", 11, "3A4A42"], ["A * (B * C)", 11, "34433B"], ["2^53", 12, "3A4A42"], ["fl(x)", 11, "34433B"],
+  ["-0 != +0", 11, "3A403D"], ["inf * 0 = NaN", 11, "34433B"], ["{{1,0},{0,1}}", 11, "3A4A42"], ["0x1p+53", 11, "3A403D"],
+  ["input(int8)", 11, "34433B"], ["(a+b)+c", 11, "3A4A42"], ["transpose(A)", 11, "3A403D"], ["print(R);", 11, "34433B"],
 ];
 
 function tokenBox(t, size) {
@@ -792,13 +790,13 @@ function addTokens() {
     const keepOut = reserved[si].slice();
     if (content) keepOut.push({ x: 0, y: 0, w: W, h: 1.5 });
     const placed = [];
-    const limit = content ? 4 : 8;
+    const limit = content ? 3 : 5;
     // Rotate the order so that different tokens surface on different slides.
     const order = TOKENS.map((_, i) => (i + si * 5) % TOKENS.length);
     for (const i of order) {
       const [t, size, color] = TOKENS[i];
       const name = `!!p${String(i + 1).padStart(2, "0")}`;
-      let { w, h } = tokenBox(t, size);
+      const { w, h } = tokenBox(t, size);
       let best = null, bestScore = -Infinity;
       if (placed.length < limit) {
         for (let x = 0.25; x + w <= W - 0.25; x += 0.1) {
@@ -809,7 +807,7 @@ function addTokens() {
             let score = rng() * 0.8 - (content && y > 6.7 ? 0.6 : 0);
             if (prev[name] && prev[name].onSlide) {
               const d = Math.hypot(x - prev[name].x, y - prev[name].y);
-              score -= Math.abs(d - 1.6) * 0.9;
+              score -= Math.abs(d - 0.9) * 1.2;
             }
             let near = 3;
             for (const q of placed) near = Math.min(near, Math.hypot(x - q.x, y - q.y));
@@ -818,16 +816,8 @@ function addTokens() {
           }
         }
       }
-      let fontSize = size;
       const from = prev[name] || { x: rng() < 0.5 ? -1 : W, y: 0.5 + rng() * 6, w, h };
-      if (best && si === N - 1 && i % 2 === 0 && prev[name] && prev[name].onSlide) {
-        // On the last slide some tokens leave through the nearest edge at twice
-        // their size, as if the camera flew through them.
-        const dx = from.x + from.w / 2 - W / 2, dy = from.y + from.h / 2 - H / 2, len = Math.hypot(dx, dy) || 1;
-        fontSize = size * 2.2;
-        ({ w, h } = tokenBox(t, fontSize));
-        best = { x: W / 2 + dx / len * 10 - w / 2, y: H / 2 + dy / len * 6.5 - h / 2, w, h, onSlide: false };
-      } else if (best) {
+      if (best) {
         best.onSlide = true;
         placed.push(best);
       } else {
@@ -838,59 +828,10 @@ function addTokens() {
       prev[name] = best;
       slides[si].addText(t, {
         x: best.x, y: best.y, w, h, margin: 0, isTextBox: true, wrap: false, valign: "middle",
-        fontFace: MONO, fontSize, color, objectName: name,
+        fontFace: MONO, fontSize: size, color, objectName: name,
       });
     }
   }
-}
-
-/* ---------------------------------------------------------------- code rain */
-
-const RAIN = "0101101001110010ABCDEFRXTMN*+=;[]{}()<>^~:%";
-const RAIN_COLUMNS = [16, 11, 11, 11, 11, 22];  // for the transitions into slides 2..7
-const RAIN_PT = 13;
-const RAIN_LINE = 14 / 72;
-
-function rainRuns(rng, n) {
-  const runs = [];
-  for (let i = 0; i < n; i++) {
-    const fromHead = n - 1 - i;
-    let color;
-    if (fromHead === 0) color = "F2FFF4";
-    else if (fromHead <= 2) color = HEX.accent1;
-    else color = lerpHex("00D936", "02260B", (fromHead - 2) / Math.max(1, n - 3));
-    const o = { color, fontFace: MONO, fontSize: RAIN_PT, lineSpacing: 14, breakLine: i < n - 1 };
-    if (fromHead === 0) o.glow = { size: 6, opacity: 0.6, color: HEX.accent1 };
-    runs.push({ text: RAIN[Math.floor(rng() * RAIN.length)], options: o });
-  }
-  return runs;
-}
-
-function addRain() {
-  const rng = mulberry32(53);
-  RAIN_COLUMNS.forEach((count, t) => {
-    const slots = [];
-    for (let x = 0.06; x < W - 0.3; x += 0.33) slots.push(x);
-    for (let i = slots.length - 1; i > 0; i--) {
-      const j = Math.floor(rng() * (i + 1));
-      [slots[i], slots[j]] = [slots[j], slots[i]];
-    }
-    for (let k = 0; k < count; k++) {
-      const n = 10 + Math.floor(rng() * 22);
-      const h = n * RAIN_LINE + 0.06;
-      const x = slots[k] + (rng() - 0.5) * 0.06;
-      const runs = rainRuns(rng, n);
-      const name = `!!r${t + 1}_${String(k + 1).padStart(2, "0")}`;
-      const above = -h - 0.3 - rng() * 4.5;
-      const below = H + 0.3 + rng() * 3.5;
-      [[t, above], [t + 1, below]].forEach(([si, y]) => {
-        slides[si].addText(JSON.parse(JSON.stringify(runs)), {
-          x, y, w: 0.3, h, margin: 0, isTextBox: true, wrap: false, align: "center", valign: "top",
-          fontFace: MONO, fontSize: RAIN_PT, lineSpacing: 14, objectName: name,
-        });
-      });
-    }
-  });
 }
 
 /* ---------------------------------------------------------------- speaker notes */
@@ -904,7 +845,7 @@ In one sentence: MatrixLang is a complete compiler for a small matrix language, 
 
 The matrix on the right is a teaser. It comes back on slide 3 with its meaning.
 
-(Run this in Slide Show. Every transition is Morph; the green columns parked above and below each slide are the code rain, so leave them where they are.)`,
+(Run this in Slide Show: every transition is Morph.)`,
 
   `About 90 seconds.
 
@@ -989,40 +930,21 @@ function renderPages() {
 }
 
 async function qrImage() {
-  const buf = await QRCode.toBuffer(REPO, { errorCorrectionLevel: "M", margin: 2, scale: 14, color: { dark: "#000000", light: "#00FF41" } });
+  const buf = await QRCode.toBuffer(REPO, { errorCorrectionLevel: "M", margin: 2, scale: 14, color: { dark: "#000000", light: "#FFFFFF" } });
   return "image/png;base64," + buf.toString("base64");
 }
 
 /* ---------------------------------------------------------------- post-processing */
 
-// Glow for the actors, in their own colours. pptxgenjs writes glow on text
-// runs only, so shapes get theirs here, by name.
-const GLOW = {
-  "!!brL": [HEX.accent1, 5, 45], "!!brR": [HEX.accent1, 5, 45],
-  "!!k1": [HEX.accent1, 4, 50], "!!k2": [HEX.accent2, 4, 50], "!!k3": [HEX.accent3, 4, 50],
-  "qr-tile": [HEX.accent1, 10, 30],
-};
-
-// The code rain and the drifting tokens carry no content: mark them
-// decorative so that screen readers skip them.
+// The tokens carry no content: mark them decorative so that screen
+// readers skip them.
 function markDecorative(xml) {
-  return xml.replace(/(<p:cNvPr id="\d+" name="!!(?:r\d|p\d)[^"]*")><\/p:cNvPr>/g, (_, head) => head + '><a:extLst><a:ext uri="{C183D7F6-B498-43B3-948B-1728B52AA6E4}">'
+  return xml.replace(/(<p:cNvPr id="\d+" name="!!p\d[^"]*")><\/p:cNvPr>/g, (_, head) => head + '><a:extLst><a:ext uri="{C183D7F6-B498-43B3-948B-1728B52AA6E4}">'
     + '<adec:decorative xmlns:adec="http://schemas.microsoft.com/office/drawing/2017/decorative" val="1"/></a:ext></a:extLst></p:cNvPr>');
 }
 
-function addGlow(xml) {
-  return xml.replace(/<p:sp>[\s\S]*?<\/p:sp>/g, (sp) => {
-    const m = sp.match(/<p:cNvPr id="\d+" name="([^"]*)"/);
-    const g = m && GLOW[m[1]];
-    if (!g || sp.includes("<a:effectLst>")) return sp;
-    const [color, rad, alpha] = g;
-    const fx = `<a:effectLst><a:glow rad="${rad * 12700}"><a:srgbClr val="${color}"><a:alpha val="${alpha * 1000}"/></a:srgbClr></a:glow></a:effectLst>`;
-    return sp.replace("</p:spPr>", fx + "</p:spPr>");
-  });
-}
-
 // Morph on every slide; the fallback for PowerPoint 2016 and older is a fade.
-const MORPH_MS = [1200, 2200, 1800, 1800, 1800, 1800, 2400];
+const MORPH_MS = [1000, 1600, 1500, 1500, 1500, 1500, 1800];
 function morph(ms) {
   return '<mc:AlternateContent xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">'
     + '<mc:Choice xmlns:p159="http://schemas.microsoft.com/office/powerpoint/2015/09/main" xmlns:p14="http://schemas.microsoft.com/office/powerpoint/2010/main" Requires="p159">'
@@ -1043,7 +965,7 @@ async function postProcess(file) {
   zip.file(theme, themeXml(await zip.file(theme).async("string")));
   for (let i = 1; i <= N; i++) {
     const part = `ppt/slides/slide${i}.xml`;
-    let xml = markDecorative(addGlow(await zip.file(part).async("string")));
+    let xml = markDecorative(await zip.file(part).async("string"));
     if (xml.includes("<p:transition") || xml.includes("mc:AlternateContent")) throw new Error(`${part} already has a transition`);
     const at = xml.indexOf("</p:clrMapOvr>");
     if (at < 0) throw new Error(`${part} has no <p:clrMapOvr>`);
@@ -1072,7 +994,6 @@ async function main() {
   pres.addSection({ title: "Close" });
   slide7(qr, pages);
   addTokens();
-  addRain();
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
   await pres.writeFile({ fileName: OUT });
   await postProcess(OUT);
