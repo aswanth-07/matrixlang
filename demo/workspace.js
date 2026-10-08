@@ -211,8 +211,8 @@
         <label>Entry <select id="bits-entry">${Array.from({length: Math.min(a.values.length, 400)}, (_, i) => `<option value="${i}"${i === entry ? " selected" : ""}>(${Math.floor(i / a.cols) + 1},${i % a.cols + 1})${a.values[i] !== b.values[i] ? " ·" : ""}</option>`).join("")}</select></label>
         <span class="bit-key"><i></i>bits that differ</span></div>
       <dl class="bit-pair">
-        <dt>unoptimized</dt><dd>${Bits.strip(pa, null, {legend: false, size: "md"})}<span class="bit-value">${escape(Bits.describe(pa))}</span></dd>
-        <dt>${escape(contractNames[result.mode].toLowerCase())}</dt><dd>${Bits.strip(pb, pa, {size: "md"})}<span class="bit-value">${escape(Bits.describe(pb))}</span></dd>
+        <dt>unoptimized</dt><dd>${Bits.strip(pa, null, {legend: false, size: "md"})}<span class="bit-value">${Bits.describeHTML(pa)}</span></dd>
+        <dt>${escape(contractNames[result.mode].toLowerCase())}</dt><dd>${Bits.strip(pb, pa, {size: "md"})}<span class="bit-value">${Bits.describeHTML(pb)}</span></dd>
       </dl>
       <p class="bits-summary">Entry (${row + 1},${col + 1}) of <code>${escape(a.label)}</code>: <b>${Bits.differing(pa, pb)} of 64 bits differ</b>, ${escape(Bits.ulpText(pa, pb))}; exponent field ${escape(Bits.exponentOf(pb))}. Across the output, <b>${number(differ)} of ${number(a.values.length)}</b> entries differ${level ? `; certified <b>${escape(level.level)}</b>` : ""}.</p>`;
   }

@@ -158,8 +158,8 @@
     const differ = outs.reduce((s, o) => s + o.differ, 0), total = outs.reduce((s, o) => s + o.entries, 0);
     box.innerHTML = `<h3>Bit check · ${escape(c.label)}</h3>
       <p>${n ? `The most different entry, <code>${escape(w.output)}</code>[${w.index}], against the program as written: <b>${n} of 64 bits differ</b>, ${escape(Bits.ulpText(ref, got))}. ${total ? `${differ.toLocaleString("en-US")} of ${total.toLocaleString("en-US")} output entries differ.` : ""}` : `Every one of ${total.toLocaleString("en-US")} output entries carries the same 64 bits as the program as written. Entry <code>${escape(w.output)}</code>[${w.index}] shown.`} Select a lane to inspect its bits.</p>
-      <dl class="bit-pair"><dt>as written</dt><dd>${Bits.strip(ref, null, {legend: false})}<span class="bit-value">${escape(Bits.describe(ref))}</span></dd>
-      <dt>${escape(c.label.replace(/^MatrixLang · /, "MatrixLang ").replace(/^NumPy\s+/, "NumPy "))}</dt><dd>${Bits.strip(got, ref)}<span class="bit-value">${escape(Bits.describe(got))}</span></dd></dl>`;
+      <dl class="bit-pair"><dt>as written</dt><dd>${Bits.strip(ref, null, {legend: false})}<span class="bit-value">${Bits.describeHTML(ref)}</span></dd>
+      <dt>${escape(c.label.replace(/^MatrixLang · /, "MatrixLang ").replace(/^NumPy\s+/, "NumPy "))}</dt><dd>${Bits.strip(got, ref)}<span class="bit-value">${Bits.describeHTML(got)}</span></dd></dl>`;
   }
 
   async function runLive() {

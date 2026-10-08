@@ -49,7 +49,7 @@
   /* --- presenter path ------------------------------------------------------- */
   const steps = [
     {title: "Python disagrees with itself", view: "opener",
-     note: "Same arithmetic, different order, different bits. So compilers either never reorder, or do it blindly with -ffast-math."},
+     note: "Same value, computed two ways, different bits. So compilers either never reorder, or do it blindly with -ffast-math."},
     {title: "Shapes before code", view: "workspace", example: "multiply", contract: "strict", stage: "check",
      note: "The compiler infers every matrix shape and rejects a mismatched product before generating any code."},
     {title: "Proved exact", view: "workspace", example: "exact", contract: "strict", stage: "guarantees",

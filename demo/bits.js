@@ -128,5 +128,11 @@
     return `${u.toLocaleString("en-US")} ulp${u === 1n ? "" : "s"} apart`;
   }
 
-  root.Bits = {fromHex, fromPattern, toNumber, describe, strip, differing, parseOutputs, ulps, ulpText, exponentOf};
+  /* describe() as HTML: "× 10^6" set with a real superscript. */
+  function describeHTML(pattern) {
+    const text = describe(pattern).replace(/[&<>]/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;"}[c]));
+    return text.replace(/10\^(\S+)/, "10<sup>$1</sup>");
+  }
+
+  root.Bits = {fromHex, fromPattern, toNumber, describe, describeHTML, strip, differing, parseOutputs, ulps, ulpText, exponentOf};
 }(typeof globalThis !== "undefined" ? globalThis : this));
