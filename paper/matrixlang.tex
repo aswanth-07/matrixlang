@@ -19,6 +19,8 @@
   keepspaces=true,showstringspaces=false,breaklines=true,
   morekeywords={matrix,scalar,print,transpose,identity,zeros,ones,input},
   keywordstyle=\bfseries,aboveskip=4pt,belowskip=4pt}
+% Narrow columns and long \texttt identifiers: let TeX stretch rather than overrun.
+\setlength{\emergencystretch}{2.5em}
 \newtheorem{definition}{Definition}
 \newcommand{\fl}{\mathrm{fl}}
 \newcommand{\abs}[1]{\lvert #1\rvert}
@@ -85,8 +87,15 @@ rewrite is \emph{bound-preserving}. Only if values are unbounded, so that one
 bracketing may overflow where the other does not, is the rewrite merely
 \emph{relaxed}, valid over the reals and nowhere else.
 
+\begin{table}[t]
+\caption{One chain $R=ABC$ ($40\times2$, $2\times40$, $40\times2$) over three
+input domains: modeled arithmetic after optimization (11,120 in source order)
+and the certificate of \texttt{print(R)}, as our compiler reports them.}
+\label{tab:intro}\centering\footnotesize\setlength{\tabcolsep}{4pt}
+\input{generated/tab-intro.tex}
+\end{table}
 The difference between these cases is not in the program text but in the
-values the program will see. We make that knowledge explicit: program inputs
+values the program will see (Table~\ref{tab:intro}). We make that knowledge explicit: program inputs
 declare a value domain (\texttt{input(int8)}, \texttt{input(real(1))}), the
 runtime checks each input against its domain before execution, and the compiler
 derives from the domains facts precise enough to decide, rewrite by rewrite,
@@ -124,7 +133,7 @@ rounded addition in round-to-nearest, and no fused multiply-add is used
 (\texttt{-ffp-contract=off}). Outputs are compared in hexadecimal, which
 distinguishes every binary64 value including $-0$ and NaN.
 
-The optimizer performs constant folding, common-subexpression elimination, copy
+The optimizer performs constant folding, common subexpression elimination, copy
 propagation and dead-code elimination, which are bit-exact; algebraic identity
 and zero rewrites ($x\cdot1$, $AI$, $x+0$, $A\cdot0$, $0\cdot A$); and matrix-chain
 reordering by dynamic programming over the modeled cost $m\,p\,(2n-1)$ of an
@@ -132,7 +141,7 @@ $m\times n$ by $n\times p$ product. Before this work a single flag decided all
 value-changing rewrites at once.
 
 \paragraph{Input domains.} A declaration
-\lstinline{matrix A[40,2] = input(int8);} introduces a run-time input whose
+\texttt{matrix A[40,2] = input(int8);} introduces a run-time input whose
 values the compiler never sees. Domains are \texttt{bool}, \texttt{uint8},
 \texttt{int8}, \texttt{uint16}, \texttt{int16}, \texttt{int32},
 \texttt{int(lo,hi)}, \texttt{real} (any finite value), \texttt{real(B)}
@@ -167,15 +176,17 @@ the rewrites applied to it. The certificate of an output is the weakest level in
 the dependency cone of its \texttt{print}, together with the reasons recorded by
 those rewrites. The compiler prints, for example:
 \begin{lstlisting}
-Contract: bounded. Every output must keep the source order's
-worst-case error bound.
-  1. bit-identical     print(R)
-       - A * B * C is exact: every intermediate of every
-         bracketing needs at most 51 of 53 significand bits
-  2. bound-preserving  print(S)
-       - X * B * C keeps the source-order error bound:
-         |error| <= 2.89e-15 |A1|...|Ak| under every bracketing,
-         and no intermediate can overflow
+Contract: bounded. Every output must keep the
+source order's worst-case error bound.
+ 1. bit-identical     print(R)
+    - A * B * C is exact: every intermediate of
+      every bracketing needs at most 51 of 53
+      significand bits
+ 2. bound-preserving  print(S)
+    - X * B * C keeps the source-order error
+      bound: |error| <= 2.89e-15 |A1|...|Ak|
+      under every bracketing, and no
+      intermediate can overflow
 \end{lstlisting}
 
 \paragraph{Inheritance.} A dependency cone in the \emph{optimized} program is
@@ -306,7 +317,7 @@ for algebraic. Segment facts use the facts of $P_i$ as their first operand.
 Ties prefer the stronger guarantee, so an exact tree is chosen over a
 bound-preserving tree of equal cost. Only segment roots carry a guarantee:
 interior products have no counterpart in the source program, and labelling them
-let common-subexpression elimination spread one chain's proof to an unrelated
+let common subexpression elimination spread one chain's proof to an unrelated
 output. On a four-operand \texttt{int(0,m)} chain $24\times3\cdot3\times24\cdot24
 \times3\cdot3\times24$, the whole chain is exact only for $m\le2{,}541$, but its
 first three operands are exact up to $m=50{,}013$, and the strict contract
@@ -412,7 +423,7 @@ start-up.
 \begin{table}[t]
 \caption{RQ2. Outputs of \RqTwoPrograms{} executed programs on three input
 seeds, compared bit for bit with the unoptimized program.}\label{tab:soundness}
-\centering\small\input{generated/tab-soundness.tex}
+\centering\footnotesize\setlength{\tabcolsep}{3.5pt}\input{generated/tab-soundness.tex}
 \end{table}
 Each program ran unoptimized and under every contract on three seeded input
 draws, \RqTwoRuns{} executions in all (Table~\ref{tab:soundness}). Strict output
@@ -455,7 +466,7 @@ certificate is conservative by up to ten percent of the domain there.
 sized so every partial sum is exact, compiled by GCC 15.2 \texttt{-O3
 -march=native} strict and with reassociation licensed. Medians of 7 processes
 $\times$ 21 repetitions, one thread.}\label{tab:bench}
-\centering\small\input{generated/tab-bench.tex}
+\centering\footnotesize\setlength{\tabcolsep}{4pt}\input{generated/tab-bench.tex}
 \end{table}
 A certificate is useful beyond our compiler if it licenses something a production
 compiler would otherwise refuse. We compiled six reductions twice with GCC:
