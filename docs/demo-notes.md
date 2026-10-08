@@ -23,11 +23,11 @@ If the service will not start, the page still works from recorded results: every
 | 1 · Opener | 0:00–0:30 | Python's own results, drawn as bits | "Same value, computed two ways, different bits. Python says `(0.1+0.2)+0.3` is not `0.1+(0.2+0.3)`, and rewriting `x * 0` as `0` flips the sign of zero. That is why compilers refuse to reorder floating point, or do it blindly with `-ffast-math`." | The white cells: the bits that changed. The last row overflows to infinity. |
 | 2 · Shapes before code | 0:30–1:00 | Workspace, *Matrix product* | "It is a real compiler: flex, bison, C. It infers every shape and rejects a bad product before generating code." | *Shape check* stage. Optionally pick *Shape mismatch* in the explorer. |
 | 3 · Proved exact | 1:00–1:45 | *Exact integer chain*, strict, Guarantees | "The inputs are declared `int8`. The compiler never sees the values, only the domain, and proves every bracketing is exact, so it reorders 11,120 operations to 556 and certifies the output bit-identical." | The certificate reason ("needs at most 28 of 53 significand bits") and the bit strips: no white cells. |
-| 4 · Bounded | 1:45–2:15 | *Real-valued chain*, bounded | "Over real values the bits must change, so strict refuses. Bounded reorders and states the error bound it keeps." Click **Compare contracts** if there is time. | The amber *bound-preserving* label; white cells only at the end of the fraction. |
+| 4 · Bounded | 1:45–2:15 | *Real-valued chain*, bounded | "Over real values the bits may change, so strict refuses. Bounded reorders and states the error bound it keeps." Click **Compare contracts** if there is time. | The amber *bound-preserving* label; white cells only at the end of the fraction. |
 | 5 · Race: graph walks | 2:15–3:00 | Race, *Graph walks*, 1 thread | "Same program, same inputs, timed on this laptop. MatrixLang's proved reordering runs in about 1.2 ms against 322 ms for the C you would write, 274 times faster, and every bit is identical. NumPy's default `@` takes 65 ms." Click **Replay**: the bars fill in proportion to real time. | The MatrixLang side finishing first; the *identical bits* chips. |
 | 6 · Race: diffusion | 3:00–3:30 | *Diffusion* | "On real data strict keeps your order. Bounded is about 219 times faster within a certified bound. `multi_dot` is fast too, but its bits differ and it says nothing about it." | Strict lane at about 1×, bounded lane with *within certified bound*, multi_dot with *no guarantee*. |
 | 7 · Race: overflow trap | 3:30–4:00 | *Overflow trap* | "Here the cheaper order overflows. `multi_dot` takes it and returns infinity. MatrixLang's facts see the overflow coming and keep the finite answer; only the algebraic contract takes the shortcut, and it labels the output relaxed." | multi_dot: *returns +∞ · no warning*. Click its lane: the bit check shows the exponent all ones. |
-| 8 · Results | 4:00–5:00 | Results | "Measured here: faster than what you would write, and across 57,600 executions per contract, not one output certified bit-identical was wrong." | Speedup chart, the bits table, *0 of 147,042*. |
+| 8 · Results | 4:00–5:00 | Results | "Measured here: faster than what you would write, and across 57,600 output comparisons per contract, not one output certified bit-identical was wrong." | Speedup chart, the bits table, *0 of 147,042*. |
 
 ## How to contrast each baseline
 
@@ -39,7 +39,7 @@ If the service will not start, the page still works from recorded results: every
 
 ## Questions you may get, and straight answers
 
-**"Is the 274× real or a trick?"** Real and measured: the race compiles all seven contestants on this laptop, runs each on the same dumped inputs, times only the compute section, and reports the median of repeated runs. The speedup comes from doing 683 times less arithmetic (the chain `A·A·A·1` becomes three matrix-vector products). The *bits* line proves nothing was lost.
+**"Is the 274× real or a trick?"** Real and measured: the race compiles all seven contestants on this laptop, runs each on the same dumped inputs, times only the compute section, and reports the median of repeated runs. The speedup comes from doing 683 times less arithmetic (the chain `A·A·A·1` becomes three matrix-vector products). The *bits* line confirms agreement for these inputs; the static certificate supplies the domain-wide guarantee.
 
 **"Why not just use `multi_dot`?"** It reorders blindly. It cannot tell an integer kernel (safe) from the overflow trap (returns infinity) or real data (bits change). MatrixLang tells you, before running, which outputs are bit-identical, which stay within a stated error bound, and refuses where it cannot prove either. It is also a compiler: the same proof licenses reordering in generated C, not only in one Python call.
 
@@ -72,3 +72,4 @@ Live runs vary by about 10–20% from these; the shape of the result does not ch
 - **"Recorded results" in the top right:** the service is not running; everything still works from recordings. Say "these are the numbers recorded on this laptop this morning".
 - **A live race fails:** the lanes keep the recorded run; the message above them says why. Continue with the recorded numbers.
 - **You lose your place:** Ctrl K, type "step", choose the step.
+

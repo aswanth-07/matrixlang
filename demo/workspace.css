@@ -166,7 +166,7 @@ body[data-view="results"] .status-other, body[data-view="opener"] .status-other 
 .fact h2 { margin: 0; font-size: 15px; font-weight: 600; color: var(--ink); }
 .fact-note { margin: 6px 0 0; font-size: 12.5px; color: var(--muted); }
 .fact-ulp { margin: 8px 0 0; font-size: 12.5px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
-.fact-rows { display: grid; gap: 12px; }
+.fact-rows { display: grid; gap: 12px; min-width: 0; }
 .fact-row { display: grid; grid-template-columns: 260px 150px auto; gap: 16px; align-items: center; }
 .fact-row code { white-space: nowrap; }
 .fact-row .bits { --cell: 5px; --cell-h: 20px; }
@@ -446,6 +446,8 @@ body[data-view="results"] .status-other, body[data-view="opener"] .status-other 
   .view-workspace { grid-template-columns: 200px minmax(0, 1fr) minmax(440px, 1fr); }
   .palette-trigger { min-width: 0; } .palette-trigger span { display: none; }
   .race-body { grid-template-columns: 270px minmax(0, 1fr); }
+  .fact-row { grid-template-columns: minmax(0, 1fr) 150px; }
+  .fact-row .bits { grid-column: 1 / -1; }
 }
 @media (max-width: 1060px) {
   body.app { height: auto; min-height: 100vh; overflow: auto; grid-template-rows: auto auto auto 26px; }
@@ -475,6 +477,7 @@ body[data-view="results"] .status-other, body[data-view="opener"] .status-other 
   .opener-head h1, .race-heading h1, .results-head h1 { font-size: 26px; }
   .fact { grid-template-columns: minmax(0, 1fr); }
   .fact-row { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .fact-row .bits { grid-column: auto; }
   .opener-close { flex-direction: column; align-items: flex-start; }
   .race-head, .race-main, .results { padding-left: 16px; padding-right: 16px; }
   .toolbar, .editor-head, .snippets { padding-left: 14px; padding-right: 14px; }
@@ -488,6 +491,18 @@ body[data-view="results"] .status-other, body[data-view="opener"] .status-other 
   .step-text b { overflow: hidden; text-overflow: ellipsis; }
   .statusbar .status-item:last-child { display: none; }
   .inputs li { grid-template-columns: 36px 64px minmax(0, 1fr); } .input-meaning { grid-column: 1 / -1; }
+  .lane-top { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 10px; }
+  .lane-name { grid-column: 1; grid-row: 1; }
+  .lane-time { grid-column: 2; grid-row: 1; }
+  .lane-detail { grid-column: 1 / -1; white-space: normal; }
+  .button, .icon-button, .palette-trigger { min-height: 44px; }
+  .icon-button { min-width: 44px; }
+  .editor-tabs { height: 48px; }
+  .segmented button { height: 44px; }
+  .view-tabs button { min-height: 44px; }
+}
+@media (max-width: 360px) {
+  .bits, .bits-md, .fact-row .bits { --cell: 3px; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
