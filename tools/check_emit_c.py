@@ -117,7 +117,9 @@ def main():
 
     jobs = []
     for path in sorted((ROOT / "examples").rglob("*.ml")):
-        if "errors" in path.parts:
+        # Rejected programs have no C; the real-data kernels take minutes in
+        # the VM and are checked against it by e2e_real.py on their real inputs.
+        if "errors" in path.parts or "real" in path.parts:
             continue
         jobs.append((path.relative_to(ROOT).as_posix(), path.read_text(encoding="utf-8")))
     domains = ["bool", "int8", "int16", "real", "realx", "mixed"]

@@ -84,7 +84,7 @@ The language has static dimensions, scalar and matrix values, mutable variables,
 
 Authors: **A Aswanth Raj**, **Dr. RANJITHKUMAR S**, School of Computer Science and Engineering, VIT Vellore, India.
 
-The manuscript proves the two theorems above and measures six questions on generated, domain-typed workloads and six application kernels:
+The manuscript, formatted for ACM TACO, proves the theorems above and measures nine questions: on generated, domain-typed workloads, on application kernels over generated and real data (Cora, MNIST), on two machines with GCC and Clang, and in LLVM:
 
 - **Recovery** (15,000 programs): strict with proofs recovers 83.6% of the algebraic saving on `int8` data with bit-identical output; bounded recovers all of it wherever values are bounded.
 - **Soundness** (57,600 executions per contract): no output certified bit-identical differed from the unoptimized program. This check found one unsound certificate in an earlier version, now fixed.
@@ -92,6 +92,12 @@ The manuscript proves the two theorems above and measures six questions on gener
 - **Production compiler**: compiled to C and by GCC, proved reorderings make the kernels 278× (graph walks) and 4.98× (quantized layers) faster with identical bits, and the bounded contract 469× and 277× on real-valued kernels within the source order's error bound; `-ffast-math` gains at most 1.13×. Hand-written reductions licensed by a certificate run 1.23–6.54× faster with identical bits, and a certified OpenMP reduction gives one result for 1–24 threads.
 - **Test adequacy**: small-integer tests cannot notice a compiler that reorders without proof, and no random or domain-bound input notices a 54-bit threshold; witnesses built at the threshold kill it. Nine of ten side-condition mutants are killed.
 - **Accuracy** (preregistered, 2,700 real-valued chains): the cheaper bracketing is more accurate than source order (median error ratio 0.941, Holm p = 4.6×10⁻¹¹).
+- **Real data and a second machine**:
+  - On the Cora citation graph, strict compilation makes the walk count 1,168× (GCC) and 946× (Clang) faster with identical bits, and every integer program prints one result across all 22 builds.
+  - On a Linux machine with GCC 13 and Clang 18, strict compilation with reduction clauses runs integer kernels at 83–113% of the speed of reordering without proofs.
+- **LLVM** (`llvm/`): ExactReduce derives the facts from integer conversions in C.
+  - Strict Clang runs nine integer reductions over MNIST, Cora and generated data 5.09–9.71× faster (95–102% of `-ffast-math`), and keeps the strict bits on all 784 adversarial inputs. `-ffast-math` changes 14 of them, and a mutant that admits one bit more changes 10.
+  - In four existing code bases the pass guards 23 of 109 reductions. CPython's `audioop` runs up to 8× faster and returns all 404 results unchanged.
 
 ```bash
 make contracts           # repeat every measurement into results/contracts/

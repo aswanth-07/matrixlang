@@ -1047,8 +1047,7 @@ including all \LlvmScanPolybenchReductions{} in PolyBench, \LlvmScanInexact{} wh
 exact (the root mean square of 32-bit samples squares values of up to
 $2^{31}$), and \LlvmScanShape{} in loops it cannot version. Compiling the
 \LlvmScanCompiled{} files that build took \LlvmScanCompileWithS~s with the pass
-against \LlvmScanCompileWithoutS~s without (best of three per file,
-\LlvmScanCompileOverheadPct\% more).
+against \LlvmScanCompileWithoutS~s without (best of three runs per file).
 
 To check the licenses end to end, we compiled \texttt{audioop} with and without
 the pass, loaded each build in its own interpreter, and called every function

@@ -97,7 +97,7 @@ Every number in the manuscript is a macro or a table cell generated from the raw
 | RQ4 hand-written reductions (Table 9) | `rq4_bench.jsonl`, `rq4_threads.jsonl`, `rq4_vectorizer.txt` | `bench.py`, `bench/licensed/kernels.c` | GCC strict against licensed builds (also repeated on M2 in `results/contracts-linux/`); result bits; OpenMP with 1–24 threads. |
 | RQ5 mutation (Table 10) | `rq5_mutation.jsonl` | `mutation.py`, `witnesses/` | 10 mutants of `src/ir/mutant.h` against 7 test populations. |
 | RQ6 accuracy (Table 11, Figure 2) | `rq6_accuracy.jsonl`, `rq6_validation.jsonl` | `accuracy.py` | 2,700 chains with exact integer references; sign tests, Holm correction, seed-cluster bootstrap. |
-| RQ7 LLVM speed (Table 12) | `llvm_bench.jsonl`, `llvm_decisions.jsonl`, `llvm_compile.jsonl` | `llvm_eval.py`, `llvm/kernels/` | 11 C kernels × 6 builds (Clang strict, with ExactReduce, `-ffast-math`, ExactReduce for SSE2, GCC strict and `-ffast-math`); 5 processes × 11 runs. |
+| RQ7 LLVM speed (Table 12) | `llvm_bench.jsonl`, `llvm_decisions.jsonl`, `llvm_compile.jsonl` | `llvm_eval.py`, `llvm/kernels/` | 11 C kernels and a short-loop variant × 6 builds (Clang strict, with ExactReduce, `-ffast-math`, ExactReduce for SSE2, GCC strict and `-ffast-math`); 5 processes × 11 runs. |
 | RQ8 LLVM soundness (Table 13) | `llvm_stress.jsonl` | `llvm_eval.py`, `llvm/kernels/stress.c` | 784 adversarial cases × 8 builds, including two mutants of the pass. |
 | RQ9 existing code (Table 14) | `llvm_scan.jsonl`, `llvm_audioop.jsonl` | `llvm_scan.py`, `llvm_audioop.py` | The pass's decision for every add reduction in audioop, Pillow, SciPy ndimage and PolyBench/C; `audioop` strict against licensed, on every function with a reduction. |
 
