@@ -1,0 +1,11 @@
+{"decision":"versioned","function":"k_sum_u8","location":"kernels.c:25","reason":"terms per iteration 2^7.99, trip count up to 9223372036854775807; guarded by start a multiple of 2^0 and |start| + trip count * 2^7.99 <= 2^53"}
+{"decision":"versioned","function":"k_sumsq_u8","location":"kernels.c:34","reason":"terms per iteration 2^15.99, trip count up to 9223372036854775807; guarded by start a multiple of 2^0 and |start| + trip count * 2^15.99 <= 2^53"}
+{"decision":"versioned","function":"k_energy_i16","location":"kernels.c:43","reason":"terms per iteration 2^30.00, trip count up to 9223372036854775807; guarded by start a multiple of 2^0 and |start| + trip count * 2^30.00 <= 2^53"}
+{"decision":"versioned","function":"k_sum_i32","location":"kernels.c:52","reason":"terms per iteration 2^31.00, trip count up to 2147483647; guarded by start a multiple of 2^0 and |start| + trip count * 2^31.00 <= 2^53"}
+{"decision":"licensed","function":"k_gram_u8","location":"kernels.c:65","reason":"terms per iteration 2^15.99, at most 2147483647 terms, partial sums 2^46.99 <= 2^53"}
+{"decision":"versioned","function":"k_qlinear_i8","location":"kernels.c:80","reason":"terms per iteration 2^14.00, trip count up to 2147483647; guarded by start a multiple of 2^0 and |start| + trip count * 2^14.00 <= 2^24"}
+{"decision":"licensed","function":"k_gemm_i8","location":"kernels.c:93","reason":"terms per iteration 2^14.00, at most 2147483647 terms, partial sums 2^45.00 <= 2^53"}
+{"decision":"licensed","function":"k_degree_u8","location":"kernels.c:105","reason":"terms per iteration 2^7.99, at most 2147483647 terms, partial sums 2^38.99 <= 2^53"}
+{"decision":"versioned","function":"k_walks2_u8","location":"kernels.c:117","reason":"terms per iteration 2^22.99, trip count up to 2147483647; guarded by start a multiple of 2^0 and |start| + trip count * 2^22.99 <= 2^53"}
+{"decision":"declined","function":"k_dot_f64","location":"kernels.c:127","reason":"a term has no grid fact"}
+{"decision":"versioned","function":"k_sum_u8_f32","location":"kernels.c:137","reason":"terms per iteration 2^7.99, trip count up to 9223372036854775807; guarded by start a multiple of 2^0 and |start| + trip count * 2^7.99 <= 2^24"}

@@ -42,8 +42,9 @@ KERNELS = ["walks", "layers", "image", "normal", "lowrank", "diffusion"]
 SEED = 1
 PROCESSES = 5
 REPS = 11
-THREADS = 8
-GCC = shutil.which("gcc") or "C:/msys64/mingw64/bin/gcc.exe"
+THREADS = int(os.environ.get("E2E_THREADS", "8"))
+# E2E_CC selects another C compiler (a second toolchain); GCC by default.
+GCC = os.environ.get("E2E_CC") or shutil.which("gcc") or "C:/msys64/mingw64/bin/gcc.exe"
 BASE = ["-std=c11", "-O3", "-ffp-contract=off", "-w"]
 NATIVE = ["-march=native"]
 SSE2 = ["-march=x86-64"]
@@ -99,14 +100,17 @@ def quantile(xs, q):
     return xs[lo] + (xs[hi] - xs[lo]) * (pos - lo)
 
 
-def measure(kernel, workdir):
-    src = common.ROOT / "examples" / "kernels" / f"{kernel}.ml"
+def measure(kernel, workdir, src=None, supply=None, processes=PROCESSES, reps=REPS):
+    """Times every configuration of one kernel. supply replaces the seeded
+    draw with --input NAME=PATH arguments (real data)."""
+    src = src or common.ROOT / "examples" / "kernels" / f"{kernel}.ml"
+    supply = supply or ["--random-inputs", SEED]
     inputs = Path(workdir) / f"{kernel}.bin"
-    code, out = common.call(["-q", "--random-inputs", SEED, "--dump-inputs", inputs, src])
+    code, out = common.call(["-q", *supply, "--dump-inputs", inputs, src], timeout=3600)
     if code:
         raise RuntimeError(out)
 
-    _, vm_out = common.call(["-q", "--run", "--exact-output", "--random-inputs", SEED, src], timeout=3600)
+    _, vm_out = common.call(["-q", "--run", "--exact-output", *supply, src], timeout=7200)
     rows, outputs, sources = [], {}, {}
     for name, (flags, licensed, cflags, threads) in CONFIGS.items():
         key = (tuple(flags), licensed)
@@ -131,8 +135,8 @@ def measure(kernel, workdir):
             raise RuntimeError(o + e)
         env = {"OMP_NUM_THREADS": str(threads)} if threads else {"OMP_NUM_THREADS": "1"}
         samples, checks, text = [], [], None
-        for _ in range(PROCESSES):
-            code, o, e = sh([exe, inputs, REPS], env=env)
+        for _ in range(processes):
+            code, o, e = sh([exe, inputs, reps], env=env, timeout=7200)
             if code:
                 raise RuntimeError(e)
             samples += times_of(e)[1:]

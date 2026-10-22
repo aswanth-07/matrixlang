@@ -18,7 +18,8 @@ ROOT = Path(__file__).resolve().parents[2]
 EXE = ".exe" if os.name == "nt" else ""
 MATRIXC = ROOT / "bin" / f"matrixc{EXE}"
 MUTANTS = ROOT / "bin" / f"matrixc-mutants{EXE}"
-RESULTS = ROOT / "results" / "contracts"
+# CONTRACTS_RESULTS redirects every script's raw output, for a second machine.
+RESULTS = Path(os.environ.get("CONTRACTS_RESULTS") or ROOT / "results" / "contracts")
 
 CONTRACT_FLAGS = {
     "none": [],                                    # unoptimized reference
@@ -119,6 +120,13 @@ def cpu_name():
                 return p.stdout.strip()
         except OSError:
             pass
+    try:
+        with open("/proc/cpuinfo", encoding="utf-8") as f:
+            for line in f:
+                if line.startswith("model name"):
+                    return line.split(":", 1)[1].strip()
+    except OSError:
+        pass
     return platform.processor() or "unknown"
 
 

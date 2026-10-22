@@ -30,3 +30,6 @@ paper/*.fdb_latexmk
 paper/*.synctex.gz
 paper/build.log
 paper/build-*.txt
+
+# The LLVM pass plugin, built by `make -C llvm`.
+*.so

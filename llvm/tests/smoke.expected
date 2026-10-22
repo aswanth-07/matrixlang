@@ -1,0 +1,8 @@
+sum_u8 licensed
+sum_u8_long versioned
+dot_i16_long versioned
+dot_i8_f32_1024 licensed
+dot_i8_f32_2048 declined
+dot_real declined
+sum2d_u8 versioned
+cond_sum licensed

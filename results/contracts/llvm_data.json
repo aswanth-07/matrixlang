@@ -1,0 +1,37 @@
+{
+  "cora": {
+    "citations": 5429,
+    "max_degree": 168,
+    "sha256": [
+      "ec1a372391b7f0f60a6aff0084e8abd8f19f0faa7e1f2441a41c492042d5945e",
+      "b8ebed0fd45e53995abafd1b70cf6a9fcc8f86abc5826d69b97fe6ca46e9c8ee"
+    ],
+    "source": [
+      "https://raw.githubusercontent.com/tkipf/pygcn/master/data/cora/cora.cites",
+      "https://raw.githubusercontent.com/tkipf/pygcn/master/data/cora/cora.content"
+    ],
+    "undirected_edges": 5278,
+    "vertices": 2708
+  },
+  "files": {
+    "cora_adj.u8": "c9631dd5d4ccbe8ad16c8619b18fcfd458a1c362c5dfddb3c050092be481a6d4",
+    "cora_deg.i16": "b673314bb9ad1c6b05c1e9214371fa746dd62eea610ef63657c0a21c00bc5868",
+    "mnist_templates.i8": "01f2acc3d94a91dc880c197174f555c672e5d7a84755e60fb09e7034cdda21fd",
+    "mnist_test.u8": "6d87418db22cc8025d05968bec9bd5c3932904b23485740db143a061a2c9d161",
+    "mnist_train.u8": "741c988805d008ac6e4c904b69001ba184c24b2c540a4ef403f4c71b676cf757"
+  },
+  "mnist": {
+    "float_accuracy": 0.9219,
+    "int8_accuracy": 0.9222,
+    "sha256": "731c5ac602752760c8e48fbffcf8c3b850d9dc2a2aedcf2cc48468fc17b673d1",
+    "source": "https://storage.googleapis.com/tensorflow/tf-keras-datasets/mnist.npz",
+    "test": [
+      10000,
+      784
+    ],
+    "train": [
+      60000,
+      784
+    ]
+  }
+}
