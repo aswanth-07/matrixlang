@@ -19,7 +19,364 @@
       "sum_i32": 3.9313744970774818
     }
   },
-  "real": {},
+  "real": {
+    "cora_diffusion": {
+      "clang": {
+        "hashes": {
+          "algebraic-licensed": "1facbef29287daf1",
+          "algebraic-licensed-8t": "1facbef29287daf1",
+          "algebraic-licensed-sse2": "10f094f4ec18be31",
+          "bounded-licensed": "1facbef29287daf1",
+          "source": "338f3b7f67c64788",
+          "source-fast-math": "05f0ff4dfd17aa37",
+          "strict": "338f3b7f67c64788",
+          "strict-8t": "338f3b7f67c64788",
+          "strict-licensed": "338f3b7f67c64788",
+          "strict-licensed-8t": "338f3b7f67c64788",
+          "strict-licensed-sse2": "338f3b7f67c64788"
+        },
+        "same": {
+          "algebraic-licensed": false,
+          "algebraic-licensed-8t": false,
+          "algebraic-licensed-sse2": false,
+          "bounded-licensed": false,
+          "source": true,
+          "source-fast-math": false,
+          "strict": true,
+          "strict-8t": true,
+          "strict-licensed": true,
+          "strict-licensed-8t": true,
+          "strict-licensed-sse2": true
+        },
+        "source_matches_vm": true,
+        "source_ms": 38707.097184,
+        "speedup": {
+          "algebraic-licensed": 1869.8384769784293,
+          "algebraic-licensed-8t": 8497.016641659578,
+          "algebraic-licensed-sse2": 1449.42384672386,
+          "bounded-licensed": 1532.2091441427863,
+          "source": 1.0,
+          "source-fast-math": 1.0087742892449463,
+          "strict": 0.9467888716330849,
+          "strict-8t": 3.9186139881350543,
+          "strict-licensed": 0.9409505606429008,
+          "strict-licensed-8t": 3.973237817658663,
+          "strict-licensed-sse2": 0.8100168566786304
+        }
+      },
+      "distinct_results": 6,
+      "gcc": {
+        "hashes": {
+          "algebraic-licensed": "ea0f29d5cd0f890c",
+          "algebraic-licensed-8t": "ea0f29d5cd0f890c",
+          "algebraic-licensed-sse2": "8ef7eb562cbed976",
+          "bounded-licensed": "ea0f29d5cd0f890c",
+          "source": "338f3b7f67c64788",
+          "source-fast-math": "338f3b7f67c64788",
+          "strict": "338f3b7f67c64788",
+          "strict-8t": "338f3b7f67c64788",
+          "strict-licensed": "338f3b7f67c64788",
+          "strict-licensed-8t": "338f3b7f67c64788",
+          "strict-licensed-sse2": "338f3b7f67c64788"
+        },
+        "same": {
+          "algebraic-licensed": false,
+          "algebraic-licensed-8t": false,
+          "algebraic-licensed-sse2": false,
+          "bounded-licensed": false,
+          "source": true,
+          "source-fast-math": true,
+          "strict": true,
+          "strict-8t": true,
+          "strict-licensed": true,
+          "strict-licensed-8t": true,
+          "strict-licensed-sse2": true
+        },
+        "source_matches_vm": true,
+        "source_ms": 41762.2720515,
+        "speedup": {
+          "algebraic-licensed": 2080.1906245290593,
+          "algebraic-licensed-8t": 7384.037193914406,
+          "algebraic-licensed-sse2": 1605.9383589521876,
+          "bounded-licensed": 2130.4164294479765,
+          "source": 1.0,
+          "source-fast-math": 0.9964126859717574,
+          "strict": 0.9913159379877333,
+          "strict-8t": 4.368654946542158,
+          "strict-licensed": 0.9809209823681001,
+          "strict-licensed-8t": 4.275543788511623,
+          "strict-licensed-sse2": 0.8827313718773879
+        }
+      }
+    },
+    "cora_walks": {
+      "clang": {
+        "hashes": {
+          "algebraic-licensed": "232bf144cd643748",
+          "algebraic-licensed-8t": "232bf144cd643748",
+          "algebraic-licensed-sse2": "232bf144cd643748",
+          "bounded-licensed": "232bf144cd643748",
+          "source": "232bf144cd643748",
+          "source-fast-math": "232bf144cd643748",
+          "strict": "232bf144cd643748",
+          "strict-8t": "232bf144cd643748",
+          "strict-licensed": "232bf144cd643748",
+          "strict-licensed-8t": "232bf144cd643748",
+          "strict-licensed-sse2": "232bf144cd643748"
+        },
+        "same": {
+          "algebraic-licensed": true,
+          "algebraic-licensed-8t": true,
+          "algebraic-licensed-sse2": true,
+          "bounded-licensed": true,
+          "source": true,
+          "source-fast-math": true,
+          "strict": true,
+          "strict-8t": true,
+          "strict-licensed": true,
+          "strict-licensed-8t": true,
+          "strict-licensed-sse2": true
+        },
+        "source_matches_vm": true,
+        "source_ms": 37462.538947,
+        "speedup": {
+          "algebraic-licensed": 1837.3466876235548,
+          "algebraic-licensed-8t": 4903.372600237626,
+          "algebraic-licensed-sse2": 1557.707884950071,
+          "bounded-licensed": 1678.2001411008157,
+          "source": 1.0,
+          "source-fast-math": 0.9577432606622679,
+          "strict": 945.8132195731289,
+          "strict-8t": 3432.9841365828215,
+          "strict-licensed": 1691.378019467814,
+          "strict-licensed-8t": 8545.778394880363,
+          "strict-licensed-sse2": 1514.79227016612
+        }
+      },
+      "distinct_results": 1,
+      "gcc": {
+        "hashes": {
+          "algebraic-licensed": "232bf144cd643748",
+          "algebraic-licensed-8t": "232bf144cd643748",
+          "algebraic-licensed-sse2": "232bf144cd643748",
+          "bounded-licensed": "232bf144cd643748",
+          "source": "232bf144cd643748",
+          "source-fast-math": "232bf144cd643748",
+          "strict": "232bf144cd643748",
+          "strict-8t": "232bf144cd643748",
+          "strict-licensed": "232bf144cd643748",
+          "strict-licensed-8t": "232bf144cd643748",
+          "strict-licensed-sse2": "232bf144cd643748"
+        },
+        "same": {
+          "algebraic-licensed": true,
+          "algebraic-licensed-8t": true,
+          "algebraic-licensed-sse2": true,
+          "bounded-licensed": true,
+          "source": true,
+          "source-fast-math": true,
+          "strict": true,
+          "strict-8t": true,
+          "strict-licensed": true,
+          "strict-licensed-8t": true,
+          "strict-licensed-sse2": true
+        },
+        "source_matches_vm": true,
+        "source_ms": 42261.211619,
+        "speedup": {
+          "algebraic-licensed": 1816.3241219129418,
+          "algebraic-licensed-8t": 7595.343289250094,
+          "algebraic-licensed-sse2": 1712.9027701415641,
+          "bounded-licensed": 2059.487192108852,
+          "source": 1.0,
+          "source-fast-math": 0.9788565185349289,
+          "strict": 1168.101263653917,
+          "strict-8t": 4171.2220401408895,
+          "strict-licensed": 1887.695631206484,
+          "strict-licensed-8t": 6833.322344008139,
+          "strict-licensed-sse2": 1864.9235920214007
+        }
+      }
+    },
+    "mnist_normal": {
+      "clang": {
+        "hashes": {
+          "algebraic-licensed": "ebe25c6073ace4e1",
+          "algebraic-licensed-8t": "ebe25c6073ace4e1",
+          "algebraic-licensed-sse2": "ebe25c6073ace4e1",
+          "bounded-licensed": "ebe25c6073ace4e1",
+          "source": "ebe25c6073ace4e1",
+          "source-fast-math": "ebe25c6073ace4e1",
+          "strict": "ebe25c6073ace4e1",
+          "strict-8t": "ebe25c6073ace4e1",
+          "strict-licensed": "ebe25c6073ace4e1",
+          "strict-licensed-8t": "ebe25c6073ace4e1",
+          "strict-licensed-sse2": "ebe25c6073ace4e1"
+        },
+        "same": {
+          "algebraic-licensed": true,
+          "algebraic-licensed-8t": true,
+          "algebraic-licensed-sse2": true,
+          "bounded-licensed": true,
+          "source": true,
+          "source-fast-math": true,
+          "strict": true,
+          "strict-8t": true,
+          "strict-licensed": true,
+          "strict-licensed-8t": true,
+          "strict-licensed-sse2": true
+        },
+        "source_matches_vm": true,
+        "source_ms": 16.5779565,
+        "speedup": {
+          "algebraic-licensed": 1.1691720511572299,
+          "algebraic-licensed-8t": 3.010784313369385,
+          "algebraic-licensed-sse2": 0.9417204558716067,
+          "bounded-licensed": 1.1886125840546966,
+          "source": 1.0,
+          "source-fast-math": 1.1058605057173798,
+          "strict": 1.168346665673426,
+          "strict-8t": 2.8828265651304363,
+          "strict-licensed": 1.1488257889267193,
+          "strict-licensed-8t": 2.7406924209438848,
+          "strict-licensed-sse2": 0.9085102363171317
+        }
+      },
+      "distinct_results": 1,
+      "gcc": {
+        "hashes": {
+          "algebraic-licensed": "ebe25c6073ace4e1",
+          "algebraic-licensed-8t": "ebe25c6073ace4e1",
+          "algebraic-licensed-sse2": "ebe25c6073ace4e1",
+          "bounded-licensed": "ebe25c6073ace4e1",
+          "source": "ebe25c6073ace4e1",
+          "source-fast-math": "ebe25c6073ace4e1",
+          "strict": "ebe25c6073ace4e1",
+          "strict-8t": "ebe25c6073ace4e1",
+          "strict-licensed": "ebe25c6073ace4e1",
+          "strict-licensed-8t": "ebe25c6073ace4e1",
+          "strict-licensed-sse2": "ebe25c6073ace4e1"
+        },
+        "same": {
+          "algebraic-licensed": true,
+          "algebraic-licensed-8t": true,
+          "algebraic-licensed-sse2": true,
+          "bounded-licensed": true,
+          "source": true,
+          "source-fast-math": true,
+          "strict": true,
+          "strict-8t": true,
+          "strict-licensed": true,
+          "strict-licensed-8t": true,
+          "strict-licensed-sse2": true
+        },
+        "source_matches_vm": true,
+        "source_ms": 14.754728,
+        "speedup": {
+          "algebraic-licensed": 0.9837666509158867,
+          "algebraic-licensed-8t": 3.173837887137922,
+          "algebraic-licensed-sse2": 0.8913567969187182,
+          "bounded-licensed": 1.0691323271469007,
+          "source": 1.0,
+          "source-fast-math": 0.9754765758666679,
+          "strict": 1.0176950461788934,
+          "strict-8t": 3.0958447563123457,
+          "strict-licensed": 1.0984044887493538,
+          "strict-licensed-8t": 3.29600392087613,
+          "strict-licensed-sse2": 0.9329276809329777
+        }
+      }
+    },
+    "mnist_scores": {
+      "clang": {
+        "hashes": {
+          "algebraic-licensed": "9ff26db5ee770310",
+          "algebraic-licensed-8t": "9ff26db5ee770310",
+          "algebraic-licensed-sse2": "9ff26db5ee770310",
+          "bounded-licensed": "9ff26db5ee770310",
+          "source": "9ff26db5ee770310",
+          "source-fast-math": "9ff26db5ee770310",
+          "strict": "9ff26db5ee770310",
+          "strict-8t": "9ff26db5ee770310",
+          "strict-licensed": "9ff26db5ee770310",
+          "strict-licensed-8t": "9ff26db5ee770310",
+          "strict-licensed-sse2": "9ff26db5ee770310"
+        },
+        "same": {
+          "algebraic-licensed": true,
+          "algebraic-licensed-8t": true,
+          "algebraic-licensed-sse2": true,
+          "bounded-licensed": true,
+          "source": true,
+          "source-fast-math": true,
+          "strict": true,
+          "strict-8t": true,
+          "strict-licensed": true,
+          "strict-licensed-8t": true,
+          "strict-licensed-sse2": true
+        },
+        "source_matches_vm": true,
+        "source_ms": 25.0960515,
+        "speedup": {
+          "algebraic-licensed": 8.743694534348528,
+          "algebraic-licensed-8t": 40.97194123274745,
+          "algebraic-licensed-sse2": 7.767895745247219,
+          "bounded-licensed": 8.90701108032602,
+          "source": 1.0,
+          "source-fast-math": 1.1298846724003004,
+          "strict": 4.863562205106207,
+          "strict-8t": 20.809838632039508,
+          "strict-licensed": 10.18393890298475,
+          "strict-licensed-8t": 19.700429042373184,
+          "strict-licensed-sse2": 6.624047412414204
+        }
+      },
+      "distinct_results": 1,
+      "gcc": {
+        "hashes": {
+          "algebraic-licensed": "9ff26db5ee770310",
+          "algebraic-licensed-8t": "9ff26db5ee770310",
+          "algebraic-licensed-sse2": "9ff26db5ee770310",
+          "bounded-licensed": "9ff26db5ee770310",
+          "source": "9ff26db5ee770310",
+          "source-fast-math": "9ff26db5ee770310",
+          "strict": "9ff26db5ee770310",
+          "strict-8t": "9ff26db5ee770310",
+          "strict-licensed": "9ff26db5ee770310",
+          "strict-licensed-8t": "9ff26db5ee770310",
+          "strict-licensed-sse2": "9ff26db5ee770310"
+        },
+        "same": {
+          "algebraic-licensed": true,
+          "algebraic-licensed-8t": true,
+          "algebraic-licensed-sse2": true,
+          "bounded-licensed": true,
+          "source": true,
+          "source-fast-math": true,
+          "strict": true,
+          "strict-8t": true,
+          "strict-licensed": true,
+          "strict-licensed-8t": true,
+          "strict-licensed-sse2": true
+        },
+        "source_matches_vm": true,
+        "source_ms": 25.94512,
+        "speedup": {
+          "algebraic-licensed": 11.49915845341577,
+          "algebraic-licensed-8t": 48.40074023221801,
+          "algebraic-licensed-sse2": 7.413410367297139,
+          "bounded-licensed": 9.34370205162547,
+          "source": 1.0,
+          "source-fast-math": 0.8657698251530115,
+          "strict": 5.004499592379655,
+          "strict-8t": 19.94599346463264,
+          "strict-licensed": 9.73233848500319,
+          "strict-licensed-8t": 61.49014254413251,
+          "strict-licensed-sse2": 7.75365573688676
+        }
+      }
+    }
+  },
   "synthetic": {
     "diffusion": {
       "distinct_results": 7,

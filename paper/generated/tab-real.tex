@@ -1,0 +1,19 @@
+\begin{tabular}{llrrrrrrrr}
+\toprule
+Kernel & Build & Source & \multicolumn{6}{c}{Speedup over source} & Results\\
+\cmidrule(lr){4-9}
+ & & (ms) & fast-math & strict & + clauses & bounded & algebraic & threads & \\
+\midrule
+\texttt{cora\_walks} & GCC & 42,261 & 0.98 & 1,168 & 1,888 & 2,059 & 1,816 & 6,833 & 1\\
+ & Clang & 37,463 & 0.96 & 946 & 1,691 & 1,678 & 1,837 & 8,546 & \\
+\addlinespace
+\texttt{cora\_diffusion} & GCC & 41,762 & 1.00 & 0.99 & 0.98 & 2,130$^\dagger$ & 2,080$^\dagger$ & 4.28 & 6\\
+ & Clang & 38,707 & 1.01$^\dagger$ & 0.95 & 0.94 & 1,532$^\dagger$ & 1,870$^\dagger$ & 3.97 & \\
+\addlinespace
+\texttt{mnist\_normal} & GCC & 14.8 & 0.98 & 1.02 & 1.10 & 1.07 & 0.98 & 3.30 & 1\\
+ & Clang & 16.6 & 1.11 & 1.17 & 1.15 & 1.19 & 1.17 & 2.74 & \\
+\addlinespace
+\texttt{mnist\_scores} & GCC & 25.9 & 0.87 & 5.00 & 9.73 & 9.34 & 11.5 & 61.5 & 1\\
+ & Clang & 25.1 & 1.13 & 4.86 & 10.2 & 8.91 & 8.74 & 19.7 & \\
+\bottomrule
+\end{tabular}

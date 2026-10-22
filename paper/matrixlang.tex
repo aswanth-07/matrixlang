@@ -811,16 +811,22 @@ Cora ($P^3v$ with $P=D^{-1}A$, \texttt{real(0,1)}), the normal equations of a
 least-squares fit of the digit label on the central $10\times10$ pixels of
 4,096 MNIST images (\texttt{uint8}), and the class scores of the \texttt{int8}
 classifier summed over 4,096 test images ($WX\mathbf 1$, \texttt{int8}). The
-input checks accepted every real input in its declared domain. The strict
-contract proves the walk count bit-identical on the real graph and gains
-\RealCoraWalksStrictGcc$\times$ under GCC and \RealCoraWalksStrictClang$\times$
-under Clang with identical bits; the classifier's scores gain
-\RealMnistScoresStrictGcc$\times$ and \RealMnistScoresStrictClang$\times$. The
-random walk is real-valued: strict declines it, and the bounded contract
-reorders it for \RealCoraDiffusionBoundedGcc$\times$ and
-\RealCoraDiffusionBoundedClang$\times$ within the source order's error bound.
-The normal equations contain no chain; their reductions are licensed, and the
-gain is that of vectorizing them.
+input checks accepted every real input in its declared domain, and with both
+compilers the source build printed the VM's unoptimized output for every
+program. The strict contract proves the walk count bit-identical on the real
+graph and gains \RealCoraWalksStrictGcc$\times$ under GCC and
+\RealCoraWalksStrictClang$\times$ under Clang, and with licensed reductions
+\RealCoraWalksClausesGcc$\times$ and \RealCoraWalksClausesClang$\times$, against
+\RealCoraWalksAlgebraicGcc$\times$ and \RealCoraWalksAlgebraicClang$\times$ for
+the unproved reordering; the classifier's scores gain
+\RealMnistScoresClausesGcc$\times$ and \RealMnistScoresClausesClang$\times$. Each
+integer program printed one result across all 22 builds. The random walk is
+real-valued: strict declines it (\RealCoraDiffusionStrictGcc$\times$ and
+\RealCoraDiffusionStrictClang$\times$), and the bounded contract reorders it for
+\RealCoraDiffusionBoundedGcc$\times$ and \RealCoraDiffusionBoundedClang$\times$
+within the source order's error bound, printing a different result. The normal
+equations contain no chain, and only their narrow product $X^{\mathsf T}y$ takes
+reduction clauses, so no contract changes much.
 
 \paragraph{A second machine and compiler.}
 \begin{table}[t]
