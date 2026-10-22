@@ -402,8 +402,8 @@
 {"case":"ref-1000","function":"findfactor","kind":"result","same":true,"strict":"'0x1.a82e9a2f8fafap-7'","width":2}
 {"case":"max","function":"findfit","kind":"result","same":true,"strict":"(0, 1.0)","width":2}
 {"case":"max","function":"findfactor","kind":"result","same":true,"strict":"'0x1.0000000000000p+0'","width":2}
-{"function":"rms-16","kind":"time","licensed_ns":5336437,"strict_ns":5295051}
-{"function":"avg-16","kind":"time","licensed_ns":5328490,"strict_ns":5365575}
-{"function":"rms-8","kind":"time","licensed_ns":1087578,"strict_ns":10344411}
-{"function":"avg-8","kind":"time","licensed_ns":1033892,"strict_ns":10338900}
-{"function":"findfit-16","kind":"time","licensed_ns":21406261,"strict_ns":125276143}
+{"function":"rms-16","kind":"time","licensed_ns":5463662,"strict_ns":5748494}
+{"function":"avg-16","kind":"time","licensed_ns":5469471,"strict_ns":5264711}
+{"function":"rms-8","kind":"time","licensed_ns":1573674,"strict_ns":10312556}
+{"function":"avg-8","kind":"time","licensed_ns":1282295,"strict_ns":10318380}
+{"function":"findfit-16","kind":"time","licensed_ns":22129133,"strict_ns":127839619}

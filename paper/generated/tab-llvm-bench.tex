@@ -4,17 +4,19 @@ Kernel & Data & License & Strict & \multicolumn{5}{c}{Speedup over strict Clang}
 \cmidrule(lr){5-9}
  & & & (ms) & licensed & fast-math & lic.\ SSE2 & GCC & GCC f.-m.\\
 \midrule
-sum & MNIST & guarded & 59.6 & 5.98 & 6.47 & 2.87 & 1.00 & 4.94\\
-sum of squares & MNIST & guarded & 58.8 & 6.31 & 5.58 & 2.53 & 0.99 & 4.82\\
-Gram matrix & MNIST & static & 384 & 5.69 & 5.91 & 1.57 & 0.97 & 3.05\\
-int8 classifier & MNIST & guarded & 94.8 & 9.46 & 9.86 & 4.06 & 0.99 & 6.75\\
-degrees & Cora & static & 9.07 & 9.29 & 9.35 & 2.69 & 1.00 & 5.76\\
-2-walks & Cora & guarded & 9.27 & 5.67 & 5.49 & 1.74 & 0.94 & 3.04\\
-GEMM & generated & static & 68.4 & 5.36 & 5.28 & 1.27 & 0.95 & 2.87\\
-energy & generated & guarded & 5.34 & 7.58 & 8.80 & 3.15 & 0.97 & 4.46\\
-sum & generated & guarded & 2.71 & 7.73 & 7.81 & 3.89 & 0.99 & 6.69\\
+sum & MNIST & guarded & 59.1 & 6.50 & 6.57 & 2.91 & 0.99 & 4.53\\
+sum of squares & MNIST & guarded & 59.4 & 6.31 & 6.21 & 2.57 & 0.96 & 4.63\\
+Gram matrix & MNIST & static & 386 & 5.42 & 5.33 & 1.51 & 0.98 & 3.08\\
+int8 classifier & MNIST & guarded & 93.9 & 9.71 & 10.2 & 3.98 & 0.97 & 6.71\\
+degrees & Cora & static & 9.11 & 9.19 & 9.25 & 2.91 & 1.01 & 5.95\\
+2-walks & Cora & guarded & 9.31 & 5.69 & 5.77 & 1.82 & 0.99 & 3.12\\
+GEMM & generated & static & 69.3 & 5.09 & 5.35 & 1.35 & 1.00 & 3.02\\
+energy & generated & guarded & 5.33 & 9.15 & 9.39 & 3.44 & 0.98 & 6.45\\
+sum & generated & guarded & 2.67 & 8.36 & 8.75 & 3.81 & 0.99 & 6.43\\
+\addlinespace
+16-term sums & MNIST & guarded & 23.4 & 1.65 & 1.68 & 0.93 & 0.66 & 1.32\\
 \midrule
-dot product & generated & declined & 3.62 & 0.95 & 1.30$^\dagger$ & 1.00$^\dagger$ & 0.98$^\dagger$ & 1.40$^\dagger$\\
-sum, binary32 & MNIST & guarded & 60 & 1.01 & 7.81$^\dagger$ & 1.01 & 1.02 & 7.36$^\dagger$\\
+dot product & generated & declined & 3.81 & 0.97 & 1.54$^\dagger$ & 1.04$^\dagger$ & 1.01$^\dagger$ & 1.43$^\dagger$\\
+sum, binary32 & MNIST & guarded & 59.9 & 1.02 & 8.48$^\dagger$ & 1.00 & 1.01 & 7.32$^\dagger$\\
 \bottomrule
 \end{tabular}

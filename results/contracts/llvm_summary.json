@@ -11,11 +11,11 @@
     "identical": 404,
     "results": 404,
     "speedup": {
-      "avg-16": 1.0069597578300795,
-      "avg-8": 9.999980655619735,
-      "findfit-16": 5.852313162023018,
-      "rms-16": 0.9922446381358948,
-      "rms-8": 9.5114198705748
+      "avg-16": 0.9625631071085302,
+      "avg-8": 8.046806702045942,
+      "findfit-16": 5.7769827222783645,
+      "rms-16": 1.052132068198948,
+      "rms-8": 6.553171749676236
     }
   },
   "bench": {
@@ -24,17 +24,17 @@
         "clang-fast-math": {
           "deterministic": true,
           "same": true,
-          "speedup": 9.346596717284134
+          "speedup": 9.251750368458527
         },
         "clang-licensed": {
           "deterministic": true,
           "same": true,
-          "speedup": 9.287897483894817
+          "speedup": 9.18589603303868
         },
         "clang-licensed-sse2": {
           "deterministic": true,
           "same": true,
-          "speedup": 2.685226128213433
+          "speedup": 2.906902591264241
         },
         "clang-strict": {
           "deterministic": true,
@@ -44,33 +44,33 @@
         "gcc-fast-math": {
           "deterministic": true,
           "same": true,
-          "speedup": 5.761635119846578
+          "speedup": 5.947329862691339
         },
         "gcc-strict": {
           "deterministic": true,
           "same": true,
-          "speedup": 0.997789373194068
+          "speedup": 1.0099833905849378
         }
       },
       "decision": "licensed",
-      "strict_ms": 9.070087
+      "strict_ms": 9.108413
     },
     "dot_f64": {
       "configs": {
         "clang-fast-math": {
           "deterministic": true,
           "same": false,
-          "speedup": 1.2996481748960647
+          "speedup": 1.5423830899713236
         },
         "clang-licensed": {
           "deterministic": true,
           "same": true,
-          "speedup": 0.9486394140182284
+          "speedup": 0.9651640155062197
         },
         "clang-licensed-sse2": {
           "deterministic": true,
           "same": false,
-          "speedup": 1.00408315730173
+          "speedup": 1.0387985702126172
         },
         "clang-strict": {
           "deterministic": true,
@@ -80,33 +80,33 @@
         "gcc-fast-math": {
           "deterministic": true,
           "same": false,
-          "speedup": 1.3962050260054824
+          "speedup": 1.4287110423620315
         },
         "gcc-strict": {
           "deterministic": true,
           "same": false,
-          "speedup": 0.9822379374711642
+          "speedup": 1.0143705621792714
         }
       },
       "decision": "declined",
-      "strict_ms": 3.623462
+      "strict_ms": 3.805329
     },
     "energy_i16": {
       "configs": {
         "clang-fast-math": {
           "deterministic": true,
           "same": true,
-          "speedup": 8.79707739223605
+          "speedup": 9.38636607622115
         },
         "clang-licensed": {
           "deterministic": true,
           "same": true,
-          "speedup": 7.579077799648366
+          "speedup": 9.154606934431857
         },
         "clang-licensed-sse2": {
           "deterministic": true,
           "same": true,
-          "speedup": 3.151321379750162
+          "speedup": 3.4417836573364524
         },
         "clang-strict": {
           "deterministic": true,
@@ -116,33 +116,33 @@
         "gcc-fast-math": {
           "deterministic": true,
           "same": true,
-          "speedup": 4.455583978840608
+          "speedup": 6.454341378054285
         },
         "gcc-strict": {
           "deterministic": true,
           "same": true,
-          "speedup": 0.9737331381274098
+          "speedup": 0.9761400450708576
         }
       },
       "decision": "versioned",
-      "strict_ms": 5.336747
+      "strict_ms": 5.333474
     },
     "gemm_i8": {
       "configs": {
         "clang-fast-math": {
           "deterministic": true,
           "same": true,
-          "speedup": 5.281718081272848
+          "speedup": 5.353160661743099
         },
         "clang-licensed": {
           "deterministic": true,
           "same": true,
-          "speedup": 5.357277625184045
+          "speedup": 5.087368794190909
         },
         "clang-licensed-sse2": {
           "deterministic": true,
           "same": true,
-          "speedup": 1.265200574261396
+          "speedup": 1.345546434763731
         },
         "clang-strict": {
           "deterministic": true,
@@ -152,33 +152,33 @@
         "gcc-fast-math": {
           "deterministic": true,
           "same": true,
-          "speedup": 2.8713612832037265
+          "speedup": 3.0212338443896583
         },
         "gcc-strict": {
           "deterministic": true,
           "same": true,
-          "speedup": 0.946891893123963
+          "speedup": 0.9995523667976511
         }
       },
       "decision": "licensed",
-      "strict_ms": 68.441311
+      "strict_ms": 69.318147
     },
     "gram_u8": {
       "configs": {
         "clang-fast-math": {
           "deterministic": true,
           "same": true,
-          "speedup": 5.907732181776375
+          "speedup": 5.330099867303477
         },
         "clang-licensed": {
           "deterministic": true,
           "same": true,
-          "speedup": 5.6879422123173695
+          "speedup": 5.424602277449606
         },
         "clang-licensed-sse2": {
           "deterministic": true,
           "same": true,
-          "speedup": 1.565631721468682
+          "speedup": 1.5140142623278776
         },
         "clang-strict": {
           "deterministic": true,
@@ -188,33 +188,33 @@
         "gcc-fast-math": {
           "deterministic": true,
           "same": true,
-          "speedup": 3.045668879356679
+          "speedup": 3.082504776013571
         },
         "gcc-strict": {
           "deterministic": true,
           "same": true,
-          "speedup": 0.9702132412555274
+          "speedup": 0.9835859698973408
         }
       },
       "decision": "licensed",
-      "strict_ms": 384.00258
+      "strict_ms": 385.797676
     },
     "qlinear_i8": {
       "configs": {
         "clang-fast-math": {
           "deterministic": true,
           "same": true,
-          "speedup": 9.864496426964482
+          "speedup": 10.175306428416853
         },
         "clang-licensed": {
           "deterministic": true,
           "same": true,
-          "speedup": 9.463409667027706
+          "speedup": 9.707778754174198
         },
         "clang-licensed-sse2": {
           "deterministic": true,
           "same": true,
-          "speedup": 4.061376618558269
+          "speedup": 3.9827791368112435
         },
         "clang-strict": {
           "deterministic": true,
@@ -224,33 +224,33 @@
         "gcc-fast-math": {
           "deterministic": true,
           "same": true,
-          "speedup": 6.754687123757217
+          "speedup": 6.71447147063999
         },
         "gcc-strict": {
           "deterministic": true,
           "same": true,
-          "speedup": 0.98721125589598
+          "speedup": 0.9688857599218235
         }
       },
       "decision": "versioned",
-      "strict_ms": 94.842339
+      "strict_ms": 93.945165
     },
     "sum_i32": {
       "configs": {
         "clang-fast-math": {
           "deterministic": true,
           "same": true,
-          "speedup": 7.812523953191501
+          "speedup": 8.751038852595904
         },
         "clang-licensed": {
           "deterministic": true,
           "same": true,
-          "speedup": 7.7299522720663285
+          "speedup": 8.361631628844174
         },
         "clang-licensed-sse2": {
           "deterministic": true,
           "same": true,
-          "speedup": 3.891013258092201
+          "speedup": 3.8062382498718166
         },
         "clang-strict": {
           "deterministic": true,
@@ -260,33 +260,33 @@
         "gcc-fast-math": {
           "deterministic": true,
           "same": true,
-          "speedup": 6.689435323493563
+          "speedup": 6.428018896062038
         },
         "gcc-strict": {
           "deterministic": true,
           "same": true,
-          "speedup": 0.9940445789462685
+          "speedup": 0.9925109587346955
         }
       },
       "decision": "versioned",
-      "strict_ms": 2.711188
+      "strict_ms": 2.672436
     },
     "sum_u8": {
       "configs": {
         "clang-fast-math": {
           "deterministic": true,
           "same": true,
-          "speedup": 6.471662681175619
+          "speedup": 6.573272736214055
         },
         "clang-licensed": {
           "deterministic": true,
           "same": true,
-          "speedup": 5.97852703416094
+          "speedup": 6.501507852453633
         },
         "clang-licensed-sse2": {
           "deterministic": true,
           "same": true,
-          "speedup": 2.867802856513458
+          "speedup": 2.905776334437938
         },
         "clang-strict": {
           "deterministic": true,
@@ -296,33 +296,33 @@
         "gcc-fast-math": {
           "deterministic": true,
           "same": true,
-          "speedup": 4.940050957013738
+          "speedup": 4.5257206932676874
         },
         "gcc-strict": {
           "deterministic": true,
           "same": true,
-          "speedup": 1.000205216858756
+          "speedup": 0.9882582430774172
         }
       },
       "decision": "versioned",
-      "strict_ms": 59.636967
+      "strict_ms": 59.079826
     },
     "sum_u8_f32": {
       "configs": {
         "clang-fast-math": {
           "deterministic": true,
           "same": false,
-          "speedup": 7.812765995697561
+          "speedup": 8.48072283130701
         },
         "clang-licensed": {
           "deterministic": true,
           "same": true,
-          "speedup": 1.0085922382624184
+          "speedup": 1.019673591901667
         },
         "clang-licensed-sse2": {
           "deterministic": true,
           "same": true,
-          "speedup": 1.0056520373859459
+          "speedup": 1.0028773206031318
         },
         "clang-strict": {
           "deterministic": true,
@@ -332,33 +332,69 @@
         "gcc-fast-math": {
           "deterministic": true,
           "same": false,
-          "speedup": 7.3620511676022735
+          "speedup": 7.323941109647687
         },
         "gcc-strict": {
           "deterministic": true,
           "same": true,
-          "speedup": 1.0175488988964607
+          "speedup": 1.0107613234116524
         }
       },
       "decision": "versioned",
-      "strict_ms": 59.971659
+      "strict_ms": 59.855729
+    },
+    "sum_u8_short": {
+      "configs": {
+        "clang-fast-math": {
+          "deterministic": true,
+          "same": true,
+          "speedup": 1.678898185101981
+        },
+        "clang-licensed": {
+          "deterministic": true,
+          "same": true,
+          "speedup": 1.6523528492193726
+        },
+        "clang-licensed-sse2": {
+          "deterministic": true,
+          "same": true,
+          "speedup": 0.9268940717668612
+        },
+        "clang-strict": {
+          "deterministic": true,
+          "same": true,
+          "speedup": 1.0
+        },
+        "gcc-fast-math": {
+          "deterministic": true,
+          "same": true,
+          "speedup": 1.3157278985936298
+        },
+        "gcc-strict": {
+          "deterministic": true,
+          "same": true,
+          "speedup": 0.6560112676299112
+        }
+      },
+      "decision": "versioned",
+      "strict_ms": 23.443916
     },
     "sumsq_u8": {
       "configs": {
         "clang-fast-math": {
           "deterministic": true,
           "same": true,
-          "speedup": 5.576996061253212
+          "speedup": 6.213494022154403
         },
         "clang-licensed": {
           "deterministic": true,
           "same": true,
-          "speedup": 6.306084079881613
+          "speedup": 6.311589209448845
         },
         "clang-licensed-sse2": {
           "deterministic": true,
           "same": true,
-          "speedup": 2.527861593364728
+          "speedup": 2.572374156278694
         },
         "clang-strict": {
           "deterministic": true,
@@ -368,33 +404,33 @@
         "gcc-fast-math": {
           "deterministic": true,
           "same": true,
-          "speedup": 4.8243697125382745
+          "speedup": 4.630375117289715
         },
         "gcc-strict": {
           "deterministic": true,
           "same": true,
-          "speedup": 0.989580651272138
+          "speedup": 0.9572301093348873
         }
       },
       "decision": "versioned",
-      "strict_ms": 58.814967
+      "strict_ms": 59.370128
     },
     "walks2_u8": {
       "configs": {
         "clang-fast-math": {
           "deterministic": true,
           "same": true,
-          "speedup": 5.494903758737218
+          "speedup": 5.770082128802363
         },
         "clang-licensed": {
           "deterministic": true,
           "same": true,
-          "speedup": 5.674631138987478
+          "speedup": 5.686571377076123
         },
         "clang-licensed-sse2": {
           "deterministic": true,
           "same": true,
-          "speedup": 1.7416558826827784
+          "speedup": 1.8166886801420234
         },
         "clang-strict": {
           "deterministic": true,
@@ -404,23 +440,23 @@
         "gcc-fast-math": {
           "deterministic": true,
           "same": true,
-          "speedup": 3.043664607283781
+          "speedup": 3.124275078823692
         },
         "gcc-strict": {
           "deterministic": true,
           "same": true,
-          "speedup": 0.9377500848070819
+          "speedup": 0.9920685304211451
         }
       },
       "decision": "versioned",
-      "strict_ms": 9.271672
+      "strict_ms": 9.307581
     }
   },
   "compile": {
-    "licensed_s": 0.1458867134999764,
-    "strict_s": 0.1419802489997437,
+    "licensed_s": 0.17763859849992514,
+    "strict_s": 0.13773811300006855,
     "text_growth": 0.3981682333092311,
-    "time_ratio": 1.027514140366381
+    "time_ratio": 1.2896836948814359
   },
   "data": {
     "cora": {
@@ -461,22 +497,26 @@
   },
   "scan": {
     "audioop": {
-      "declined": 9,
+      "declined": 2,
       "files": 1,
       "functions": [
+        "audioop_avg_impl",
         "audioop_avgpp_impl",
         "audioop_findfactor",
         "audioop_findfit",
-        "audioop_findmax"
+        "audioop_findmax",
+        "audioop_rms_impl"
       ],
       "licensed": 0,
       "reasons": {
         "inexact": 1,
-        "shape": 8
+        "shape": 1
       },
       "reductions": 18,
+      "seconds_with": 1.1197651929996937,
+      "seconds_without": 1.0330386119994728,
       "skipped": 0,
-      "versioned": 9
+      "versioned": 16
     },
     "ndimage": {
       "declined": 39,
@@ -487,6 +527,8 @@
         "no fact": 39
       },
       "reductions": 39,
+      "seconds_with": 5.06645260500045,
+      "seconds_without": 4.839997412998855,
       "skipped": 2,
       "versioned": 0
     },
@@ -502,6 +544,8 @@
         "no fact": 15
       },
       "reductions": 22,
+      "seconds_with": 18.41252196699861,
+      "seconds_without": 18.70950854900093,
       "skipped": 0,
       "versioned": 7
     },
@@ -514,6 +558,8 @@
         "no fact": 30
       },
       "reductions": 30,
+      "seconds_with": 3.255591459002062,
+      "seconds_without": 3.261829619001219,
       "skipped": 0,
       "versioned": 0
     }
