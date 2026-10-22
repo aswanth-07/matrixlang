@@ -35,10 +35,12 @@ KERNELS = {
     "gemm_i8": ("GEMM", "generated", "int8"),
     "energy_i16": ("energy", "generated", "int16"),
     "sum_i32": ("sum", "generated", "int32"),
+    "sum_u8_short": ("16-term sums", "MNIST", "uint8"),
     "dot_f64": ("dot product", "generated", "binary64"),
     "sum_u8_f32": ("sum, binary32", "MNIST", "uint8, binary32"),
 }
 CONTROLS = {"dot_f64", "sum_u8_f32"}
+SHORT = {"sum_u8_short"}   # measures the guard's cost, not a kernel of its own
 # Each guarded stress kernel's admissible trip count (2^p / K), from kernels.c.
 LIMITS = {"sum_u8_f32": (1 << 24) // 255, "energy_i16": 1 << 23, "sum_i32": 1 << 22,
           "qlinear_i8": 1024}
@@ -89,8 +91,9 @@ def bench(rows, decisions):
         if (k, "clang-strict") not in by:
             continue
         base = by[(k, "clang-strict")]["median_ns"]
-        cell = {"strict_ms": base / 1e6, "decision": decided[k]["decision"] if k in decided else None,
-                "configs": {}}
+        # sum_u8_short calls k_sum_u8, so it has that function's decision.
+        d = decided.get(k) or decided.get(k.replace("_short", ""))
+        cell = {"strict_ms": base / 1e6, "decision": d["decision"] if d else None, "configs": {}}
         for (kk, c), r in by.items():
             if kk == k:
                 cell["configs"][c] = {"speedup": base / r["median_ns"], "same": r["same_as_strict"],
@@ -140,6 +143,8 @@ def scan(rows):
                    "versioned": sum(d["decision"] == "versioned" for d in reds),
                    "declined": len(declined),
                    "reasons": dict(collections.Counter(reason_class(d["reason"]) for d in declined)),
+                   "seconds_with": sum(r.get("seconds_with", 0) for r in mine if not r["skipped"]),
+                   "seconds_without": sum(r.get("seconds_without", 0) for r in mine if not r["skipped"]),
                    "functions": sorted({d["function"] for d in reds if d["decision"] != "declined"})}
     return out
 
@@ -164,7 +169,7 @@ def compile_cost(rows):
 def macros(s):
     m = {}
     b = s["bench"]
-    ints = [k for k in b if k not in CONTROLS]
+    ints = [k for k in b if k not in CONTROLS | SHORT]
     if ints:
         def rng(config):
             xs = [b[k]["configs"][config]["speedup"] for k in ints]
@@ -181,7 +186,7 @@ def macros(s):
         m["BenchKernels"] = num(len(b))
         m["BenchIntKernels"] = num(len(ints))
         m["BenchIntSame"] = num(sum(all(c["same"] for c in b[k]["configs"].values()) for k in ints))
-        dec = collections.Counter(b[k]["decision"] for k in b)
+        dec = collections.Counter(b[k]["decision"] for k in b if k not in SHORT)
         m["BenchStatic"], m["BenchGuarded"], m["BenchDeclined"] = (
             num(dec["licensed"]), num(dec["versioned"]), num(dec["declined"]))
         for k in CONTROLS & set(b):
@@ -213,9 +218,16 @@ def macros(s):
                ["files", "skipped", "reductions", "licensed", "versioned", "declined"]}
         for k, v in tot.items():
             m[f"Scan{k.capitalize()}"] = num(v)
+        m["ScanCompiled"] = num(tot["files"] - tot["skipped"])
         reasons = collections.Counter()
         for v in sc.values():
             reasons.update(v["reasons"])
+        with_s = sum(v["seconds_with"] for v in sc.values())
+        without_s = sum(v["seconds_without"] for v in sc.values())
+        if without_s:
+            m["ScanCompileWithS"] = f"{with_s:.1f}"
+            m["ScanCompileWithoutS"] = f"{without_s:.1f}"
+            m["ScanCompileOverheadPct"] = f"{100 * (with_s / without_s - 1):.1f}"
         m["ScanNoFact"], m["ScanInexact"], m["ScanShape"] = (
             num(reasons["no fact"]), num(reasons["inexact"]), num(reasons["shape"]))
         for cb, v in sc.items():
@@ -237,8 +249,8 @@ def macros(s):
         m["CompileTextGrowthPct"] = f"{100 * c['text_growth']:.0f}"
     d = s["data"]
     if d:
-        m["DataMnistAccuracy"] = f"{100 * d['mnist']['int8_accuracy']:.1f}"
-        m["DataMnistFloatAccuracy"] = f"{100 * d['mnist']['float_accuracy']:.1f}"
+        m["DataMnistAccuracy"] = f"{100 * d['mnist']['int8_accuracy']:.2f}"
+        m["DataMnistFloatAccuracy"] = f"{100 * d['mnist']['float_accuracy']:.2f}"
         m["DataCoraVertices"] = num(d["cora"]["vertices"])
         m["DataCoraEdges"] = num(d["cora"]["undirected_edges"])
         m["DataCoraMaxDegree"] = num(d["cora"]["max_degree"])
@@ -265,13 +277,15 @@ def tables(s):
                 ("gcc-fast-math", "GCC f.-m.")]
         word = {"licensed": "static", "versioned": "guarded", "declined": "declined"}
         lines = ["\\begin{tabular}{lllrrrrrr}", "\\toprule",
-                 "Kernel & Data & Licence & Strict & \\multicolumn{5}{c}{Speedup over strict Clang}\\\\",
+                 "Kernel & Data & License & Strict & \\multicolumn{5}{c}{Speedup over strict Clang}\\\\",
                  "\\cmidrule(lr){5-9}",
                  " & & & (ms) & " + " & ".join(l for _, l in cols) + "\\\\", "\\midrule"]
         for k, cell in b.items():
             label, data, _ = KERNELS[k]
             if k == "dot_f64":
                 lines.append("\\midrule")
+            if k in SHORT:
+                lines.append("\\addlinespace")
             def fmt(c):
                 x = cell["configs"][c]
                 return speed(x["speedup"]) + ("" if x["same"] else "$^\\dagger$")

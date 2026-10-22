@@ -118,6 +118,25 @@ def main():
             m[key("Plat", "Cc", name)] = ("Clang " if "clang" in text else "GCC ") + versions[-1]
             m[key("Plat", "Cpu", name)] = e.get("cpu", "").replace("(R)", "").replace("(TM)", "").strip()
 
+    # bench.py repeated on M2: the hand-written reductions of Table 9.
+    bench = load(RUNS["second-gcc"] / "rq4_bench.jsonl")
+    if bench:
+        import statistics
+        sp, same = {}, {}
+        for k in sorted({r["kernel"] for r in bench}):
+            med = {b: statistics.median(r["median_ns"] for r in bench if r["kernel"] == k and r["build"] == b)
+                   for b in ("strict", "licensed")}
+            sums = {b: {r["checksum"] for r in bench if r["kernel"] == k and r["build"] == b}
+                    for b in ("strict", "licensed")}
+            sp[k] = med["strict"] / med["licensed"]
+            same[k] = sums["strict"] == sums["licensed"] and len(sums["strict"]) == 1
+        certified = [k for k in sp if k not in ("dot_real", "guard_i16")]
+        m["PlatBenchLo"] = speed(min(sp[k] for k in certified))
+        m["PlatBenchHi"] = speed(max(sp[k] for k in certified))
+        m["PlatBenchIdentical"] = str(sum(same[k] for k in certified))
+        m["PlatBenchCertified"] = str(len(certified))
+        summary["bench_second"] = {"speedup": sp, "identical": same}
+
     real = load(RUNS["first-gcc"] / "e2e_real.jsonl")
     renv = env(RUNS["first-gcc"] / "e2e_real_env.json")
     if real:
@@ -150,7 +169,7 @@ def main():
                 f" & {results}\\\\")
 
     if syn:
-        names = {"first-gcc": "M1, GCC", "second-gcc": "M2, GCC", "second-clang": "M2, Clang"}
+        names = {"first-gcc": "M1, GCC", "second-gcc": "GCC", "second-clang": "Clang"}
         lines = ["\\begin{tabular}{llr" + "r" * len(COLS) + "r}", "\\toprule",
                  "Kernel & Build & Source & \\multicolumn{" + str(len(COLS)) +
                  "}{c}{Speedup over source} & Results\\\\",
@@ -159,7 +178,10 @@ def main():
         for i, (kernel, v) in enumerate(syn.items()):
             if i:
                 lines.append("\\addlinespace")
-            for j, (name, c) in enumerate(v["runs"].items()):
+            # M1's rows are Table 6; this table shows M2, but its Results
+            # column counts every build on both machines.
+            shown = [(n, c) for n, c in v["runs"].items() if n != "first-gcc"]
+            for j, (name, c) in enumerate(shown):
                 label = f"\\texttt{{{kernel}}}" if j == 0 else ""
                 results = str(v["distinct_results"]) if j == 0 else ""
                 lines.append(row(label, names[name], c, results))

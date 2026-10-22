@@ -1,4 +1,4 @@
-"""RQ7 and RQ8: the per-reduction licence in LLVM.
+"""RQ7 and RQ8: the per-reduction license in LLVM.
 
 Builds llvm/ExactReduce.so and compiles llvm/kernels/kernels.c under these
 configurations (the driver and the stress harness are compiled once, without

@@ -114,7 +114,7 @@ The real datasets (RQ4, RQ7) were added after the preregistered study and are ex
 
 ## Scope of the claims
 
-- Certificates and licences are static claims over the declared domains, or over the IR's integer ranges. Execution checks them on drawn and constructed inputs only.
+- Certificates and licenses are static claims over the declared domains, or over the IR's integer ranges. Execution checks them on drawn and constructed inputs only.
 - The threshold is shown to be the true boundary for the measured chain families, not in general.
 - The bounded contract promises the standard-model error bound; gradual underflow is outside it.
 - Modeled arithmetic is a cost model, not runtime. Runtime appears in RQ4, RQ7 and RQ9, on two machines.

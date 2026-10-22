@@ -37,8 +37,10 @@ import e2e  # noqa: E402
 DATA = common.ROOT / "build" / "data"
 REAL = common.ROOT / "examples" / "kernels" / "real"
 SAMPLES = 4096
-# kernel: (processes, repetitions); the Cora programs take seconds per run as written.
-EFFORT = {"cora_walks": (3, 3), "cora_diffusion": (3, 3), "mnist_normal": (5, 11),
+# kernel: (processes, repetitions); each process drops its first run. The Cora
+# programs take about half a minute per run as written, and their speedups
+# are in the hundreds, so two timed runs each suffice.
+EFFORT = {"cora_walks": (2, 2), "cora_diffusion": (2, 2), "mnist_normal": (5, 11),
           "mnist_scores": (5, 11)}
 
 

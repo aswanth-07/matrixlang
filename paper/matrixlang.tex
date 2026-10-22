@@ -16,6 +16,8 @@
 \usepackage{amsmath}
 \settopmatter{printacmref=false}
 \setcopyright{none}
+% A submission has no DOI or ISSN yet: drop the placeholder copyright block.
+\renewcommand\footnotetextcopyrightpermission[1]{}
 \citestyle{acmnumeric}
 \input{generated/contracts.tex}
 \input{generated/platforms.tex}
@@ -208,15 +210,16 @@ domains. The check is what makes domain-derived facts sound; without input
 declarations every value would be a compile-time constant and constant folding
 would subsume optimization.
 
-\paragraph{LLVM.} LLVM attaches fast-math flags to individual floating-point
+\paragraph{LLVM\@.} LLVM attaches fast-math flags to individual floating-point
 instructions~\cite{llvm-fmf}: \texttt{reassoc} permits reassociation,
 \texttt{nsz} lets the sign of a zero be ignored, \texttt{nnan} and
 \texttt{ninf} assume the absence of NaN and infinity, and so on. The loop
 vectorizer recognizes an addition reduction from its header phi and vectorizes
 and interleaves it only when every addition of the chain carries
-\texttt{reassoc}~\cite{llvm-vectorizers}; without the flag a floating-point
-reduction stays scalar on targets without ordered vector reductions, which is
-why strict semantics cost speed.
+\texttt{reassoc}, or when a loop pragma forces vectorization, itself a
+per-loop license~\cite{llvm-vectorizers}; otherwise a floating-point reduction
+stays scalar on targets without ordered vector reductions, which is why strict
+semantics cost speed.
 
 \section{Contracts and certificates}\label{sec:contracts}
 \begin{definition}[Guarantee levels]
@@ -491,7 +494,7 @@ $0-x\to-x$ is absent: it maps $+0-(+0)=+0$ to $-0$ and saves no arithmetic.
 
 \section{Certificates as code}\label{sec:codegen}
 A guarantee is worth most when a production compiler can act on it.
-\texttt{matrixc --emit-c} writes the optimized program as a C11 translation
+\texttt{matrixc -{}-emit-c} writes the optimized program as a C11 translation
 unit that GCC or Clang compiles like any other. Every instruction becomes a loop
 nest that performs the VM's arithmetic. A product entry is summed from $+0$ over
 $k$ ascending, written $i$-$k$-$j$ with literal trip counts so that the C
@@ -525,17 +528,17 @@ across vector lanes and across four threads (\RqEmitMismatches{} mismatches
 in all). Under the bounded and algebraic contracts, licensed reductions changed
 the output of \RqEmitChangedBounded{} and \RqEmitChangedAlgebraic{} programs.
 
-\section{The licence in LLVM}\label{sec:llvm}
+\section{The license in LLVM}\label{sec:llvm}
 MatrixLang's facts come from declared domains. C has no such declarations, but
 its programs state many of the same facts in another way: integer data is
 stored in integer arrays and converted where it is summed. ExactReduce, an
 LLVM~18 pass plugin of \LlvmPassLoc{} lines of C++, derives grid facts from
-those conversions and licenses reassociation of exactly the reductions whose
-every order returns the same bits. It runs at the start of the vectorizer
+those conversions and licenses the reassociation of a reduction only when it
+proves that every order returns the same bits. It runs at the start of the vectorizer
 pipeline, after the loop and scalar optimizations, so that the loop vectorizer,
 which runs next, reads its decisions.
 
-\paragraph{Facts from the IR.} A fact $(G,K)$ about a floating-point value
+\paragraph{Facts from the IR\@.} A fact $(G,K)$ about a floating-point value
 states that it is an integer multiple of $2^G$ of magnitude at most $K2^G$,
 the grid--magnitude domain of Section~\ref{sec:exact} with exact integer
 bounds. An \texttt{sitofp} or \texttt{uitofp} of an integer gives $G$ from the
@@ -549,7 +552,7 @@ conversion must itself be exact. Constants give exact facts;
 operation inside a term must be exact. A value loaded from a floating-point
 array has no fact: the pass licenses nothing over real-valued data.
 
-\paragraph{Reductions and the static licence.} The pass takes every
+\paragraph{Reductions and the static license.} The pass takes every
 floating-point add reduction that LLVM's recurrence analysis recognizes and
 walks its chain from the loop latch back to the header phi: additions,
 subtractions of a term from the accumulator, \texttt{llvm.fmuladd} with the
@@ -563,10 +566,9 @@ bounds. Every term of a product kernel over \texttt{int8} data with an
 \texttt{int} trip count, for instance, is at most $2^{14}$ and there are at most
 $2^{31}$ of them, so every order is exact in binary64.
 
-\paragraph{The guarded licence.} When the start value is unknown, or the trip
+\paragraph{The guarded license.} When the start value is unknown, or the trip
 count may be too large, as with any \texttt{long} or \texttt{size\_t} loop
-bound, the pass versions the loop. The preheader computes, in integer
-arithmetic,
+bound, the pass versions the loop. The preheader computes
 \begin{lstlisting}[language=C]
 a  = fabs(s0);  u = a * 0x1p-G;                     /* exact: G <= 0, scaling by a power of two */
 ok = a <= 0x1p(p+G) && u == trunc(u)                /* s0 is a multiple of 2^G, |s0| <= 2^(p+G) */
@@ -596,7 +598,7 @@ proposition; the stress study (RQ8) found no output that changed.
 elements that happen to hold integers looks like any other, and only a
 declaration such as MatrixLang's could change that. It needs a bound on the
 trip count, or a loop it can version: innermost, with one exit and a trip count
-computable on entry. And a licence is necessary but not sufficient: the
+computable on entry. And a license is necessary but not sufficient: the
 vectorizer must also be able to vectorize the loop (RQ9 shows a loop whose run-time
 stride prevents it). The study's mutants are two switches of the pass: one adds
 a bit to every significand width, the other licenses every add reduction
@@ -608,11 +610,11 @@ the segmented chain pass take \RqImplFactsLoc{} of them (\texttt{facts.c},
 \texttt{chain.c}); input domains and their load-time checks take
 \RqImplInputsLoc{} (\texttt{domain.c}, \texttt{inputs.c}); contracts, side
 conditions and certificates are part of \texttt{optimize.c}, and the C backend
-is \texttt{emit\_c.c}. The command line selects \texttt{--fp-strict} (default),
-\texttt{--fp-bounded} or \texttt{--fp-algebraic}; \texttt{--no-proofs} disables
-facts and reproduces the previous strict optimizer; \texttt{--certificate} prints
-per-output guarantees; \texttt{--random-inputs}~\textit{seed} draws inputs
-reproducibly; and \texttt{--emit-c} writes C. A browser workspace runs the same
+is \texttt{emit\_c.c}. The command line selects \texttt{-{}-fp-strict} (default),
+\texttt{-{}-fp-bounded} or \texttt{-{}-fp-algebraic}; \texttt{-{}-no-proofs} disables
+facts and reproduces the previous strict optimizer; \texttt{-{}-certificate} prints
+per-output guarantees; \texttt{-{}-random-inputs}~\textit{seed} draws inputs
+reproducibly; and \texttt{-{}-emit-c} writes C. A browser workspace runs the same
 compiler locally, shows the three contracts and each output's certificate,
 checks every certificate against an unoptimized run, and presents the
 measurements of Section~\ref{sec:eval}. ExactReduce builds against an installed
@@ -626,7 +628,7 @@ Theorem~\ref{thm:exact} is to the true boundary; (RQ4) what certificates are
 worth to a production compiler, on generated and real data, on two machines and
 under two C compilers; (RQ5) which tests notice a missing side condition; (RQ6)
 whether cheaper bracketings are more accurate; and, for the LLVM pass, (RQ7) what
-its licences are worth, (RQ8) whether they are sound under inputs built to break
+its licenses are worth, (RQ8) whether they are sound under inputs built to break
 them, and (RQ9) how often existing code has reductions they apply to. All
 scripts, seeds and raw observations are in the artifact; every number below is
 generated from them.
@@ -686,7 +688,7 @@ end to end under strict against \RqOverheadNoproofMs{}~ms without proofs (median
 ratio \RqOverheadRatio, largest \RqOverheadMaxRatio), a time dominated by process
 start-up.
 \begin{figure}[t]
-\centering\includegraphics[width=0.7\textwidth]{figures/contracts-recovery.pdf}
+\centering\includegraphics[width=0.58\textwidth]{figures/contracts-recovery.pdf}
 \caption{RQ1. Modeled arithmetic removed per value domain and contract.}
 \Description{Grouped bars per value domain showing the share of modeled
 arithmetic removed under no proofs, strict, bounded and algebraic contracts.}
@@ -822,15 +824,15 @@ gain is that of vectorizing them.
 
 \paragraph{A second machine and compiler.}
 \begin{table}[t]
-\caption{RQ4 across machines and compilers: the kernels of Table~\ref{tab:e2e}
-on M1 with GCC, and on M2 with GCC and Clang (\emph{threads}: eight on M1,
-\LlvmCores{} on M2). Results counts distinct outputs over every build on every
-machine.}
+\caption{RQ4 on M2: the kernels of Table~\ref{tab:e2e} compiled by
+GCC~\LlvmGcc{} and Clang~\LlvmClang{} (\emph{threads}: \LlvmCores). Results
+counts distinct outputs over every build of both compilers on M2 and of
+Table~\ref{tab:e2e} on M1.}
 \label{tab:platforms}\centering\small\setlength{\tabcolsep}{4pt}\input{generated/tab-platforms.tex}
 \end{table}
 Table~\ref{tab:platforms} repeats Table~\ref{tab:e2e} on M2, with GCC and with
-Clang. The source program printed the same bits on all \PlatRuns{} toolchains for
-\PlatSourceAgree{} of the six kernels. Every integer kernel printed a single
+Clang. The source program printed the same bits with all \PlatRuns{} toolchains
+for \PlatSourceAgree{} of six kernels. Every integer kernel printed a single
 result across every build on every machine (\PlatIntegerOneResult{} of
 \PlatIntegerKernels): the certified outputs are reproducible across vector
 widths, thread counts, compilers and machines. The real-valued kernels printed
@@ -858,8 +860,10 @@ hand-written reductions twice with GCC: strict, and with
 (Table~\ref{tab:bench}). On certified data both builds printed identical bits,
 and the licensed build was faster by \RqFourDotIOneSixSpeedup$\times$ (an
 \texttt{int16} dot product, memory-bound) to \RqFourFdotIEightSpeedup$\times$
-(an \texttt{int8} dot product in binary32, compute-bound). The real-valued
-control changed bits for a comparable speedup. A run-time domain check over both
+(an \texttt{int8} dot product in binary32, compute-bound); on M2 with
+GCC~\LlvmGcc, by \PlatBenchLo--\PlatBenchHi$\times$, with identical bits on
+all \PlatBenchCertified{} certified kernels. The real-valued control changed
+bits for a comparable speedup. A run-time domain check over both
 inputs of the \texttt{int16} dot product costs \RqFourGuardPct\% of the strict
 kernel; MatrixLang performs it once at load time, and ExactReduce's guard checks
 only the start value and the trip count. With OpenMP, whose reduction
@@ -930,7 +934,7 @@ the rival that smaller intermediates cause the effect; we report the association
 not the mechanism. No chain exceeded the bound of Theorem~\ref{thm:bound}; the
 largest error reached \RqSixMaxOverBound{} of it.
 \begin{figure}[t]
-\centering\includegraphics[width=0.7\textwidth]{figures/contracts-accuracy.pdf}
+\centering\includegraphics[width=0.58\textwidth]{figures/contracts-accuracy.pdf}
 \caption{RQ6. Distribution of the error ratio (cost-optimal / source) over
 chains whose cheaper bracketing differs from source order.}
 \Description{Distribution of the ratio of the cost-optimal bracketing's error
@@ -938,7 +942,7 @@ to the source bracketing's error, by population; most mass lies below one.}
 \label{fig:accuracy}
 \end{figure}
 
-\subsection{RQ7: The licence in LLVM}\label{sec:rq7}
+\subsection{RQ7: The license in LLVM}\label{sec:rq7}
 \begin{table}[t]
 \caption{RQ7 on M2. C reductions over integer data, compiled with
 \texttt{-O3 -march=native}: the pass's decision, the median time under strict
@@ -961,7 +965,7 @@ which is exact only for at most 65,793 terms. ExactReduce licensed
 \LlvmBenchStatic{} reductions statically and \LlvmBenchGuarded{} behind a
 guard, and declined the real-valued one.
 
-With the licence, strict Clang ran the nine integer kernels
+With the license, strict Clang ran the nine integer kernels
 \LlvmBenchLicensedLo--\LlvmBenchLicensedHi$\times$ faster, between
 \LlvmBenchOfFastMathLo\% and \LlvmBenchOfFastMathHi\% of the speedup of
 \texttt{-ffast-math}, and every one printed the strict bits; so did
@@ -972,15 +976,20 @@ knowing that: on the real-valued control it changed the result
 the 47 million terms to the strict loop, it ran
 \LlvmBenchSumSingleFastMath$\times$ faster and printed a different sum, while the
 licensed build ran at the strict speed (\LlvmBenchSumSingleLicensed$\times$) and
-printed the strict bits. With SSE2 only, the licence still gained
+printed the strict bits. With SSE2 only, the license still gained
 \LlvmBenchLicensedSseLo--\LlvmBenchLicensedSseHi$\times$. GCC's strict
 builds ran at Clang's strict speed, and GCC's \texttt{-ffast-math}
-\LlvmBenchGccFastMathLo--\LlvmBenchGccFastMathHi$\times$. Compiling the kernels
+\LlvmBenchGccFastMathLo--\LlvmBenchGccFastMathHi$\times$. To expose the
+guard's cost, the row \emph{16-term sums} calls the sum kernel once for every
+run of 16 consecutive pixels, so that every call evaluates a guard for a loop
+of 16 iterations: the licensed build ran at
+\LlvmKernelSumUEightShortLicensed$\times$ the strict speed, and
+\texttt{-ffast-math} at \LlvmKernelSumUEightShortFastMath$\times$. Compiling the kernels
 took a median \LlvmCompileLicensedMs~ms with the pass against
 \LlvmCompileStrictMs~ms without (\LlvmCompileOverheadPct\% more); loop versioning
 grew their code by \LlvmCompileTextGrowthPct\%.
 
-\subsection{RQ8: Soundness of the LLVM licence}\label{sec:rq8}
+\subsection{RQ8: Soundness of the LLVM license}\label{sec:rq8}
 \begin{table}[t]
 \caption{RQ8 on M2. Stress cases whose output differs from strict Clang's, per
 build: \LlvmStressCases{} cases over \LlvmStressKernels{} kernels,
@@ -1028,11 +1037,14 @@ of integer samples or pixels: \texttt{audioop}'s average, root mean square,
 peak-to-peak average and the 16-bit correlation behind \texttt{findfit},
 \texttt{findmax} and \texttt{findfactor}, and Pillow's reduction of 32-bit
 images. It declined \LlvmScanNoFact{} reductions over real-valued data,
-including every PolyBench kernel, \LlvmScanInexact{} whose terms are never
+including all \LlvmScanPolybenchReductions{} in PolyBench, \LlvmScanInexact{} whose terms are never
 exact (the root mean square of 32-bit samples squares values of up to
-$2^{31}$), and \LlvmScanShape{} in loops it cannot version.
+$2^{31}$), and \LlvmScanShape{} in loops it cannot version. Compiling the
+\LlvmScanCompiled{} files that build took \LlvmScanCompileWithS~s with the pass
+against \LlvmScanCompileWithoutS~s without (best of three per file,
+\LlvmScanCompileOverheadPct\% more).
 
-To check the licences end to end, we compiled \texttt{audioop} with and without
+To check the licenses end to end, we compiled \texttt{audioop} with and without
 the pass, loaded each build in its own interpreter, and called every function
 with a reduction on fragments of every sample width, lengths from 0 to
 $2^{22}+1$ samples (on both sides of the 16-bit guard's limit) and the families
@@ -1042,14 +1054,15 @@ of RQ8: \LlvmAudioopIdentical{} of \LlvmAudioopResults{} results were identical.
 8-bit samples \LlvmAudioopAvgEight$\times$ and \LlvmAudioopRmsEight$\times$.
 For 16-bit samples the same two functions gained nothing
 (\LlvmAudioopAvgSixteen$\times$, \LlvmAudioopRmsSixteen$\times$): their loops
-advance by the run-time sample width, and the vectorizer vectorizes only the
-copy it specializes for a stride of one byte. Existing code thus contains
-reductions that the licence makes faster without changing a result, but fewer
+advance by the run-time sample width, and the vectorizer guards its vector
+loop with the speculation that this stride is one byte, so wider samples run
+the scalar loop. Existing code thus contains
+reductions that the license makes faster without changing a result, but fewer
 than kernels written for the study: most floating-point reductions in
 scientific code sum floating-point data.
 
 \subsection{Threats to validity}
-\emph{Internal.} Every certificate and licence was checked against execution
+\emph{Internal.} Every certificate and license was checked against execution
 on drawn and constructed inputs only; the theorems carry the claim over the
 whole domain, and RQ3, RQ5 and RQ8 test the boundaries where a wrong condition
 would show. The two implementations share no code but share their authors'
@@ -1085,7 +1098,7 @@ domain facts, and per-output certificates. Boldo et al.\ verify that CompCert
 preserves floating-point semantics exactly~\cite{compcert-fp}; Monniaux
 catalogues why compiled floating-point code is hard to reason
 about~\cite{monniaux}, among them that reassociation breaks compensated
-summation~\cite{kahan}, which our licences never touch because such sums are
+summation~\cite{kahan}, which our licenses never touch because such sums are
 not exact.
 
 \paragraph{Value facts in production compilers.} GCC's ranger tracks
@@ -1148,7 +1161,7 @@ load time; a domain that is wider than the data loses opportunities, never
 soundness. The threshold is the true boundary for the chain families of RQ3, not
 in general: magnitude bounds cannot see, for instance, that every input is even.
 Runtime was measured on two machines with three compiler versions; other
-targets, notably those with ordered vector reductions, may value the licence
+targets, notably those with ordered vector reductions, may value the license
 differently. The equal-cost ablation in RQ6 cannot discriminate between two
 mechanisms.
 

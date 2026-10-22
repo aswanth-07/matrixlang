@@ -2,7 +2,7 @@
 // floating-point reduction exactly when every order of its additions returns
 // the same bits.
 //
-// This is the per-reduction licence of the MatrixLang paper (the free-reduction
+// This is the per-reduction license of the MatrixLang paper (the free-reduction
 // corollary of the correctly-rounded-chain theorem) moved from MatrixLang's
 // declared input domains to facts LLVM already has: the integer ranges of
 // values converted to floating point. A value is described by a grid fact
@@ -850,7 +850,7 @@ struct ExactReducePass : PassInfoMixin<ExactReducePass> {
       ChangedCFG |= simplifyLoop(L, &DT, &LI, &SE, &AC, nullptr, /*PreserveLCSSA=*/false);
 
     // Decide everything against the unmodified loops, then apply.
-    SmallVector<SmallVector<Instruction *, 8>, 8> Licences;
+    SmallVector<SmallVector<Instruction *, 8>, 8> Licenses;
     SmallVector<Plan, 4> Versions;
     for (Loop *L : LI.getLoopsInPreorder()) {
       if (!L->getLoopLatch() || !L->getLoopPreheader())
@@ -874,7 +874,7 @@ struct ExactReducePass : PassInfoMixin<ExactReducePass> {
           continue;
         }
         if (O.Force) {
-          Licences.push_back(All);
+          Licenses.push_back(All);
           report(Head + " licensed forced");
           continue;
         }
@@ -887,7 +887,7 @@ struct ExactReducePass : PassInfoMixin<ExactReducePass> {
         }
         Decision D = decide(Phi, L, RD, C, SE, FA);
         if (D.What == Decision::Licensed) {
-          Licences.push_back(C.Ops);
+          Licenses.push_back(C.Ops);
           report(Head + " licensed " + D.Why);
         } else if (D.What == Decision::Versioned && O.Version) {
           Guarded.push_back({{L, RD.getRecurrenceStartValue(), C.Ops, D}, Head});
@@ -904,7 +904,7 @@ struct ExactReducePass : PassInfoMixin<ExactReducePass> {
       }
     }
 
-    for (auto &Ops : Licences)
+    for (auto &Ops : Licenses)
       license(Ops);
     SmallPtrSet<Loop *, 4> Done;
     for (Plan &P : Versions) {
@@ -928,7 +928,7 @@ struct ExactReducePass : PassInfoMixin<ExactReducePass> {
     }
     if (ChangedCFG)
       return PreservedAnalyses::none();
-    if (Licences.empty())
+    if (Licenses.empty())
       return PreservedAnalyses::all();
     PreservedAnalyses PA;
     PA.preserveSet<CFGAnalyses>();

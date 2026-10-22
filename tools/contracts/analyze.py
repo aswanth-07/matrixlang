@@ -494,7 +494,7 @@ def write_tables(s):
     three = s.get("rq3")
     if three:
         lines = ["\\begin{tabular}{lrrrrr}", "\\toprule",
-                 "Chain & exact only & Thm.~1 & compiler & witness & differ\\\\",
+                 "Chain & exact only & Thm.~\\ref{thm:exact} & compiler & witness & differ\\\\",
                  "\\midrule"]
         for f, c in three["families"].items():
             off = c["first_witness_offset"]

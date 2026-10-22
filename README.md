@@ -124,6 +124,8 @@ make test-demo    # local service, compiler integration and recorded-example rep
 | `src/backend`, `src/support` | Cost model, VM code generation, VM, C output (`emit_c.c`), input loading and checks, diagnostics |
 | `examples`, `tests`, `demos` | Accepted/rejected programs, contract examples, application kernels (`examples/kernels`), acceptance checks, review demonstrations |
 | `tools/contracts`, `results/contracts`, `bench/licensed` | Contracts study scripts, raw observations, C kernels |
+| `llvm` | ExactReduce, the per-reduction license as an LLVM 18 pass plugin; its C kernels, stress harness and tests |
+| `results/contracts-linux*` | RQ4 repeated on the second machine with GCC and Clang |
 | `paper` | Manuscript, generated macros and tables, figures, evidence map |
 | `demo`, `docs` | Browser workspace and evaluation page, laboratory and teaching materials |
 

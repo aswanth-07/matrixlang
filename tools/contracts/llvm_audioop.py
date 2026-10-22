@@ -1,4 +1,4 @@
-"""RQ9b: the licence in an existing module, end to end.
+"""RQ9b: the license in an existing module, end to end.
 
 CPython's audioop module (audioop-lts 0.2.2, the package that carries it for
 Python 3.13) sums integer audio samples in double precision: avg, rms and

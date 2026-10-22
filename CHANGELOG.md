@@ -1,5 +1,28 @@
 # Changelog
 
+## The journal version: an LLVM license, real data, a second machine
+
+- Added ExactReduce (`llvm/`), an LLVM 18 pass plugin that derives grid facts
+  from integer conversions in C and sets `reassoc` on a floating-point add
+  reduction only when every order of its additions is exact: statically, or
+  by versioning the loop behind a guard on the actual start value and trip
+  count. `make -C llvm test` checks its decisions, that exactly the licensed
+  reductions vectorize, and bit equality with strict Clang on adversarial
+  inputs, and that a one-bit-wider mutant is caught.
+- Added the LLVM study: `llvm_data.py` (MNIST, Cora, an int8 classifier,
+  digests checked), `llvm_eval.py` (RQ7 speed, RQ8 stress and mutants),
+  `llvm_scan.py` (RQ9: audioop, Pillow, SciPy ndimage, PolyBench/C) and
+  `llvm_audioop.py` (audioop strict against licensed, end to end), analysed by
+  `analyze_llvm.py`.
+- RQ4 now also runs on real data (`examples/kernels/real/`, `e2e_real.py`) and
+  on a second machine with GCC and Clang (`CONTRACTS_RESULTS`, `E2E_CC`),
+  analysed by `analyze_platforms.py`; Table 6 gains the algebraic column, the
+  fair baseline for chain reordering.
+- The manuscript moves to ACM TACO's journal format (acmsmall,
+  double-anonymous) with the LLVM section, RQ7-RQ9, a soundness argument for
+  certificates, the guarded-reduction proposition and threats to validity; the
+  venue notes, checklist, review notes and a cover letter follow it.
+
 ## Product demo and race
 
 - Redesigned the workspace as a dark, IDE-style product in an IEEE 754 field-diagram world: every reported value can be opened as its sign, exponent and fraction bits, compared bit for bit.

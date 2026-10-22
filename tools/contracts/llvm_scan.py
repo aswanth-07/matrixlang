@@ -1,4 +1,4 @@
-"""RQ9: how often existing C code has reductions the licence applies to.
+"""RQ9: how often existing C code has reductions the license applies to.
 
 Compiles the C sources of four existing code bases with clang -O3 and the
 ExactReduce plugin in report mode, and records the pass's decision for every
@@ -28,6 +28,7 @@ import subprocess
 import sys
 import sysconfig
 import tarfile
+import time
 import urllib.request
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -104,16 +105,21 @@ def polybench():
     return root, digests
 
 
-def compile_one(source, includes, defines, report):
-    args = [CLANG, "-std=gnu11", "-O3", "-march=native", "-g", f"-fpass-plugin={PLUGIN}",
-            "-w", "-c", str(source), "-o", os.devnull]
+def compile_one(source, includes, defines, report, plugin=True):
+    """Compiles one file; returns (first error line or None, seconds)."""
+    args = [CLANG, "-std=gnu11", "-O3", "-march=native", "-g", "-w", "-c", str(source),
+            "-o", os.devnull]
+    if plugin:
+        args.append(f"-fpass-plugin={PLUGIN}")
     args += [f"-I{i}" for i in includes] + [f"-D{d}" for d in defines]
     env = dict(os.environ, EXACT_REDUCE_REPORT=str(report))
+    t0 = time.perf_counter()
     p = subprocess.run(args, capture_output=True, text=True, env=env, timeout=600)
+    seconds = time.perf_counter() - t0
     if p.returncode:
         first = next((l for l in p.stderr.splitlines() if "error" in l), p.stderr[:200])
-        return first.strip()
-    return None
+        return first.strip(), seconds
+    return None, seconds
 
 
 def scan(code_base, sources, includes, defines, root):
@@ -122,14 +128,20 @@ def scan(code_base, sources, includes, defines, root):
         report = SCAN / "report.txt"
         if report.exists():
             report.unlink()
-        error = compile_one(src, includes, defines, report)
+        error, with_pass = compile_one(src, includes, defines, report)
         rel = src.relative_to(root).as_posix()
         if error:
             rows.append({"code_base": code_base, "file": rel, "skipped": error})
             continue
         lines = report.read_text().splitlines() if report.exists() else []
         decisions = [DECISION.match(l) for l in lines]
+        # Compile time with and without the pass, alternated, best of three.
+        times = {"with": [with_pass], "without": []}
+        for _ in range(3):
+            times["without"].append(compile_one(src, includes, defines, report, plugin=False)[1])
+            times["with"].append(compile_one(src, includes, defines, report)[1])
         rows.append({"code_base": code_base, "file": rel, "skipped": None,
+                     "seconds_with": min(times["with"]), "seconds_without": min(times["without"]),
                      "reductions": [{"function": m.group(1), "location": m.group(3),
                                      "decision": m.group(4), "reason": m.group(5)}
                                     for m in decisions if m]})

@@ -1,4 +1,24 @@
 {
+  "bench_second": {
+    "identical": {
+      "dot_i16": true,
+      "dot_real": false,
+      "fdot_i8": true,
+      "gemm_i8": true,
+      "guard_i16": true,
+      "matvec_u8_i16": true,
+      "sum_i32": true
+    },
+    "speedup": {
+      "dot_i16": 2.3196255344486807,
+      "dot_real": 2.9331559470788577,
+      "fdot_i8": 4.8895913846352865,
+      "gemm_i8": 3.804118381697489,
+      "guard_i16": 1.0447148277620015,
+      "matvec_u8_i16": 1.672005912565809,
+      "sum_i32": 3.9313744970774818
+    }
+  },
   "real": {},
   "synthetic": {
     "diffusion": {

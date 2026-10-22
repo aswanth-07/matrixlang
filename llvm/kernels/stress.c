@@ -1,4 +1,4 @@
-/* stress.c -- inputs built to break an unsound licence.
+/* stress.c -- inputs built to break an unsound license.
  *
  *   stress            prints one line per case: kernel family n output_hash
  *
@@ -7,7 +7,7 @@
  * cancel, products that are -0, sparse maxima, and odd maxima, whose partial
  * sums are odd and therefore round as soon as they exceed the significand.
  * Trip counts include the admissible limit of each kernel's guard, one past
- * it, and twice it, where a licence that accepted one more bit would be
+ * it, and twice it, where a license that accepted one more bit would be
  * wrong. A sound build prints the strict build's lines exactly;
  * tools/contracts/llvm_eval.py compares them.
  */

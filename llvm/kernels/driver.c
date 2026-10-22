@@ -21,7 +21,7 @@
 
 enum { MNIST_TRAIN = 60000, MNIST_TEST = 10000, PIXELS = 784, CLASSES = 10, CORA = 2708 };
 enum { CROP = 10, GRAM_D = CROP * CROP, GEMM_N = 384 };
-enum { AUDIO_N = 1 << 22, INT32_N = 1 << 21, REAL_N = 1 << 21 };
+enum { AUDIO_N = 1 << 22, INT32_N = 1 << 21, REAL_N = 1 << 21, SHORT = 16 };
 
 static double now_ns(void)
 {
@@ -79,7 +79,8 @@ static float *scores;
 
 static void prepare(const char *dir, const char *kernel)
 {
-    if (!strcmp(kernel, "sum_u8") || !strcmp(kernel, "sumsq_u8") || !strcmp(kernel, "sum_u8_f32"))
+    if (!strcmp(kernel, "sum_u8") || !strcmp(kernel, "sumsq_u8") || !strcmp(kernel, "sum_u8_f32") ||
+        !strcmp(kernel, "sum_u8_short"))
         train = load(dir, "mnist_train.u8", (size_t)MNIST_TRAIN * PIXELS);
     if (!strcmp(kernel, "gram_u8")) {
         train = load(dir, "mnist_train.u8", (size_t)MNIST_TRAIN * PIXELS);
@@ -158,6 +159,18 @@ static long run(const char *kernel, int record)
         if (record) mix(&s, sizeof s);
         return (long)MNIST_TRAIN * PIXELS;
     }
+    if (!strcmp(kernel, "sum_u8_short")) {
+        /* The guard's cost: the sum of every 16-pixel run of the training
+         * images, one call per run, so that each call checks its guard. */
+        double total = 0.0;
+        for (long off = 0; off + SHORT <= (long)MNIST_TRAIN * PIXELS; off += SHORT) {
+            double s = k_sum_u8(train + off, SHORT);
+            if (record) mix(&s, sizeof s);
+            total += s;
+        }
+        (void)total;
+        return (long)MNIST_TRAIN * PIXELS;
+    }
     if (!strcmp(kernel, "gram_u8")) {
         k_gram_u8(crop, GRAM_D, MNIST_TRAIN, gram);
         if (record) mix(gram, sizeof *gram * GRAM_D * GRAM_D);
@@ -204,7 +217,7 @@ static long run(const char *kernel, int record)
 
 static const char *const NAMES[] = {
     "sum_u8", "sumsq_u8", "gram_u8", "qlinear_i8", "degree_u8", "walks2_u8",
-    "gemm_i8", "energy_i16", "sum_i32", "dot_f64", "sum_u8_f32",
+    "gemm_i8", "energy_i16", "sum_i32", "sum_u8_short", "dot_f64", "sum_u8_f32",
 };
 
 static int compare(const void *a, const void *b)
