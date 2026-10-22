@@ -1,19 +1,45 @@
 # Venue strategy
 
-Checked on 2026-10-08 for the contracts paper (*Exact, Bounded, or Relaxed*), a compiler-optimization and floating-point paper with an implementation and an evaluation.
+Revised on 2026-10-22 for the journal version of the contracts paper (*Exact, Bounded, or Relaxed*). The earlier assessment, written for a conference submission, is in the Git history.
 
-## Verified
+## Target: ACM Transactions on Architecture and Code Optimization (TACO)
 
-- **CGO 2027** (IEEE/ACM Code Generation and Optimization), Salt Lake City, Utah, USA, 20–24 March 2027, co-located with HPCA, PPoPP and CC 2027. Two submission rounds, 11 June 2026 and 10 September 2026; **both have closed**. Papers use the ACM format, up to 11 pages excluding references. Source: the [CGO 2027 call](https://conf.researchr.org/track/cgo-2027/cgo-2027-papers), read 2026-10-08.
-- **CC 2026**, the most recent CC call, as the precedent: full papers due 11 November 2025 (AoE), notification 10 December 2025; at most **10 pages of text, references excluded**; ACM `acmart` with `sigplan,10pt,review,anonymous`; **double-blind**; artifacts encouraged, required for tool papers. Source: the [CC 2026 call](https://conf.researchr.org/track/CC-2026/calls), read 2026-10-08.
+What TACO is: ACM's journal for hardware, software and system research in computer architecture and code optimization. Compiler optimization papers with an implementation and a measured evaluation are in its core scope.
 
-## Not verified
+Rules that shape the manuscript. These come from TACO's author guidelines as quoted by search results on 2026-10-22; dl.acm.org could not be opened from this machine, so confirm them on the page before submitting:
 
-- **CC 2027** is listed with CGO, HPCA and PPoPP in Salt Lake City (20–24 March 2027), but no CC 2027 call was posted on 2026-10-08 ([series page](https://conf.researchr.org/series/CC) lists editions up to 2026). A deadline in November 2026 follows the pattern of earlier editions; it is an inference, not a date.
+- **Length:** an initial submission may have at most 20 pages in the ACM small (`acmsmall`) format, references excluded. A revision may be longer, and the published version may have at most 25 pages including references. The current anonymous build is within the 20 pages.
+- **Review:** double-anonymous. Remove names, affiliations, funding, acknowledgements, the repository URL and identifying file metadata. Cite your own earlier work in the third person. `anonymous.pdf` is the build to submit.
+- **Decisions:** accept, minor revision, major revision or reject. A paper gets one major revision, not several. Reported time to a first decision is about two months.
+- **Conference extensions:** a paper extended from a conference version needs at least 25–30% new material. This paper has no published conference version, so the rule does not apply.
+- **Open access and fees:** since 1 January 2026 ACM publishes everything open access. If the corresponding author's institution is not in ACM Open, an article processing charge applies. The 2026 subsidised journal rate was reported as about USD 950 for ACM members and USD 1,450 for non-members. Check whether VIT Vellore participates in ACM Open, and check the current charge.
 
-## Recommendation
+Acceptance: the only figure found is a third-party estimate of about 30% after review. No official TACO figure was found.
 
-1. **CC 2027**, when its call appears. The paper's scope (an analysis, a contract design, a theorem, an implementation with a C backend, and an evaluation under GCC) is CC's research-paper scope. The manuscript is formatted as CC 2026 required (`sigplan,10pt,review,anonymous`); check the body against the 10-page limit of the new call.
-2. **CGO 2028**, first round (expected around June 2027 if CGO keeps two rounds; not announced). The end-to-end GCC results and the reduction clauses are the parts closest to CGO; an LLVM implementation would strengthen a CGO submission.
+## How the manuscript was strengthened for TACO
 
-What would most strengthen either submission: kernels from existing applications or benchmark suites with integer-valued data (graph analytics, quantized inference, image processing), which this machine could not download; an LLVM prototype of the per-reduction license; and a second author pass over related work. No acceptance probability is claimed.
+Changes made against the weaknesses that a conference review would raise:
+
+1. **A prototype in a production compiler.** ExactReduce (`llvm/`) is an LLVM 18 pass that derives the paper's facts from integer conversions in C. It marks a reduction reassociable only where every order is exact, either statically or behind a run-time guard. With it, Clang's vectorizer runs strict programs as fast as with `-ffast-math`, and the bits stay the same.
+2. **Real data.** The study now uses the Cora citation graph, MNIST, and an int8 classifier trained on MNIST, in both MatrixLang and C.
+3. **Existing code.** Four existing code bases were compiled with the pass: CPython's `audioop` module, Pillow, SciPy `ndimage` and PolyBench/C. `audioop` was then tested end to end, with timings.
+4. **A second machine and compiler.** RQ4 was repeated on Linux with GCC 13 and Clang 18. Certified outputs are bit-identical across machines, compilers, vector widths and thread counts.
+5. **A fair baseline.** The RQ4 tables now show the algebraic contract, which reorders without proofs. The headline speedups are presented as recovering unproved reordering under strict semantics, not as a win over `-ffast-math`.
+6. **Soundness under adversarial inputs.** A stress suite was built from the proof obligations, together with two mutants of the pass: one that admits one more significand bit, and one that licenses every reduction without a proof.
+7. **Rigor.** The paper adds a soundness argument for bit-identical certificates and the guarded-reduction proposition that the LLVM guard implements.
+
+## Remaining risks a TACO reviewer may raise
+
+- MatrixLang is still straight-line and statically shaped. The loop story is carried by the LLVM pass, not by MatrixLang.
+- The pass applies only where integer data is converted where it is summed. In the scanned code bases it guarded a minority of the reductions LLVM recognizes (Table 14 of the paper); most scientific reductions sum floating-point data, and the pass declines those by design. The paper says so.
+- Runtime was measured on two machines. One of them is a 4-core cloud instance.
+- The theory is clean but not deep. Theorem 5.1 follows from Higham's standard analysis, which the paper states.
+- The authors must disclose the use of generative AI under ACM policy. A draft statement is in the manuscript; the authors need to confirm or edit it.
+
+## Alternatives
+
+- **CC 2027**, if its call appears and the deadline allows. The paper would have to be cut back to the conference's page limit, and the LLVM study would make it stronger there too.
+- **CGO 2028**, first round (expected around mid-2027). The LLVM pass and the GCC/Clang results are the parts closest to CGO.
+- **ACM TOPLAS**, if reviewers mainly value the semantics and theorems. It fits the evaluation less well than TACO.
+
+No acceptance probability is guaranteed. My judgement is in the session that produced this revision, not in the artifact.

@@ -659,10 +659,10 @@ Value *buildGuard(IRBuilder<> &B, Value *Start, Value *BTC, const Decision &D) {
   return B.CreateAnd(Valid, Fits, "exact.reduce.ok");
 }
 
-// Clones L. The clone runs when the guard holds and is returned through VMap
-// (original -> clone); the original runs otherwise and is left untouched.
-void versionLoop(Loop *L, Value *Start, const Decision &D, LoopInfo &LI, DominatorTree &DT,
-                 ScalarEvolution &SE, ValueToValueMapTy &VMap) {
+// Clones L. The clone runs when every reduction's guard holds and is returned
+// through VMap (original -> clone); the original runs otherwise, untouched.
+void versionLoop(Loop *L, ArrayRef<std::pair<Value *, Decision>> Guards, LoopInfo &LI,
+                 DominatorTree &DT, ScalarEvolution &SE, ValueToValueMapTy &VMap) {
   formLCSSA(*L, DT, &LI, &SE);
   BasicBlock *Preheader = L->getLoopPreheader();
   BasicBlock *Exit = L->getExitBlock();
@@ -672,7 +672,9 @@ void versionLoop(Loop *L, Value *Start, const Decision &D, LoopInfo &LI, Dominat
   SCEVExpander Exp(SE, Preheader->getModule()->getDataLayout(), "exact.reduce");
   Value *Count = Exp.expandCodeFor(BTC, BTC->getType(), Preheader->getTerminator());
   IRBuilder<> B(Preheader->getTerminator());
-  Value *Ok = buildGuard(B, Start, Count, D);
+  Value *Ok = B.getTrue();
+  for (auto &[Start, D] : Guards)
+    Ok = B.CreateAnd(Ok, buildGuard(B, Start, Count, D));
 
   // The old preheader becomes the check; each copy gets its own preheader.
   BasicBlock *Check = Preheader;
@@ -853,6 +855,7 @@ struct ExactReducePass : PassInfoMixin<ExactReducePass> {
     for (Loop *L : LI.getLoopsInPreorder()) {
       if (!L->getLoopLatch() || !L->getLoopPreheader())
         continue;
+      SmallVector<std::pair<Plan, std::string>, 2> Guarded;   // this loop's
       for (PHINode &PhiRef : L->getHeader()->phis()) {
         PHINode *Phi = &PhiRef;
         if (!Phi->getType()->isFloatTy() && !Phi->getType()->isDoubleTy())
@@ -887,34 +890,40 @@ struct ExactReducePass : PassInfoMixin<ExactReducePass> {
           Licences.push_back(C.Ops);
           report(Head + " licensed " + D.Why);
         } else if (D.What == Decision::Versioned && O.Version) {
-          Versions.push_back({L, RD.getRecurrenceStartValue(), C.Ops, D});
-          report(Head + " versioned " + D.Why);
+          Guarded.push_back({{L, RD.getRecurrenceStartValue(), C.Ops, D}, Head});
         } else {
           if (D.What == Decision::Versioned)
             D.Why += " (versioning disabled)";
           report(Head + " declined " + D.Why);
         }
       }
+      // One clone per loop, guarded by every guarded reduction's condition.
+      for (auto &[P, Head] : Guarded) {
+        Versions.push_back(P);
+        report(Head + " versioned " + P.D.Why);
+      }
     }
 
     for (auto &Ops : Licences)
       license(Ops);
-    // One clone per loop; a second reduction of the same loop is declined
-    // rather than guarded twice.
-    SmallPtrSet<Loop *, 4> Versioned;
+    SmallPtrSet<Loop *, 4> Done;
     for (Plan &P : Versions) {
-      if (!Versioned.insert(P.L).second)
+      if (!Done.insert(P.L).second)
         continue;
-      bool Single = std::count_if(Versions.begin(), Versions.end(),
-                                  [&](const Plan &Q) { return Q.L == P.L; }) == 1;
-      if (!Single)
-        continue;
+      SmallVector<std::pair<Value *, Decision>, 2> Guards;
+      for (Plan &Q : Versions)
+        if (Q.L == P.L)
+          Guards.push_back({Q.Start, Q.D});
       ValueToValueMapTy VMap;
-      versionLoop(P.L, P.Start, P.D, LI, DT, SE, VMap);
-      SmallVector<Instruction *, 8> Cloned;
-      for (Instruction *I : P.Ops)
-        Cloned.push_back(cast<Instruction>(VMap[I]));
-      license(Cloned);
+      versionLoop(P.L, Guards, LI, DT, SE, VMap);
+      for (Plan &Q : Versions) {
+        if (Q.L != P.L)
+          continue;
+        SmallVector<Instruction *, 8> Cloned;
+        for (Instruction *I : Q.Ops)
+          Cloned.push_back(cast<Instruction>(VMap[I]));
+        license(Cloned);
+      }
       ChangedCFG = true;
     }
     if (ChangedCFG)

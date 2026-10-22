@@ -1,0 +1,13 @@
+\begin{tabular}{lrr}
+\toprule
+Build & integer (707) & real (77)\\
+\midrule
+Clang + ExactReduce & 0 & 0\\
+Clang + ExactReduce, SSE2 & 0 & 35\\
+GCC, strict & 0 & 35\\
+Clang \texttt{-ffast-math} & 14 & 22\\
+GCC \texttt{-ffast-math} & 14 & 42\\
+mutant: one bit more & 10 & 0\\
+mutant: no proof & 14 & 22\\
+\bottomrule
+\end{tabular}

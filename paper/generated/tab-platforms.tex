@@ -1,0 +1,31 @@
+\begin{tabular}{llrrrrrrrr}
+\toprule
+Kernel & Build & Source & \multicolumn{6}{c}{Speedup over source} & Results\\
+\cmidrule(lr){4-9}
+ & & (ms) & fast-math & strict & + clauses & bounded & algebraic & threads & \\
+\midrule
+\texttt{walks} & M1, GCC & 342 & 1.12 & 278 & 288 & 288 & 284 & 1,202 & 1\\
+ & M2, GCC & 758 & 0.99 & 190 & 563 & 592 & 679 & 2,450 & \\
+ & M2, Clang & 648 & 1.04 & 159 & 711 & 751 & 699 & 1,646 & \\
+\addlinespace
+\texttt{layers} & M1, GCC & 1.14 & 0.99 & 4.98 & 5.47 & 5.44 & 5.69 & 14.6 & 1\\
+ & M2, GCC & 2.8 & 0.88 & 4.31 & 15.6 & 15.5 & 16.1 & 46.5 & \\
+ & M2, Clang & 2.5 & 1.01 & 3.73 & 16.1 & 16.2 & 16.7 & 49.7 & \\
+\addlinespace
+\texttt{image} & M1, GCC & 4.61 & 1.02 & 0.98 & 1.02 & 1.05 & 1.05 & 1.87 & 1\\
+ & M2, GCC & 10.7 & 1.01 & 1.09 & 1.54 & 1.57 & 1.56 & 2.40 & \\
+ & M2, Clang & 9.89 & 2.22 & 1.02 & 1.55 & 1.48 & 1.81 & 2.74 & \\
+\addlinespace
+\texttt{normal} & M1, GCC & 0.0288 & 1.09 & 1.27 & 1.28 & 1.24 & 1.25 & 1.31 & 1\\
+ & M2, GCC & 0.0599 & 0.82 & 1.24 & 1.57 & 1.50 & 1.57 & 1.35 & \\
+ & M2, Clang & 0.0561 & 1.43 & 1.15 & 1.89 & 1.90 & 1.68 & 1.89 & \\
+\addlinespace
+\texttt{lowrank} & M1, GCC & 11.8 & 1.01 & 1.00 & 0.93 & 469$^\dagger$ & 503$^\dagger$ & 6.51 & 7\\
+ & M2, GCC & 29.1 & 0.98 & 0.92 & 0.93 & 1,623$^\dagger$ & 1,573$^\dagger$ & 3.14 & \\
+ & M2, Clang & 22.6 & 1.20$^\dagger$ & 1.04 & 1.01 & 327$^\dagger$ & 327$^\dagger$ & 3.39 & \\
+\addlinespace
+\texttt{diffusion} & M1, GCC & 325 & 1.13 & 1.06 & 1.05 & 277$^\dagger$ & 277$^\dagger$ & 5.06 & 7\\
+ & M2, GCC & 736 & 0.99 & 0.97 & 0.99 & 650$^\dagger$ & 673$^\dagger$ & 2.89 & \\
+ & M2, Clang & 661 & 1.08$^\dagger$ & 1.03 & 0.98 & 760$^\dagger$ & 680$^\dagger$ & 3.33 & \\
+\bottomrule
+\end{tabular}

@@ -1,31 +1,41 @@
-# Author and submission checklist
+# Author and submission checklist (ACM TACO)
 
-The manuscript and artifact are complete for author review. Submission has not occurred. This checklist separates completed verification from decisions that only the authors can make.
+The manuscript and artifact are complete for author review. Nothing has been submitted. This checklist separates verified items from decisions only the authors can make.
 
 ## Recorded author details
 
 1. A Aswanth Raj
 2. Dr. RANJITHKUMAR S
 
-Both: School of Computer Science and Engineering, VIT Vellore, India. Ranjithkumar is the mentor; supervision is the stated contribution. Other contribution roles have not been confirmed and are not inferred from the author order.
+Both: School of Computer Science and Engineering, VIT Vellore, India. Ranjithkumar is the mentor, and supervision is his stated contribution. No other contribution roles have been confirmed, and none are inferred from the author order.
 
 ## Authors must complete before submission
 
-- Confirm that both authors qualify for authorship, consent to the order, approve the final manuscript, and accept responsibility under the venue's policy.
-- Supply the corresponding author's email and any requested identifiers.
-- Confirm funding and competing-interest declarations. Absence of information is not a declaration of no funding or no interests.
-- Confirm contribution statements and review the disclosure of AI assistance in implementation, literature search, evaluation, analysis and drafting, as the venue requires.
-- Select the call (see [venue.md](venue.md)); check its page limit, template options and disclosure rules against the anonymous build.
-- Supply an anonymous artifact URL or archive if the call requires one. The anonymous PDF removes names and the repository URL; the public repository itself is not anonymous.
-- If a persistent archive is wanted, authorize a versioned release; no DOI is claimed here.
+- Confirm that both authors qualify for authorship, consent to the author order, approve the final manuscript, and accept responsibility under ACM's authorship policy.
+- Supply the corresponding author's email, ORCID iDs and any other identifiers the submission system asks for.
+- Confirm the funding and competing-interest declarations. Missing information is not the same as declaring no funding or no interests.
+- Review the "Use of generative AI" statement at the end of the manuscript and make it match what was actually done (implementation, literature search, evaluation scripts, analysis, drafting), as ACM policy requires.
+- Check the current TACO author guidelines against `anonymous.pdf`: the 20-page limit (references excluded), the `acmsmall` format, and double-anonymous review. See [venue.md](venue.md).
+- Put the artifact at an **anonymous** URL (for example an anonymised repository or archive) and cite it in the Data availability section. The public repository is not anonymous. `anonymous.pdf` removes names, affiliations and the repository URL; also check the PDF metadata of the file you upload.
+- Check whether VIT Vellore participates in ACM Open. If it does not, budget for the article processing charge.
+- Edit and send the cover letter ([cover-letter.md](cover-letter.md)).
+- If you want a persistent archive, authorise a versioned release. No DOI is claimed here.
 
 ## Technical checks (done)
 
-- `make test` passes: acceptance checks, strict numerical fixtures, browser-engine agreement and the workspace service tests.
-- `tools/check_emit_c.py` passes: GCC's build of the emitted C prints the virtual machine's bits for every example and generated program, under every contract.
-- Every number, table and figure in the manuscript is generated from `results/contracts/` by `tools/contracts/analyze.py`; `make contracts` repeats every measurement.
-- Negative and null results are reported (reduction clauses give no speedup on the generated kernels; one mutant is equivalent; the narrow-profile accuracy test is not significant).
-- Related-work citations were checked against primary sources or Crossref records on 2026-10-08; items that could not be verified were left out.
-- The named and anonymous PDFs build with no undefined references and no overfull boxes.
+- `make test` passes: acceptance checks, strict numerical fixtures, browser-engine agreement, workspace service tests and the C backend against the VM.
+- `make -C llvm test` passes: the pass's expected decisions on the smoke tests, vectorization of exactly the licensed reductions, bit equality of the licensed build with strict Clang on every stress case, and detection of the one-bit mutant.
+- Every number, table and figure is generated from raw results:
+  - MatrixLang study: `tools/contracts/analyze.py`, from `results/contracts/`
+  - Second machine and real data: `analyze_platforms.py`, from `results/contracts-linux*/` and `e2e_real.jsonl`
+  - LLVM study: `analyze_llvm.py`, from `results/contracts/llvm_*`
+- Negative and null results are reported:
+  - Reduction clauses gave no speedup on the generated kernels.
+  - One mutant is equivalent.
+  - The narrow-profile accuracy test is not significant.
+  - 16-bit `audioop` functions gain nothing, because of the vectorizer's stride handling.
+  - Most reductions in existing scientific code are declined.
+- The real datasets are public, are downloaded by script, and are checked against SHA-256 digests (`results/contracts/llvm_data.json`).
+- The anonymous and named PDFs build with no undefined references.
 
-The missing author declarations prevent describing this as a submission-ready or author-approved paper. They do not prevent reviewing, reproducing or improving the technical draft.
+The missing author declarations mean this cannot yet be called a submission-ready or author-approved paper. They do not prevent reviewing, reproducing or improving the technical draft.

@@ -100,9 +100,10 @@ def quantile(xs, q):
     return xs[lo] + (xs[hi] - xs[lo]) * (pos - lo)
 
 
-def measure(kernel, workdir, src=None, supply=None, processes=PROCESSES, reps=REPS):
+def measure(kernel, workdir, src=None, supply=None, processes=PROCESSES, reps=REPS, vm_cache=None):
     """Times every configuration of one kernel. supply replaces the seeded
-    draw with --input NAME=PATH arguments (real data)."""
+    draw with --input NAME=PATH arguments (real data); vm_cache keeps the
+    virtual machine's output between calls for the same program and inputs."""
     src = src or common.ROOT / "examples" / "kernels" / f"{kernel}.ml"
     supply = supply or ["--random-inputs", SEED]
     inputs = Path(workdir) / f"{kernel}.bin"
@@ -110,7 +111,13 @@ def measure(kernel, workdir, src=None, supply=None, processes=PROCESSES, reps=RE
     if code:
         raise RuntimeError(out)
 
-    _, vm_out = common.call(["-q", "--run", "--exact-output", *supply, src], timeout=7200)
+    key = (str(src), tuple(map(str, supply)))
+    if vm_cache is not None and key in vm_cache:
+        vm_out = vm_cache[key]
+    else:
+        _, vm_out = common.call(["-q", "--run", "--exact-output", *supply, src], timeout=7200)
+        if vm_cache is not None:
+            vm_cache[key] = vm_out
     rows, outputs, sources = [], {}, {}
     for name, (flags, licensed, cflags, threads) in CONFIGS.items():
         key = (tuple(flags), licensed)

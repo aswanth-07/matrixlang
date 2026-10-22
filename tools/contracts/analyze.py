@@ -520,7 +520,8 @@ def write_tables(s):
     e2e = s.get("rq4b")
     if e2e:
         cols = [("source-fast-math", "fast-math"), ("strict", "strict"), ("strict-licensed", "+ clauses"),
-                ("bounded-licensed", "bounded"), ("strict-licensed-8t", "8 threads")]
+                ("bounded-licensed", "bounded"), ("algebraic-licensed", "algebraic"),
+                ("strict-licensed-8t", "8 threads")]
         lines = ["\\begin{tabular}{llr" + "r" * len(cols) + "r}", "\\toprule",
                  "Kernel & Inputs & Source & \\multicolumn{" + str(len(cols)) + "}{c}{Speedup over source} & Results\\\\",
                  "\\cmidrule(lr){4-" + str(3 + len(cols)) + "}",

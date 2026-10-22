@@ -1,21 +1,17 @@
-# Technical review and responses
+# Internal review of the TACO version
 
-This is an internal review of the completed draft, not external peer review or
-an acceptance prediction. The review considered venue fit, positioning,
-methodology and educational significance separately.
+This is an internal review of the journal draft. It is not external peer review and not an acceptance prediction. It lists the concerns a TACO reviewer is likely to raise, what the manuscript and artifact now do about each, and what remains open.
 
 | Concern | Response in the manuscript and artifact | Remaining limit |
 | --- | --- | --- |
-| Shapes, chain DP and numerical permissions already exist | Related work names the established mechanisms and positions the contribution as an executable instructional artifact and measured characterization | No algorithmic priority claim |
-| The generator creates the opportunities being measured | Five shape/expression profiles, eight arms, all zero-saving cases and per-seed variation are reported | Designed synthetic workloads do not represent courses or real applications |
-| Instruction savings are confused with arithmetic or speed | Conventional arithmetic and live TAC count are defined separately, with a paired contrast and a chain-only control | No runtime benchmark |
-| Small dyadic tests conceal floating-point changes | Broad-value tests and 15 targeted fixtures distinguish strict agreement from permitted algebraic differences | No universal correctness or relative-error guarantee |
-| The two execution paths can share bugs | Independent exhaustive enumeration checks small-chain cost; six scalar references check selected numerical behavior | Shared front end and VM remain a limitation |
-| A tool paper needs usable instructional material | Four exercise families specify commands, expected observations, submitted artifacts and a rubric | No classroom or usability evaluation |
-| Results can drift from the released implementation | Final full evaluation was repeated after a declaration-boundary regression repair; source/protocol checks, complete coverage, recomputed statistics and replay pass | Cross-platform behavior has not been established |
-| Submission requires author accountability | Names, order and affiliation follow the user; mentorship is recorded and unconfirmed declarations are listed separately | Author approval, email, funding/interests and anonymous artifact packaging remain pending |
+| A toy language: does the idea reach a real compiler? | ExactReduce, an LLVM 18 pass (Section 9), derives the facts from integer conversions in C and licenses reductions that the unmodified Clang vectorizer then speeds up (RQ7). It was run on four existing code bases and end to end on CPython's `audioop` (RQ9). | The pass handles add reductions only, not chains or identity rewrites; MatrixLang remains straight-line. |
+| The headline speedups come from chain reordering, which any chain optimizer gets | The RQ4 tables add the algebraic contract (reordering without proofs). The text says the contribution is that a *strict* compiler may take these speedups, not the speedups themselves. | None. |
+| Only synthetic workloads | RQ4 adds the Cora citation graph and MNIST, including an int8 classifier trained on MNIST. RQ7 uses the same data in C. RQ9 uses existing code. | Two public datasets; RQ9's code bases were chosen because they build without their build systems. |
+| One machine, one compiler | RQ4 was repeated on a second machine with GCC 13 and Clang 18. Certified outputs are identical on every build, compiler and machine. | The second machine is a 4-core cloud instance, and its timings are noisier. |
+| Is the LLVM licence sound beyond random tests? | Proposition 4.5 proves it. A stress suite is built from the proof obligation and includes trip counts past each guard's limit. Two mutants of the pass show that the checks are necessary (RQ8). | Testing covers the stress families, not every input; the proposition covers the rest. |
+| How often does real code benefit? | RQ9 counts every add reduction LLVM recognizes in four code bases and classifies every decline. | Most scientific reductions sum floating-point data and are declined. The paper states this. |
+| Soundness of certificates with weaker rewrites | Proposition 3.1 gives the induction behind the inheritance rule. RQ2 records the defect that motivated the rule. | The argument is on paper, not mechanised. |
+| Statistics and preregistration (RQ6) | Unchanged: preregistered, Holm-corrected, seed-cluster bootstrap. Deviations are stated. | The ablation cannot separate two mechanisms. |
+| Authorship and AI use | Author details follow the authors' instructions. A generative-AI statement is drafted at the end of the manuscript. | Author approval, email, funding and interest declarations, and confirmation of the AI statement are pending. |
 
-The final artifact has 157 passing acceptance checks, 15 strict numerical
-fixtures, 40,000 recorded cost observations, 4,000 execution comparisons,
-1,250 oracle chains (48,750 trees), and 440 replayed arm observations. Statistical
-tables and the figure reconstruct from the retained raw data.
+All numbers in the manuscript are generated by `tools/contracts/analyze.py`, `analyze_platforms.py` and `analyze_llvm.py` from the raw files in `results/`.

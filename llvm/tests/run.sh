@@ -28,6 +28,20 @@ while read -r fn decision; do
 done < "$here/smoke.expected"
 echo "vectorization: checked"
 
+# smoke.c itself, strict against licensed, on families and lengths around each guard.
+"$CLANG" -std=c11 -O2 -c "$here/smoke_driver.c" -o "$work/smoke_driver.o"
+"$CLANG" -std=c11 -O3 -march=native -c "$here/smoke.c" -o "$work/smoke-strict.o"
+"$CLANG" -std=c11 -O3 -march=native -fpass-plugin="$plugin" -c "$here/smoke.c" -o "$work/smoke-licensed.o"
+for v in strict licensed; do
+    "$CLANG" "$work/smoke_driver.o" "$work/smoke-$v.o" -o "$work/smoke-$v"
+    "$work/smoke-$v" > "$work/smoke-out-$v"
+done
+if cmp -s "$work/smoke-out-strict" "$work/smoke-out-licensed"; then
+    echo "smoke: licensed build matches strict on $(wc -l < "$work/smoke-out-strict") lines"
+else
+    echo "smoke: FAILED"; diff "$work/smoke-out-strict" "$work/smoke-out-licensed" | head; fail=1
+fi
+
 "$CLANG" -std=c11 -O2 -c "$here/../kernels/stress.c" -o "$work/stress.o"
 build() {  # name, extra environment...
     local name=$1; shift
