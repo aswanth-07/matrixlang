@@ -1,5 +1,26 @@
 # Changelog
 
+## Sound bound arithmetic and a 20-page manuscript
+
+- Repaired two understated bounds in `src/ir/facts.c`. `mul_up` lost a
+  positive FMA residual that fell below the subnormal range, so a product
+  bound near the smallest normal number could sit below the exact product; the
+  residual is now compared after an exact scaling by 2^54. `facts_chain_bound`
+  formed the bounded contract's coefficient as fl(prod(1+gamma)) - 1 and could
+  understate it; it is now accumulated upward. `fits` also rejects a
+  non-finite bound before its coarse-grid shortcut.
+- Added `tests/test_bound_arithmetic.py` (run by `make test`), which checks the
+  bound arithmetic against exact rationals on generic x86-64 and Haswell.
+- Added `tools/contracts/bound_repair.py`: the measured commit against the
+  repaired one, on the oracle, on every example under every contract, and on
+  rerun deterministic study records. Nothing measured changed.
+- Added `tools/contracts/analyze_spread.py`, which states the timing spread
+  behind every speedup.
+- The manuscript caps the exactness condition at `DBL_MAX`, reports the repair,
+  states timing spread, writes its contributions as findings, describes the
+  RQ6 protocol as recorded locally rather than preregistered, and fits 20
+  pages including references.
+
 ## The journal version: an LLVM license, real data, a second machine
 
 - Added ExactReduce (`llvm/`), an LLVM 18 pass plugin that derives grid facts

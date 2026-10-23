@@ -1,0 +1,144 @@
+{
+  "before": "25f3a20",
+  "examples": {
+    "cases": 174,
+    "contracts": 3,
+    "differ": [],
+    "programs": 58
+  },
+  "oracle": {
+    "after": {
+      "chain": {
+        "cases": 85,
+        "understated": []
+      },
+      "fits_overflowed": {
+        "haswell": [],
+        "x86-64": []
+      },
+      "mul": {
+        "haswell": {
+          "cases": 21,
+          "understated": []
+        },
+        "x86-64": {
+          "cases": 21,
+          "understated": []
+        }
+      }
+    },
+    "before": {
+      "chain": {
+        "cases": 85,
+        "understated": [
+          [
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096,
+            4096
+          ],
+          [
+            928,
+            1924,
+            3788
+          ]
+        ]
+      },
+      "fits_overflowed": {
+        "haswell": [
+          971,
+          1000,
+          1023
+        ],
+        "x86-64": [
+          971,
+          1000,
+          1023
+        ]
+      },
+      "mul": {
+        "haswell": {
+          "cases": 21,
+          "understated": [
+            "0x1.0000000000001p-511 * 0x1.fffffffffffffp-512",
+            "0x1.0000000000001p-511 * 0x1.0000000000001p-511",
+            "0x1.0000000000001p-510 * 0x1.0000000000001p-510",
+            "0x1.0000000000001p-500 * 0x1.0000000000001p-500"
+          ]
+        },
+        "x86-64": {
+          "cases": 21,
+          "understated": [
+            "0x1.0000000000001p-511 * 0x1.0000000000001p-511",
+            "0x1.0000000000001p-510 * 0x1.0000000000001p-510",
+            "0x1.0000000000001p-500 * 0x1.0000000000001p-500"
+          ]
+        }
+      }
+    }
+  },
+  "rerun": {
+    "rq1_recovery.jsonl": {
+      "identical": 60000,
+      "records": 60000,
+      "rerun_records": 60000
+    },
+    "rq2_soundness.jsonl": {
+      "identical": 57600,
+      "records": 57600,
+      "rerun_records": 57600
+    },
+    "rq3_tightness.jsonl": {
+      "identical": 864,
+      "records": 864,
+      "rerun_records": 864
+    },
+    "rq5_mutation.jsonl": {
+      "identical": 3131,
+      "records": 3131,
+      "rerun_records": 3131
+    },
+    "rq6_accuracy.jsonl": {
+      "identical": 2700,
+      "records": 2700,
+      "rerun_records": 2700
+    },
+    "rq6_validation.jsonl": {
+      "identical": 120,
+      "records": 120,
+      "rerun_records": 120
+    },
+    "width.jsonl": {
+      "identical": 3600,
+      "records": 3600,
+      "rerun_records": 3600
+    }
+  }
+}

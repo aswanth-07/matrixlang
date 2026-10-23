@@ -25,11 +25,20 @@ static double up(double x) { return nextafter(x, INFINITY); }
 
 static double mul_up(double a, double b)
 {
-    double p = a * b;
+    double p = a * b, residual;
     if (a == 0.0 || b == 0.0) return 0.0;
     if (isinf(p)) return p;
     if (p < DBL_MIN) return DBL_MIN;            /* never let a bound underflow to 0 */
-    if (fma(a, b, -p) > 0.0) p = up(p);
+    /* A normal product can have a positive residual below the subnormal
+     * range, which fma then rounds to zero. Below 2^-969 the comparison is
+     * scaled by 2^54, which is exact: p >= DBL_MIN keeps every bit of a*b at
+     * or above 2^-1127, so the scaled residual is representable, and
+     * b >= 2^-1074 with p < 2^-969 gives a < 2^106, so a*2^54 cannot overflow. */
+    if (p < 0x1.0p-969)
+        residual = fma(ldexp(a, 54), b, -ldexp(p, 54));
+    else
+        residual = fma(a, b, -p);
+    if (residual > 0.0) p = up(p);
     return p;
 }
 
@@ -46,6 +55,8 @@ static double add_up(double a, double b)
  * the count m / 2^g fits in 53 bits and the grid itself is representable. */
 static int fits(double m, int g)
 {
+    /* A coarse grid cannot certify a bound that already overflowed. */
+    if (!isfinite(m)) return 0;
     if (m == 0.0) return 1;
     if (g < -1074) return 0;
     if (g + 53 >= 1024) return 1;
@@ -452,13 +463,16 @@ int facts_chain_range(const Fact *ops, const int *dim, int k, ChainCheck *why)
 
 double facts_chain_bound(const int *dim, int k)
 {
-    double prod = 1.0;
+    double bound = 0.0;
     int t;
     for (t = 1; t < k; t++) {
         double pu = dim[t] * UNIT_ROUNDOFF;
-        prod *= 1.0 + pu / (1.0 - pu);
+        double gamma = up(pu / (1.0 - pu));
+        /* (1 + bound)(1 + gamma) - 1, without forming 1 + bound: rounding
+         * that sum to nearest and subtracting 1 can understate the bound. */
+        bound = add_up(add_up(bound, gamma), mul_up(bound, gamma));
     }
-    return prod - 1.0;
+    return bound;
 }
 
 /* --- the per-instruction pass ---------------------------------------------- */
