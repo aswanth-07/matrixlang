@@ -141,16 +141,24 @@ static void prepare(const char *dir, const char *kernel)
     }
 }
 
+/* Built with -DINT_ACC, the driver runs the integer kernels with integer
+ * accumulators (intacc.c) instead; the two controls are unchanged. */
+#ifdef INT_ACC
+#define K(f) f##_int
+#else
+#define K(f) f
+#endif
+
 /* Runs the kernel once; returns the number of terms it summed. */
 static long run(const char *kernel, int record)
 {
     if (!strcmp(kernel, "sum_u8")) {
-        double s = k_sum_u8(train, (long)MNIST_TRAIN * PIXELS);
+        double s = K(k_sum_u8)(train, (long)MNIST_TRAIN * PIXELS);
         if (record) mix(&s, sizeof s);
         return (long)MNIST_TRAIN * PIXELS;
     }
     if (!strcmp(kernel, "sumsq_u8")) {
-        double s = k_sumsq_u8(train, (long)MNIST_TRAIN * PIXELS);
+        double s = K(k_sumsq_u8)(train, (long)MNIST_TRAIN * PIXELS);
         if (record) mix(&s, sizeof s);
         return (long)MNIST_TRAIN * PIXELS;
     }
@@ -164,7 +172,7 @@ static long run(const char *kernel, int record)
          * images, one call per run, so that each call checks its guard. */
         double total = 0.0;
         for (long off = 0; off + SHORT <= (long)MNIST_TRAIN * PIXELS; off += SHORT) {
-            double s = k_sum_u8(train + off, SHORT);
+            double s = K(k_sum_u8)(train + off, SHORT);
             if (record) mix(&s, sizeof s);
             total += s;
         }
@@ -172,37 +180,37 @@ static long run(const char *kernel, int record)
         return (long)MNIST_TRAIN * PIXELS;
     }
     if (!strcmp(kernel, "gram_u8")) {
-        k_gram_u8(crop, GRAM_D, MNIST_TRAIN, gram);
+        K(k_gram_u8)(crop, GRAM_D, MNIST_TRAIN, gram);
         if (record) mix(gram, sizeof *gram * GRAM_D * GRAM_D);
         return (long)GRAM_D * (GRAM_D + 1) / 2 * MNIST_TRAIN;
     }
     if (!strcmp(kernel, "qlinear_i8")) {
-        k_qlinear_i8(templates, qtest, CLASSES, PIXELS, MNIST_TEST, scores);
+        K(k_qlinear_i8)(templates, qtest, CLASSES, PIXELS, MNIST_TEST, scores);
         if (record) mix(scores, sizeof *scores * MNIST_TEST * CLASSES);
         return (long)MNIST_TEST * CLASSES * PIXELS;
     }
     if (!strcmp(kernel, "gemm_i8")) {
-        k_gemm_i8(ga, gb, GEMM_N, GEMM_N, GEMM_N, gemm);
+        K(k_gemm_i8)(ga, gb, GEMM_N, GEMM_N, GEMM_N, gemm);
         if (record) mix(gemm, sizeof *gemm * GEMM_N * GEMM_N);
         return (long)GEMM_N * GEMM_N * GEMM_N;
     }
     if (!strcmp(kernel, "degree_u8")) {
-        k_degree_u8(adj, CORA, degree);
+        K(k_degree_u8)(adj, CORA, degree);
         if (record) mix(degree, sizeof *degree * CORA);
         return (long)CORA * CORA;
     }
     if (!strcmp(kernel, "walks2_u8")) {
-        k_walks2_u8(adj, deg, CORA, walks);
+        K(k_walks2_u8)(adj, deg, CORA, walks);
         if (record) mix(walks, sizeof *walks * CORA);
         return (long)CORA * CORA;
     }
     if (!strcmp(kernel, "energy_i16")) {
-        double e = k_energy_i16(audio, AUDIO_N);
+        double e = K(k_energy_i16)(audio, AUDIO_N);
         if (record) mix(&e, sizeof e);
         return AUDIO_N;
     }
     if (!strcmp(kernel, "sum_i32")) {
-        double s = k_sum_i32(ints, INT32_N);
+        double s = K(k_sum_i32)(ints, INT32_N);
         if (record) mix(&s, sizeof s);
         return INT32_N;
     }

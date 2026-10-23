@@ -24,6 +24,7 @@
 \input{generated/llvm.tex}
 \input{generated/spread.tex}
 \input{generated/repair.tex}
+\input{generated/baselines.tex}
 \lstset{basicstyle=\ttfamily\footnotesize,columns=fullflexible,
   keepspaces=true,showstringspaces=false,breaklines=true,
   morekeywords={matrix,scalar,print,transpose,identity,zeros,ones,input},
@@ -545,9 +546,7 @@ value $s_0$ has a fact, either a constant or the running sum of enclosing loops
 that only add this loop's result to it, and scalar evolution bounds the trip
 count by $N$, Proposition~\ref{prop:guard} applies when
 $\abs{s_0}+NW\le2^{p+G}$; for nested sums $N$ is the product of the trip-count
-bounds. Every term of a product kernel over \texttt{int8} data with an
-\texttt{int} trip count, for instance, is at most $2^{14}$ and there are at most
-$2^{31}$ of them, so every order is exact in binary64.
+bounds.
 
 \paragraph{The guarded license.} When the start value is unknown, or the trip
 count may be too large, as with any \texttt{long} or \texttt{size\_t} loop
@@ -588,9 +587,8 @@ the fact domain and chain pass (\texttt{facts.c}, \texttt{chain.c}) take
 \texttt{optimize.c}, the C backend in \texttt{emit\_c.c}. Flags select the
 contract (\texttt{-{}-fp-strict}, the default, \texttt{-{}-fp-bounded},
 \texttt{-{}-fp-algebraic}), disable facts to reproduce the previous strict
-optimizer (\texttt{-{}-no-proofs}), print certificates and write C. ExactReduce
-builds against LLVM~18, loads with \texttt{clang -fpass-plugin}, and reports
-each reduction's decision and reason.
+optimizer (\texttt{-{}-no-proofs}), print certificates and write C; ExactReduce
+reports each reduction's decision and reason.
 
 \paragraph{Bound arithmetic.} Bounds are binary64 values rounded upward, so an
 understated bound is a soundness defect; an exact-rational oracle found two in
@@ -628,7 +626,8 @@ generated from them.
 \PlatCpuFirstGcc{} (24 cores, AVX2) under Windows~11 with \PlatCcFirstGcc{}.
 The rest of RQ4 and RQ7--RQ9 ran on machine M2, an \LlvmCpu{} cloud instance
 (\LlvmCores{} cores, AVX-512) under Linux with GCC~\LlvmGcc{} and
-Clang~\LlvmClang{}. A speedup is a ratio of medians. The interquartile range of
+Clang~\LlvmClang{}; the RQ7 baselines also ran on M1, under WSL with
+Clang~\BaseClang. A speedup is a ratio of medians. The interquartile range of
 a build's runs was a median \SpreadFirstMedian\% of its median on M1 and
 \SpreadSecondMedian\% on M2; the largest, \SpreadFirstMax\% and
 \SpreadSecondMax\%, occur in builds under 10~ms, and above 10~ms it stays within
@@ -671,8 +670,7 @@ bit-identical; on \texttt{int16} and \texttt{int32} longer chains exhaust the
 saving on every domain with a magnitude bound and \RqOneRecoveryRealxBounded\%
 on unbounded \texttt{real}, where it cannot exclude overflow. On the earlier
 study's dyadic literals strict recovers \RqOneRecoveryDyadicStrict\%: those
-programs were exact all along, which is why an earlier algebraic mode never
-changed their output. With every matrix of \RqWidthPrograms{} heterogeneous and
+programs were exact all along. With every matrix of \RqWidthPrograms{} heterogeneous and
 narrow programs over $\mathtt{int}(-(2^b-1), 2^b-1)$, strict proves
 bit-identical \RqWidthShareThree\% of the chain reorderings the algebraic
 contract applies at $b=3$, \RqWidthShareSeven\% at $b=7$, \RqWidthShareOneFive\%
@@ -733,9 +731,7 @@ exists at $m^\star+1$, so the threshold is the true boundary. For the
 four-operand chain the first witness is at $m^\star+2$, and none can exist at
 $m^\star+1$: that maximum is even, so an odd partial sum needs a lowered entry
 in the first operand's row, which brings the sum below $2^{53}$. Generic inputs
-alone found no witness below $\RqThreeGenericFirstLo\,m^\star$, which is why an
-earlier version of this study, without the search, reported up to ten percent
-of slack.
+alone found no witness below $\RqThreeGenericFirstLo\,m^\star$.
 
 \subsection{RQ4: Value in a production compiler}\label{sec:rq4}
 \begin{table}[t]
@@ -937,16 +933,14 @@ the line, the two controls.}
 \label{tab:llvm}\centering\footnotesize\setlength{\tabcolsep}{4pt}\input{generated/tab-llvm-bench.tex}
 \end{table}
 Table~\ref{tab:llvm} compiles eleven kernels written as C programs write them,
-with integers in integer arrays: the sum and the sum of squares of the
-\texttt{uint8} MNIST training pixels (47 million terms), the Gram matrix of
-the central $10\times10$ pixels over all 60,000 images, the \texttt{int8}
-classifier's scores for the 10,000 test images accumulated in binary32,
-vertex degrees and walks of length two on Cora, an \texttt{int8} GEMM, the
-energy of \texttt{int16} samples, a sum of \texttt{int32} values, and two
-controls: a real-valued dot product, and a binary32 sum of the MNIST pixels,
-which is exact only for at most 65,793 terms. ExactReduce licensed
-\LlvmBenchStatic{} reductions statically and \LlvmBenchGuarded{} behind a
-guard, and declined the real-valued one.
+with integers in integer arrays: the sum and sum of squares of the 47 million
+\texttt{uint8} MNIST training pixels, the Gram matrix of their central
+$10\times10$ pixels over 60,000 images, the \texttt{int8} classifier's binary32
+scores on the 10,000 test images, degrees and 2-walks on Cora, an \texttt{int8}
+GEMM, the energy of \texttt{int16} samples and a sum of \texttt{int32} values,
+with two controls: a real-valued dot product and a binary32 pixel sum, exact
+only up to 65,793 terms. ExactReduce licensed \LlvmBenchStatic{} reductions
+statically, \LlvmBenchGuarded{} behind a guard, and declined the real-valued one.
 
 With the license, strict Clang ran the nine integer kernels
 \LlvmBenchLicensedLo--\LlvmBenchLicensedHi$\times$ faster, at
@@ -969,6 +963,22 @@ speed and \texttt{-ffast-math} at \LlvmKernelSumUEightShortFastMath$\times$.
 Compilation took a median \LlvmCompileLicensedMs~ms with the pass and
 \LlvmCompileStrictMs~ms without (\LlvmCompileOverheadPct\% more), and loop
 versioning grew the code by \LlvmCompileTextGrowthPct\%.
+
+\paragraph{Two other routes to the same bits.} On M1, in one run, the license
+was compared with rewriting each kernel by hand to accumulate in the narrowest
+safe integer type, and with LLVM's in-order vector reductions
+(\texttt{-force-ordered-reductions}). Over strict Clang the license gained
+\BaseLicensedLo--\BaseLicensedHi$\times$ (median \BaseLicensedMedian), in-order
+reductions \BaseOrderedLo--\BaseOrderedHi$\times$ (median \BaseOrderedMedian),
+and integer accumulators \BaseIntLo--\BaseIntHi$\times$ (median
+\BaseIntMedian), whose lanes are narrower; the license reached a median
+\BaseLicensedOfIntMedian\% of the rewrite's speed (\BaseLicensedOfIntLo--%
+\BaseLicensedOfIntHi\%). All three printed the strict bits on every kernel. In
+the stress suite the licensed build again changed none of \BaseStressCases{}
+cases, and the in-order build changed \BaseStressOrderedRealChanged{} of the
+\BaseStressRealCases{} real-valued ones, whose vector loop forms no fused
+multiply-add where scalar strict Clang does. Where the source may change, the
+rewrite is faster; the license gives unchanged code most of that speed.
 
 \subsection{RQ8: Soundness of the LLVM license}\label{sec:rq8}
 \begin{table}[t]
@@ -1137,13 +1147,15 @@ cannot see, for instance, that every input is even. The proofs are on paper,
 and the bound arithmetic is checked against an oracle on finite cases; neither
 is mechanised. Runtime was measured on two machines with three compiler
 versions; targets with ordered vector reductions may value the license
-differently. The equal-cost ablation in RQ6 cannot separate two mechanisms.
+differently. Where integer data are summed and the source may change, a
+hand-written integer accumulator is faster than the license (RQ7); the same
+facts prove that rewrite exact, but ExactReduce does not perform it. The
+equal-cost ablation in RQ6 cannot separate two mechanisms.
 
 \section{Conclusion}
 A floating-point rewrite keeps one of three guarantees, and the values a program
-will see often prove which, so a strict compiler can take the reorderings that
-are bit-identical, and a bounded one those that keep the error bound, without a
-fast-math switch. LLVM already has the facts for integer data converted where it
+will see often prove which: a strict compiler can then take the bit-identical
+reorderings, and a bounded one those that keep the error bound. LLVM already has the facts for integer data converted where it
 is summed: licensing exactly those reductions gives strict C programs
 \LlvmBenchOfFastMathLo--\LlvmBenchOfFastMathHi\% of the speedup of
 \texttt{-ffast-math} with the strict bits. Execution found a defect in
@@ -1152,10 +1164,9 @@ and only inputs built from the proof obligations killed the one-bit mutants.
 
 \section*{Data availability}
 The artifact, available to reviewers, holds the compilers, the LLVM pass, the
-scripts and the raw observations. \texttt{make contracts} and \texttt{make
+scripts and the raw observations; \texttt{make contracts} and \texttt{make
 contracts-analyze} repeat the MatrixLang measurements and regenerate every
-number, table and figure; \texttt{tools/contracts/} holds the scripts of the
-other studies.
+number, and \texttt{tools/contracts/} holds the other studies' scripts.
 
 \section*{Use of generative AI}
 Generative AI tools assisted with implementation, literature search,

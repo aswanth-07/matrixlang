@@ -27,7 +27,7 @@ Both: School of Computer Science and Engineering, VIT Vellore, India. Ranjithkum
 
 - `make test` passes: acceptance checks, strict numerical fixtures, browser-engine agreement, workspace service tests, the bound arithmetic against exact rationals, and the C backend against the VM.
 - The bound-arithmetic repair is verified by `tools/contracts/bound_repair.py` (`results/contracts/bound_repair.json`): the unrepaired commit understates bounds in the oracle, the repaired one does not; every example under every contract compiles to byte-identical output; and the deterministic records of RQ1–RQ3, RQ5 and RQ6, rerun on the repaired compiler, match the recorded ones.
-- `make -C llvm test` passes: the pass's expected decisions on the smoke tests, vectorization of exactly the licensed reductions, bit equality of the licensed build with strict Clang on every stress case, and detection of the one-bit mutant.
+- `make -C llvm test` passes on M2 and again on M1 under WSL (Clang 18.1.3): the pass's expected decisions on the smoke tests, vectorization of exactly the licensed reductions, bit equality of the licensed build with strict Clang on every stress case, and detection of the one-bit mutant.
 - Every number, table and figure is generated from raw results:
   - MatrixLang study: `tools/contracts/analyze.py`, from `results/contracts/`
   - Second machine and real data: `analyze_platforms.py`, from `results/contracts-linux*/` and `e2e_real.jsonl`

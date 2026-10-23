@@ -1,5 +1,19 @@
 # Changelog
 
+## Two baselines for the LLVM license
+
+- Added `llvm/kernels/intacc.c`, the nine integer kernels rewritten by hand to
+  accumulate in the narrowest safe integer type; the driver runs them when
+  built with `-DINT_ACC`, and is otherwise unchanged (identical machine code).
+- `llvm_eval.py` adds `clang-ordered` (`-mllvm -force-ordered-reductions`, no
+  forced vector width) and the integer-accumulator build. RQ7 and RQ8 were
+  rerun with both on M1 under WSL into `results/contracts-wsl/`;
+  `analyze_baselines.py` writes `generated/baselines.tex` and
+  `tab-llvm-baselines.tex`.
+- The manuscript reports both in RQ7: integer accumulators are faster than the
+  license where the source may change, in-order reductions gain far less, and
+  all keep the strict bits.
+
 ## Sound bound arithmetic and a 20-page manuscript
 
 - Repaired two understated bounds in `src/ir/facts.c`. `mul_up` lost a

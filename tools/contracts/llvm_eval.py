@@ -12,6 +12,10 @@ the plugin, and linked with each):
     gcc-fast-math     gcc -O3 -march=native -ffast-math
     mutant-extra-bit  the licensed build with every significand one bit wider
     mutant-force      every add reduction licensed without a proof
+    clang-ordered     clang-strict + -mllvm -force-ordered-reductions: the
+                      vectorizer may vectorize a reduction only in source order
+    int-accumulator   (timed only) the integer kernels rewritten by hand to
+                      accumulate in integers, llvm/kernels/intacc.c
 
 RQ7 (llvm_bench.jsonl): every kernel of llvm/kernels/driver.c, on MNIST, Cora
 and generated data, in several processes of repeated runs; median times and a
@@ -60,9 +64,13 @@ CONFIGS = {
     "gcc-fast-math": (GCC, NATIVE + ["-ffast-math"], None),
     "mutant-extra-bit": (CLANG, NATIVE, {"EXACT_REDUCE_EXTRA_BITS": "1"}),
     "mutant-force": (CLANG, NATIVE, {"EXACT_REDUCE_FORCE": "1"}),
+    # In-order vector reductions keep the strict bits without any proof. No
+    # vector width is forced: a forced width would let LLVM reassociate.
+    "clang-ordered": (CLANG, NATIVE + ["-mllvm", "-force-ordered-reductions"], None),
 }
+INT_ACC = "int-accumulator"
 TIMED = ["clang-strict", "clang-licensed", "clang-fast-math", "clang-licensed-sse2",
-         "gcc-strict", "gcc-fast-math"]
+         "gcc-strict", "gcc-fast-math", "clang-ordered", INT_ACC]
 DECISION = re.compile(r"^(\S+) (\S*) (\S+) (licensed|versioned|declined) (.*)$")
 
 
@@ -133,7 +141,14 @@ def link(name, harness_obj, workdir, tag):
 def bench(workdir):
     driver = Path(workdir) / "driver.o"
     sh([CLANG, "-std=c11", "-O2", "-c", KERNELS / "driver.c", "-o", driver])
-    exes = {name: link(name, driver, workdir, "driver") for name in TIMED}
+    exes = {name: link(name, driver, workdir, "driver") for name in TIMED if name != INT_ACC}
+    # The integer-accumulator driver: intacc.c for the integer kernels, the
+    # strict objects for the two controls.
+    int_driver, intacc = Path(workdir) / "driver-int.o", Path(workdir) / "intacc.o"
+    sh([CLANG, "-std=c11", "-O2", "-DINT_ACC", "-c", KERNELS / "driver.c", "-o", int_driver])
+    sh([CLANG, "-std=c11", *NATIVE, "-c", KERNELS / "intacc.c", "-o", intacc])
+    exes[INT_ACC] = Path(workdir) / f"driver-{INT_ACC}"
+    sh([CLANG, int_driver, intacc, compile_kernels("clang-strict", workdir), "-o", exes[INT_ACC], "-lm"])
     names = sh([exes["clang-strict"], DATA, "list"]).split()
     rows = []
     for kernel in names:
@@ -191,8 +206,9 @@ def main():
                 "gcc": sh([GCC, "--version"]).splitlines()[0]}
     common.write_json(common.RESULTS / "llvm_env.json", common.environment(
         {"compilers": versions, "processes": PROCESSES, "reps": REPS, "compiles": COMPILES,
-         "configs": {k: {"compiler": Path(v[0]).name, "flags": v[1], "plugin_env": v[2]}
-                     for k, v in CONFIGS.items()},
+         "configs": {**{k: {"compiler": Path(v[0]).name, "flags": v[1], "plugin_env": v[2]}
+                        for k, v in CONFIGS.items()},
+                     INT_ACC: {"compiler": Path(CLANG).name, "flags": NATIVE, "source": "intacc.c"}},
          "plugin_sha256": common.sha256_file(PLUGIN),
          "pass_source_sha256": common.sha256_file(LLVM / "ExactReduce.cpp"),
          "kernel_sources_sha256": {p.name: common.sha256_file(p)

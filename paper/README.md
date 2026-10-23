@@ -50,6 +50,8 @@ python tools/contracts/llvm_scan.py     # RQ9: existing code bases
 python tools/contracts/llvm_audioop.py  # RQ9: audioop end to end
 python tools/contracts/analyze_llvm.py
 
+CONTRACTS_RESULTS=results/contracts-wsl python tools/contracts/llvm_eval.py  # RQ7/RQ8 on M1 (WSL), with the two baselines
+python tools/contracts/analyze_baselines.py   # integer accumulators and in-order reductions against the license
 python tools/contracts/analyze_spread.py   # timing spread behind every speedup
 python tools/contracts/bound_repair.py     # bound-arithmetic repair, before and after
 for s in corpus tightness width mutation accuracy; do  # optional: rerun the deterministic studies ...
@@ -79,6 +81,7 @@ On Windows, run Make from MSYS2 with `/mingw64/bin` first on `PATH`, and pass `P
 
 - **M1** (RQ1–RQ6, Tables 6 and 9): Intel Core Ultra 9 275HX, 24 cores, Windows 11, GCC 15.2.
 - **M2** (Tables 7, 8 and 12–14): Intel Xeon cloud instance at 2.8 GHz, 4 cores, AVX-512, Ubuntu 24.04, GCC 13.3 and Clang 18.1.
+- **M1 under WSL** (the RQ7 baselines): the M1 laptop, Ubuntu 24.04 in WSL 2, Clang 18.1.3 and GCC 13.3, AVX2.
 
 Each run's `*_env.json` records its machine, compiler versions and the digests of every source and tool.
 
@@ -108,6 +111,7 @@ Every number in the manuscript is a macro or a table cell generated from the raw
 | RQ7 LLVM speed (Table 12) | `llvm_bench.jsonl`, `llvm_decisions.jsonl`, `llvm_compile.jsonl` | `llvm_eval.py`, `llvm/kernels/` | 11 C kernels and a short-loop variant × 6 builds (Clang strict, with ExactReduce, `-ffast-math`, ExactReduce for SSE2, GCC strict and `-ffast-math`); 5 processes × 11 runs. |
 | RQ8 LLVM soundness (Table 13) | `llvm_stress.jsonl` | `llvm_eval.py`, `llvm/kernels/stress.c` | 784 adversarial cases × 8 builds, including two mutants of the pass. |
 | RQ9 existing code (Table 14) | `llvm_scan.jsonl`, `llvm_audioop.jsonl` | `llvm_scan.py`, `llvm_audioop.py` | The pass's decision for every add reduction in audioop, Pillow, SciPy ndimage and PolyBench/C; `audioop` strict against licensed, on every function with a reduction. |
+| RQ7 baselines on M1 (Section 11.7) | `results/contracts-wsl/llvm_bench.jsonl`, `llvm_stress.jsonl`, `llvm_env.json` | `llvm_eval.py`, `analyze_baselines.py`, `llvm/kernels/intacc.c` | Strict, licensed, `-ffast-math`, in-order reductions (`-force-ordered-reductions`) and hand-written integer accumulators, all timed in one run on M1 under WSL (Ubuntu 24.04, Clang 18.1.3, GCC 13.3); RQ8's stress suite on the same machine. `generated/tab-llvm-baselines.tex` has the per-kernel numbers. |
 | Timing spread (Section 11) | `e2e*.jsonl`, `llvm_bench.jsonl` | `analyze_spread.py` | Interquartile range of each build's runs (and of RQ7's process medians) relative to the median. |
 | Bound-arithmetic repair (Section 10) | `bound_repair.json` | `bound_repair.py`, `tests/test_bound_arithmetic.py` | The bound arithmetic of the measured commit and of the repaired one against exact rationals; every example under every contract with both compilers, byte for byte; the deterministic records of RQ1–RQ3, RQ5 and RQ6 rerun on the repaired compiler. |
 

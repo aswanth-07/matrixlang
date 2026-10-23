@@ -1,0 +1,17 @@
+\begin{tabular}{lrrrrr}
+\toprule
+Kernel & Strict & \multicolumn{4}{c}{Speedup over strict Clang}\\
+\cmidrule(lr){3-6}
+ & (ms) & licensed & int.\ acc. & ordered & fast-math\\
+\midrule
+sum & 24.2 & 3.29 & 4 & 1.12 & 3.01\\
+sum of squares & 42.3 & 4.75 & 5.61 & 1.75 & 5.14\\
+Gram matrix & 302 & 6.4 & 9.19 & 2 & 6.64\\
+int8 classifier & 74.4 & 8.93 & 17.8 & 2.36 & 9.24\\
+degrees & 3.76 & 3.82 & 14.1 & 1.21 & 4.37\\
+2-walks & 6.39 & 5.27 & 18.1 & 1.86 & 4.74\\
+GEMM & 47.3 & 5.4 & 16.2 & 1.78 & 4.65\\
+energy & 3.6 & 8.64 & 11 & 1.67 & 10.5\\
+sum (int32) & 1.01 & 4.72 & 4.4 & 0.922 & 4.16\\
+\bottomrule
+\end{tabular}
