@@ -4,7 +4,7 @@
 // Eleven slides for a ten-minute review: black and gold, one idea per slide,
 // details in the speaker notes.
 //
-//   cd <dir with pptxgenjs, react-icons, react, react-dom, sharp and qrcode> &&
+//   cd <dir with pptxgenjs, react-icons, react, react-dom and sharp> &&
 //   node /path/to/tools/build-final-deck.js [OUT.pptx] [path/to/apply_theme.js]
 //
 // Numbers come from the paper's generated macros (generated/*.tex, with the
@@ -16,7 +16,6 @@ const pptxgen = require("pptxgenjs");
 const React = require("react");
 const ReactDOMServer = require("react-dom/server");
 const sharp = require("sharp");
-const QRCode = require("qrcode");
 const fa = require("react-icons/fa");
 
 const ROOT = path.resolve(__dirname, "..");
@@ -61,11 +60,6 @@ async function icon(Comp, color, size = 256) {
   const buf = await sharp(Buffer.from(svg)).png().toBuffer();
   return "image/png;base64," + buf.toString("base64");
 }
-async function qr() {
-  const buf = await QRCode.toBuffer(REPO_URL, { margin: 1, width: 600,
-    color: { dark: "#" + HEX.dk1, light: "#" + HEX.lt2 } });
-  return "image/png;base64," + buf.toString("base64");
-}
 
 async function main() {
   const pres = new pptxgen();
@@ -83,7 +77,7 @@ async function main() {
     title: "COVER",
     background: { color: BG },
     objects: [
-      { placeholder: { options: { name: "title", type: "title", x: 0.8, y: 1.6, w: 8.6, h: 2.4,
+      { placeholder: { options: { name: "title", type: "title", x: 0.8, y: 1.5, w: 11.7, h: 2.5,
         fontSize: 44, bold: true, color: FG, valign: "bottom", align: "left", margin: 0 }, text: "" } },
     ],
   });
@@ -122,6 +116,11 @@ async function main() {
     showLegend: true, legendPos: "t", showValue: true, dataLabelPosition: "outEnd",
     barDir: "col", barGrouping: "clustered", barGapWidthPct: 55,
   };
+  const repoLink = async (s, x, y) => {
+    s.addImage({ data: await icon(fa.FaGithub, HEX.accent1), x, y, w: 0.34, h: 0.34 });
+    txt(s, [{ text: REPO, options: { hyperlink: { url: REPO_URL } } }],
+      { x: x + 0.5, y, w: 6, h: 0.34, fontSize: 16, color: IVORY, valign: "middle" });
+  };
   let n = 0;
   const content = (section) => pres.addSlide({ masterName: "CONTENT", sectionTitle: section });
   const K = (label) => String(++n).padStart(2, "0") + "  ·  " + label.toUpperCase();
@@ -129,22 +128,19 @@ async function main() {
   // ---- 1. cover ----
   pres.addSection({ title: "Introduction" });
   let s = pres.addSlide({ masterName: "COVER", sectionTitle: "Introduction" });
-  txt(s, "MATRIXLANG  ·  EXACTREDUCE", { x: 0.8, y: 1.15, w: 8, h: 0.4, fontSize: 13, bold: true,
+  txt(s, "MATRIXLANG  ·  EXACTREDUCE", { x: 0.8, y: 2.65, w: 8, h: 0.4, fontSize: 13, bold: true,
     color: GOLD, charSpacing: 5 });
   s.addText("Proof-Guided Floating\u2011Point Optimization", { placeholder: "title" });
   txt(s, "Exact Reassociation, Error Bounds, and Compiler Certificates",
     { x: 0.8, y: 4.15, w: 8.0, h: 0.5, fontSize: 20, italic: true, color: IVORY });
-  txt(s, [
-    { text: "A Aswanth Raj   ·   Dr. Ranjithkumar S", options: { bold: true, color: FG, breakLine: true } },
-    { text: "School of Computer Science and Engineering, VIT Vellore", options: { color: MUTED } },
-  ], { x: 0.8, y: 5.35, w: 8.0, h: 0.8, fontSize: 16, paraSpaceAfter: 4 });
-  box(s, 9.7, 1.7, 2.85, 3.75, { fill: BG, line: GOLD, lw: 1.25, name: "repo card" });
-  s.addImage({ data: await qr(), x: 10.1, y: 2.05, w: 2.05, h: 2.05, hyperlink: { url: REPO_URL },
-    altText: "QR code linking to " + REPO_URL });
-  s.addImage({ data: await icon(fa.FaGithub, HEX.accent1), x: 10.1, y: 4.35, w: 0.3, h: 0.3 });
-  txt(s, "Code · data · paper", { x: 10.5, y: 4.35, w: 1.9, h: 0.3, fontSize: 12, bold: true, color: GOLD, valign: "middle" });
-  txt(s, [{ text: REPO, options: { hyperlink: { url: REPO_URL } } }],
-    { x: 9.8, y: 4.8, w: 2.65, h: 0.3, fontSize: 10.5, color: IVORY, align: "center" });
+  const people = [["PRESENTED BY", "A Aswanth Raj", 0.8], ["GUIDE", "Dr. Ranjithkumar S", 4.6]];
+  for (const [role, name, x] of people) {
+    txt(s, role, { x, y: 4.95, w: 3.6, h: 0.3, fontSize: 11, bold: true, color: GOLD, charSpacing: 4 });
+    txt(s, name, { x, y: 5.25, w: 3.6, h: 0.45, fontSize: 20, bold: true, color: FG });
+  }
+  txt(s, "School of Computer Science and Engineering, VIT Vellore",
+    { x: 0.8, y: 5.8, w: 8.0, h: 0.35, fontSize: 15, color: MUTED });
+  await repoLink(s, 0.8, 6.45);
   s.addNotes("Compilers either keep floating-point evaluation order exactly (strict) or drop it wholesale " +
     "(fast-math). We show that facts about the input values let a compiler prove, rewrite by rewrite, which " +
     "guarantee is kept, and label every output with it. Two implementations: the MatrixLang compiler and the " +
@@ -421,20 +417,12 @@ async function main() {
 
   // ---- 11. close ----
   s = pres.addSlide({ masterName: "COVER", sectionTitle: "Conclusion" });
-  txt(s, "TAKEAWAY", { x: 0.8, y: 1.15, w: 8, h: 0.4, fontSize: 13, bold: true, color: GOLD, charSpacing: 5 });
+  txt(s, "TAKEAWAY", { x: 0.8, y: 2.65, w: 8, h: 0.4, fontSize: 13, bold: true, color: GOLD, charSpacing: 5 });
   s.addText("Fast exactly where it is provably safe", { placeholder: "title" });
   txt(s, "A guarantee for every rewrite, a certificate for every output.",
     { x: 0.8, y: 4.15, w: 8.0, h: 0.5, fontSize: 20, italic: true, color: IVORY });
   txt(s, "Thank you  ·  Questions?", { x: 0.8, y: 5.35, w: 8.0, h: 0.6, fontSize: 24, bold: true, color: GOLD });
-  box(s, 9.7, 1.7, 2.85, 3.75, { fill: BG, line: GOLD, lw: 1.25, name: "repo card" });
-  s.addImage({ data: await qr(), x: 10.1, y: 2.05, w: 2.05, h: 2.05, hyperlink: { url: REPO_URL },
-    altText: "QR code linking to " + REPO_URL });
-  s.addImage({ data: await icon(fa.FaGithub, HEX.accent1), x: 10.1, y: 4.35, w: 0.3, h: 0.3 });
-  txt(s, "Try it yourself", { x: 10.5, y: 4.35, w: 1.9, h: 0.3, fontSize: 12, bold: true, color: GOLD, valign: "middle" });
-  txt(s, [{ text: REPO, options: { hyperlink: { url: REPO_URL } } }],
-    { x: 9.8, y: 4.8, w: 2.65, h: 0.3, fontSize: 10.5, color: IVORY, align: "center" });
-  txt(s, "make && make test", { x: 9.7, y: 5.7, w: 2.85, h: 0.35, fontSize: 13, fontFace: "Courier New",
-    color: MUTED, align: "center" });
+  await repoLink(s, 0.8, 6.45);
   s.addNotes("Close: instead of an on/off switch, the compiler proves which guarantee each rewrite keeps and " +
     "labels every output. Build and test: make && make test; the LLVM pass needs LLVM/Clang 18: " +
     "make -C llvm && make -C llvm test. Repository: " + REPO_URL + SRC("paper/README.md"));
