@@ -12,7 +12,7 @@
   Historical bounded real-domain timings retain their historical scope.
 - The 22-page named and anonymous manuscripts state the tested LLVM proof
   boundary, integer-rewrite baselines, compilation costs and remaining limits.
-  The delivery package and a 15-slide presentation, generated from the paper's macros, accompany the source.
+  The delivery package and an 11-slide presentation, generated from the paper's macros, accompany the source.
 
 ## The integer rewrite
 
