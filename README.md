@@ -86,7 +86,7 @@ The language has static dimensions, scalar and matrix values, mutable variables,
 
 Authors: **A Aswanth Raj**, **Dr. Ranjithkumar S**, School of Computer Science and Engineering, VIT Vellore, India.
 
-The October 24, 2026 revision repairs bounded admission under inexact underflow, adds independent numerical certificate replay, and states the LLVM proof boundary explicitly. Both manuscript builds have 22 pages including references. The [revision notes](paper/review-response.md), [self-contained manuscript package](paper/delivery-review/README.md), and [eight-slide presentation](paper/presentation-updated/MatrixLang-Simple-8-Slides.pptx) accompany the research artifact.
+The October 24, 2026 revision repairs bounded admission under inexact underflow, adds independent numerical certificate replay, and states the LLVM proof boundary explicitly. Both manuscript builds have 22 pages including references. The [revision notes](paper/review-response.md), [self-contained manuscript package](paper/delivery-review/README.md), and [presentation](paper/presentation-updated/MatrixLang-Presentation.pptx) (built by `tools/build-final-deck.js`) accompany the research artifact.
 
 The manuscript, formatted for ACM TACO, proves the theorems above and measures nine questions: on generated, domain-typed workloads, on application kernels over generated and real data (Cora, MNIST), on two machines with GCC and Clang, and in LLVM:
 
