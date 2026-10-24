@@ -1,5 +1,37 @@
 # Changelog
 
+## October 24, 2026: bounded admission and certificate replay
+
+- Bounded chain and reduction checks now exclude inexact underflow using
+  representable product grids, finite bounds and accumulated error slack.
+  Exact subnormal results remain allowed under gradual underflow.
+- Applied chain obligations can be exported with `MATRIXC_CERTIFICATE_JSONL`
+  and replayed independently using exact rational arithmetic. The checker
+  trusts supplied operand facts and does not verify emitted code.
+- Separate post-repair replays update RQ1/RQ2 over 15,000 and 4,800 programs.
+  Historical bounded real-domain timings retain their historical scope.
+- The 22-page named and anonymous manuscripts state the tested LLVM proof
+  boundary, integer-rewrite baselines, compilation costs and remaining limits.
+  The delivery package and an eight-slide presentation accompany the source.
+
+## The integer rewrite
+
+- ExactReduce gains an integer mode (`EXACT_REDUCE_INTEGER=1`): where every
+  term of a licensed sum is an integer expression, the sum is accumulated in an
+  `i32` or `i64` register and converted once after the loop, which keeps the
+  strict bits and packs more terms per vector instruction. A static license
+  whose terms fit 32 bits is versioned on its trip count so that short entries
+  use `i32`. Anything the rewrite does not handle keeps the license.
+- `make -C llvm test` checks the integer build against strict on the smoke
+  tests and the stress suite, and `llvm/tests/tier32.c` at the 32-bit limit,
+  where the mutant `EXACT_REDUCE_TIER32_SLACK=2` must fail.
+- RQ7 and RQ8 on M1 now include the rewrite (`clang-int-rewrite`);
+  `llvm_tier32.py` records the boundary test; `analyze_baselines.py` draws
+  `figures/llvm-routes.pdf`.
+- The manuscript describes the rewrite, compares every bit-preserving route in
+  one figure, cites three TACO papers, and moves the hand-written reduction
+  table to the artifact; it stays at 20 pages.
+
 ## Two baselines for the LLVM license
 
 - Added `llvm/kernels/intacc.c`, the nine integer kernels rewritten by hand to

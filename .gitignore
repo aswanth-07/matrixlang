@@ -33,3 +33,9 @@ paper/build-*.txt
 
 # The LLVM pass plugin, built by `make -C llvm`.
 *.so
+
+# Intermediate copies and visual checks for the manuscript package.
+results/review-revision/before/
+results/review-revision/package-build/
+results/review-revision/display-build/
+results/review-revision/render/

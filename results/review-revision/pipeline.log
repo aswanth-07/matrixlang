@@ -1,0 +1,2033 @@
+Running pass: Annotation2MetadataPass on [module]
+Running pass: ForceFunctionAttrsPass on [module]
+Running pass: AssignmentTrackingPass on [module]
+Running pass: InferFunctionAttrsPass on [module]
+Running analysis: InnerAnalysisManagerProxy<FunctionAnalysisManager, Module> on [module]
+Running analysis: TargetLibraryAnalysis on llvm.lifetime.start.p0
+Running analysis: TargetLibraryAnalysis on llvm.lifetime.end.p0
+Running analysis: TargetLibraryAnalysis on llvm.fmuladd.f64
+Running analysis: TargetLibraryAnalysis on llvm.fmuladd.f32
+Invalidating analysis: InnerAnalysisManagerProxy<FunctionAnalysisManager, Module> on [module]
+Running pass: CoroEarlyPass on [module]
+Running analysis: InnerAnalysisManagerProxy<FunctionAnalysisManager, Module> on [module]
+Running pass: LowerExpectIntrinsicPass on sum_u8 (35 instructions)
+Running pass: SimplifyCFGPass on sum_u8 (35 instructions)
+Running analysis: TargetIRAnalysis on sum_u8
+Running analysis: AssumptionAnalysis on sum_u8
+Running pass: SROAPass on sum_u8 (33 instructions)
+Running analysis: DominatorTreeAnalysis on sum_u8
+Running pass: EarlyCSEPass on sum_u8 (14 instructions)
+Running analysis: TargetLibraryAnalysis on sum_u8
+Running pass: CallSiteSplittingPass on sum_u8 (14 instructions)
+Invalidating analysis: DominatorTreeAnalysis on sum_u8
+Running pass: LowerExpectIntrinsicPass on sum_u8_long (34 instructions)
+Running pass: SimplifyCFGPass on sum_u8_long (34 instructions)
+Running analysis: TargetIRAnalysis on sum_u8_long
+Running analysis: AssumptionAnalysis on sum_u8_long
+Running pass: SROAPass on sum_u8_long (32 instructions)
+Running analysis: DominatorTreeAnalysis on sum_u8_long
+Running pass: EarlyCSEPass on sum_u8_long (13 instructions)
+Running analysis: TargetLibraryAnalysis on sum_u8_long
+Running pass: CallSiteSplittingPass on sum_u8_long (13 instructions)
+Invalidating analysis: DominatorTreeAnalysis on sum_u8_long
+Running pass: LowerExpectIntrinsicPass on dot_i16_long (41 instructions)
+Running pass: SimplifyCFGPass on dot_i16_long (41 instructions)
+Running analysis: TargetIRAnalysis on dot_i16_long
+Running analysis: AssumptionAnalysis on dot_i16_long
+Running pass: SROAPass on dot_i16_long (39 instructions)
+Running analysis: DominatorTreeAnalysis on dot_i16_long
+Running pass: EarlyCSEPass on dot_i16_long (16 instructions)
+Running analysis: TargetLibraryAnalysis on dot_i16_long
+Running pass: CallSiteSplittingPass on dot_i16_long (16 instructions)
+Invalidating analysis: DominatorTreeAnalysis on dot_i16_long
+Running pass: LowerExpectIntrinsicPass on dot_i8_f32_1024 (39 instructions)
+Running pass: SimplifyCFGPass on dot_i8_f32_1024 (39 instructions)
+Running analysis: TargetIRAnalysis on dot_i8_f32_1024
+Running analysis: AssumptionAnalysis on dot_i8_f32_1024
+Running pass: SROAPass on dot_i8_f32_1024 (37 instructions)
+Running analysis: DominatorTreeAnalysis on dot_i8_f32_1024
+Running pass: EarlyCSEPass on dot_i8_f32_1024 (17 instructions)
+Running analysis: TargetLibraryAnalysis on dot_i8_f32_1024
+Running pass: CallSiteSplittingPass on dot_i8_f32_1024 (16 instructions)
+Invalidating analysis: DominatorTreeAnalysis on dot_i8_f32_1024
+Running pass: LowerExpectIntrinsicPass on dot_i8_f32_2048 (39 instructions)
+Running pass: SimplifyCFGPass on dot_i8_f32_2048 (39 instructions)
+Running analysis: TargetIRAnalysis on dot_i8_f32_2048
+Running analysis: AssumptionAnalysis on dot_i8_f32_2048
+Running pass: SROAPass on dot_i8_f32_2048 (37 instructions)
+Running analysis: DominatorTreeAnalysis on dot_i8_f32_2048
+Running pass: EarlyCSEPass on dot_i8_f32_2048 (17 instructions)
+Running analysis: TargetLibraryAnalysis on dot_i8_f32_2048
+Running pass: CallSiteSplittingPass on dot_i8_f32_2048 (16 instructions)
+Invalidating analysis: DominatorTreeAnalysis on dot_i8_f32_2048
+Running pass: LowerExpectIntrinsicPass on dot_real (40 instructions)
+Running pass: SimplifyCFGPass on dot_real (40 instructions)
+Running analysis: TargetIRAnalysis on dot_real
+Running analysis: AssumptionAnalysis on dot_real
+Running pass: SROAPass on dot_real (38 instructions)
+Running analysis: DominatorTreeAnalysis on dot_real
+Running pass: EarlyCSEPass on dot_real (15 instructions)
+Running analysis: TargetLibraryAnalysis on dot_real
+Running pass: CallSiteSplittingPass on dot_real (14 instructions)
+Invalidating analysis: DominatorTreeAnalysis on dot_real
+Running pass: LowerExpectIntrinsicPass on sum2d_u8 (62 instructions)
+Running pass: SimplifyCFGPass on sum2d_u8 (62 instructions)
+Running analysis: TargetIRAnalysis on sum2d_u8
+Running analysis: AssumptionAnalysis on sum2d_u8
+Running pass: SROAPass on sum2d_u8 (58 instructions)
+Running analysis: DominatorTreeAnalysis on sum2d_u8
+Running pass: EarlyCSEPass on sum2d_u8 (25 instructions)
+Running analysis: TargetLibraryAnalysis on sum2d_u8
+Running pass: CallSiteSplittingPass on sum2d_u8 (25 instructions)
+Invalidating analysis: DominatorTreeAnalysis on sum2d_u8
+Running pass: LowerExpectIntrinsicPass on cond_sum (44 instructions)
+Running pass: SimplifyCFGPass on cond_sum (44 instructions)
+Running analysis: TargetIRAnalysis on cond_sum
+Running analysis: AssumptionAnalysis on cond_sum
+Running pass: SROAPass on cond_sum (42 instructions)
+Running analysis: DominatorTreeAnalysis on cond_sum
+Running pass: EarlyCSEPass on cond_sum (22 instructions)
+Running analysis: TargetLibraryAnalysis on cond_sum
+Running pass: CallSiteSplittingPass on cond_sum (18 instructions)
+Invalidating analysis: DominatorTreeAnalysis on cond_sum
+Running pass: LowerExpectIntrinsicPass on two_sums (61 instructions)
+Running pass: SimplifyCFGPass on two_sums (61 instructions)
+Running analysis: TargetIRAnalysis on two_sums
+Running analysis: AssumptionAnalysis on two_sums
+Running pass: SROAPass on two_sums (59 instructions)
+Running analysis: DominatorTreeAnalysis on two_sums
+Running pass: EarlyCSEPass on two_sums (24 instructions)
+Running analysis: TargetLibraryAnalysis on two_sums
+Running pass: CallSiteSplittingPass on two_sums (18 instructions)
+Invalidating analysis: DominatorTreeAnalysis on two_sums
+Running pass: OpenMPOptPass on [module]
+Running pass: IPSCCPPass on [module]
+Running analysis: DominatorTreeAnalysis on sum_u8
+Running analysis: DominatorTreeAnalysis on sum_u8_long
+Running analysis: DominatorTreeAnalysis on dot_i16_long
+Running analysis: DominatorTreeAnalysis on dot_i8_f32_1024
+Running analysis: DominatorTreeAnalysis on dot_i8_f32_2048
+Running analysis: DominatorTreeAnalysis on dot_real
+Running analysis: DominatorTreeAnalysis on sum2d_u8
+Running analysis: DominatorTreeAnalysis on cond_sum
+Running analysis: DominatorTreeAnalysis on two_sums
+Running pass: CalledValuePropagationPass on [module]
+Running pass: GlobalOptPass on [module]
+Running pass: PromotePass on sum_u8 (14 instructions)
+Running pass: InstCombinePass on sum_u8 (14 instructions)
+Running analysis: OptimizationRemarkEmitterAnalysis on sum_u8
+Running analysis: AAManager on sum_u8
+Running analysis: BasicAA on sum_u8
+Running analysis: ScopedNoAliasAA on sum_u8
+Running analysis: TypeBasedAA on sum_u8
+Running analysis: OuterAnalysisManagerProxy<ModuleAnalysisManager, Function> on sum_u8
+Running pass: SimplifyCFGPass on sum_u8 (13 instructions)
+Invalidating analysis: DominatorTreeAnalysis on sum_u8
+Invalidating analysis: BasicAA on sum_u8
+Invalidating analysis: AAManager on sum_u8
+Running pass: PromotePass on sum_u8_long (13 instructions)
+Running pass: InstCombinePass on sum_u8_long (13 instructions)
+Running analysis: OptimizationRemarkEmitterAnalysis on sum_u8_long
+Running analysis: AAManager on sum_u8_long
+Running analysis: BasicAA on sum_u8_long
+Running analysis: ScopedNoAliasAA on sum_u8_long
+Running analysis: TypeBasedAA on sum_u8_long
+Running analysis: OuterAnalysisManagerProxy<ModuleAnalysisManager, Function> on sum_u8_long
+Running pass: SimplifyCFGPass on sum_u8_long (12 instructions)
+Invalidating analysis: DominatorTreeAnalysis on sum_u8_long
+Invalidating analysis: BasicAA on sum_u8_long
+Invalidating analysis: AAManager on sum_u8_long
+Running pass: PromotePass on dot_i16_long (16 instructions)
+Running pass: InstCombinePass on dot_i16_long (16 instructions)
+Running analysis: OptimizationRemarkEmitterAnalysis on dot_i16_long
+Running analysis: AAManager on dot_i16_long
+Running analysis: BasicAA on dot_i16_long
+Running analysis: ScopedNoAliasAA on dot_i16_long
+Running analysis: TypeBasedAA on dot_i16_long
+Running analysis: OuterAnalysisManagerProxy<ModuleAnalysisManager, Function> on dot_i16_long
+Running pass: SimplifyCFGPass on dot_i16_long (15 instructions)
+Invalidating analysis: DominatorTreeAnalysis on dot_i16_long
+Invalidating analysis: BasicAA on dot_i16_long
+Invalidating analysis: AAManager on dot_i16_long
+Running pass: PromotePass on dot_i8_f32_1024 (16 instructions)
+Running pass: InstCombinePass on dot_i8_f32_1024 (16 instructions)
+Running analysis: OptimizationRemarkEmitterAnalysis on dot_i8_f32_1024
+Running analysis: AAManager on dot_i8_f32_1024
+Running analysis: BasicAA on dot_i8_f32_1024
+Running analysis: ScopedNoAliasAA on dot_i8_f32_1024
+Running analysis: TypeBasedAA on dot_i8_f32_1024
+Running analysis: OuterAnalysisManagerProxy<ModuleAnalysisManager, Function> on dot_i8_f32_1024
+Running pass: SimplifyCFGPass on dot_i8_f32_1024 (16 instructions)
+Invalidating analysis: DominatorTreeAnalysis on dot_i8_f32_1024
+Invalidating analysis: BasicAA on dot_i8_f32_1024
+Invalidating analysis: AAManager on dot_i8_f32_1024
+Running pass: PromotePass on dot_i8_f32_2048 (16 instructions)
+Running pass: InstCombinePass on dot_i8_f32_2048 (16 instructions)
+Running analysis: OptimizationRemarkEmitterAnalysis on dot_i8_f32_2048
+Running analysis: AAManager on dot_i8_f32_2048
+Running analysis: BasicAA on dot_i8_f32_2048
+Running analysis: ScopedNoAliasAA on dot_i8_f32_2048
+Running analysis: TypeBasedAA on dot_i8_f32_2048
+Running analysis: OuterAnalysisManagerProxy<ModuleAnalysisManager, Function> on dot_i8_f32_2048
+Running pass: SimplifyCFGPass on dot_i8_f32_2048 (16 instructions)
+Invalidating analysis: DominatorTreeAnalysis on dot_i8_f32_2048
+Invalidating analysis: BasicAA on dot_i8_f32_2048
+Invalidating analysis: AAManager on dot_i8_f32_2048
+Running pass: PromotePass on dot_real (14 instructions)
+Running pass: InstCombinePass on dot_real (14 instructions)
+Running analysis: OptimizationRemarkEmitterAnalysis on dot_real
+Running analysis: AAManager on dot_real
+Running analysis: BasicAA on dot_real
+Running analysis: ScopedNoAliasAA on dot_real
+Running analysis: TypeBasedAA on dot_real
+Running analysis: OuterAnalysisManagerProxy<ModuleAnalysisManager, Function> on dot_real
+Running pass: SimplifyCFGPass on dot_real (14 instructions)
+Invalidating analysis: DominatorTreeAnalysis on dot_real
+Invalidating analysis: BasicAA on dot_real
+Invalidating analysis: AAManager on dot_real
+Running pass: PromotePass on sum2d_u8 (25 instructions)
+Running pass: InstCombinePass on sum2d_u8 (25 instructions)
+Running analysis: OptimizationRemarkEmitterAnalysis on sum2d_u8
+Running analysis: AAManager on sum2d_u8
+Running analysis: BasicAA on sum2d_u8
+Running analysis: ScopedNoAliasAA on sum2d_u8
+Running analysis: TypeBasedAA on sum2d_u8
+Running analysis: OuterAnalysisManagerProxy<ModuleAnalysisManager, Function> on sum2d_u8
+Running pass: SimplifyCFGPass on sum2d_u8 (24 instructions)
+Invalidating analysis: DominatorTreeAnalysis on sum2d_u8
+Invalidating analysis: BasicAA on sum2d_u8
+Invalidating analysis: AAManager on sum2d_u8
+Running pass: PromotePass on cond_sum (18 instructions)
+Running pass: InstCombinePass on cond_sum (18 instructions)
+Running analysis: OptimizationRemarkEmitterAnalysis on cond_sum
+Running analysis: AAManager on cond_sum
+Running analysis: BasicAA on cond_sum
+Running analysis: ScopedNoAliasAA on cond_sum
+Running analysis: TypeBasedAA on cond_sum
+Running analysis: OuterAnalysisManagerProxy<ModuleAnalysisManager, Function> on cond_sum
+Running pass: SimplifyCFGPass on cond_sum (17 instructions)
+Invalidating analysis: DominatorTreeAnalysis on cond_sum
+Invalidating analysis: BasicAA on cond_sum
+Invalidating analysis: AAManager on cond_sum
+Running pass: PromotePass on two_sums (18 instructions)
+Running pass: InstCombinePass on two_sums (18 instructions)
+Running analysis: OptimizationRemarkEmitterAnalysis on two_sums
+Running analysis: AAManager on two_sums
+Running analysis: BasicAA on two_sums
+Running analysis: ScopedNoAliasAA on two_sums
+Running analysis: TypeBasedAA on two_sums
+Running analysis: OuterAnalysisManagerProxy<ModuleAnalysisManager, Function> on two_sums
+Running pass: SimplifyCFGPass on two_sums (17 instructions)
+Invalidating analysis: DominatorTreeAnalysis on two_sums
+Invalidating analysis: BasicAA on two_sums
+Invalidating analysis: AAManager on two_sums
+Running pass: AlwaysInlinerPass on [module]
+Running analysis: ProfileSummaryAnalysis on [module]
+Running pass: ModuleInlinerWrapperPass on [module]
+Running analysis: InlineAdvisorAnalysis on [module]
+Running pass: RequireAnalysisPass<llvm::GlobalsAA, llvm::Module, llvm::AnalysisManager<Module>> on [module]
+Running analysis: GlobalsAA on [module]
+Running analysis: CallGraphAnalysis on [module]
+Running pass: InvalidateAnalysisPass<llvm::AAManager> on sum_u8 (13 instructions)
+Running pass: InvalidateAnalysisPass<llvm::AAManager> on sum_u8_long (12 instructions)
+Running pass: InvalidateAnalysisPass<llvm::AAManager> on dot_i16_long (15 instructions)
+Running pass: InvalidateAnalysisPass<llvm::AAManager> on dot_i8_f32_1024 (16 instructions)
+Running pass: InvalidateAnalysisPass<llvm::AAManager> on dot_i8_f32_2048 (16 instructions)
+Running pass: InvalidateAnalysisPass<llvm::AAManager> on dot_real (14 instructions)
+Running pass: InvalidateAnalysisPass<llvm::AAManager> on sum2d_u8 (23 instructions)
+Running pass: InvalidateAnalysisPass<llvm::AAManager> on cond_sum (15 instructions)
+Running pass: InvalidateAnalysisPass<llvm::AAManager> on two_sums (17 instructions)
+Running pass: RequireAnalysisPass<llvm::ProfileSummaryAnalysis, llvm::Module, llvm::AnalysisManager<Module>> on [module]
+Running analysis: InnerAnalysisManagerProxy<CGSCCAnalysisManager, Module> on [module]
+Running analysis: LazyCallGraphAnalysis on [module]
+Running analysis: FunctionAnalysisManagerCGSCCProxy on (sum_u8)
+Running analysis: OuterAnalysisManagerProxy<ModuleAnalysisManager, LazyCallGraph::SCC, LazyCallGraph &> on (sum_u8)
+Running pass: DevirtSCCRepeatedPass on (sum_u8) (1 node)
+Running pass: InlinerPass on (sum_u8) (1 node)
+Running pass: PostOrderFunctionAttrsPass on (sum_u8) (1 node)
+Running pass: ArgumentPromotionPass on (sum_u8) (1 node)
+Running pass: OpenMPOptCGSCCPass on (sum_u8) (1 node)
+Running pass: SROAPass on sum_u8 (13 instructions)
+Running analysis: DominatorTreeAnalysis on sum_u8
+Running pass: EarlyCSEPass on sum_u8 (13 instructions)
+Running analysis: MemorySSAAnalysis on sum_u8
+Running analysis: AAManager on sum_u8
+Running analysis: BasicAA on sum_u8
+Running pass: SpeculativeExecutionPass on sum_u8 (13 instructions)
+Running pass: JumpThreadingPass on sum_u8 (13 instructions)
+Running analysis: LazyValueAnalysis on sum_u8
+Running pass: CorrelatedValuePropagationPass on sum_u8 (13 instructions)
+Invalidating analysis: LazyValueAnalysis on sum_u8
+Running pass: SimplifyCFGPass on sum_u8 (13 instructions)
+Running pass: InstCombinePass on sum_u8 (13 instructions)
+Running pass: AggressiveInstCombinePass on sum_u8 (13 instructions)
+Running pass: LibCallsShrinkWrapPass on sum_u8 (13 instructions)
+Running pass: TailCallElimPass on sum_u8 (13 instructions)
+Running pass: SimplifyCFGPass on sum_u8 (13 instructions)
+Running pass: ReassociatePass on sum_u8 (13 instructions)
+Running pass: ConstraintEliminationPass on sum_u8 (13 instructions)
+Running analysis: LoopAnalysis on sum_u8
+Running analysis: ScalarEvolutionAnalysis on sum_u8
+Running pass: LoopSimplifyPass on sum_u8 (13 instructions)
+Running pass: LCSSAPass on sum_u8 (13 instructions)
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on sum_u8
+Running pass: LoopInstSimplifyPass on <unnamed loop>
+Running pass: LoopSimplifyCFGPass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: LoopRotatePass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: SimpleLoopUnswitchPass on <unnamed loop>
+Running analysis: OuterAnalysisManagerProxy<FunctionAnalysisManager, Loop, LoopStandardAnalysisResults &> on <unnamed loop>
+Running pass: SimplifyCFGPass on sum_u8 (17 instructions)
+Clearing all analysis results for: <possibly invalidated loop>
+Invalidating analysis: DominatorTreeAnalysis on sum_u8
+Invalidating analysis: BasicAA on sum_u8
+Invalidating analysis: AAManager on sum_u8
+Invalidating analysis: MemorySSAAnalysis on sum_u8
+Invalidating analysis: LoopAnalysis on sum_u8
+Invalidating analysis: ScalarEvolutionAnalysis on sum_u8
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on sum_u8
+Running pass: InstCombinePass on sum_u8 (14 instructions)
+Running analysis: DominatorTreeAnalysis on sum_u8
+Running analysis: AAManager on sum_u8
+Running analysis: BasicAA on sum_u8
+Running pass: LoopSimplifyPass on sum_u8 (14 instructions)
+Running analysis: LoopAnalysis on sum_u8
+Running pass: LCSSAPass on sum_u8 (16 instructions)
+Running analysis: ScalarEvolutionAnalysis on sum_u8
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on sum_u8
+Running pass: LoopIdiomRecognizePass on <unnamed loop>
+Running pass: IndVarSimplifyPass on <unnamed loop>
+Running pass: LoopDeletionPass on <unnamed loop>
+Running pass: LoopFullUnrollPass on <unnamed loop>
+Running pass: SROAPass on sum_u8 (17 instructions)
+Running pass: VectorCombinePass on sum_u8 (17 instructions)
+Running pass: MergedLoadStoreMotionPass on sum_u8 (17 instructions)
+Running pass: GVNPass on sum_u8 (17 instructions)
+Running analysis: MemoryDependenceAnalysis on sum_u8
+Clearing all analysis results for: <possibly invalidated loop>
+Invalidating analysis: ScalarEvolutionAnalysis on sum_u8
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on sum_u8
+Invalidating analysis: MemoryDependenceAnalysis on sum_u8
+Running pass: SCCPPass on sum_u8 (16 instructions)
+Running pass: BDCEPass on sum_u8 (16 instructions)
+Running analysis: DemandedBitsAnalysis on sum_u8
+Running pass: InstCombinePass on sum_u8 (16 instructions)
+Invalidating analysis: DemandedBitsAnalysis on sum_u8
+Running pass: JumpThreadingPass on sum_u8 (16 instructions)
+Running analysis: LazyValueAnalysis on sum_u8
+Invalidating analysis: LoopAnalysis on sum_u8
+Running pass: CorrelatedValuePropagationPass on sum_u8 (15 instructions)
+Invalidating analysis: LazyValueAnalysis on sum_u8
+Running pass: ADCEPass on sum_u8 (15 instructions)
+Running analysis: PostDominatorTreeAnalysis on sum_u8
+Running pass: MemCpyOptPass on sum_u8 (15 instructions)
+Running analysis: MemorySSAAnalysis on sum_u8
+Running pass: DSEPass on sum_u8 (15 instructions)
+Running analysis: LoopAnalysis on sum_u8
+Running pass: MoveAutoInitPass on sum_u8 (15 instructions)
+Running pass: LoopSimplifyPass on sum_u8 (15 instructions)
+Invalidating analysis: PostDominatorTreeAnalysis on sum_u8
+Running pass: LCSSAPass on sum_u8 (16 instructions)
+Running analysis: ScalarEvolutionAnalysis on sum_u8
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on sum_u8
+Running pass: LICMPass on <unnamed loop>
+Running pass: CoroElidePass on sum_u8 (17 instructions)
+Running pass: SimplifyCFGPass on sum_u8 (17 instructions)
+Invalidating analysis: DominatorTreeAnalysis on sum_u8
+Invalidating analysis: BasicAA on sum_u8
+Invalidating analysis: AAManager on sum_u8
+Invalidating analysis: MemorySSAAnalysis on sum_u8
+Invalidating analysis: LoopAnalysis on sum_u8
+Invalidating analysis: ScalarEvolutionAnalysis on sum_u8
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on sum_u8
+Running pass: InstCombinePass on sum_u8 (15 instructions)
+Running analysis: DominatorTreeAnalysis on sum_u8
+Running analysis: AAManager on sum_u8
+Running analysis: BasicAA on sum_u8
+Invalidating analysis: DominatorTreeAnalysis on sum_u8
+Invalidating analysis: BasicAA on sum_u8
+Invalidating analysis: AAManager on sum_u8
+Running pass: PostOrderFunctionAttrsPass on (sum_u8) (1 node)
+Running analysis: AAManager on sum_u8
+Running analysis: BasicAA on sum_u8
+Running analysis: DominatorTreeAnalysis on sum_u8
+Running pass: RequireAnalysisPass<llvm::ShouldNotRunFunctionPassesAnalysis, llvm::Function, llvm::AnalysisManager<Function>> on sum_u8 (15 instructions)
+Running analysis: ShouldNotRunFunctionPassesAnalysis on sum_u8
+Running pass: CoroSplitPass on (sum_u8) (1 node)
+Running analysis: FunctionAnalysisManagerCGSCCProxy on (sum_u8_long)
+Running analysis: OuterAnalysisManagerProxy<ModuleAnalysisManager, LazyCallGraph::SCC, LazyCallGraph &> on (sum_u8_long)
+Running pass: DevirtSCCRepeatedPass on (sum_u8_long) (1 node)
+Running pass: InlinerPass on (sum_u8_long) (1 node)
+Running pass: PostOrderFunctionAttrsPass on (sum_u8_long) (1 node)
+Running pass: ArgumentPromotionPass on (sum_u8_long) (1 node)
+Running pass: OpenMPOptCGSCCPass on (sum_u8_long) (1 node)
+Running pass: SROAPass on sum_u8_long (12 instructions)
+Running analysis: DominatorTreeAnalysis on sum_u8_long
+Running pass: EarlyCSEPass on sum_u8_long (12 instructions)
+Running analysis: MemorySSAAnalysis on sum_u8_long
+Running analysis: AAManager on sum_u8_long
+Running analysis: BasicAA on sum_u8_long
+Running pass: SpeculativeExecutionPass on sum_u8_long (12 instructions)
+Running pass: JumpThreadingPass on sum_u8_long (12 instructions)
+Running analysis: LazyValueAnalysis on sum_u8_long
+Running pass: CorrelatedValuePropagationPass on sum_u8_long (12 instructions)
+Invalidating analysis: LazyValueAnalysis on sum_u8_long
+Running pass: SimplifyCFGPass on sum_u8_long (12 instructions)
+Running pass: InstCombinePass on sum_u8_long (12 instructions)
+Running pass: AggressiveInstCombinePass on sum_u8_long (12 instructions)
+Running pass: LibCallsShrinkWrapPass on sum_u8_long (12 instructions)
+Running pass: TailCallElimPass on sum_u8_long (12 instructions)
+Running pass: SimplifyCFGPass on sum_u8_long (12 instructions)
+Running pass: ReassociatePass on sum_u8_long (12 instructions)
+Running pass: ConstraintEliminationPass on sum_u8_long (12 instructions)
+Running analysis: LoopAnalysis on sum_u8_long
+Running analysis: ScalarEvolutionAnalysis on sum_u8_long
+Running pass: LoopSimplifyPass on sum_u8_long (12 instructions)
+Running pass: LCSSAPass on sum_u8_long (12 instructions)
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on sum_u8_long
+Running pass: LoopInstSimplifyPass on <unnamed loop>
+Running pass: LoopSimplifyCFGPass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: LoopRotatePass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: SimpleLoopUnswitchPass on <unnamed loop>
+Running analysis: OuterAnalysisManagerProxy<FunctionAnalysisManager, Loop, LoopStandardAnalysisResults &> on <unnamed loop>
+Running pass: SimplifyCFGPass on sum_u8_long (16 instructions)
+Clearing all analysis results for: <possibly invalidated loop>
+Invalidating analysis: DominatorTreeAnalysis on sum_u8_long
+Invalidating analysis: BasicAA on sum_u8_long
+Invalidating analysis: AAManager on sum_u8_long
+Invalidating analysis: MemorySSAAnalysis on sum_u8_long
+Invalidating analysis: LoopAnalysis on sum_u8_long
+Invalidating analysis: ScalarEvolutionAnalysis on sum_u8_long
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on sum_u8_long
+Running pass: InstCombinePass on sum_u8_long (13 instructions)
+Running analysis: DominatorTreeAnalysis on sum_u8_long
+Running analysis: AAManager on sum_u8_long
+Running analysis: BasicAA on sum_u8_long
+Running pass: LoopSimplifyPass on sum_u8_long (13 instructions)
+Running analysis: LoopAnalysis on sum_u8_long
+Running pass: LCSSAPass on sum_u8_long (15 instructions)
+Running analysis: ScalarEvolutionAnalysis on sum_u8_long
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on sum_u8_long
+Running pass: LoopIdiomRecognizePass on <unnamed loop>
+Running pass: IndVarSimplifyPass on <unnamed loop>
+Running pass: LoopDeletionPass on <unnamed loop>
+Running pass: LoopFullUnrollPass on <unnamed loop>
+Running pass: SROAPass on sum_u8_long (16 instructions)
+Running pass: VectorCombinePass on sum_u8_long (16 instructions)
+Running pass: MergedLoadStoreMotionPass on sum_u8_long (16 instructions)
+Running pass: GVNPass on sum_u8_long (16 instructions)
+Running analysis: MemoryDependenceAnalysis on sum_u8_long
+Clearing all analysis results for: <possibly invalidated loop>
+Invalidating analysis: ScalarEvolutionAnalysis on sum_u8_long
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on sum_u8_long
+Invalidating analysis: MemoryDependenceAnalysis on sum_u8_long
+Running pass: SCCPPass on sum_u8_long (15 instructions)
+Running pass: BDCEPass on sum_u8_long (15 instructions)
+Running analysis: DemandedBitsAnalysis on sum_u8_long
+Running pass: InstCombinePass on sum_u8_long (15 instructions)
+Invalidating analysis: DemandedBitsAnalysis on sum_u8_long
+Running pass: JumpThreadingPass on sum_u8_long (15 instructions)
+Running analysis: LazyValueAnalysis on sum_u8_long
+Invalidating analysis: LoopAnalysis on sum_u8_long
+Running pass: CorrelatedValuePropagationPass on sum_u8_long (14 instructions)
+Invalidating analysis: LazyValueAnalysis on sum_u8_long
+Running pass: ADCEPass on sum_u8_long (14 instructions)
+Running analysis: PostDominatorTreeAnalysis on sum_u8_long
+Running pass: MemCpyOptPass on sum_u8_long (14 instructions)
+Running analysis: MemorySSAAnalysis on sum_u8_long
+Running pass: DSEPass on sum_u8_long (14 instructions)
+Running analysis: LoopAnalysis on sum_u8_long
+Running pass: MoveAutoInitPass on sum_u8_long (14 instructions)
+Running pass: LoopSimplifyPass on sum_u8_long (14 instructions)
+Invalidating analysis: PostDominatorTreeAnalysis on sum_u8_long
+Running pass: LCSSAPass on sum_u8_long (15 instructions)
+Running analysis: ScalarEvolutionAnalysis on sum_u8_long
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on sum_u8_long
+Running pass: LICMPass on <unnamed loop>
+Running pass: CoroElidePass on sum_u8_long (16 instructions)
+Running pass: SimplifyCFGPass on sum_u8_long (16 instructions)
+Invalidating analysis: DominatorTreeAnalysis on sum_u8_long
+Invalidating analysis: BasicAA on sum_u8_long
+Invalidating analysis: AAManager on sum_u8_long
+Invalidating analysis: MemorySSAAnalysis on sum_u8_long
+Invalidating analysis: LoopAnalysis on sum_u8_long
+Invalidating analysis: ScalarEvolutionAnalysis on sum_u8_long
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on sum_u8_long
+Running pass: InstCombinePass on sum_u8_long (13 instructions)
+Running analysis: DominatorTreeAnalysis on sum_u8_long
+Running analysis: AAManager on sum_u8_long
+Running analysis: BasicAA on sum_u8_long
+Invalidating analysis: DominatorTreeAnalysis on sum_u8_long
+Invalidating analysis: BasicAA on sum_u8_long
+Invalidating analysis: AAManager on sum_u8_long
+Running pass: PostOrderFunctionAttrsPass on (sum_u8_long) (1 node)
+Running analysis: AAManager on sum_u8_long
+Running analysis: BasicAA on sum_u8_long
+Running analysis: DominatorTreeAnalysis on sum_u8_long
+Running pass: RequireAnalysisPass<llvm::ShouldNotRunFunctionPassesAnalysis, llvm::Function, llvm::AnalysisManager<Function>> on sum_u8_long (13 instructions)
+Running analysis: ShouldNotRunFunctionPassesAnalysis on sum_u8_long
+Running pass: CoroSplitPass on (sum_u8_long) (1 node)
+Running analysis: FunctionAnalysisManagerCGSCCProxy on (dot_i16_long)
+Running analysis: OuterAnalysisManagerProxy<ModuleAnalysisManager, LazyCallGraph::SCC, LazyCallGraph &> on (dot_i16_long)
+Running pass: DevirtSCCRepeatedPass on (dot_i16_long) (1 node)
+Running pass: InlinerPass on (dot_i16_long) (1 node)
+Running pass: PostOrderFunctionAttrsPass on (dot_i16_long) (1 node)
+Running pass: ArgumentPromotionPass on (dot_i16_long) (1 node)
+Running pass: OpenMPOptCGSCCPass on (dot_i16_long) (1 node)
+Running pass: SROAPass on dot_i16_long (15 instructions)
+Running analysis: DominatorTreeAnalysis on dot_i16_long
+Running pass: EarlyCSEPass on dot_i16_long (15 instructions)
+Running analysis: MemorySSAAnalysis on dot_i16_long
+Running analysis: AAManager on dot_i16_long
+Running analysis: BasicAA on dot_i16_long
+Running pass: SpeculativeExecutionPass on dot_i16_long (15 instructions)
+Running pass: JumpThreadingPass on dot_i16_long (15 instructions)
+Running analysis: LazyValueAnalysis on dot_i16_long
+Running pass: CorrelatedValuePropagationPass on dot_i16_long (15 instructions)
+Invalidating analysis: LazyValueAnalysis on dot_i16_long
+Running pass: SimplifyCFGPass on dot_i16_long (15 instructions)
+Running pass: InstCombinePass on dot_i16_long (15 instructions)
+Running pass: AggressiveInstCombinePass on dot_i16_long (15 instructions)
+Running pass: LibCallsShrinkWrapPass on dot_i16_long (15 instructions)
+Running pass: TailCallElimPass on dot_i16_long (15 instructions)
+Invalidating analysis: MemorySSAAnalysis on dot_i16_long
+Running pass: SimplifyCFGPass on dot_i16_long (15 instructions)
+Running pass: ReassociatePass on dot_i16_long (15 instructions)
+Running pass: ConstraintEliminationPass on dot_i16_long (15 instructions)
+Running analysis: LoopAnalysis on dot_i16_long
+Running analysis: ScalarEvolutionAnalysis on dot_i16_long
+Running pass: LoopSimplifyPass on dot_i16_long (15 instructions)
+Running pass: LCSSAPass on dot_i16_long (15 instructions)
+Running analysis: MemorySSAAnalysis on dot_i16_long
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_i16_long
+Running pass: LoopInstSimplifyPass on <unnamed loop>
+Running pass: LoopSimplifyCFGPass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: LoopRotatePass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: SimpleLoopUnswitchPass on <unnamed loop>
+Running analysis: OuterAnalysisManagerProxy<FunctionAnalysisManager, Loop, LoopStandardAnalysisResults &> on <unnamed loop>
+Running pass: SimplifyCFGPass on dot_i16_long (19 instructions)
+Clearing all analysis results for: <possibly invalidated loop>
+Invalidating analysis: DominatorTreeAnalysis on dot_i16_long
+Invalidating analysis: BasicAA on dot_i16_long
+Invalidating analysis: AAManager on dot_i16_long
+Invalidating analysis: LoopAnalysis on dot_i16_long
+Invalidating analysis: ScalarEvolutionAnalysis on dot_i16_long
+Invalidating analysis: MemorySSAAnalysis on dot_i16_long
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_i16_long
+Running pass: InstCombinePass on dot_i16_long (16 instructions)
+Running analysis: DominatorTreeAnalysis on dot_i16_long
+Running analysis: AAManager on dot_i16_long
+Running analysis: BasicAA on dot_i16_long
+Running pass: LoopSimplifyPass on dot_i16_long (16 instructions)
+Running analysis: LoopAnalysis on dot_i16_long
+Running pass: LCSSAPass on dot_i16_long (18 instructions)
+Running analysis: ScalarEvolutionAnalysis on dot_i16_long
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_i16_long
+Running pass: LoopIdiomRecognizePass on <unnamed loop>
+Running pass: IndVarSimplifyPass on <unnamed loop>
+Running pass: LoopDeletionPass on <unnamed loop>
+Running pass: LoopFullUnrollPass on <unnamed loop>
+Running pass: SROAPass on dot_i16_long (19 instructions)
+Running pass: VectorCombinePass on dot_i16_long (19 instructions)
+Running pass: MergedLoadStoreMotionPass on dot_i16_long (19 instructions)
+Running pass: GVNPass on dot_i16_long (19 instructions)
+Running analysis: MemoryDependenceAnalysis on dot_i16_long
+Clearing all analysis results for: <possibly invalidated loop>
+Invalidating analysis: ScalarEvolutionAnalysis on dot_i16_long
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_i16_long
+Invalidating analysis: MemoryDependenceAnalysis on dot_i16_long
+Running pass: SCCPPass on dot_i16_long (18 instructions)
+Running pass: BDCEPass on dot_i16_long (18 instructions)
+Running analysis: DemandedBitsAnalysis on dot_i16_long
+Running pass: InstCombinePass on dot_i16_long (18 instructions)
+Invalidating analysis: DemandedBitsAnalysis on dot_i16_long
+Running pass: JumpThreadingPass on dot_i16_long (18 instructions)
+Running analysis: LazyValueAnalysis on dot_i16_long
+Invalidating analysis: LoopAnalysis on dot_i16_long
+Running pass: CorrelatedValuePropagationPass on dot_i16_long (17 instructions)
+Invalidating analysis: LazyValueAnalysis on dot_i16_long
+Running pass: ADCEPass on dot_i16_long (17 instructions)
+Running analysis: PostDominatorTreeAnalysis on dot_i16_long
+Running pass: MemCpyOptPass on dot_i16_long (17 instructions)
+Running analysis: MemorySSAAnalysis on dot_i16_long
+Running pass: DSEPass on dot_i16_long (17 instructions)
+Running analysis: LoopAnalysis on dot_i16_long
+Running pass: MoveAutoInitPass on dot_i16_long (17 instructions)
+Running pass: LoopSimplifyPass on dot_i16_long (17 instructions)
+Invalidating analysis: PostDominatorTreeAnalysis on dot_i16_long
+Running pass: LCSSAPass on dot_i16_long (18 instructions)
+Running analysis: ScalarEvolutionAnalysis on dot_i16_long
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_i16_long
+Running pass: LICMPass on <unnamed loop>
+Running pass: CoroElidePass on dot_i16_long (19 instructions)
+Running pass: SimplifyCFGPass on dot_i16_long (19 instructions)
+Invalidating analysis: DominatorTreeAnalysis on dot_i16_long
+Invalidating analysis: BasicAA on dot_i16_long
+Invalidating analysis: AAManager on dot_i16_long
+Invalidating analysis: MemorySSAAnalysis on dot_i16_long
+Invalidating analysis: LoopAnalysis on dot_i16_long
+Invalidating analysis: ScalarEvolutionAnalysis on dot_i16_long
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_i16_long
+Running pass: InstCombinePass on dot_i16_long (16 instructions)
+Running analysis: DominatorTreeAnalysis on dot_i16_long
+Running analysis: AAManager on dot_i16_long
+Running analysis: BasicAA on dot_i16_long
+Invalidating analysis: DominatorTreeAnalysis on dot_i16_long
+Invalidating analysis: BasicAA on dot_i16_long
+Invalidating analysis: AAManager on dot_i16_long
+Running pass: PostOrderFunctionAttrsPass on (dot_i16_long) (1 node)
+Running analysis: AAManager on dot_i16_long
+Running analysis: BasicAA on dot_i16_long
+Running analysis: DominatorTreeAnalysis on dot_i16_long
+Running pass: RequireAnalysisPass<llvm::ShouldNotRunFunctionPassesAnalysis, llvm::Function, llvm::AnalysisManager<Function>> on dot_i16_long (16 instructions)
+Running analysis: ShouldNotRunFunctionPassesAnalysis on dot_i16_long
+Running pass: CoroSplitPass on (dot_i16_long) (1 node)
+Running analysis: FunctionAnalysisManagerCGSCCProxy on (dot_i8_f32_1024)
+Running analysis: OuterAnalysisManagerProxy<ModuleAnalysisManager, LazyCallGraph::SCC, LazyCallGraph &> on (dot_i8_f32_1024)
+Running pass: DevirtSCCRepeatedPass on (dot_i8_f32_1024) (1 node)
+Running pass: InlinerPass on (dot_i8_f32_1024) (1 node)
+Running pass: PostOrderFunctionAttrsPass on (dot_i8_f32_1024) (1 node)
+Running pass: ArgumentPromotionPass on (dot_i8_f32_1024) (1 node)
+Running pass: OpenMPOptCGSCCPass on (dot_i8_f32_1024) (1 node)
+Running pass: SROAPass on dot_i8_f32_1024 (16 instructions)
+Running analysis: DominatorTreeAnalysis on dot_i8_f32_1024
+Running pass: EarlyCSEPass on dot_i8_f32_1024 (16 instructions)
+Running analysis: MemorySSAAnalysis on dot_i8_f32_1024
+Running analysis: AAManager on dot_i8_f32_1024
+Running analysis: BasicAA on dot_i8_f32_1024
+Running pass: SpeculativeExecutionPass on dot_i8_f32_1024 (16 instructions)
+Running pass: JumpThreadingPass on dot_i8_f32_1024 (16 instructions)
+Running analysis: LazyValueAnalysis on dot_i8_f32_1024
+Running pass: CorrelatedValuePropagationPass on dot_i8_f32_1024 (16 instructions)
+Invalidating analysis: LazyValueAnalysis on dot_i8_f32_1024
+Running pass: SimplifyCFGPass on dot_i8_f32_1024 (16 instructions)
+Running pass: InstCombinePass on dot_i8_f32_1024 (16 instructions)
+Running pass: AggressiveInstCombinePass on dot_i8_f32_1024 (16 instructions)
+Running pass: LibCallsShrinkWrapPass on dot_i8_f32_1024 (16 instructions)
+Running pass: TailCallElimPass on dot_i8_f32_1024 (16 instructions)
+Invalidating analysis: MemorySSAAnalysis on dot_i8_f32_1024
+Running pass: SimplifyCFGPass on dot_i8_f32_1024 (16 instructions)
+Running pass: ReassociatePass on dot_i8_f32_1024 (16 instructions)
+Running pass: ConstraintEliminationPass on dot_i8_f32_1024 (16 instructions)
+Running analysis: LoopAnalysis on dot_i8_f32_1024
+Running analysis: ScalarEvolutionAnalysis on dot_i8_f32_1024
+Running pass: LoopSimplifyPass on dot_i8_f32_1024 (16 instructions)
+Running pass: LCSSAPass on dot_i8_f32_1024 (16 instructions)
+Running analysis: MemorySSAAnalysis on dot_i8_f32_1024
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_i8_f32_1024
+Running pass: LoopInstSimplifyPass on <unnamed loop>
+Running pass: LoopSimplifyCFGPass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: LoopRotatePass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: SimpleLoopUnswitchPass on <unnamed loop>
+Running analysis: OuterAnalysisManagerProxy<FunctionAnalysisManager, Loop, LoopStandardAnalysisResults &> on <unnamed loop>
+Running pass: SimplifyCFGPass on dot_i8_f32_1024 (16 instructions)
+Running pass: InstCombinePass on dot_i8_f32_1024 (16 instructions)
+Clearing all analysis results for: <possibly invalidated loop>
+Invalidating analysis: ScalarEvolutionAnalysis on dot_i8_f32_1024
+Invalidating analysis: MemorySSAAnalysis on dot_i8_f32_1024
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_i8_f32_1024
+Running pass: LoopSimplifyPass on dot_i8_f32_1024 (15 instructions)
+Running pass: LCSSAPass on dot_i8_f32_1024 (15 instructions)
+Running analysis: ScalarEvolutionAnalysis on dot_i8_f32_1024
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_i8_f32_1024
+Running pass: LoopIdiomRecognizePass on <unnamed loop>
+Running pass: IndVarSimplifyPass on <unnamed loop>
+Running pass: LoopDeletionPass on <unnamed loop>
+Running pass: LoopFullUnrollPass on <unnamed loop>
+Running pass: SROAPass on dot_i8_f32_1024 (15 instructions)
+Running pass: VectorCombinePass on dot_i8_f32_1024 (15 instructions)
+Running pass: MergedLoadStoreMotionPass on dot_i8_f32_1024 (15 instructions)
+Running pass: GVNPass on dot_i8_f32_1024 (15 instructions)
+Running analysis: MemoryDependenceAnalysis on dot_i8_f32_1024
+Clearing all analysis results for: <possibly invalidated loop>
+Invalidating analysis: ScalarEvolutionAnalysis on dot_i8_f32_1024
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_i8_f32_1024
+Invalidating analysis: MemoryDependenceAnalysis on dot_i8_f32_1024
+Running pass: SCCPPass on dot_i8_f32_1024 (14 instructions)
+Running pass: BDCEPass on dot_i8_f32_1024 (14 instructions)
+Running analysis: DemandedBitsAnalysis on dot_i8_f32_1024
+Running pass: InstCombinePass on dot_i8_f32_1024 (14 instructions)
+Invalidating analysis: DemandedBitsAnalysis on dot_i8_f32_1024
+Running pass: JumpThreadingPass on dot_i8_f32_1024 (14 instructions)
+Running analysis: LazyValueAnalysis on dot_i8_f32_1024
+Running pass: CorrelatedValuePropagationPass on dot_i8_f32_1024 (14 instructions)
+Invalidating analysis: LazyValueAnalysis on dot_i8_f32_1024
+Running pass: ADCEPass on dot_i8_f32_1024 (14 instructions)
+Running analysis: PostDominatorTreeAnalysis on dot_i8_f32_1024
+Running pass: MemCpyOptPass on dot_i8_f32_1024 (14 instructions)
+Running analysis: MemorySSAAnalysis on dot_i8_f32_1024
+Running pass: DSEPass on dot_i8_f32_1024 (14 instructions)
+Running pass: MoveAutoInitPass on dot_i8_f32_1024 (14 instructions)
+Running pass: LoopSimplifyPass on dot_i8_f32_1024 (14 instructions)
+Running pass: LCSSAPass on dot_i8_f32_1024 (14 instructions)
+Running analysis: ScalarEvolutionAnalysis on dot_i8_f32_1024
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_i8_f32_1024
+Running pass: LICMPass on <unnamed loop>
+Running pass: CoroElidePass on dot_i8_f32_1024 (15 instructions)
+Running pass: SimplifyCFGPass on dot_i8_f32_1024 (15 instructions)
+Running pass: InstCombinePass on dot_i8_f32_1024 (15 instructions)
+Invalidating analysis: MemorySSAAnalysis on dot_i8_f32_1024
+Invalidating analysis: ScalarEvolutionAnalysis on dot_i8_f32_1024
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_i8_f32_1024
+Invalidating analysis: DominatorTreeAnalysis on dot_i8_f32_1024
+Invalidating analysis: BasicAA on dot_i8_f32_1024
+Invalidating analysis: AAManager on dot_i8_f32_1024
+Invalidating analysis: LoopAnalysis on dot_i8_f32_1024
+Invalidating analysis: PostDominatorTreeAnalysis on dot_i8_f32_1024
+Running pass: PostOrderFunctionAttrsPass on (dot_i8_f32_1024) (1 node)
+Running analysis: AAManager on dot_i8_f32_1024
+Running analysis: BasicAA on dot_i8_f32_1024
+Running analysis: DominatorTreeAnalysis on dot_i8_f32_1024
+Running pass: RequireAnalysisPass<llvm::ShouldNotRunFunctionPassesAnalysis, llvm::Function, llvm::AnalysisManager<Function>> on dot_i8_f32_1024 (14 instructions)
+Running analysis: ShouldNotRunFunctionPassesAnalysis on dot_i8_f32_1024
+Running pass: CoroSplitPass on (dot_i8_f32_1024) (1 node)
+Running analysis: FunctionAnalysisManagerCGSCCProxy on (dot_i8_f32_2048)
+Running analysis: OuterAnalysisManagerProxy<ModuleAnalysisManager, LazyCallGraph::SCC, LazyCallGraph &> on (dot_i8_f32_2048)
+Running pass: DevirtSCCRepeatedPass on (dot_i8_f32_2048) (1 node)
+Running pass: InlinerPass on (dot_i8_f32_2048) (1 node)
+Running pass: PostOrderFunctionAttrsPass on (dot_i8_f32_2048) (1 node)
+Running pass: ArgumentPromotionPass on (dot_i8_f32_2048) (1 node)
+Running pass: OpenMPOptCGSCCPass on (dot_i8_f32_2048) (1 node)
+Running pass: SROAPass on dot_i8_f32_2048 (16 instructions)
+Running analysis: DominatorTreeAnalysis on dot_i8_f32_2048
+Running pass: EarlyCSEPass on dot_i8_f32_2048 (16 instructions)
+Running analysis: MemorySSAAnalysis on dot_i8_f32_2048
+Running analysis: AAManager on dot_i8_f32_2048
+Running analysis: BasicAA on dot_i8_f32_2048
+Running pass: SpeculativeExecutionPass on dot_i8_f32_2048 (16 instructions)
+Running pass: JumpThreadingPass on dot_i8_f32_2048 (16 instructions)
+Running analysis: LazyValueAnalysis on dot_i8_f32_2048
+Running pass: CorrelatedValuePropagationPass on dot_i8_f32_2048 (16 instructions)
+Invalidating analysis: LazyValueAnalysis on dot_i8_f32_2048
+Running pass: SimplifyCFGPass on dot_i8_f32_2048 (16 instructions)
+Running pass: InstCombinePass on dot_i8_f32_2048 (16 instructions)
+Running pass: AggressiveInstCombinePass on dot_i8_f32_2048 (16 instructions)
+Running pass: LibCallsShrinkWrapPass on dot_i8_f32_2048 (16 instructions)
+Running pass: TailCallElimPass on dot_i8_f32_2048 (16 instructions)
+Invalidating analysis: MemorySSAAnalysis on dot_i8_f32_2048
+Running pass: SimplifyCFGPass on dot_i8_f32_2048 (16 instructions)
+Running pass: ReassociatePass on dot_i8_f32_2048 (16 instructions)
+Running pass: ConstraintEliminationPass on dot_i8_f32_2048 (16 instructions)
+Running analysis: LoopAnalysis on dot_i8_f32_2048
+Running analysis: ScalarEvolutionAnalysis on dot_i8_f32_2048
+Running pass: LoopSimplifyPass on dot_i8_f32_2048 (16 instructions)
+Running pass: LCSSAPass on dot_i8_f32_2048 (16 instructions)
+Running analysis: MemorySSAAnalysis on dot_i8_f32_2048
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_i8_f32_2048
+Running pass: LoopInstSimplifyPass on <unnamed loop>
+Running pass: LoopSimplifyCFGPass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: LoopRotatePass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: SimpleLoopUnswitchPass on <unnamed loop>
+Running analysis: OuterAnalysisManagerProxy<FunctionAnalysisManager, Loop, LoopStandardAnalysisResults &> on <unnamed loop>
+Running pass: SimplifyCFGPass on dot_i8_f32_2048 (16 instructions)
+Running pass: InstCombinePass on dot_i8_f32_2048 (16 instructions)
+Clearing all analysis results for: <possibly invalidated loop>
+Invalidating analysis: ScalarEvolutionAnalysis on dot_i8_f32_2048
+Invalidating analysis: MemorySSAAnalysis on dot_i8_f32_2048
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_i8_f32_2048
+Running pass: LoopSimplifyPass on dot_i8_f32_2048 (15 instructions)
+Running pass: LCSSAPass on dot_i8_f32_2048 (15 instructions)
+Running analysis: ScalarEvolutionAnalysis on dot_i8_f32_2048
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_i8_f32_2048
+Running pass: LoopIdiomRecognizePass on <unnamed loop>
+Running pass: IndVarSimplifyPass on <unnamed loop>
+Running pass: LoopDeletionPass on <unnamed loop>
+Running pass: LoopFullUnrollPass on <unnamed loop>
+Running pass: SROAPass on dot_i8_f32_2048 (15 instructions)
+Running pass: VectorCombinePass on dot_i8_f32_2048 (15 instructions)
+Running pass: MergedLoadStoreMotionPass on dot_i8_f32_2048 (15 instructions)
+Running pass: GVNPass on dot_i8_f32_2048 (15 instructions)
+Running analysis: MemoryDependenceAnalysis on dot_i8_f32_2048
+Clearing all analysis results for: <possibly invalidated loop>
+Invalidating analysis: ScalarEvolutionAnalysis on dot_i8_f32_2048
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_i8_f32_2048
+Invalidating analysis: MemoryDependenceAnalysis on dot_i8_f32_2048
+Running pass: SCCPPass on dot_i8_f32_2048 (14 instructions)
+Running pass: BDCEPass on dot_i8_f32_2048 (14 instructions)
+Running analysis: DemandedBitsAnalysis on dot_i8_f32_2048
+Running pass: InstCombinePass on dot_i8_f32_2048 (14 instructions)
+Invalidating analysis: DemandedBitsAnalysis on dot_i8_f32_2048
+Running pass: JumpThreadingPass on dot_i8_f32_2048 (14 instructions)
+Running analysis: LazyValueAnalysis on dot_i8_f32_2048
+Running pass: CorrelatedValuePropagationPass on dot_i8_f32_2048 (14 instructions)
+Invalidating analysis: LazyValueAnalysis on dot_i8_f32_2048
+Running pass: ADCEPass on dot_i8_f32_2048 (14 instructions)
+Running analysis: PostDominatorTreeAnalysis on dot_i8_f32_2048
+Running pass: MemCpyOptPass on dot_i8_f32_2048 (14 instructions)
+Running analysis: MemorySSAAnalysis on dot_i8_f32_2048
+Running pass: DSEPass on dot_i8_f32_2048 (14 instructions)
+Running pass: MoveAutoInitPass on dot_i8_f32_2048 (14 instructions)
+Running pass: LoopSimplifyPass on dot_i8_f32_2048 (14 instructions)
+Running pass: LCSSAPass on dot_i8_f32_2048 (14 instructions)
+Running analysis: ScalarEvolutionAnalysis on dot_i8_f32_2048
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_i8_f32_2048
+Running pass: LICMPass on <unnamed loop>
+Running pass: CoroElidePass on dot_i8_f32_2048 (15 instructions)
+Running pass: SimplifyCFGPass on dot_i8_f32_2048 (15 instructions)
+Running pass: InstCombinePass on dot_i8_f32_2048 (15 instructions)
+Invalidating analysis: MemorySSAAnalysis on dot_i8_f32_2048
+Invalidating analysis: ScalarEvolutionAnalysis on dot_i8_f32_2048
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_i8_f32_2048
+Invalidating analysis: DominatorTreeAnalysis on dot_i8_f32_2048
+Invalidating analysis: BasicAA on dot_i8_f32_2048
+Invalidating analysis: AAManager on dot_i8_f32_2048
+Invalidating analysis: LoopAnalysis on dot_i8_f32_2048
+Invalidating analysis: PostDominatorTreeAnalysis on dot_i8_f32_2048
+Running pass: PostOrderFunctionAttrsPass on (dot_i8_f32_2048) (1 node)
+Running analysis: AAManager on dot_i8_f32_2048
+Running analysis: BasicAA on dot_i8_f32_2048
+Running analysis: DominatorTreeAnalysis on dot_i8_f32_2048
+Running pass: RequireAnalysisPass<llvm::ShouldNotRunFunctionPassesAnalysis, llvm::Function, llvm::AnalysisManager<Function>> on dot_i8_f32_2048 (14 instructions)
+Running analysis: ShouldNotRunFunctionPassesAnalysis on dot_i8_f32_2048
+Running pass: CoroSplitPass on (dot_i8_f32_2048) (1 node)
+Running analysis: FunctionAnalysisManagerCGSCCProxy on (dot_real)
+Running analysis: OuterAnalysisManagerProxy<ModuleAnalysisManager, LazyCallGraph::SCC, LazyCallGraph &> on (dot_real)
+Running pass: DevirtSCCRepeatedPass on (dot_real) (1 node)
+Running pass: InlinerPass on (dot_real) (1 node)
+Running pass: PostOrderFunctionAttrsPass on (dot_real) (1 node)
+Running pass: ArgumentPromotionPass on (dot_real) (1 node)
+Running pass: OpenMPOptCGSCCPass on (dot_real) (1 node)
+Running pass: SROAPass on dot_real (14 instructions)
+Running analysis: DominatorTreeAnalysis on dot_real
+Running pass: EarlyCSEPass on dot_real (14 instructions)
+Running analysis: MemorySSAAnalysis on dot_real
+Running analysis: AAManager on dot_real
+Running analysis: BasicAA on dot_real
+Running pass: SpeculativeExecutionPass on dot_real (14 instructions)
+Running pass: JumpThreadingPass on dot_real (14 instructions)
+Running analysis: LazyValueAnalysis on dot_real
+Running pass: CorrelatedValuePropagationPass on dot_real (14 instructions)
+Invalidating analysis: LazyValueAnalysis on dot_real
+Running pass: SimplifyCFGPass on dot_real (14 instructions)
+Running pass: InstCombinePass on dot_real (14 instructions)
+Running pass: AggressiveInstCombinePass on dot_real (14 instructions)
+Running pass: LibCallsShrinkWrapPass on dot_real (14 instructions)
+Running pass: TailCallElimPass on dot_real (14 instructions)
+Invalidating analysis: MemorySSAAnalysis on dot_real
+Running pass: SimplifyCFGPass on dot_real (14 instructions)
+Running pass: ReassociatePass on dot_real (14 instructions)
+Running pass: ConstraintEliminationPass on dot_real (14 instructions)
+Running analysis: LoopAnalysis on dot_real
+Running analysis: ScalarEvolutionAnalysis on dot_real
+Running pass: LoopSimplifyPass on dot_real (14 instructions)
+Running pass: LCSSAPass on dot_real (14 instructions)
+Running analysis: MemorySSAAnalysis on dot_real
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_real
+Running pass: LoopInstSimplifyPass on <unnamed loop>
+Running pass: LoopSimplifyCFGPass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: LoopRotatePass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: SimpleLoopUnswitchPass on <unnamed loop>
+Running analysis: OuterAnalysisManagerProxy<FunctionAnalysisManager, Loop, LoopStandardAnalysisResults &> on <unnamed loop>
+Running pass: SimplifyCFGPass on dot_real (18 instructions)
+Clearing all analysis results for: <possibly invalidated loop>
+Invalidating analysis: DominatorTreeAnalysis on dot_real
+Invalidating analysis: BasicAA on dot_real
+Invalidating analysis: AAManager on dot_real
+Invalidating analysis: LoopAnalysis on dot_real
+Invalidating analysis: ScalarEvolutionAnalysis on dot_real
+Invalidating analysis: MemorySSAAnalysis on dot_real
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_real
+Running pass: InstCombinePass on dot_real (15 instructions)
+Running analysis: DominatorTreeAnalysis on dot_real
+Running analysis: AAManager on dot_real
+Running analysis: BasicAA on dot_real
+Running pass: LoopSimplifyPass on dot_real (15 instructions)
+Running analysis: LoopAnalysis on dot_real
+Running pass: LCSSAPass on dot_real (17 instructions)
+Running analysis: ScalarEvolutionAnalysis on dot_real
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_real
+Running pass: LoopIdiomRecognizePass on <unnamed loop>
+Running pass: IndVarSimplifyPass on <unnamed loop>
+Running pass: LoopDeletionPass on <unnamed loop>
+Running pass: LoopFullUnrollPass on <unnamed loop>
+Running pass: SROAPass on dot_real (18 instructions)
+Running pass: VectorCombinePass on dot_real (18 instructions)
+Running pass: MergedLoadStoreMotionPass on dot_real (18 instructions)
+Running pass: GVNPass on dot_real (18 instructions)
+Running analysis: MemoryDependenceAnalysis on dot_real
+Clearing all analysis results for: <possibly invalidated loop>
+Invalidating analysis: ScalarEvolutionAnalysis on dot_real
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_real
+Invalidating analysis: MemoryDependenceAnalysis on dot_real
+Running pass: SCCPPass on dot_real (17 instructions)
+Running pass: BDCEPass on dot_real (17 instructions)
+Running analysis: DemandedBitsAnalysis on dot_real
+Running pass: InstCombinePass on dot_real (17 instructions)
+Invalidating analysis: DemandedBitsAnalysis on dot_real
+Running pass: JumpThreadingPass on dot_real (17 instructions)
+Running analysis: LazyValueAnalysis on dot_real
+Invalidating analysis: LoopAnalysis on dot_real
+Running pass: CorrelatedValuePropagationPass on dot_real (16 instructions)
+Invalidating analysis: LazyValueAnalysis on dot_real
+Running pass: ADCEPass on dot_real (16 instructions)
+Running analysis: PostDominatorTreeAnalysis on dot_real
+Running pass: MemCpyOptPass on dot_real (16 instructions)
+Running analysis: MemorySSAAnalysis on dot_real
+Running pass: DSEPass on dot_real (16 instructions)
+Running analysis: LoopAnalysis on dot_real
+Running pass: MoveAutoInitPass on dot_real (16 instructions)
+Running pass: LoopSimplifyPass on dot_real (16 instructions)
+Invalidating analysis: PostDominatorTreeAnalysis on dot_real
+Running pass: LCSSAPass on dot_real (17 instructions)
+Running analysis: ScalarEvolutionAnalysis on dot_real
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_real
+Running pass: LICMPass on <unnamed loop>
+Running pass: CoroElidePass on dot_real (18 instructions)
+Running pass: SimplifyCFGPass on dot_real (18 instructions)
+Invalidating analysis: DominatorTreeAnalysis on dot_real
+Invalidating analysis: BasicAA on dot_real
+Invalidating analysis: AAManager on dot_real
+Invalidating analysis: MemorySSAAnalysis on dot_real
+Invalidating analysis: LoopAnalysis on dot_real
+Invalidating analysis: ScalarEvolutionAnalysis on dot_real
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_real
+Running pass: InstCombinePass on dot_real (16 instructions)
+Running analysis: DominatorTreeAnalysis on dot_real
+Running analysis: AAManager on dot_real
+Running analysis: BasicAA on dot_real
+Invalidating analysis: DominatorTreeAnalysis on dot_real
+Invalidating analysis: BasicAA on dot_real
+Invalidating analysis: AAManager on dot_real
+Running pass: PostOrderFunctionAttrsPass on (dot_real) (1 node)
+Running analysis: AAManager on dot_real
+Running analysis: BasicAA on dot_real
+Running analysis: DominatorTreeAnalysis on dot_real
+Running pass: RequireAnalysisPass<llvm::ShouldNotRunFunctionPassesAnalysis, llvm::Function, llvm::AnalysisManager<Function>> on dot_real (16 instructions)
+Running analysis: ShouldNotRunFunctionPassesAnalysis on dot_real
+Running pass: CoroSplitPass on (dot_real) (1 node)
+Running analysis: FunctionAnalysisManagerCGSCCProxy on (sum2d_u8)
+Running analysis: OuterAnalysisManagerProxy<ModuleAnalysisManager, LazyCallGraph::SCC, LazyCallGraph &> on (sum2d_u8)
+Running pass: DevirtSCCRepeatedPass on (sum2d_u8) (1 node)
+Running pass: InlinerPass on (sum2d_u8) (1 node)
+Running pass: PostOrderFunctionAttrsPass on (sum2d_u8) (1 node)
+Running pass: ArgumentPromotionPass on (sum2d_u8) (1 node)
+Running pass: OpenMPOptCGSCCPass on (sum2d_u8) (1 node)
+Running pass: SROAPass on sum2d_u8 (23 instructions)
+Running analysis: DominatorTreeAnalysis on sum2d_u8
+Running pass: EarlyCSEPass on sum2d_u8 (23 instructions)
+Running analysis: MemorySSAAnalysis on sum2d_u8
+Running analysis: AAManager on sum2d_u8
+Running analysis: BasicAA on sum2d_u8
+Running pass: SpeculativeExecutionPass on sum2d_u8 (23 instructions)
+Running pass: JumpThreadingPass on sum2d_u8 (23 instructions)
+Running analysis: LazyValueAnalysis on sum2d_u8
+Running pass: CorrelatedValuePropagationPass on sum2d_u8 (23 instructions)
+Invalidating analysis: LazyValueAnalysis on sum2d_u8
+Running pass: SimplifyCFGPass on sum2d_u8 (23 instructions)
+Running pass: InstCombinePass on sum2d_u8 (23 instructions)
+Running pass: AggressiveInstCombinePass on sum2d_u8 (23 instructions)
+Running pass: LibCallsShrinkWrapPass on sum2d_u8 (23 instructions)
+Running pass: TailCallElimPass on sum2d_u8 (23 instructions)
+Running pass: SimplifyCFGPass on sum2d_u8 (23 instructions)
+Running pass: ReassociatePass on sum2d_u8 (23 instructions)
+Invalidating analysis: MemorySSAAnalysis on sum2d_u8
+Running pass: ConstraintEliminationPass on sum2d_u8 (23 instructions)
+Running analysis: LoopAnalysis on sum2d_u8
+Running analysis: ScalarEvolutionAnalysis on sum2d_u8
+Running pass: LoopSimplifyPass on sum2d_u8 (23 instructions)
+Running pass: LCSSAPass on sum2d_u8 (24 instructions)
+Running analysis: MemorySSAAnalysis on sum2d_u8
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on sum2d_u8
+Running pass: LoopInstSimplifyPass on <unnamed loop>
+Running pass: LoopSimplifyCFGPass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: LoopRotatePass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: SimpleLoopUnswitchPass on <unnamed loop>
+Running analysis: OuterAnalysisManagerProxy<FunctionAnalysisManager, Loop, LoopStandardAnalysisResults &> on <unnamed loop>
+Running pass: LoopInstSimplifyPass on <unnamed loop>
+Running pass: LoopSimplifyCFGPass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: LoopRotatePass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: SimpleLoopUnswitchPass on <unnamed loop>
+Running analysis: OuterAnalysisManagerProxy<FunctionAnalysisManager, Loop, LoopStandardAnalysisResults &> on <unnamed loop>
+Clearing all analysis results for: <unnamed loop>
+Running pass: LoopInstSimplifyPass on <unnamed loop>
+Running pass: LoopSimplifyCFGPass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: LoopRotatePass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: SimpleLoopUnswitchPass on <unnamed loop>
+Running pass: LoopInstSimplifyPass on <unnamed loop>
+Running pass: LoopSimplifyCFGPass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: LoopRotatePass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: SimpleLoopUnswitchPass on <unnamed loop>
+Running analysis: OuterAnalysisManagerProxy<FunctionAnalysisManager, Loop, LoopStandardAnalysisResults &> on <unnamed loop>
+Running pass: LoopInstSimplifyPass on <unnamed loop>
+Running pass: LoopSimplifyCFGPass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: LoopRotatePass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: SimpleLoopUnswitchPass on <unnamed loop>
+Running analysis: OuterAnalysisManagerProxy<FunctionAnalysisManager, Loop, LoopStandardAnalysisResults &> on <unnamed loop>
+Running pass: SimplifyCFGPass on sum2d_u8 (39 instructions)
+Clearing all analysis results for: <possibly invalidated loop>
+Clearing all analysis results for: <possibly invalidated loop>
+Clearing all analysis results for: <possibly invalidated loop>
+Invalidating analysis: DominatorTreeAnalysis on sum2d_u8
+Invalidating analysis: BasicAA on sum2d_u8
+Invalidating analysis: AAManager on sum2d_u8
+Invalidating analysis: LoopAnalysis on sum2d_u8
+Invalidating analysis: ScalarEvolutionAnalysis on sum2d_u8
+Invalidating analysis: MemorySSAAnalysis on sum2d_u8
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on sum2d_u8
+Running pass: InstCombinePass on sum2d_u8 (31 instructions)
+Running analysis: DominatorTreeAnalysis on sum2d_u8
+Running analysis: AAManager on sum2d_u8
+Running analysis: BasicAA on sum2d_u8
+Running pass: LoopSimplifyPass on sum2d_u8 (30 instructions)
+Running analysis: LoopAnalysis on sum2d_u8
+Running pass: LCSSAPass on sum2d_u8 (34 instructions)
+Running analysis: ScalarEvolutionAnalysis on sum2d_u8
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on sum2d_u8
+Running pass: LoopIdiomRecognizePass on <unnamed loop>
+Running pass: IndVarSimplifyPass on <unnamed loop>
+Running pass: LoopDeletionPass on <unnamed loop>
+Clearing all analysis results for: <unnamed loop>
+Running pass: LoopIdiomRecognizePass on <unnamed loop>
+Running pass: IndVarSimplifyPass on <unnamed loop>
+Running pass: LoopDeletionPass on <unnamed loop>
+Running pass: LoopFullUnrollPass on <unnamed loop>
+Running pass: LoopIdiomRecognizePass on <unnamed loop>
+Running pass: IndVarSimplifyPass on <unnamed loop>
+Running pass: LoopDeletionPass on <unnamed loop>
+Running pass: LoopFullUnrollPass on <unnamed loop>
+Running pass: SROAPass on sum2d_u8 (32 instructions)
+Running pass: VectorCombinePass on sum2d_u8 (32 instructions)
+Running pass: MergedLoadStoreMotionPass on sum2d_u8 (32 instructions)
+Running pass: GVNPass on sum2d_u8 (32 instructions)
+Running analysis: MemoryDependenceAnalysis on sum2d_u8
+Clearing all analysis results for: <possibly invalidated loop>
+Clearing all analysis results for: <possibly invalidated loop>
+Invalidating analysis: ScalarEvolutionAnalysis on sum2d_u8
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on sum2d_u8
+Invalidating analysis: MemoryDependenceAnalysis on sum2d_u8
+Running pass: SCCPPass on sum2d_u8 (29 instructions)
+Running pass: BDCEPass on sum2d_u8 (29 instructions)
+Running analysis: DemandedBitsAnalysis on sum2d_u8
+Running pass: InstCombinePass on sum2d_u8 (29 instructions)
+Invalidating analysis: DemandedBitsAnalysis on sum2d_u8
+Running pass: JumpThreadingPass on sum2d_u8 (29 instructions)
+Running analysis: LazyValueAnalysis on sum2d_u8
+Invalidating analysis: LoopAnalysis on sum2d_u8
+Running pass: CorrelatedValuePropagationPass on sum2d_u8 (27 instructions)
+Invalidating analysis: LazyValueAnalysis on sum2d_u8
+Running pass: ADCEPass on sum2d_u8 (27 instructions)
+Running analysis: PostDominatorTreeAnalysis on sum2d_u8
+Running pass: MemCpyOptPass on sum2d_u8 (27 instructions)
+Running analysis: MemorySSAAnalysis on sum2d_u8
+Running pass: DSEPass on sum2d_u8 (27 instructions)
+Running analysis: LoopAnalysis on sum2d_u8
+Running pass: MoveAutoInitPass on sum2d_u8 (27 instructions)
+Running pass: LoopSimplifyPass on sum2d_u8 (27 instructions)
+Invalidating analysis: PostDominatorTreeAnalysis on sum2d_u8
+Running pass: LCSSAPass on sum2d_u8 (28 instructions)
+Running analysis: ScalarEvolutionAnalysis on sum2d_u8
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on sum2d_u8
+Running pass: LICMPass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: CoroElidePass on sum2d_u8 (30 instructions)
+Running pass: SimplifyCFGPass on sum2d_u8 (30 instructions)
+Invalidating analysis: DominatorTreeAnalysis on sum2d_u8
+Invalidating analysis: BasicAA on sum2d_u8
+Invalidating analysis: AAManager on sum2d_u8
+Invalidating analysis: MemorySSAAnalysis on sum2d_u8
+Invalidating analysis: LoopAnalysis on sum2d_u8
+Invalidating analysis: ScalarEvolutionAnalysis on sum2d_u8
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on sum2d_u8
+Running pass: InstCombinePass on sum2d_u8 (28 instructions)
+Running analysis: DominatorTreeAnalysis on sum2d_u8
+Running analysis: AAManager on sum2d_u8
+Running analysis: BasicAA on sum2d_u8
+Invalidating analysis: DominatorTreeAnalysis on sum2d_u8
+Invalidating analysis: BasicAA on sum2d_u8
+Invalidating analysis: AAManager on sum2d_u8
+Running pass: PostOrderFunctionAttrsPass on (sum2d_u8) (1 node)
+Running analysis: AAManager on sum2d_u8
+Running analysis: BasicAA on sum2d_u8
+Running analysis: DominatorTreeAnalysis on sum2d_u8
+Running pass: RequireAnalysisPass<llvm::ShouldNotRunFunctionPassesAnalysis, llvm::Function, llvm::AnalysisManager<Function>> on sum2d_u8 (27 instructions)
+Running analysis: ShouldNotRunFunctionPassesAnalysis on sum2d_u8
+Running pass: CoroSplitPass on (sum2d_u8) (1 node)
+Running analysis: FunctionAnalysisManagerCGSCCProxy on (cond_sum)
+Running analysis: OuterAnalysisManagerProxy<ModuleAnalysisManager, LazyCallGraph::SCC, LazyCallGraph &> on (cond_sum)
+Running pass: DevirtSCCRepeatedPass on (cond_sum) (1 node)
+Running pass: InlinerPass on (cond_sum) (1 node)
+Running pass: PostOrderFunctionAttrsPass on (cond_sum) (1 node)
+Running pass: ArgumentPromotionPass on (cond_sum) (1 node)
+Running pass: OpenMPOptCGSCCPass on (cond_sum) (1 node)
+Running pass: SROAPass on cond_sum (15 instructions)
+Running analysis: DominatorTreeAnalysis on cond_sum
+Running pass: EarlyCSEPass on cond_sum (15 instructions)
+Running analysis: MemorySSAAnalysis on cond_sum
+Running analysis: AAManager on cond_sum
+Running analysis: BasicAA on cond_sum
+Running pass: SpeculativeExecutionPass on cond_sum (15 instructions)
+Running pass: JumpThreadingPass on cond_sum (15 instructions)
+Running analysis: LazyValueAnalysis on cond_sum
+Running pass: CorrelatedValuePropagationPass on cond_sum (15 instructions)
+Invalidating analysis: LazyValueAnalysis on cond_sum
+Running pass: SimplifyCFGPass on cond_sum (15 instructions)
+Running pass: InstCombinePass on cond_sum (15 instructions)
+Invalidating analysis: MemorySSAAnalysis on cond_sum
+Running pass: AggressiveInstCombinePass on cond_sum (15 instructions)
+Running pass: LibCallsShrinkWrapPass on cond_sum (15 instructions)
+Running pass: TailCallElimPass on cond_sum (15 instructions)
+Running pass: SimplifyCFGPass on cond_sum (15 instructions)
+Running pass: ReassociatePass on cond_sum (15 instructions)
+Running pass: ConstraintEliminationPass on cond_sum (15 instructions)
+Running analysis: LoopAnalysis on cond_sum
+Running analysis: ScalarEvolutionAnalysis on cond_sum
+Running pass: LoopSimplifyPass on cond_sum (15 instructions)
+Running pass: LCSSAPass on cond_sum (15 instructions)
+Running analysis: MemorySSAAnalysis on cond_sum
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on cond_sum
+Running pass: LoopInstSimplifyPass on <unnamed loop>
+Running pass: LoopSimplifyCFGPass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: LoopRotatePass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: SimpleLoopUnswitchPass on <unnamed loop>
+Running analysis: OuterAnalysisManagerProxy<FunctionAnalysisManager, Loop, LoopStandardAnalysisResults &> on <unnamed loop>
+Running pass: SimplifyCFGPass on cond_sum (19 instructions)
+Clearing all analysis results for: <possibly invalidated loop>
+Invalidating analysis: DominatorTreeAnalysis on cond_sum
+Invalidating analysis: BasicAA on cond_sum
+Invalidating analysis: AAManager on cond_sum
+Invalidating analysis: LoopAnalysis on cond_sum
+Invalidating analysis: ScalarEvolutionAnalysis on cond_sum
+Invalidating analysis: MemorySSAAnalysis on cond_sum
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on cond_sum
+Running pass: InstCombinePass on cond_sum (16 instructions)
+Running analysis: DominatorTreeAnalysis on cond_sum
+Running analysis: AAManager on cond_sum
+Running analysis: BasicAA on cond_sum
+Running pass: LoopSimplifyPass on cond_sum (16 instructions)
+Running analysis: LoopAnalysis on cond_sum
+Running pass: LCSSAPass on cond_sum (18 instructions)
+Running analysis: ScalarEvolutionAnalysis on cond_sum
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on cond_sum
+Running pass: LoopIdiomRecognizePass on <unnamed loop>
+Running pass: IndVarSimplifyPass on <unnamed loop>
+Running pass: LoopDeletionPass on <unnamed loop>
+Running pass: LoopFullUnrollPass on <unnamed loop>
+Running pass: SROAPass on cond_sum (19 instructions)
+Running pass: VectorCombinePass on cond_sum (19 instructions)
+Running pass: MergedLoadStoreMotionPass on cond_sum (19 instructions)
+Running pass: GVNPass on cond_sum (19 instructions)
+Running analysis: MemoryDependenceAnalysis on cond_sum
+Clearing all analysis results for: <possibly invalidated loop>
+Invalidating analysis: ScalarEvolutionAnalysis on cond_sum
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on cond_sum
+Invalidating analysis: MemoryDependenceAnalysis on cond_sum
+Running pass: SCCPPass on cond_sum (18 instructions)
+Running pass: BDCEPass on cond_sum (18 instructions)
+Running analysis: DemandedBitsAnalysis on cond_sum
+Running pass: InstCombinePass on cond_sum (18 instructions)
+Invalidating analysis: DemandedBitsAnalysis on cond_sum
+Running pass: JumpThreadingPass on cond_sum (18 instructions)
+Running analysis: LazyValueAnalysis on cond_sum
+Invalidating analysis: LoopAnalysis on cond_sum
+Running pass: CorrelatedValuePropagationPass on cond_sum (17 instructions)
+Invalidating analysis: LazyValueAnalysis on cond_sum
+Running pass: ADCEPass on cond_sum (17 instructions)
+Running analysis: PostDominatorTreeAnalysis on cond_sum
+Running pass: MemCpyOptPass on cond_sum (17 instructions)
+Running analysis: MemorySSAAnalysis on cond_sum
+Running pass: DSEPass on cond_sum (17 instructions)
+Running analysis: LoopAnalysis on cond_sum
+Running pass: MoveAutoInitPass on cond_sum (17 instructions)
+Running pass: LoopSimplifyPass on cond_sum (17 instructions)
+Invalidating analysis: PostDominatorTreeAnalysis on cond_sum
+Running pass: LCSSAPass on cond_sum (18 instructions)
+Running analysis: ScalarEvolutionAnalysis on cond_sum
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on cond_sum
+Running pass: LICMPass on <unnamed loop>
+Running pass: CoroElidePass on cond_sum (19 instructions)
+Running pass: SimplifyCFGPass on cond_sum (19 instructions)
+Invalidating analysis: DominatorTreeAnalysis on cond_sum
+Invalidating analysis: BasicAA on cond_sum
+Invalidating analysis: AAManager on cond_sum
+Invalidating analysis: MemorySSAAnalysis on cond_sum
+Invalidating analysis: LoopAnalysis on cond_sum
+Invalidating analysis: ScalarEvolutionAnalysis on cond_sum
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on cond_sum
+Running pass: InstCombinePass on cond_sum (17 instructions)
+Running analysis: DominatorTreeAnalysis on cond_sum
+Running analysis: AAManager on cond_sum
+Running analysis: BasicAA on cond_sum
+Invalidating analysis: DominatorTreeAnalysis on cond_sum
+Invalidating analysis: BasicAA on cond_sum
+Invalidating analysis: AAManager on cond_sum
+Running pass: PostOrderFunctionAttrsPass on (cond_sum) (1 node)
+Running analysis: AAManager on cond_sum
+Running analysis: BasicAA on cond_sum
+Running analysis: DominatorTreeAnalysis on cond_sum
+Running pass: RequireAnalysisPass<llvm::ShouldNotRunFunctionPassesAnalysis, llvm::Function, llvm::AnalysisManager<Function>> on cond_sum (17 instructions)
+Running analysis: ShouldNotRunFunctionPassesAnalysis on cond_sum
+Running pass: CoroSplitPass on (cond_sum) (1 node)
+Running analysis: FunctionAnalysisManagerCGSCCProxy on (two_sums)
+Running analysis: OuterAnalysisManagerProxy<ModuleAnalysisManager, LazyCallGraph::SCC, LazyCallGraph &> on (two_sums)
+Running pass: DevirtSCCRepeatedPass on (two_sums) (1 node)
+Running pass: InlinerPass on (two_sums) (1 node)
+Running pass: PostOrderFunctionAttrsPass on (two_sums) (1 node)
+Running pass: ArgumentPromotionPass on (two_sums) (1 node)
+Running pass: OpenMPOptCGSCCPass on (two_sums) (1 node)
+Running pass: SROAPass on two_sums (17 instructions)
+Running analysis: DominatorTreeAnalysis on two_sums
+Running pass: EarlyCSEPass on two_sums (17 instructions)
+Running analysis: MemorySSAAnalysis on two_sums
+Running analysis: AAManager on two_sums
+Running analysis: BasicAA on two_sums
+Running pass: SpeculativeExecutionPass on two_sums (16 instructions)
+Running pass: JumpThreadingPass on two_sums (16 instructions)
+Running analysis: LazyValueAnalysis on two_sums
+Running pass: CorrelatedValuePropagationPass on two_sums (16 instructions)
+Invalidating analysis: LazyValueAnalysis on two_sums
+Running pass: SimplifyCFGPass on two_sums (16 instructions)
+Running pass: InstCombinePass on two_sums (16 instructions)
+Running pass: AggressiveInstCombinePass on two_sums (16 instructions)
+Running pass: LibCallsShrinkWrapPass on two_sums (16 instructions)
+Running pass: TailCallElimPass on two_sums (16 instructions)
+Invalidating analysis: MemorySSAAnalysis on two_sums
+Running pass: SimplifyCFGPass on two_sums (16 instructions)
+Running pass: ReassociatePass on two_sums (16 instructions)
+Running pass: ConstraintEliminationPass on two_sums (16 instructions)
+Running analysis: LoopAnalysis on two_sums
+Running analysis: ScalarEvolutionAnalysis on two_sums
+Running pass: LoopSimplifyPass on two_sums (16 instructions)
+Running pass: LCSSAPass on two_sums (16 instructions)
+Running analysis: MemorySSAAnalysis on two_sums
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on two_sums
+Running pass: LoopInstSimplifyPass on <unnamed loop>
+Running pass: LoopSimplifyCFGPass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: LoopRotatePass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: SimpleLoopUnswitchPass on <unnamed loop>
+Running analysis: OuterAnalysisManagerProxy<FunctionAnalysisManager, Loop, LoopStandardAnalysisResults &> on <unnamed loop>
+Running pass: SimplifyCFGPass on two_sums (22 instructions)
+Clearing all analysis results for: <possibly invalidated loop>
+Invalidating analysis: DominatorTreeAnalysis on two_sums
+Invalidating analysis: BasicAA on two_sums
+Invalidating analysis: AAManager on two_sums
+Invalidating analysis: LoopAnalysis on two_sums
+Invalidating analysis: ScalarEvolutionAnalysis on two_sums
+Invalidating analysis: MemorySSAAnalysis on two_sums
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on two_sums
+Running pass: InstCombinePass on two_sums (18 instructions)
+Running analysis: DominatorTreeAnalysis on two_sums
+Running analysis: AAManager on two_sums
+Running analysis: BasicAA on two_sums
+Running pass: LoopSimplifyPass on two_sums (18 instructions)
+Running analysis: LoopAnalysis on two_sums
+Running pass: LCSSAPass on two_sums (20 instructions)
+Running analysis: ScalarEvolutionAnalysis on two_sums
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on two_sums
+Running pass: LoopIdiomRecognizePass on <unnamed loop>
+Running pass: IndVarSimplifyPass on <unnamed loop>
+Running pass: LoopDeletionPass on <unnamed loop>
+Running pass: LoopFullUnrollPass on <unnamed loop>
+Running pass: SROAPass on two_sums (22 instructions)
+Running pass: VectorCombinePass on two_sums (22 instructions)
+Running pass: MergedLoadStoreMotionPass on two_sums (22 instructions)
+Running pass: GVNPass on two_sums (22 instructions)
+Running analysis: MemoryDependenceAnalysis on two_sums
+Clearing all analysis results for: <possibly invalidated loop>
+Invalidating analysis: ScalarEvolutionAnalysis on two_sums
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on two_sums
+Invalidating analysis: MemoryDependenceAnalysis on two_sums
+Running pass: SCCPPass on two_sums (20 instructions)
+Running pass: BDCEPass on two_sums (20 instructions)
+Running analysis: DemandedBitsAnalysis on two_sums
+Running pass: InstCombinePass on two_sums (20 instructions)
+Invalidating analysis: DemandedBitsAnalysis on two_sums
+Running pass: JumpThreadingPass on two_sums (20 instructions)
+Running analysis: LazyValueAnalysis on two_sums
+Invalidating analysis: LoopAnalysis on two_sums
+Running pass: CorrelatedValuePropagationPass on two_sums (19 instructions)
+Invalidating analysis: LazyValueAnalysis on two_sums
+Running pass: ADCEPass on two_sums (19 instructions)
+Running analysis: PostDominatorTreeAnalysis on two_sums
+Running pass: MemCpyOptPass on two_sums (19 instructions)
+Running analysis: MemorySSAAnalysis on two_sums
+Running pass: DSEPass on two_sums (19 instructions)
+Running analysis: LoopAnalysis on two_sums
+Running pass: MoveAutoInitPass on two_sums (19 instructions)
+Running pass: LoopSimplifyPass on two_sums (19 instructions)
+Invalidating analysis: PostDominatorTreeAnalysis on two_sums
+Running pass: LCSSAPass on two_sums (20 instructions)
+Running analysis: ScalarEvolutionAnalysis on two_sums
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on two_sums
+Running pass: LICMPass on <unnamed loop>
+Running pass: CoroElidePass on two_sums (22 instructions)
+Running pass: SimplifyCFGPass on two_sums (22 instructions)
+Invalidating analysis: DominatorTreeAnalysis on two_sums
+Invalidating analysis: BasicAA on two_sums
+Invalidating analysis: AAManager on two_sums
+Invalidating analysis: MemorySSAAnalysis on two_sums
+Invalidating analysis: LoopAnalysis on two_sums
+Invalidating analysis: ScalarEvolutionAnalysis on two_sums
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on two_sums
+Running pass: InstCombinePass on two_sums (18 instructions)
+Running analysis: DominatorTreeAnalysis on two_sums
+Running analysis: AAManager on two_sums
+Running analysis: BasicAA on two_sums
+Invalidating analysis: DominatorTreeAnalysis on two_sums
+Invalidating analysis: BasicAA on two_sums
+Invalidating analysis: AAManager on two_sums
+Running pass: PostOrderFunctionAttrsPass on (two_sums) (1 node)
+Running analysis: AAManager on two_sums
+Running analysis: BasicAA on two_sums
+Running analysis: DominatorTreeAnalysis on two_sums
+Running pass: RequireAnalysisPass<llvm::ShouldNotRunFunctionPassesAnalysis, llvm::Function, llvm::AnalysisManager<Function>> on two_sums (18 instructions)
+Running analysis: ShouldNotRunFunctionPassesAnalysis on two_sums
+Running pass: CoroSplitPass on (two_sums) (1 node)
+Invalidating analysis: CallGraphAnalysis on [module]
+Running pass: InvalidateAnalysisPass<llvm::ShouldNotRunFunctionPassesAnalysis> on sum_u8 (15 instructions)
+Invalidating analysis: ShouldNotRunFunctionPassesAnalysis on sum_u8
+Running pass: InvalidateAnalysisPass<llvm::ShouldNotRunFunctionPassesAnalysis> on sum_u8_long (13 instructions)
+Invalidating analysis: ShouldNotRunFunctionPassesAnalysis on sum_u8_long
+Running pass: InvalidateAnalysisPass<llvm::ShouldNotRunFunctionPassesAnalysis> on dot_i16_long (16 instructions)
+Invalidating analysis: ShouldNotRunFunctionPassesAnalysis on dot_i16_long
+Running pass: InvalidateAnalysisPass<llvm::ShouldNotRunFunctionPassesAnalysis> on dot_i8_f32_1024 (14 instructions)
+Invalidating analysis: ShouldNotRunFunctionPassesAnalysis on dot_i8_f32_1024
+Running pass: InvalidateAnalysisPass<llvm::ShouldNotRunFunctionPassesAnalysis> on dot_i8_f32_2048 (14 instructions)
+Invalidating analysis: ShouldNotRunFunctionPassesAnalysis on dot_i8_f32_2048
+Running pass: InvalidateAnalysisPass<llvm::ShouldNotRunFunctionPassesAnalysis> on dot_real (16 instructions)
+Invalidating analysis: ShouldNotRunFunctionPassesAnalysis on dot_real
+Running pass: InvalidateAnalysisPass<llvm::ShouldNotRunFunctionPassesAnalysis> on sum2d_u8 (27 instructions)
+Invalidating analysis: ShouldNotRunFunctionPassesAnalysis on sum2d_u8
+Running pass: InvalidateAnalysisPass<llvm::ShouldNotRunFunctionPassesAnalysis> on cond_sum (17 instructions)
+Invalidating analysis: ShouldNotRunFunctionPassesAnalysis on cond_sum
+Running pass: InvalidateAnalysisPass<llvm::ShouldNotRunFunctionPassesAnalysis> on two_sums (18 instructions)
+Invalidating analysis: ShouldNotRunFunctionPassesAnalysis on two_sums
+Invalidating analysis: InlineAdvisorAnalysis on [module]
+Running pass: DeadArgumentEliminationPass on [module]
+Running pass: CoroCleanupPass on [module]
+Running pass: GlobalOptPass on [module]
+Running pass: GlobalDCEPass on [module]
+Running pass: EliminateAvailableExternallyPass on [module]
+Running pass: ReversePostOrderFunctionAttrsPass on [module]
+Running pass: RecomputeGlobalsAAPass on [module]
+Running analysis: CallGraphAnalysis on [module]
+Running pass: Float2IntPass on sum_u8 (15 instructions)
+Running pass: LowerConstantIntrinsicsPass on sum_u8 (15 instructions)
+Running pass: ControlHeightReductionPass on sum_u8 (15 instructions)
+Running pass: (anonymous namespace)::ExactReducePass on sum_u8 (15 instructions)
+Running analysis: LoopAnalysis on sum_u8
+Running analysis: ScalarEvolutionAnalysis on sum_u8
+Invalidating analysis: DominatorTreeAnalysis on sum_u8
+Invalidating analysis: BasicAA on sum_u8
+Invalidating analysis: AAManager on sum_u8
+Invalidating analysis: LoopAnalysis on sum_u8
+Invalidating analysis: ScalarEvolutionAnalysis on sum_u8
+Running pass: LoopSimplifyPass on sum_u8 (16 instructions)
+Running analysis: LoopAnalysis on sum_u8
+Running analysis: DominatorTreeAnalysis on sum_u8
+Running pass: LCSSAPass on sum_u8 (16 instructions)
+Running analysis: AAManager on sum_u8
+Running analysis: BasicAA on sum_u8
+Running analysis: ScalarEvolutionAnalysis on sum_u8
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on sum_u8
+Running pass: LoopRotatePass on <unnamed loop>
+Running pass: LoopDeletionPass on <unnamed loop>
+Running pass: LoopDistributePass on sum_u8 (17 instructions)
+Running analysis: LoopAccessAnalysis on sum_u8
+Running pass: InjectTLIMappings on sum_u8 (17 instructions)
+Running pass: LoopVectorizePass on sum_u8 (17 instructions)
+Running analysis: DemandedBitsAnalysis on sum_u8
+Running analysis: ShouldRunExtraVectorPasses on sum_u8
+Clearing all analysis results for: <possibly invalidated loop>
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on sum_u8
+Invalidating analysis: LoopAccessAnalysis on sum_u8
+Invalidating analysis: DemandedBitsAnalysis on sum_u8
+Running pass: InferAlignmentPass on sum_u8 (62 instructions)
+Running pass: LoopLoadEliminationPass on sum_u8 (62 instructions)
+Running analysis: LoopAccessAnalysis on sum_u8
+Invalidating analysis: ScalarEvolutionAnalysis on sum_u8
+Invalidating analysis: LoopAccessAnalysis on sum_u8
+Running pass: InstCombinePass on sum_u8 (63 instructions)
+Running pass: SimplifyCFGPass on sum_u8 (54 instructions)
+Invalidating analysis: DominatorTreeAnalysis on sum_u8
+Invalidating analysis: LoopAnalysis on sum_u8
+Invalidating analysis: BasicAA on sum_u8
+Invalidating analysis: AAManager on sum_u8
+Running pass: SLPVectorizerPass on sum_u8 (48 instructions)
+Running analysis: ScalarEvolutionAnalysis on sum_u8
+Running analysis: DominatorTreeAnalysis on sum_u8
+Running analysis: LoopAnalysis on sum_u8
+Running analysis: AAManager on sum_u8
+Running analysis: BasicAA on sum_u8
+Running analysis: DemandedBitsAnalysis on sum_u8
+Running pass: VectorCombinePass on sum_u8 (48 instructions)
+Running pass: InstCombinePass on sum_u8 (48 instructions)
+Running pass: LoopUnrollPass on sum_u8 (48 instructions)
+Invalidating analysis: DemandedBitsAnalysis on sum_u8
+Running pass: WarnMissedTransformationsPass on sum_u8 (57 instructions)
+Running pass: SROAPass on sum_u8 (57 instructions)
+Running pass: InferAlignmentPass on sum_u8 (57 instructions)
+Running pass: InstCombinePass on sum_u8 (57 instructions)
+Invalidating analysis: ScalarEvolutionAnalysis on sum_u8
+Running pass: LoopSimplifyPass on sum_u8 (52 instructions)
+Running pass: LCSSAPass on sum_u8 (52 instructions)
+Running analysis: MemorySSAAnalysis on sum_u8
+Running analysis: ScalarEvolutionAnalysis on sum_u8
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on sum_u8
+Running pass: LICMPass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: AlignmentFromAssumptionsPass on sum_u8 (57 instructions)
+Running pass: LoopSinkPass on sum_u8 (57 instructions)
+Running pass: InstSimplifyPass on sum_u8 (57 instructions)
+Invalidating analysis: MemorySSAAnalysis on sum_u8
+Invalidating analysis: ScalarEvolutionAnalysis on sum_u8
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on sum_u8
+Running pass: DivRemPairsPass on sum_u8 (52 instructions)
+Running pass: TailCallElimPass on sum_u8 (52 instructions)
+Invalidating analysis: LoopAnalysis on sum_u8
+Running pass: SimplifyCFGPass on sum_u8 (52 instructions)
+Invalidating analysis: DominatorTreeAnalysis on sum_u8
+Invalidating analysis: BasicAA on sum_u8
+Invalidating analysis: AAManager on sum_u8
+Running pass: Float2IntPass on sum_u8_long (13 instructions)
+Running pass: LowerConstantIntrinsicsPass on sum_u8_long (13 instructions)
+Running pass: ControlHeightReductionPass on sum_u8_long (13 instructions)
+Running pass: (anonymous namespace)::ExactReducePass on sum_u8_long (13 instructions)
+Running analysis: LoopAnalysis on sum_u8_long
+Running analysis: ScalarEvolutionAnalysis on sum_u8_long
+Invalidating analysis: DominatorTreeAnalysis on sum_u8_long
+Invalidating analysis: BasicAA on sum_u8_long
+Invalidating analysis: AAManager on sum_u8_long
+Invalidating analysis: LoopAnalysis on sum_u8_long
+Invalidating analysis: ScalarEvolutionAnalysis on sum_u8_long
+Running pass: LoopSimplifyPass on sum_u8_long (41 instructions)
+Running analysis: LoopAnalysis on sum_u8_long
+Running analysis: DominatorTreeAnalysis on sum_u8_long
+Running pass: LCSSAPass on sum_u8_long (43 instructions)
+Running analysis: AAManager on sum_u8_long
+Running analysis: BasicAA on sum_u8_long
+Running analysis: ScalarEvolutionAnalysis on sum_u8_long
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on sum_u8_long
+Running pass: LoopRotatePass on <unnamed loop>
+Running pass: LoopDeletionPass on <unnamed loop>
+Running pass: LoopRotatePass on <unnamed loop>
+Running pass: LoopDeletionPass on <unnamed loop>
+Running pass: LoopDistributePass on sum_u8_long (45 instructions)
+Running analysis: LoopAccessAnalysis on sum_u8_long
+Running pass: InjectTLIMappings on sum_u8_long (45 instructions)
+Running pass: LoopVectorizePass on sum_u8_long (45 instructions)
+Running analysis: DemandedBitsAnalysis on sum_u8_long
+Running analysis: ShouldRunExtraVectorPasses on sum_u8_long
+Clearing all analysis results for: <possibly invalidated loop>
+Clearing all analysis results for: <possibly invalidated loop>
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on sum_u8_long
+Invalidating analysis: LoopAccessAnalysis on sum_u8_long
+Invalidating analysis: DemandedBitsAnalysis on sum_u8_long
+Running pass: InferAlignmentPass on sum_u8_long (90 instructions)
+Running pass: LoopLoadEliminationPass on sum_u8_long (90 instructions)
+Running analysis: LoopAccessAnalysis on sum_u8_long
+Invalidating analysis: ScalarEvolutionAnalysis on sum_u8_long
+Invalidating analysis: LoopAccessAnalysis on sum_u8_long
+Running pass: InstCombinePass on sum_u8_long (91 instructions)
+Running pass: SimplifyCFGPass on sum_u8_long (68 instructions)
+Invalidating analysis: DominatorTreeAnalysis on sum_u8_long
+Invalidating analysis: LoopAnalysis on sum_u8_long
+Invalidating analysis: BasicAA on sum_u8_long
+Invalidating analysis: AAManager on sum_u8_long
+Running pass: SLPVectorizerPass on sum_u8_long (58 instructions)
+Running analysis: ScalarEvolutionAnalysis on sum_u8_long
+Running analysis: DominatorTreeAnalysis on sum_u8_long
+Running analysis: LoopAnalysis on sum_u8_long
+Running analysis: AAManager on sum_u8_long
+Running analysis: BasicAA on sum_u8_long
+Running analysis: DemandedBitsAnalysis on sum_u8_long
+Running pass: VectorCombinePass on sum_u8_long (58 instructions)
+Running pass: InstCombinePass on sum_u8_long (58 instructions)
+Running pass: LoopUnrollPass on sum_u8_long (58 instructions)
+Invalidating analysis: DemandedBitsAnalysis on sum_u8_long
+Running pass: WarnMissedTransformationsPass on sum_u8_long (136 instructions)
+Running pass: SROAPass on sum_u8_long (136 instructions)
+Running pass: InferAlignmentPass on sum_u8_long (136 instructions)
+Running pass: InstCombinePass on sum_u8_long (136 instructions)
+Invalidating analysis: ScalarEvolutionAnalysis on sum_u8_long
+Running pass: LoopSimplifyPass on sum_u8_long (123 instructions)
+Running pass: LCSSAPass on sum_u8_long (123 instructions)
+Running analysis: MemorySSAAnalysis on sum_u8_long
+Running analysis: ScalarEvolutionAnalysis on sum_u8_long
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on sum_u8_long
+Running pass: LICMPass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: AlignmentFromAssumptionsPass on sum_u8_long (131 instructions)
+Running pass: LoopSinkPass on sum_u8_long (131 instructions)
+Running pass: InstSimplifyPass on sum_u8_long (131 instructions)
+Invalidating analysis: MemorySSAAnalysis on sum_u8_long
+Invalidating analysis: ScalarEvolutionAnalysis on sum_u8_long
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on sum_u8_long
+Running pass: DivRemPairsPass on sum_u8_long (123 instructions)
+Running pass: TailCallElimPass on sum_u8_long (123 instructions)
+Invalidating analysis: LoopAnalysis on sum_u8_long
+Running pass: SimplifyCFGPass on sum_u8_long (123 instructions)
+Invalidating analysis: DominatorTreeAnalysis on sum_u8_long
+Invalidating analysis: BasicAA on sum_u8_long
+Invalidating analysis: AAManager on sum_u8_long
+Running pass: Float2IntPass on dot_i16_long (16 instructions)
+Running pass: LowerConstantIntrinsicsPass on dot_i16_long (16 instructions)
+Running pass: ControlHeightReductionPass on dot_i16_long (16 instructions)
+Running pass: (anonymous namespace)::ExactReducePass on dot_i16_long (16 instructions)
+Running analysis: LoopAnalysis on dot_i16_long
+Running analysis: ScalarEvolutionAnalysis on dot_i16_long
+Invalidating analysis: DominatorTreeAnalysis on dot_i16_long
+Invalidating analysis: BasicAA on dot_i16_long
+Invalidating analysis: AAManager on dot_i16_long
+Invalidating analysis: LoopAnalysis on dot_i16_long
+Invalidating analysis: ScalarEvolutionAnalysis on dot_i16_long
+Running pass: LoopSimplifyPass on dot_i16_long (47 instructions)
+Running analysis: LoopAnalysis on dot_i16_long
+Running analysis: DominatorTreeAnalysis on dot_i16_long
+Running pass: LCSSAPass on dot_i16_long (49 instructions)
+Running analysis: AAManager on dot_i16_long
+Running analysis: BasicAA on dot_i16_long
+Running analysis: ScalarEvolutionAnalysis on dot_i16_long
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_i16_long
+Running pass: LoopRotatePass on <unnamed loop>
+Running pass: LoopDeletionPass on <unnamed loop>
+Running pass: LoopRotatePass on <unnamed loop>
+Running pass: LoopDeletionPass on <unnamed loop>
+Running pass: LoopDistributePass on dot_i16_long (51 instructions)
+Running analysis: LoopAccessAnalysis on dot_i16_long
+Running pass: InjectTLIMappings on dot_i16_long (51 instructions)
+Running pass: LoopVectorizePass on dot_i16_long (51 instructions)
+Running analysis: DemandedBitsAnalysis on dot_i16_long
+Running analysis: ShouldRunExtraVectorPasses on dot_i16_long
+Clearing all analysis results for: <possibly invalidated loop>
+Clearing all analysis results for: <possibly invalidated loop>
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_i16_long
+Invalidating analysis: LoopAccessAnalysis on dot_i16_long
+Invalidating analysis: DemandedBitsAnalysis on dot_i16_long
+Running pass: InferAlignmentPass on dot_i16_long (112 instructions)
+Running pass: LoopLoadEliminationPass on dot_i16_long (112 instructions)
+Running analysis: LoopAccessAnalysis on dot_i16_long
+Invalidating analysis: ScalarEvolutionAnalysis on dot_i16_long
+Invalidating analysis: LoopAccessAnalysis on dot_i16_long
+Running pass: InstCombinePass on dot_i16_long (113 instructions)
+Running pass: SimplifyCFGPass on dot_i16_long (86 instructions)
+Invalidating analysis: DominatorTreeAnalysis on dot_i16_long
+Invalidating analysis: LoopAnalysis on dot_i16_long
+Invalidating analysis: BasicAA on dot_i16_long
+Invalidating analysis: AAManager on dot_i16_long
+Running pass: SLPVectorizerPass on dot_i16_long (76 instructions)
+Running analysis: ScalarEvolutionAnalysis on dot_i16_long
+Running analysis: DominatorTreeAnalysis on dot_i16_long
+Running analysis: LoopAnalysis on dot_i16_long
+Running analysis: AAManager on dot_i16_long
+Running analysis: BasicAA on dot_i16_long
+Running analysis: DemandedBitsAnalysis on dot_i16_long
+Running pass: VectorCombinePass on dot_i16_long (76 instructions)
+Running pass: InstCombinePass on dot_i16_long (76 instructions)
+Running pass: LoopUnrollPass on dot_i16_long (76 instructions)
+Invalidating analysis: DemandedBitsAnalysis on dot_i16_long
+Running pass: WarnMissedTransformationsPass on dot_i16_long (178 instructions)
+Running pass: SROAPass on dot_i16_long (178 instructions)
+Running pass: InferAlignmentPass on dot_i16_long (178 instructions)
+Running pass: InstCombinePass on dot_i16_long (178 instructions)
+Invalidating analysis: ScalarEvolutionAnalysis on dot_i16_long
+Running pass: LoopSimplifyPass on dot_i16_long (165 instructions)
+Running pass: LCSSAPass on dot_i16_long (165 instructions)
+Running analysis: MemorySSAAnalysis on dot_i16_long
+Running analysis: ScalarEvolutionAnalysis on dot_i16_long
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_i16_long
+Running pass: LICMPass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: AlignmentFromAssumptionsPass on dot_i16_long (173 instructions)
+Running pass: LoopSinkPass on dot_i16_long (173 instructions)
+Running pass: InstSimplifyPass on dot_i16_long (173 instructions)
+Invalidating analysis: MemorySSAAnalysis on dot_i16_long
+Invalidating analysis: ScalarEvolutionAnalysis on dot_i16_long
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_i16_long
+Running pass: DivRemPairsPass on dot_i16_long (165 instructions)
+Running pass: TailCallElimPass on dot_i16_long (165 instructions)
+Invalidating analysis: LoopAnalysis on dot_i16_long
+Running pass: SimplifyCFGPass on dot_i16_long (165 instructions)
+Invalidating analysis: DominatorTreeAnalysis on dot_i16_long
+Invalidating analysis: BasicAA on dot_i16_long
+Invalidating analysis: AAManager on dot_i16_long
+Running pass: Float2IntPass on dot_i8_f32_1024 (14 instructions)
+Running pass: LowerConstantIntrinsicsPass on dot_i8_f32_1024 (14 instructions)
+Running pass: ControlHeightReductionPass on dot_i8_f32_1024 (14 instructions)
+Running pass: (anonymous namespace)::ExactReducePass on dot_i8_f32_1024 (14 instructions)
+Running analysis: LoopAnalysis on dot_i8_f32_1024
+Running analysis: ScalarEvolutionAnalysis on dot_i8_f32_1024
+Running pass: LoopSimplifyPass on dot_i8_f32_1024 (14 instructions)
+Running pass: LCSSAPass on dot_i8_f32_1024 (14 instructions)
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_i8_f32_1024
+Running pass: LoopRotatePass on <unnamed loop>
+Running pass: LoopDeletionPass on <unnamed loop>
+Running pass: LoopDistributePass on dot_i8_f32_1024 (15 instructions)
+Running analysis: LoopAccessAnalysis on dot_i8_f32_1024
+Running pass: InjectTLIMappings on dot_i8_f32_1024 (15 instructions)
+Running pass: LoopVectorizePass on dot_i8_f32_1024 (15 instructions)
+Running analysis: DemandedBitsAnalysis on dot_i8_f32_1024
+Running analysis: ShouldRunExtraVectorPasses on dot_i8_f32_1024
+Clearing all analysis results for: <possibly invalidated loop>
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_i8_f32_1024
+Invalidating analysis: LoopAccessAnalysis on dot_i8_f32_1024
+Invalidating analysis: DemandedBitsAnalysis on dot_i8_f32_1024
+Running pass: InferAlignmentPass on dot_i8_f32_1024 (72 instructions)
+Running pass: LoopLoadEliminationPass on dot_i8_f32_1024 (72 instructions)
+Running analysis: LoopAccessAnalysis on dot_i8_f32_1024
+Invalidating analysis: ScalarEvolutionAnalysis on dot_i8_f32_1024
+Invalidating analysis: LoopAccessAnalysis on dot_i8_f32_1024
+Running pass: InstCombinePass on dot_i8_f32_1024 (73 instructions)
+Running pass: SimplifyCFGPass on dot_i8_f32_1024 (48 instructions)
+Invalidating analysis: DominatorTreeAnalysis on dot_i8_f32_1024
+Invalidating analysis: BasicAA on dot_i8_f32_1024
+Invalidating analysis: AAManager on dot_i8_f32_1024
+Invalidating analysis: LoopAnalysis on dot_i8_f32_1024
+Running pass: SLPVectorizerPass on dot_i8_f32_1024 (42 instructions)
+Running analysis: ScalarEvolutionAnalysis on dot_i8_f32_1024
+Running analysis: DominatorTreeAnalysis on dot_i8_f32_1024
+Running analysis: LoopAnalysis on dot_i8_f32_1024
+Running analysis: AAManager on dot_i8_f32_1024
+Running analysis: BasicAA on dot_i8_f32_1024
+Running analysis: DemandedBitsAnalysis on dot_i8_f32_1024
+Running pass: VectorCombinePass on dot_i8_f32_1024 (42 instructions)
+Running pass: InstCombinePass on dot_i8_f32_1024 (42 instructions)
+Running pass: LoopUnrollPass on dot_i8_f32_1024 (42 instructions)
+Invalidating analysis: DemandedBitsAnalysis on dot_i8_f32_1024
+Running pass: WarnMissedTransformationsPass on dot_i8_f32_1024 (75 instructions)
+Running pass: SROAPass on dot_i8_f32_1024 (75 instructions)
+Running pass: InferAlignmentPass on dot_i8_f32_1024 (75 instructions)
+Running pass: InstCombinePass on dot_i8_f32_1024 (75 instructions)
+Invalidating analysis: ScalarEvolutionAnalysis on dot_i8_f32_1024
+Running pass: LoopSimplifyPass on dot_i8_f32_1024 (71 instructions)
+Running pass: LCSSAPass on dot_i8_f32_1024 (71 instructions)
+Running analysis: MemorySSAAnalysis on dot_i8_f32_1024
+Running analysis: ScalarEvolutionAnalysis on dot_i8_f32_1024
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_i8_f32_1024
+Running pass: LICMPass on <unnamed loop>
+Running pass: AlignmentFromAssumptionsPass on dot_i8_f32_1024 (75 instructions)
+Running pass: LoopSinkPass on dot_i8_f32_1024 (75 instructions)
+Running pass: InstSimplifyPass on dot_i8_f32_1024 (75 instructions)
+Invalidating analysis: MemorySSAAnalysis on dot_i8_f32_1024
+Invalidating analysis: ScalarEvolutionAnalysis on dot_i8_f32_1024
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_i8_f32_1024
+Running pass: DivRemPairsPass on dot_i8_f32_1024 (71 instructions)
+Running pass: TailCallElimPass on dot_i8_f32_1024 (71 instructions)
+Invalidating analysis: LoopAnalysis on dot_i8_f32_1024
+Running pass: SimplifyCFGPass on dot_i8_f32_1024 (71 instructions)
+Invalidating analysis: DominatorTreeAnalysis on dot_i8_f32_1024
+Invalidating analysis: BasicAA on dot_i8_f32_1024
+Invalidating analysis: AAManager on dot_i8_f32_1024
+Running pass: Float2IntPass on dot_i8_f32_2048 (14 instructions)
+Running pass: LowerConstantIntrinsicsPass on dot_i8_f32_2048 (14 instructions)
+Running pass: ControlHeightReductionPass on dot_i8_f32_2048 (14 instructions)
+Running pass: (anonymous namespace)::ExactReducePass on dot_i8_f32_2048 (14 instructions)
+Running analysis: LoopAnalysis on dot_i8_f32_2048
+Running analysis: ScalarEvolutionAnalysis on dot_i8_f32_2048
+Running pass: LoopSimplifyPass on dot_i8_f32_2048 (14 instructions)
+Running pass: LCSSAPass on dot_i8_f32_2048 (14 instructions)
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_i8_f32_2048
+Running pass: LoopRotatePass on <unnamed loop>
+Running pass: LoopDeletionPass on <unnamed loop>
+Running pass: LoopDistributePass on dot_i8_f32_2048 (15 instructions)
+Running analysis: LoopAccessAnalysis on dot_i8_f32_2048
+Running pass: InjectTLIMappings on dot_i8_f32_2048 (15 instructions)
+Running pass: LoopVectorizePass on dot_i8_f32_2048 (15 instructions)
+Running analysis: DemandedBitsAnalysis on dot_i8_f32_2048
+Running pass: InferAlignmentPass on dot_i8_f32_2048 (15 instructions)
+Running pass: LoopLoadEliminationPass on dot_i8_f32_2048 (15 instructions)
+Running pass: InstCombinePass on dot_i8_f32_2048 (15 instructions)
+Clearing all analysis results for: <possibly invalidated loop>
+Invalidating analysis: ScalarEvolutionAnalysis on dot_i8_f32_2048
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_i8_f32_2048
+Invalidating analysis: LoopAccessAnalysis on dot_i8_f32_2048
+Invalidating analysis: DemandedBitsAnalysis on dot_i8_f32_2048
+Running pass: SimplifyCFGPass on dot_i8_f32_2048 (14 instructions)
+Running pass: SLPVectorizerPass on dot_i8_f32_2048 (14 instructions)
+Running analysis: ScalarEvolutionAnalysis on dot_i8_f32_2048
+Running analysis: DemandedBitsAnalysis on dot_i8_f32_2048
+Running pass: VectorCombinePass on dot_i8_f32_2048 (14 instructions)
+Running pass: InstCombinePass on dot_i8_f32_2048 (14 instructions)
+Running pass: LoopUnrollPass on dot_i8_f32_2048 (14 instructions)
+Invalidating analysis: DemandedBitsAnalysis on dot_i8_f32_2048
+Running pass: WarnMissedTransformationsPass on dot_i8_f32_2048 (71 instructions)
+Running pass: SROAPass on dot_i8_f32_2048 (71 instructions)
+Running pass: InferAlignmentPass on dot_i8_f32_2048 (71 instructions)
+Running pass: InstCombinePass on dot_i8_f32_2048 (71 instructions)
+Invalidating analysis: ScalarEvolutionAnalysis on dot_i8_f32_2048
+Running pass: LoopSimplifyPass on dot_i8_f32_2048 (70 instructions)
+Running pass: LCSSAPass on dot_i8_f32_2048 (70 instructions)
+Running analysis: MemorySSAAnalysis on dot_i8_f32_2048
+Running analysis: ScalarEvolutionAnalysis on dot_i8_f32_2048
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_i8_f32_2048
+Running pass: LICMPass on <unnamed loop>
+Running pass: AlignmentFromAssumptionsPass on dot_i8_f32_2048 (71 instructions)
+Running pass: LoopSinkPass on dot_i8_f32_2048 (71 instructions)
+Running pass: InstSimplifyPass on dot_i8_f32_2048 (71 instructions)
+Invalidating analysis: MemorySSAAnalysis on dot_i8_f32_2048
+Invalidating analysis: ScalarEvolutionAnalysis on dot_i8_f32_2048
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_i8_f32_2048
+Running pass: DivRemPairsPass on dot_i8_f32_2048 (70 instructions)
+Running pass: TailCallElimPass on dot_i8_f32_2048 (70 instructions)
+Running pass: SimplifyCFGPass on dot_i8_f32_2048 (70 instructions)
+Invalidating analysis: DominatorTreeAnalysis on dot_i8_f32_2048
+Invalidating analysis: BasicAA on dot_i8_f32_2048
+Invalidating analysis: AAManager on dot_i8_f32_2048
+Invalidating analysis: LoopAnalysis on dot_i8_f32_2048
+Running pass: Float2IntPass on dot_real (16 instructions)
+Running pass: LowerConstantIntrinsicsPass on dot_real (16 instructions)
+Running pass: ControlHeightReductionPass on dot_real (16 instructions)
+Running pass: (anonymous namespace)::ExactReducePass on dot_real (16 instructions)
+Running analysis: LoopAnalysis on dot_real
+Running analysis: ScalarEvolutionAnalysis on dot_real
+Invalidating analysis: DominatorTreeAnalysis on dot_real
+Invalidating analysis: BasicAA on dot_real
+Invalidating analysis: AAManager on dot_real
+Invalidating analysis: LoopAnalysis on dot_real
+Invalidating analysis: ScalarEvolutionAnalysis on dot_real
+Running pass: LoopSimplifyPass on dot_real (17 instructions)
+Running analysis: LoopAnalysis on dot_real
+Running analysis: DominatorTreeAnalysis on dot_real
+Running pass: LCSSAPass on dot_real (17 instructions)
+Running analysis: AAManager on dot_real
+Running analysis: BasicAA on dot_real
+Running analysis: ScalarEvolutionAnalysis on dot_real
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_real
+Running pass: LoopRotatePass on <unnamed loop>
+Running pass: LoopDeletionPass on <unnamed loop>
+Running pass: LoopDistributePass on dot_real (18 instructions)
+Running analysis: LoopAccessAnalysis on dot_real
+Running pass: InjectTLIMappings on dot_real (18 instructions)
+Running pass: LoopVectorizePass on dot_real (18 instructions)
+Running analysis: DemandedBitsAnalysis on dot_real
+Running pass: InferAlignmentPass on dot_real (18 instructions)
+Running pass: LoopLoadEliminationPass on dot_real (18 instructions)
+Running pass: InstCombinePass on dot_real (18 instructions)
+Clearing all analysis results for: <possibly invalidated loop>
+Invalidating analysis: ScalarEvolutionAnalysis on dot_real
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_real
+Invalidating analysis: LoopAccessAnalysis on dot_real
+Invalidating analysis: DemandedBitsAnalysis on dot_real
+Running pass: SimplifyCFGPass on dot_real (17 instructions)
+Invalidating analysis: DominatorTreeAnalysis on dot_real
+Invalidating analysis: LoopAnalysis on dot_real
+Invalidating analysis: BasicAA on dot_real
+Invalidating analysis: AAManager on dot_real
+Running pass: SLPVectorizerPass on dot_real (16 instructions)
+Running analysis: ScalarEvolutionAnalysis on dot_real
+Running analysis: DominatorTreeAnalysis on dot_real
+Running analysis: LoopAnalysis on dot_real
+Running analysis: AAManager on dot_real
+Running analysis: BasicAA on dot_real
+Running analysis: DemandedBitsAnalysis on dot_real
+Running pass: VectorCombinePass on dot_real (16 instructions)
+Running pass: InstCombinePass on dot_real (16 instructions)
+Running pass: LoopUnrollPass on dot_real (16 instructions)
+Invalidating analysis: DemandedBitsAnalysis on dot_real
+Running pass: WarnMissedTransformationsPass on dot_real (92 instructions)
+Running pass: SROAPass on dot_real (92 instructions)
+Running pass: InferAlignmentPass on dot_real (92 instructions)
+Running pass: InstCombinePass on dot_real (92 instructions)
+Invalidating analysis: ScalarEvolutionAnalysis on dot_real
+Running pass: LoopSimplifyPass on dot_real (86 instructions)
+Running pass: LCSSAPass on dot_real (86 instructions)
+Running analysis: MemorySSAAnalysis on dot_real
+Running analysis: ScalarEvolutionAnalysis on dot_real
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_real
+Running pass: LICMPass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: AlignmentFromAssumptionsPass on dot_real (89 instructions)
+Running pass: LoopSinkPass on dot_real (89 instructions)
+Running pass: InstSimplifyPass on dot_real (89 instructions)
+Invalidating analysis: MemorySSAAnalysis on dot_real
+Invalidating analysis: ScalarEvolutionAnalysis on dot_real
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on dot_real
+Running pass: DivRemPairsPass on dot_real (86 instructions)
+Running pass: TailCallElimPass on dot_real (86 instructions)
+Running pass: SimplifyCFGPass on dot_real (86 instructions)
+Invalidating analysis: DominatorTreeAnalysis on dot_real
+Invalidating analysis: LoopAnalysis on dot_real
+Invalidating analysis: BasicAA on dot_real
+Invalidating analysis: AAManager on dot_real
+Running pass: Float2IntPass on sum2d_u8 (27 instructions)
+Running pass: LowerConstantIntrinsicsPass on sum2d_u8 (27 instructions)
+Running pass: ControlHeightReductionPass on sum2d_u8 (27 instructions)
+Running pass: (anonymous namespace)::ExactReducePass on sum2d_u8 (27 instructions)
+Running analysis: LoopAnalysis on sum2d_u8
+Running analysis: ScalarEvolutionAnalysis on sum2d_u8
+Invalidating analysis: DominatorTreeAnalysis on sum2d_u8
+Invalidating analysis: BasicAA on sum2d_u8
+Invalidating analysis: AAManager on sum2d_u8
+Invalidating analysis: LoopAnalysis on sum2d_u8
+Invalidating analysis: ScalarEvolutionAnalysis on sum2d_u8
+Running pass: LoopSimplifyPass on sum2d_u8 (55 instructions)
+Running analysis: LoopAnalysis on sum2d_u8
+Running analysis: DominatorTreeAnalysis on sum2d_u8
+Running pass: LCSSAPass on sum2d_u8 (57 instructions)
+Running analysis: AAManager on sum2d_u8
+Running analysis: BasicAA on sum2d_u8
+Running analysis: ScalarEvolutionAnalysis on sum2d_u8
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on sum2d_u8
+Running pass: LoopRotatePass on <unnamed loop>
+Running pass: LoopDeletionPass on <unnamed loop>
+Running pass: LoopRotatePass on <unnamed loop>
+Running pass: LoopDeletionPass on <unnamed loop>
+Running pass: LoopRotatePass on <unnamed loop>
+Running pass: LoopDeletionPass on <unnamed loop>
+Running pass: LoopDistributePass on sum2d_u8 (59 instructions)
+Running analysis: LoopAccessAnalysis on sum2d_u8
+Running pass: InjectTLIMappings on sum2d_u8 (59 instructions)
+Running pass: LoopVectorizePass on sum2d_u8 (59 instructions)
+Running analysis: DemandedBitsAnalysis on sum2d_u8
+Running analysis: ShouldRunExtraVectorPasses on sum2d_u8
+Clearing all analysis results for: <possibly invalidated loop>
+Clearing all analysis results for: <possibly invalidated loop>
+Clearing all analysis results for: <possibly invalidated loop>
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on sum2d_u8
+Invalidating analysis: LoopAccessAnalysis on sum2d_u8
+Invalidating analysis: DemandedBitsAnalysis on sum2d_u8
+Running pass: InferAlignmentPass on sum2d_u8 (105 instructions)
+Running pass: LoopLoadEliminationPass on sum2d_u8 (105 instructions)
+Running analysis: LoopAccessAnalysis on sum2d_u8
+Invalidating analysis: ScalarEvolutionAnalysis on sum2d_u8
+Invalidating analysis: LoopAccessAnalysis on sum2d_u8
+Running pass: InstCombinePass on sum2d_u8 (106 instructions)
+Running pass: SimplifyCFGPass on sum2d_u8 (93 instructions)
+Invalidating analysis: DominatorTreeAnalysis on sum2d_u8
+Invalidating analysis: LoopAnalysis on sum2d_u8
+Invalidating analysis: BasicAA on sum2d_u8
+Invalidating analysis: AAManager on sum2d_u8
+Running pass: SLPVectorizerPass on sum2d_u8 (84 instructions)
+Running analysis: ScalarEvolutionAnalysis on sum2d_u8
+Running analysis: DominatorTreeAnalysis on sum2d_u8
+Running analysis: LoopAnalysis on sum2d_u8
+Running analysis: AAManager on sum2d_u8
+Running analysis: BasicAA on sum2d_u8
+Running analysis: DemandedBitsAnalysis on sum2d_u8
+Running pass: VectorCombinePass on sum2d_u8 (84 instructions)
+Running pass: InstCombinePass on sum2d_u8 (84 instructions)
+Running pass: LoopUnrollPass on sum2d_u8 (84 instructions)
+Invalidating analysis: DemandedBitsAnalysis on sum2d_u8
+Running pass: WarnMissedTransformationsPass on sum2d_u8 (164 instructions)
+Running pass: SROAPass on sum2d_u8 (164 instructions)
+Running pass: InferAlignmentPass on sum2d_u8 (164 instructions)
+Running pass: InstCombinePass on sum2d_u8 (164 instructions)
+Invalidating analysis: ScalarEvolutionAnalysis on sum2d_u8
+Running pass: LoopSimplifyPass on sum2d_u8 (152 instructions)
+Running pass: LCSSAPass on sum2d_u8 (152 instructions)
+Running analysis: MemorySSAAnalysis on sum2d_u8
+Running analysis: ScalarEvolutionAnalysis on sum2d_u8
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on sum2d_u8
+Running pass: LICMPass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: AlignmentFromAssumptionsPass on sum2d_u8 (161 instructions)
+Running pass: LoopSinkPass on sum2d_u8 (161 instructions)
+Running pass: InstSimplifyPass on sum2d_u8 (161 instructions)
+Invalidating analysis: MemorySSAAnalysis on sum2d_u8
+Invalidating analysis: ScalarEvolutionAnalysis on sum2d_u8
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on sum2d_u8
+Running pass: DivRemPairsPass on sum2d_u8 (152 instructions)
+Running pass: TailCallElimPass on sum2d_u8 (152 instructions)
+Invalidating analysis: LoopAnalysis on sum2d_u8
+Running pass: SimplifyCFGPass on sum2d_u8 (152 instructions)
+Invalidating analysis: DominatorTreeAnalysis on sum2d_u8
+Invalidating analysis: BasicAA on sum2d_u8
+Invalidating analysis: AAManager on sum2d_u8
+Running pass: Float2IntPass on cond_sum (17 instructions)
+Running pass: LowerConstantIntrinsicsPass on cond_sum (17 instructions)
+Running pass: ControlHeightReductionPass on cond_sum (17 instructions)
+Running pass: (anonymous namespace)::ExactReducePass on cond_sum (17 instructions)
+Running analysis: LoopAnalysis on cond_sum
+Running analysis: ScalarEvolutionAnalysis on cond_sum
+Invalidating analysis: DominatorTreeAnalysis on cond_sum
+Invalidating analysis: BasicAA on cond_sum
+Invalidating analysis: AAManager on cond_sum
+Invalidating analysis: LoopAnalysis on cond_sum
+Invalidating analysis: ScalarEvolutionAnalysis on cond_sum
+Running pass: LoopSimplifyPass on cond_sum (18 instructions)
+Running analysis: LoopAnalysis on cond_sum
+Running analysis: DominatorTreeAnalysis on cond_sum
+Running pass: LCSSAPass on cond_sum (18 instructions)
+Running analysis: AAManager on cond_sum
+Running analysis: BasicAA on cond_sum
+Running analysis: ScalarEvolutionAnalysis on cond_sum
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on cond_sum
+Running pass: LoopRotatePass on <unnamed loop>
+Running pass: LoopDeletionPass on <unnamed loop>
+Running pass: LoopDistributePass on cond_sum (19 instructions)
+Running analysis: LoopAccessAnalysis on cond_sum
+Running pass: InjectTLIMappings on cond_sum (19 instructions)
+Running pass: LoopVectorizePass on cond_sum (19 instructions)
+Running analysis: DemandedBitsAnalysis on cond_sum
+Running analysis: ShouldRunExtraVectorPasses on cond_sum
+Clearing all analysis results for: <possibly invalidated loop>
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on cond_sum
+Invalidating analysis: LoopAccessAnalysis on cond_sum
+Invalidating analysis: DemandedBitsAnalysis on cond_sum
+Running pass: InferAlignmentPass on cond_sum (72 instructions)
+Running pass: LoopLoadEliminationPass on cond_sum (72 instructions)
+Running analysis: LoopAccessAnalysis on cond_sum
+Invalidating analysis: ScalarEvolutionAnalysis on cond_sum
+Invalidating analysis: LoopAccessAnalysis on cond_sum
+Running pass: InstCombinePass on cond_sum (73 instructions)
+Running pass: SimplifyCFGPass on cond_sum (64 instructions)
+Invalidating analysis: DominatorTreeAnalysis on cond_sum
+Invalidating analysis: LoopAnalysis on cond_sum
+Invalidating analysis: BasicAA on cond_sum
+Invalidating analysis: AAManager on cond_sum
+Running pass: SLPVectorizerPass on cond_sum (58 instructions)
+Running analysis: ScalarEvolutionAnalysis on cond_sum
+Running analysis: DominatorTreeAnalysis on cond_sum
+Running analysis: LoopAnalysis on cond_sum
+Running analysis: AAManager on cond_sum
+Running analysis: BasicAA on cond_sum
+Running analysis: DemandedBitsAnalysis on cond_sum
+Running pass: VectorCombinePass on cond_sum (58 instructions)
+Running pass: InstCombinePass on cond_sum (58 instructions)
+Running pass: LoopUnrollPass on cond_sum (58 instructions)
+Invalidating analysis: DemandedBitsAnalysis on cond_sum
+Running pass: WarnMissedTransformationsPass on cond_sum (67 instructions)
+Running pass: SROAPass on cond_sum (67 instructions)
+Running pass: InferAlignmentPass on cond_sum (67 instructions)
+Running pass: InstCombinePass on cond_sum (67 instructions)
+Invalidating analysis: ScalarEvolutionAnalysis on cond_sum
+Running pass: LoopSimplifyPass on cond_sum (62 instructions)
+Running pass: LCSSAPass on cond_sum (62 instructions)
+Running analysis: MemorySSAAnalysis on cond_sum
+Running analysis: ScalarEvolutionAnalysis on cond_sum
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on cond_sum
+Running pass: LICMPass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: AlignmentFromAssumptionsPass on cond_sum (67 instructions)
+Running pass: LoopSinkPass on cond_sum (67 instructions)
+Running pass: InstSimplifyPass on cond_sum (67 instructions)
+Invalidating analysis: MemorySSAAnalysis on cond_sum
+Invalidating analysis: ScalarEvolutionAnalysis on cond_sum
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on cond_sum
+Running pass: DivRemPairsPass on cond_sum (62 instructions)
+Running pass: TailCallElimPass on cond_sum (62 instructions)
+Invalidating analysis: LoopAnalysis on cond_sum
+Running pass: SimplifyCFGPass on cond_sum (62 instructions)
+Invalidating analysis: DominatorTreeAnalysis on cond_sum
+Invalidating analysis: BasicAA on cond_sum
+Invalidating analysis: AAManager on cond_sum
+Running pass: Float2IntPass on two_sums (18 instructions)
+Running pass: LowerConstantIntrinsicsPass on two_sums (18 instructions)
+Running pass: ControlHeightReductionPass on two_sums (18 instructions)
+Running pass: (anonymous namespace)::ExactReducePass on two_sums (18 instructions)
+Running analysis: LoopAnalysis on two_sums
+Running analysis: ScalarEvolutionAnalysis on two_sums
+Invalidating analysis: DominatorTreeAnalysis on two_sums
+Invalidating analysis: BasicAA on two_sums
+Invalidating analysis: AAManager on two_sums
+Invalidating analysis: LoopAnalysis on two_sums
+Invalidating analysis: ScalarEvolutionAnalysis on two_sums
+Running pass: LoopSimplifyPass on two_sums (62 instructions)
+Running analysis: LoopAnalysis on two_sums
+Running analysis: DominatorTreeAnalysis on two_sums
+Running pass: LCSSAPass on two_sums (64 instructions)
+Running analysis: AAManager on two_sums
+Running analysis: BasicAA on two_sums
+Running analysis: ScalarEvolutionAnalysis on two_sums
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on two_sums
+Running pass: LoopRotatePass on <unnamed loop>
+Running pass: LoopDeletionPass on <unnamed loop>
+Running pass: LoopRotatePass on <unnamed loop>
+Running pass: LoopDeletionPass on <unnamed loop>
+Running pass: LoopDistributePass on two_sums (68 instructions)
+Running analysis: LoopAccessAnalysis on two_sums
+Running pass: InjectTLIMappings on two_sums (68 instructions)
+Running pass: LoopVectorizePass on two_sums (68 instructions)
+Running analysis: DemandedBitsAnalysis on two_sums
+Running analysis: ShouldRunExtraVectorPasses on two_sums
+Clearing all analysis results for: <possibly invalidated loop>
+Clearing all analysis results for: <possibly invalidated loop>
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on two_sums
+Invalidating analysis: LoopAccessAnalysis on two_sums
+Invalidating analysis: DemandedBitsAnalysis on two_sums
+Running pass: InferAlignmentPass on two_sums (126 instructions)
+Running pass: LoopLoadEliminationPass on two_sums (126 instructions)
+Running analysis: LoopAccessAnalysis on two_sums
+Invalidating analysis: ScalarEvolutionAnalysis on two_sums
+Invalidating analysis: LoopAccessAnalysis on two_sums
+Running pass: InstCombinePass on two_sums (127 instructions)
+Running pass: SimplifyCFGPass on two_sums (90 instructions)
+Invalidating analysis: DominatorTreeAnalysis on two_sums
+Invalidating analysis: LoopAnalysis on two_sums
+Invalidating analysis: BasicAA on two_sums
+Invalidating analysis: AAManager on two_sums
+Running pass: SLPVectorizerPass on two_sums (77 instructions)
+Running analysis: ScalarEvolutionAnalysis on two_sums
+Running analysis: DominatorTreeAnalysis on two_sums
+Running analysis: LoopAnalysis on two_sums
+Running analysis: AAManager on two_sums
+Running analysis: BasicAA on two_sums
+Running analysis: DemandedBitsAnalysis on two_sums
+Running pass: VectorCombinePass on two_sums (77 instructions)
+Running pass: InstCombinePass on two_sums (77 instructions)
+Running pass: LoopUnrollPass on two_sums (77 instructions)
+Invalidating analysis: DemandedBitsAnalysis on two_sums
+Running pass: WarnMissedTransformationsPass on two_sums (176 instructions)
+Running pass: SROAPass on two_sums (176 instructions)
+Running pass: InferAlignmentPass on two_sums (176 instructions)
+Running pass: InstCombinePass on two_sums (176 instructions)
+Invalidating analysis: ScalarEvolutionAnalysis on two_sums
+Running pass: LoopSimplifyPass on two_sums (154 instructions)
+Running pass: LCSSAPass on two_sums (154 instructions)
+Running analysis: MemorySSAAnalysis on two_sums
+Running analysis: ScalarEvolutionAnalysis on two_sums
+Running analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on two_sums
+Running pass: LICMPass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: LICMPass on <unnamed loop>
+Running pass: AlignmentFromAssumptionsPass on two_sums (169 instructions)
+Running pass: LoopSinkPass on two_sums (169 instructions)
+Running pass: InstSimplifyPass on two_sums (169 instructions)
+Invalidating analysis: MemorySSAAnalysis on two_sums
+Invalidating analysis: ScalarEvolutionAnalysis on two_sums
+Invalidating analysis: InnerAnalysisManagerProxy<LoopAnalysisManager, Function> on two_sums
+Running pass: DivRemPairsPass on two_sums (154 instructions)
+Running pass: TailCallElimPass on two_sums (154 instructions)
+Invalidating analysis: LoopAnalysis on two_sums
+Running pass: SimplifyCFGPass on two_sums (154 instructions)
+Invalidating analysis: DominatorTreeAnalysis on two_sums
+Invalidating analysis: BasicAA on two_sums
+Invalidating analysis: AAManager on two_sums
+Invalidating analysis: LazyCallGraphAnalysis on [module]
+Invalidating analysis: InnerAnalysisManagerProxy<CGSCCAnalysisManager, Module> on [module]
+Invalidating analysis: CallGraphAnalysis on [module]
+Running pass: GlobalDCEPass on [module]
+Running pass: ConstantMergePass on [module]
+Running pass: CGProfilePass on [module]
+Running pass: RelLookupTableConverterPass on [module]
+Running pass: AnnotationRemarksPass on sum_u8 (51 instructions)
+Running pass: AnnotationRemarksPass on sum_u8_long (114 instructions)
+Running pass: AnnotationRemarksPass on dot_i16_long (156 instructions)
+Running pass: AnnotationRemarksPass on dot_i8_f32_1024 (71 instructions)
+Running pass: AnnotationRemarksPass on dot_i8_f32_2048 (70 instructions)
+Running pass: AnnotationRemarksPass on dot_real (81 instructions)
+Running pass: AnnotationRemarksPass on sum2d_u8 (144 instructions)
+Running pass: AnnotationRemarksPass on cond_sum (61 instructions)
+Running pass: AnnotationRemarksPass on two_sums (143 instructions)

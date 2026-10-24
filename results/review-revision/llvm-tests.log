@@ -1,0 +1,12 @@
+make: Entering directory '/mnt/c/Lenovo_data/matrixlang/llvm'
+CLANG=clang-18 bash tests/run.sh
+decisions: ok
+vectorization: checked
+IR boundary: 9 functions checked; declined paths and strict fallbacks retained
+smoke: licensed build matches strict on 75 lines
+smoke: integer build matches strict on 75 lines
+stress: licensed build matches strict on 784 cases
+stress: integer build matches strict on 784 cases
+tier32: integer build matches strict at the 32-bit limit on 20 cases
+stress: mutant detected on 10 cases
+make: Leaving directory '/mnt/c/Lenovo_data/matrixlang/llvm'

@@ -15,6 +15,16 @@
       ],
       "plugin_env": null
     },
+    "clang-int-rewrite": {
+      "compiler": "clang",
+      "flags": [
+        "-O3",
+        "-march=native"
+      ],
+      "plugin_env": {
+        "EXACT_REDUCE_INTEGER": "1"
+      }
+    },
     "clang-licensed": {
       "compiler": "clang",
       "flags": [
@@ -104,9 +114,9 @@
     "kernels.h": "29dba4ed9b0308d4ff63d7a3ba855c5a4fac36de16eae705aae2424fb9fbe684",
     "stress.c": "843f493cf4acca39804a9c037192dfa9a0ecc89c1ca22d60911161f03b6cdb56"
   },
-  "pass_source_sha256": "2b1e3c1768100b526c4be99d351e130f03514a175db5ac224f0dbb20d552c09d",
+  "pass_source_sha256": "8f8261d44fd624e48afa6016e0a6baaca451b2438ea840f826a1d0d1f990424e",
   "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
-  "plugin_sha256": "a6ca833e75d4d59b574e29a201139d171a82e0bfc77b60ed3a82954c356377e8",
+  "plugin_sha256": "95c1e4738d90334246205cdac02c3e3ca1b63e961fa4cacb5ae0c43055ba6011",
   "processes": 5,
   "python": "3.12.3",
   "reps": 11,
@@ -155,7 +165,7 @@
   "tool_sha256": {
     "tools/contracts/accuracy.py": "6a7d23b4ac7c64aa151a29827e18f2d9e8d10fe32fe6d0ba9d26db01652cbc1b",
     "tools/contracts/analyze.py": "dcb6c3cb81eaa405725496c41cafe48e81b6e96e383a2eac29201b12b2b6bcae",
-    "tools/contracts/analyze_baselines.py": "80ac740118813acbcea793e079c18c77443711a40a71907f8b0895b78e5aa0d4",
+    "tools/contracts/analyze_baselines.py": "ddafc7516a298b5c81a90ed88cd2d6ead1a1956a21fc73b7adb29144a271c556",
     "tools/contracts/analyze_llvm.py": "d114c6731ab30aaf998319c4bb4a3a5461639c0ef79df64dff8f154f01feb9ef",
     "tools/contracts/analyze_platforms.py": "e607e5d377384151592049890e4ed4188acab08521bde6e4117dd40734800b3e",
     "tools/contracts/analyze_spread.py": "f8041feccb2fa2760b8b992340a4c6ae8cf49536ae6f3890e12c3517582c11b7",
@@ -168,8 +178,9 @@
     "tools/contracts/genprog.py": "a8e39d106918801c97871ea557a6f569682ddca7deb61854cf00320cb0d8b5ce",
     "tools/contracts/llvm_audioop.py": "589fa1eec8a5bd6fd739f50536537c3278fa645069463ebba22d65134428c0bf",
     "tools/contracts/llvm_data.py": "3e398fb8a5aea467b4003abb2e0ab71389fb88542519cf7fb230d5991915ede1",
-    "tools/contracts/llvm_eval.py": "9d3d15a6b911add39aa8674f3223d35dfc38ffea9e9f25cacfc79a0b989e5885",
+    "tools/contracts/llvm_eval.py": "44f9ec7f490b2207aa2865cbdbc2da78e2fa9bd8da65fba36ee0b5d39003e506",
     "tools/contracts/llvm_scan.py": "5650b6280f3eb8ec2bf9e7e9208e9fd45c52dea5a2487b4d291906ea63d10e2e",
+    "tools/contracts/llvm_tier32.py": "38acc16bf5d8f7cdb0d7ec1bef61fc39e9aacf0cc2755354157fc54c79fdc5cf",
     "tools/contracts/mutation.py": "ae09ad3d0c70606d0c542d2b96c660bbbf979273e657e7b46436d60be3f54ae0",
     "tools/contracts/overhead.py": "10fbee26e69922975fb08ee2f4b07b715f6fccc11010c4345956f3b50465938f",
     "tools/contracts/run_all.py": "30a6feb7b6dfcf87b3971c15d6454488fbec2df6f7fbcae14319f84941e93fe1",

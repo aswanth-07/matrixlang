@@ -1,0 +1,653 @@
+{
+  "summary": {
+    "rq1": {
+      "programs": 15000,
+      "failures": 0,
+      "domains": {
+        "bool": {
+          "noproof": {
+            "programs": 1500,
+            "saving": 0.003930868671181548,
+            "chains": 0,
+            "bitwise": 0,
+            "bounded": 0,
+            "relaxed": 0,
+            "declined_flops": 431537959,
+            "outputs": {
+              "bit-identical": 6000
+            }
+          },
+          "strict": {
+            "programs": 1500,
+            "saving": 0.22813078278063062,
+            "chains": 1055,
+            "bitwise": 1924,
+            "bounded": 0,
+            "relaxed": 0,
+            "declined_flops": 1062575,
+            "outputs": {
+              "bit-identical": 6000
+            },
+            "recovery": 0.9882546386645703
+          },
+          "bounded": {
+            "programs": 1500,
+            "saving": 0.23079538854068674,
+            "chains": 1058,
+            "bitwise": 1938,
+            "bounded": 117,
+            "relaxed": 0,
+            "declined_flops": 0,
+            "outputs": {
+              "bit-identical": 5872,
+              "bound-preserving": 128
+            },
+            "recovery": 1.0
+          },
+          "algebraic": {
+            "programs": 1500,
+            "saving": 0.23079538854068674,
+            "chains": 1058,
+            "bitwise": 1938,
+            "bounded": 117,
+            "relaxed": 0,
+            "declined_flops": 0,
+            "outputs": {
+              "bit-identical": 5872,
+              "bound-preserving": 128
+            }
+          },
+          "exact_chain_share": 0.997164461247637
+        },
+        "uint8": {
+          "noproof": {
+            "programs": 1500,
+            "saving": 0.0054914597988227915,
+            "chains": 0,
+            "bitwise": 0,
+            "bounded": 0,
+            "relaxed": 0,
+            "declined_flops": 408995599,
+            "outputs": {
+              "bit-identical": 6000
+            }
+          },
+          "strict": {
+            "programs": 1500,
+            "saving": 0.14015525762512213,
+            "chains": 911,
+            "bitwise": 1734,
+            "bounded": 0,
+            "relaxed": 0,
+            "declined_flops": 142055813,
+            "outputs": {
+              "bit-identical": 6000
+            },
+            "recovery": 0.7775736813680536
+          },
+          "bounded": {
+            "programs": 1500,
+            "saving": 0.1786760737499708,
+            "chains": 1068,
+            "bitwise": 1552,
+            "bounded": 457,
+            "relaxed": 0,
+            "declined_flops": 0,
+            "outputs": {
+              "bit-identical": 5495,
+              "bound-preserving": 505
+            },
+            "recovery": 1.0
+          },
+          "algebraic": {
+            "programs": 1500,
+            "saving": 0.1786760737499708,
+            "chains": 1068,
+            "bitwise": 1552,
+            "bounded": 457,
+            "relaxed": 0,
+            "declined_flops": 0,
+            "outputs": {
+              "bit-identical": 5495,
+              "bound-preserving": 505
+            }
+          },
+          "exact_chain_share": 0.852996254681648
+        },
+        "int8": {
+          "noproof": {
+            "programs": 1500,
+            "saving": 0.005307359116089218,
+            "chains": 0,
+            "bitwise": 0,
+            "bounded": 0,
+            "relaxed": 0,
+            "declined_flops": 520974974,
+            "outputs": {
+              "bit-identical": 6000
+            }
+          },
+          "strict": {
+            "programs": 1500,
+            "saving": 0.16474813610551273,
+            "chains": 927,
+            "bitwise": 1697,
+            "bounded": 0,
+            "relaxed": 0,
+            "declined_flops": 161571571,
+            "outputs": {
+              "bit-identical": 6000
+            },
+            "recovery": 0.8364477701021863
+          },
+          "bounded": {
+            "programs": 1500,
+            "saving": 0.1959238957229656,
+            "chains": 1050,
+            "bitwise": 1645,
+            "bounded": 455,
+            "relaxed": 0,
+            "declined_flops": 0,
+            "outputs": {
+              "bit-identical": 5521,
+              "bound-preserving": 479
+            },
+            "recovery": 1.0
+          },
+          "algebraic": {
+            "programs": 1500,
+            "saving": 0.1959238957229656,
+            "chains": 1050,
+            "bitwise": 1645,
+            "bounded": 455,
+            "relaxed": 0,
+            "declined_flops": 0,
+            "outputs": {
+              "bit-identical": 5521,
+              "bound-preserving": 479
+            }
+          },
+          "exact_chain_share": 0.8828571428571429
+        },
+        "int16": {
+          "noproof": {
+            "programs": 1500,
+            "saving": 0.002777306188840893,
+            "chains": 0,
+            "bitwise": 0,
+            "bounded": 0,
+            "relaxed": 0,
+            "declined_flops": 454180255,
+            "outputs": {
+              "bit-identical": 6000
+            }
+          },
+          "strict": {
+            "programs": 1500,
+            "saving": 0.078461750626956,
+            "chains": 464,
+            "bitwise": 1250,
+            "bounded": 0,
+            "relaxed": 0,
+            "declined_flops": 432567531,
+            "outputs": {
+              "bit-identical": 6000
+            },
+            "recovery": 0.3440601054627587
+          },
+          "bounded": {
+            "programs": 1500,
+            "saving": 0.2227517909850947,
+            "chains": 1060,
+            "bitwise": 1097,
+            "bounded": 988,
+            "relaxed": 0,
+            "declined_flops": 0,
+            "outputs": {
+              "bound-preserving": 1061,
+              "bit-identical": 4939
+            },
+            "recovery": 1.0
+          },
+          "algebraic": {
+            "programs": 1500,
+            "saving": 0.2227517909850947,
+            "chains": 1060,
+            "bitwise": 1097,
+            "bounded": 988,
+            "relaxed": 0,
+            "declined_flops": 0,
+            "outputs": {
+              "bound-preserving": 1061,
+              "bit-identical": 4939
+            }
+          },
+          "exact_chain_share": 0.4377358490566038
+        },
+        "int32": {
+          "noproof": {
+            "programs": 1500,
+            "saving": 0.0026020504609842693,
+            "chains": 0,
+            "bitwise": 0,
+            "bounded": 0,
+            "relaxed": 0,
+            "declined_flops": 400566505,
+            "outputs": {
+              "bit-identical": 6000
+            }
+          },
+          "strict": {
+            "programs": 1500,
+            "saving": 0.07130672344969352,
+            "chains": 18,
+            "bitwise": 792,
+            "bounded": 0,
+            "relaxed": 0,
+            "declined_flops": 389464278,
+            "outputs": {
+              "bit-identical": 6000
+            },
+            "recovery": 0.35830873705730293
+          },
+          "bounded": {
+            "programs": 1500,
+            "saving": 0.19434918326316758,
+            "chains": 1099,
+            "bitwise": 858,
+            "bounded": 1255,
+            "relaxed": 0,
+            "declined_flops": 0,
+            "outputs": {
+              "bit-identical": 4621,
+              "bound-preserving": 1379
+            },
+            "recovery": 1.0
+          },
+          "algebraic": {
+            "programs": 1500,
+            "saving": 0.19434918326316758,
+            "chains": 1099,
+            "bitwise": 858,
+            "bounded": 1255,
+            "relaxed": 0,
+            "declined_flops": 0,
+            "outputs": {
+              "bit-identical": 4621,
+              "bound-preserving": 1379
+            }
+          },
+          "exact_chain_share": 0.01637852593266606
+        },
+        "real": {
+          "noproof": {
+            "programs": 1500,
+            "saving": 0.013863222324335761,
+            "chains": 0,
+            "bitwise": 0,
+            "bounded": 0,
+            "relaxed": 0,
+            "declined_flops": 425976862,
+            "outputs": {
+              "bit-identical": 6000
+            }
+          },
+          "strict": {
+            "programs": 1500,
+            "saving": 0.07549019714018496,
+            "chains": 12,
+            "bitwise": 569,
+            "bounded": 0,
+            "relaxed": 0,
+            "declined_flops": 412154986,
+            "outputs": {
+              "bit-identical": 6000
+            },
+            "recovery": 0.2594764079659565
+          },
+          "bounded": {
+            "programs": 1500,
+            "saving": 0.1176989086844215,
+            "chains": 19,
+            "bitwise": 582,
+            "bounded": 423,
+            "relaxed": 0,
+            "declined_flops": 411476953,
+            "outputs": {
+              "bit-identical": 5638,
+              "bound-preserving": 362
+            },
+            "recovery": 0.43719346918949437
+          },
+          "algebraic": {
+            "programs": 1500,
+            "saving": 0.2513683400301994,
+            "chains": 1066,
+            "bitwise": 587,
+            "bounded": 421,
+            "relaxed": 1049,
+            "declined_flops": 0,
+            "outputs": {
+              "relaxed": 1181,
+              "bit-identical": 4490,
+              "bound-preserving": 329
+            }
+          },
+          "exact_chain_share": 0.01125703564727955
+        },
+        "realx": {
+          "noproof": {
+            "programs": 1500,
+            "saving": 0.0024293028640858445,
+            "chains": 0,
+            "bitwise": 0,
+            "bounded": 0,
+            "relaxed": 0,
+            "declined_flops": 505400074,
+            "outputs": {
+              "bit-identical": 6000
+            }
+          },
+          "strict": {
+            "programs": 1500,
+            "saving": 0.025133951735786614,
+            "chains": 7,
+            "bitwise": 410,
+            "bounded": 0,
+            "relaxed": 0,
+            "declined_flops": 504104874,
+            "outputs": {
+              "bit-identical": 6000
+            },
+            "recovery": 0.0840865336974378
+          },
+          "bounded": {
+            "programs": 1500,
+            "saving": 0.05978257071666931,
+            "chains": 7,
+            "bitwise": 483,
+            "bounded": 392,
+            "relaxed": 0,
+            "declined_flops": 504104874,
+            "outputs": {
+              "bit-identical": 5632,
+              "bound-preserving": 368
+            },
+            "recovery": 0.2124074905186226
+          },
+          "algebraic": {
+            "programs": 1500,
+            "saving": 0.2724445820453776,
+            "chains": 1082,
+            "bitwise": 510,
+            "bounded": 388,
+            "relaxed": 1214,
+            "declined_flops": 0,
+            "outputs": {
+              "bit-identical": 4388,
+              "relaxed": 1320,
+              "bound-preserving": 292
+            }
+          },
+          "exact_chain_share": 0.006469500924214418
+        },
+        "mixed": {
+          "noproof": {
+            "programs": 1500,
+            "saving": 0.0037657475588646484,
+            "chains": 0,
+            "bitwise": 0,
+            "bounded": 0,
+            "relaxed": 0,
+            "declined_flops": 423082098,
+            "outputs": {
+              "bit-identical": 6000
+            }
+          },
+          "strict": {
+            "programs": 1500,
+            "saving": 0.06392622574166361,
+            "chains": 356,
+            "bitwise": 1095,
+            "bounded": 0,
+            "relaxed": 0,
+            "declined_flops": 328551498,
+            "outputs": {
+              "bit-identical": 6000
+            },
+            "recovery": 0.3786431433597871
+          },
+          "bounded": {
+            "programs": 1500,
+            "saving": 0.13549491717087978,
+            "chains": 860,
+            "bitwise": 1016,
+            "bounded": 847,
+            "relaxed": 0,
+            "declined_flops": 92689997,
+            "outputs": {
+              "bit-identical": 5068,
+              "bound-preserving": 932
+            },
+            "recovery": 0.8290882712486342
+          },
+          "algebraic": {
+            "programs": 1500,
+            "saving": 0.16265011992325315,
+            "chains": 1082,
+            "bitwise": 1016,
+            "bounded": 750,
+            "relaxed": 322,
+            "declined_flops": 0,
+            "outputs": {
+              "bit-identical": 4836,
+              "bound-preserving": 790,
+              "relaxed": 374
+            }
+          },
+          "exact_chain_share": 0.3290203327171904
+        },
+        "dyadic": {
+          "noproof": {
+            "programs": 1500,
+            "saving": 0.0011450191875282177,
+            "chains": 0,
+            "bitwise": 0,
+            "bounded": 0,
+            "relaxed": 0,
+            "declined_flops": 427856812,
+            "outputs": {
+              "bit-identical": 6000
+            }
+          },
+          "strict": {
+            "programs": 1500,
+            "saving": 0.20234050121633215,
+            "chains": 1024,
+            "bitwise": 1829,
+            "bounded": 0,
+            "relaxed": 0,
+            "declined_flops": 49250337,
+            "outputs": {
+              "bit-identical": 6000
+            },
+            "recovery": 0.9017331056216733
+          },
+          "bounded": {
+            "programs": 1500,
+            "saving": 0.22426589694447344,
+            "chains": 1040,
+            "bitwise": 1857,
+            "bounded": 220,
+            "relaxed": 0,
+            "declined_flops": 0,
+            "outputs": {
+              "bit-identical": 5770,
+              "bound-preserving": 230
+            },
+            "recovery": 1.0
+          },
+          "algebraic": {
+            "programs": 1500,
+            "saving": 0.22426589694447344,
+            "chains": 1040,
+            "bitwise": 1857,
+            "bounded": 220,
+            "relaxed": 0,
+            "declined_flops": 0,
+            "outputs": {
+              "bit-identical": 5770,
+              "bound-preserving": 230
+            }
+          },
+          "exact_chain_share": 0.9846153846153847
+        },
+        "broad": {
+          "noproof": {
+            "programs": 1500,
+            "saving": 0.0016410365578733948,
+            "chains": 0,
+            "bitwise": 0,
+            "bounded": 0,
+            "relaxed": 0,
+            "declined_flops": 409946966,
+            "outputs": {
+              "bit-identical": 6000
+            }
+          },
+          "strict": {
+            "programs": 1500,
+            "saving": 0.05684038043908748,
+            "chains": 10,
+            "bitwise": 778,
+            "bounded": 0,
+            "relaxed": 0,
+            "declined_flops": 408804516,
+            "outputs": {
+              "bit-identical": 6000
+            },
+            "recovery": 0.2753231457043721
+          },
+          "bounded": {
+            "programs": 1500,
+            "saving": 0.20206849703347074,
+            "chains": 1093,
+            "bitwise": 838,
+            "bounded": 1280,
+            "relaxed": 0,
+            "declined_flops": 306612,
+            "outputs": {
+              "bit-identical": 4606,
+              "bound-preserving": 1394
+            },
+            "recovery": 0.9996915728279205
+          },
+          "algebraic": {
+            "programs": 1500,
+            "saving": 0.20213033338032188,
+            "chains": 1097,
+            "bitwise": 838,
+            "bounded": 1272,
+            "relaxed": 12,
+            "declined_flops": 0,
+            "outputs": {
+              "bit-identical": 4606,
+              "bound-preserving": 1382,
+              "relaxed": 12
+            }
+          },
+          "exact_chain_share": 0.009115770282588878
+        }
+      },
+      "seconds_median": {
+        "noproof": 0.00433,
+        "strict": 0.00406,
+        "bounded": 0.004055,
+        "algebraic": 0.004095
+      },
+      "e01_lead_with_exactness": true
+    },
+    "rq2": {
+      "programs": 4800,
+      "runs": 57600,
+      "arms": {
+        "noproof": {
+          "runs": 14400,
+          "compared": 14400,
+          "outputs": 57600,
+          "differ": 0,
+          "levels": {},
+          "level_differ": {},
+          "errors": 0
+        },
+        "strict": {
+          "runs": 14400,
+          "compared": 14400,
+          "outputs": 57600,
+          "differ": 0,
+          "levels": {
+            "bit-identical": 57600
+          },
+          "level_differ": {
+            "bit-identical": 0
+          },
+          "errors": 0
+        },
+        "bounded": {
+          "runs": 14400,
+          "compared": 14400,
+          "outputs": 57600,
+          "differ": 7097,
+          "levels": {
+            "bit-identical": 47775,
+            "bound-preserving": 9825
+          },
+          "level_differ": {
+            "bit-identical": 0,
+            "bound-preserving": 7097
+          },
+          "errors": 0
+        },
+        "algebraic": {
+          "runs": 14400,
+          "compared": 14400,
+          "outputs": 57600,
+          "differ": 10815,
+          "levels": {
+            "bit-identical": 43827,
+            "bound-preserving": 9429,
+            "relaxed": 4344
+          },
+          "level_differ": {
+            "bit-identical": 0,
+            "bound-preserving": 6882,
+            "relaxed": 3933
+          },
+          "errors": 0
+        }
+      },
+      "pessimism": {
+        "noproof": {
+          "weaker_outputs": 0,
+          "always_identical": 0
+        },
+        "strict": {
+          "weaker_outputs": 0,
+          "always_identical": 0
+        },
+        "bounded": {
+          "weaker_outputs": 3275,
+          "always_identical": 858
+        },
+        "algebraic": {
+          "weaker_outputs": 4591,
+          "always_identical": 912
+        }
+      }
+    }
+  },
+  "raw_sha256": {
+    "results\\review-revision\\native-corpus\\rq1_recovery.jsonl": "1d99ddfc727b6b71eb10a250806fdcd17943b9f3b058ddb7adce9b6462d843f6",
+    "results\\review-revision\\native-corpus-rq2\\rq2_soundness.jsonl": "3ddac5a108b51ea2f1937db6669c08a5525249216d85d8db105770c3318bcd6d"
+  }
+}

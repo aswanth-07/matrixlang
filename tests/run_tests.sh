@@ -358,12 +358,11 @@ expect_contains "1. bit-identical     print(R)"
 run_case "a real-valued chain is kept under strict" 0 "$MATRIXC" --explain examples/contracts/real_chain.ml
 expect_contains "chain kept"
 expect_contains "A is real-valued, so products with it round"
-expect_contains "--fp-bounded permits it"
+expect_contains "--fp-algebraic permits it"
 
-run_case "the bounded contract reorders it and states the bound" 0 "$MATRIXC" --fp-bounded --explain --certificate examples/contracts/real_chain.ml
-expect_contains "chain order      : A * B * C  ->  A * (B * C)"
-expect_contains "keeps the source-order error bound"
-expect_contains "1. bound-preserving  print(R)"
+run_case "bounded refuses real domains with unexcluded inexact underflow" 0 "$MATRIXC" --fp-bounded --explain --certificate examples/contracts/real_chain.ml
+expect_contains "chain kept"
+expect_contains "1. bit-identical     print(R)"
 
 run_case "53 bits exactly is still exact" 0 "$MATRIXC" --explain examples/contracts/boundary_exact.ml
 expect_contains "needs at most 53 of 53 significand bits"

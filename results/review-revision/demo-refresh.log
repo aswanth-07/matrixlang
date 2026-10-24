@@ -1,0 +1,10 @@
+Captured Matrix product: strict, bounded, algebraic
+Captured Exact integer chain: strict, bounded, algebraic
+Captured Real-valued chain: strict, bounded, algebraic
+Captured Per-output guarantees: strict, bounded, algebraic
+Captured Unbounded reals: strict, bounded, algebraic
+Captured Signed zero: strict, bounded, algebraic
+Captured Inherited guarantee: strict, bounded, algebraic
+Captured Shape mismatch: strict, bounded, algebraic
+Captured Expression reuse: strict, bounded, algebraic
+Wrote demo/workspace-data.js

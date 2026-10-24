@@ -1,0 +1,93 @@
+{
+  "title": "Proof-Guided Floating-Point Optimization: Exact Reassociation, Error Bounds, and Compiler Certificates",
+  "date": "2026-10-24",
+  "builds": {
+    "matrixlang": {
+      "pages": 22,
+      "isolated_build": "passed",
+      "page_text_matches_delivered_pdf": true
+    },
+    "anonymous": {
+      "pages": 22,
+      "isolated_build": "passed",
+      "page_text_matches_delivered_pdf": true
+    }
+  },
+  "source_archive_members": [
+    "README.md",
+    "anonymous.tex",
+    "figures/llvm-routes.pdf",
+    "generated-review/contracts.tex",
+    "generated-review/tab-recovery.tex",
+    "generated-review/tab-soundness.tex",
+    "generated/baselines.tex",
+    "generated/contracts.tex",
+    "generated/llvm.tex",
+    "generated/platforms.tex",
+    "generated/repair.tex",
+    "generated/spread.tex",
+    "generated/tab-accuracy.tex",
+    "generated/tab-e2e.tex",
+    "generated/tab-intro.tex",
+    "generated/tab-llvm-bench.tex",
+    "generated/tab-llvm-scan.tex",
+    "generated/tab-llvm-stress.tex",
+    "generated/tab-mutation.tex",
+    "generated/tab-real.tex",
+    "generated/tab-tightness.tex",
+    "matrixlang.tex"
+  ],
+  "certificate_replay": {
+    "checked": 262,
+    "levels": {
+      "bit-identical": 166,
+      "bound-preserving": 96
+    },
+    "scope": "numerical obligations conditional on supplied operand facts"
+  },
+  "validation": {
+    "full_make_test": "passed; results/review-revision/full-tests-final.log",
+    "acceptance_checks": 233,
+    "c_backend": "48 programs x 3 contracts x 4 builds; zero required mismatches",
+    "frontend_comparison": "54 programs; demo lexer/parser agree with the compiler",
+    "rq1": "15000 programs, 60000 compilations; no errors",
+    "rq2": "4800 programs x 3 seeds x 4 arms; no execution errors or bit-identical-certificate mismatches",
+    "llvm": "9 IR functions; 75 smoke outputs and 784 stress cases each for licensed/integer builds; 20 integer-width cases; mutant caught on 10 cases",
+    "layout": "all pages visually inspected; automated geometry, header and reference checks passed"
+  },
+  "files": {
+    "README.md": {
+      "bytes": 2417,
+      "sha256": "501d004d3e98460be2661e6ae9edfa973cec2289b8cea3dd548896a68dcc5e66"
+    },
+    "certificate-provenance.jsonl": {
+      "bytes": 166185,
+      "sha256": "755f86ba9b3b217b5b33973a52f8605b931d07d2a55d7f19cfad18ab2b3402f2"
+    },
+    "check_chain_certificate.py": {
+      "bytes": 3219,
+      "sha256": "6e56a674c10e4f256cabc2093260990bd15e4f388bdcc7dbe7c9cc8f3c5208f1"
+    },
+    "manuscript-source.zip": {
+      "bytes": 85395,
+      "sha256": "ca0b608520970619d4a3b6efac30ffb9e3f6edae0957118ec0208fdd69d3bc5e"
+    },
+    "numerical-certificates.jsonl": {
+      "bytes": 122505,
+      "sha256": "50845be72fa59e8b71f0e8e44e1d1c18d78d38cae4e9f123f70586f5cf5616f0"
+    },
+    "proof-guided-floating-point-optimization-anonymous.pdf": {
+      "bytes": 795744,
+      "sha256": "9237b4d096b3eab46e0e08964be5da74294308dcdff912b3f15569f620678e2e"
+    },
+    "proof-guided-floating-point-optimization.pdf": {
+      "bytes": 800604,
+      "sha256": "ee7204a0f617ed31c25edfc4baf87320a17b6deff5e36f10e0a06b21e0f7053c"
+    },
+    "review-response.md": {
+      "bytes": 5861,
+      "sha256": "18ff2977b17c6795ca8441e6219475c967b76c3f523e3d90322bf00600a868f9"
+    }
+  },
+  "status": "revised author-review manuscript; no external submission or author approval asserted"
+}

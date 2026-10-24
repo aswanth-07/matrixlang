@@ -1,0 +1,28 @@
+{
+  "programs": 221,
+  "accepted_compilations": 660,
+  "checked_certificates": 262,
+  "levels": {
+    "bit-identical": 166,
+    "bound-preserving": 96
+  },
+  "rejected_programs": [
+    {
+      "name": "examples/phase1/bad.ml",
+      "mode": "strict",
+      "status": 1
+    },
+    {
+      "name": "examples/phase1/bad.ml",
+      "mode": "bounded",
+      "status": 1
+    },
+    {
+      "name": "examples/phase1/bad.ml",
+      "mode": "algebraic",
+      "status": 1
+    }
+  ],
+  "failures": 0,
+  "scope": "conditional numerical obligations; source/fact binding and emitted code are not verified"
+}

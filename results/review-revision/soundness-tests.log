@@ -1,0 +1,9 @@
+test_compiler_and_checker (test_review_soundness.ReviewSoundnessTests) ... ok
+test_product_grid_boundary (test_review_soundness.ReviewSoundnessTests) ... ok
+test_relative_bound_counterexample (test_review_soundness.ReviewSoundnessTests) ... ok
+test_vm_preserves_counterexample_source_order (test_review_soundness.ReviewSoundnessTests) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.420s
+
+OK

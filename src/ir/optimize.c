@@ -821,6 +821,8 @@ void optimize_run(int passes)
 {
     int round;
 
+    chain_certificate_begin();
+
     stats.original = tac_live_count();
     stats.flops_before = cost_total();
 

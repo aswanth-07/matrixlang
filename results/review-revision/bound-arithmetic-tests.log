@@ -1,0 +1,8 @@
+test_chain_bound_never_understates_exact_coefficient (test_bound_arithmetic.BoundArithmeticTests) ... ok
+test_magnitude_products_bound_exact_rationals_near_underflow (test_bound_arithmetic.BoundArithmeticTests) ... ok
+test_nonfinite_bound_never_fits_a_coarse_grid (test_bound_arithmetic.BoundArithmeticTests) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 4.754s
+
+OK

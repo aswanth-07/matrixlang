@@ -37,16 +37,19 @@
 // "-"), one line per floating-point add reduction:
 //     <function> <loop> <file:line> licensed|versioned|declined <reason>
 //
-// Two switches exist only for the validation study, which must show that the
+// Three switches exist only for the validation study, which must show that the
 // checks are necessary: EXACT_REDUCE_EXTRA_BITS=<k> widens every significand
 // by k bits (k = 1 is a mutant that accepts one bit too many), and
 // EXACT_REDUCE_FORCE=1 licenses every add reduction without a proof, which is
 // what -fassociative-math does to such a loop. EXACT_REDUCE_VERSION=0
-// disables versioning.
+// disables versioning. EXACT_REDUCE_INTEGER=1 enables the integer rewrite (see
+// below); EXACT_REDUCE_TIER32_SLACK=<k> widens its 32-bit limit by k trips, a
+// mutant for the boundary test (llvm/tests/tier32.c).
 //
 // Build: make -C llvm.  Use: clang -O2 -fpass-plugin=llvm/ExactReduce.so ...
 
 #include "llvm/ADT/APInt.h"
+#include "llvm/ADT/APSInt.h"
 #include "llvm/ADT/DenseMap.h"
 #include "llvm/ADT/SmallPtrSet.h"
 #include "llvm/ADT/SmallVector.h"
@@ -72,6 +75,7 @@
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/Transforms/Utils/BasicBlockUtils.h"
 #include "llvm/Transforms/Utils/Cloning.h"
+#include "llvm/Transforms/Utils/Local.h"
 #include "llvm/Transforms/Utils/LoopSimplify.h"
 #include "llvm/Transforms/Utils/LoopUtils.h"
 #include "llvm/Transforms/Utils/ScalarEvolutionExpander.h"
@@ -96,6 +100,10 @@ struct Options {
   int ExtraBits = 0;      // EXACT_REDUCE_EXTRA_BITS: added to p (validation only)
   bool Force = false;     // EXACT_REDUCE_FORCE: license every add reduction
   bool Version = true;    // EXACT_REDUCE_VERSION=0 disables loop versioning
+  bool Integer = false;   // EXACT_REDUCE_INTEGER=1: licensed sums of integers are
+                          // accumulated in integers (the integer rewrite)
+  int Tier32Slack = 0;    // EXACT_REDUCE_TIER32_SLACK: added to the 32-bit trip
+                          // limit (validation only: a mutant that must be caught)
   std::string Report;     // EXACT_REDUCE_REPORT: a path, or "-" for stderr
 
   static const Options &get() {
@@ -104,6 +112,8 @@ struct Options {
       if (const char *B = std::getenv("EXACT_REDUCE_EXTRA_BITS")) R.ExtraBits = std::atoi(B);
       if (const char *F = std::getenv("EXACT_REDUCE_FORCE")) R.Force = std::atoi(F) != 0;
       if (const char *V = std::getenv("EXACT_REDUCE_VERSION")) R.Version = std::atoi(V) != 0;
+      if (const char *I = std::getenv("EXACT_REDUCE_INTEGER")) R.Integer = std::atoi(I) != 0;
+      if (const char *T = std::getenv("EXACT_REDUCE_TIER32_SLACK")) R.Tier32Slack = std::atoi(T);
       if (const char *P = std::getenv("EXACT_REDUCE_REPORT")) R.Report = P;
       return R;
     }();
@@ -593,6 +603,8 @@ struct Decision {
   std::string Why;
   int G = 0;              // the guard's grid (never above 0)
   APInt K{Width, 0};      // one iteration's terms, in units of 2^G
+  Fact TermsBound;        // a static license: every sum of the terms
+  Fact PerBound;          // the terms one iteration adds
 };
 
 // ---- loop versioning ------------------------------------------------------------------
@@ -659,9 +671,9 @@ Value *buildGuard(IRBuilder<> &B, Value *Start, Value *BTC, const Decision &D) {
   return B.CreateAnd(Valid, Fits, "exact.reduce.ok");
 }
 
-// Clones L. The clone runs when every reduction's guard holds and is returned
+// Clones L. The clone runs when Guard (given the backedge-taken count) holds and is returned
 // through VMap (original -> clone); the original runs otherwise, untouched.
-void versionLoop(Loop *L, ArrayRef<std::pair<Value *, Decision>> Guards, LoopInfo &LI,
+void versionLoop(Loop *L, function_ref<Value *(IRBuilder<> &, Value *)> Guard, LoopInfo &LI,
                  DominatorTree &DT, ScalarEvolution &SE, ValueToValueMapTy &VMap) {
   formLCSSA(*L, DT, &LI, &SE);
   BasicBlock *Preheader = L->getLoopPreheader();
@@ -672,9 +684,7 @@ void versionLoop(Loop *L, ArrayRef<std::pair<Value *, Decision>> Guards, LoopInf
   SCEVExpander Exp(SE, Preheader->getModule()->getDataLayout(), "exact.reduce");
   Value *Count = Exp.expandCodeFor(BTC, BTC->getType(), Preheader->getTerminator());
   IRBuilder<> B(Preheader->getTerminator());
-  Value *Ok = B.getTrue();
-  for (auto &[Start, D] : Guards)
-    Ok = B.CreateAnd(Ok, buildGuard(B, Start, Count, D));
+  Value *Ok = Guard(B, Count);
 
   // The old preheader becomes the check; each copy gets its own preheader.
   BasicBlock *Check = Preheader;
@@ -760,10 +770,12 @@ Decision decide(PHINode *Phi, Loop *L, const RecurrenceDescriptor &RD, const Cha
   Decision D;
   Format Fm = formatOf(Phi->getType());
   const Fact &Per = C.PerIteration;
+  D.PerBound = Per;
   std::string Terms = "terms per iteration " + describe(Per);
   if (Per.isZero()) {
     D.What = Decision::Licensed;
     D.Why = "every term is zero";
+    D.TermsBound = Fact::zero();
     return D;
   }
 
@@ -777,6 +789,7 @@ Decision decide(PHINode *Phi, Loop *L, const RecurrenceDescriptor &RD, const Cha
       Fact Total = addFacts(S.Before, scaleFact(Per, N));
       if (exactIn(Total, Fm)) {
         D.What = Decision::Licensed;
+        D.TermsBound = scaleFact(Per, N);
         D.Why = Terms + ", at most " + toString(N, 10, false) + " terms, partial sums " +
                 describe(Total) + " <= " + pow2(Fm.P + Total.G);
         return D;
@@ -818,6 +831,333 @@ Decision decide(PHINode *Phi, Loop *L, const RecurrenceDescriptor &RD, const Cha
   return D;
 }
 
+// ---- the integer rewrite (EXACT_REDUCE_INTEGER=1) --------------------------------------
+//
+// Where a reduction is licensed and every term is an integer, the facts that
+// make every order exact also bound the integer sum, so the sum can be
+// accumulated in an integer type instead and converted once after the loop.
+// The result is the exact sum, as in the strict program, so the bits are the
+// same; integer lanes are narrower than floating-point ones, so the vectorizer
+// can pack more terms per instruction. The accumulator is 32 bits wide when
+// the proved bound on the terms' sum is below 2^31 and 64 bits otherwise
+// (every licensed sum is at most 2^53); each term is computed in the narrowest
+// of the two that holds every value of its expression.
+//
+// The rewrite is attempted only where it is simple to get right: a straight
+// chain from the phi to the latch value whose intermediate values have no
+// other use, a loop that exits from its latch, and a constant start value
+// other than -0. A sum of integer terms is never -0, so a -0 start, the one
+// case in which the strict program can return -0 (Lemma 2), keeps the
+// floating-point license. Anything else keeps it too.
+
+struct IntRecipe {
+  bool Ok = false;
+  std::string Why;
+  unsigned AccBits = 64;
+  SmallVector<Instruction *, 8> Order;   // chain operations, from the phi to the latch value
+  SmallVector<unsigned, 8> TermBits;     // per operation
+  uint64_t Tier32Trips = 0;              // a static i64 recipe: i32 when BTC < this
+};
+
+const APInt &int31Max() {
+  static APInt M = APInt::getLowBitsSet(Width, 31);
+  return M;
+}
+
+// The magnitude bound of an integer fact, or nothing when the fact is not of
+// integers or exceeds 2^62.
+std::optional<APInt> integerMagnitude(const Fact &F) {
+  if (!F.Known)
+    return std::nullopt;
+  if (F.isZero())
+    return APInt(Width, 0);
+  if (F.G < 0)
+    return std::nullopt;
+  auto M = shiftUp(F.K, F.G);
+  if (!M || M->ugt(APInt::getOneBitSet(Width, 62)))
+    return std::nullopt;
+  return M;
+}
+
+// Whether V is an integer expression the rewrite can rebuild; widens Bits to
+// 64 when one of its values may not fit in 32.
+bool integerTerm(Value *V, FactAnalysis &FA, unsigned &Bits, int Depth = 0) {
+  if (Depth > 8)
+    return false;
+  auto M = integerMagnitude(FA.of(V));
+  if (!M)
+    return false;
+  if (M->ugt(int31Max()))
+    Bits = 64;
+  if (isa<ConstantFP>(V))
+    return true;
+  auto *I = dyn_cast<Instruction>(V);
+  if (!I)
+    return false;
+  switch (I->getOpcode()) {
+  case Instruction::SIToFP:
+  case Instruction::UIToFP:
+    return I->getOperand(0)->getType()->isIntegerTy() &&
+           I->getOperand(0)->getType()->getIntegerBitWidth() <= 64;
+  case Instruction::FPExt:
+  case Instruction::FNeg:
+    return integerTerm(I->getOperand(0), FA, Bits, Depth + 1);
+  case Instruction::FMul:
+  case Instruction::FAdd:
+  case Instruction::FSub:
+    return integerTerm(I->getOperand(0), FA, Bits, Depth + 1) &&
+           integerTerm(I->getOperand(1), FA, Bits, Depth + 1);
+  case Instruction::Select:
+    return integerTerm(I->getOperand(1), FA, Bits, Depth + 1) &&
+           integerTerm(I->getOperand(2), FA, Bits, Depth + 1);
+  default:
+    return false;
+  }
+}
+
+// The accumulator operand of a chain operation: the phi or another chain
+// operation, never both operands, and the minuend of a subtraction. Null when
+// there is none.
+Value *accumulatorOf(Instruction *I, PHINode *Phi, ArrayRef<Instruction *> Ops) {
+  auto InChain = [&](Value *V) {
+    return V == Phi || std::find(Ops.begin(), Ops.end(), V) != Ops.end();
+  };
+  if (auto *II = dyn_cast<IntrinsicInst>(I))
+    return II->getIntrinsicID() == Intrinsic::fmuladd && InChain(II->getArgOperand(2)) &&
+                   !InChain(II->getArgOperand(0)) && !InChain(II->getArgOperand(1))
+               ? II->getArgOperand(2)
+               : nullptr;
+  if (I->getOpcode() != Instruction::FAdd && I->getOpcode() != Instruction::FSub)
+    return nullptr;
+  bool A = InChain(I->getOperand(0)), B = InChain(I->getOperand(1));
+  if (A == B || (I->getOpcode() == Instruction::FSub && B))
+    return nullptr;
+  return A ? I->getOperand(0) : I->getOperand(1);
+}
+
+// The term an addition or subtraction of the chain adds, given its accumulator.
+Value *termOf(Instruction *I, Value *Acc) {
+  return I->getOperand(0) == Acc ? I->getOperand(1) : I->getOperand(0);
+}
+
+// The shape the rewrite needs, on the loop it would rewrite (in LCSSA form):
+// the chain in order with no other use inside it, and the latch value used
+// only by the phi and by LCSSA phis of the unique exit. Empty when it holds.
+std::string integerShape(PHINode *Phi, Loop *L, ArrayRef<Instruction *> Ops,
+                         SmallVectorImpl<Instruction *> &Order) {
+  BasicBlock *Latch = L->getLoopLatch();
+  BasicBlock *Exit = L->getExitBlock();
+  if (!Latch || !L->getLoopPreheader() || L->getExitingBlock() != Latch || !Exit)
+    return "the loop does not exit from its latch";
+  SmallVector<Instruction *, 8> Rev;
+  Value *Cur = Phi->getIncomingValueForBlock(Latch);
+  while (Cur != Phi) {
+    auto *I = dyn_cast<Instruction>(Cur);
+    if (!I || std::find(Ops.begin(), Ops.end(), I) == Ops.end() || Rev.size() > Ops.size())
+      return "the chain is not a straight line of additions";
+    Rev.push_back(I);
+    Cur = accumulatorOf(I, Phi, Ops);
+    if (!Cur)
+      return "the chain is not a straight line of additions";
+  }
+  if (Rev.empty() || !Phi->hasOneUse() || *Phi->user_begin() != Rev.back())
+    return "the accumulator has another use";
+  Order.assign(Rev.rbegin(), Rev.rend());
+  for (size_t K = 0; K + 1 < Order.size(); ++K)
+    if (!Order[K]->hasOneUse())
+      return "a partial sum has another use";
+  // After the loop the sum leaves through LCSSA phis: in the exit, or in a
+  // block already split onto the exit edge (one per latch, see applyInteger).
+  for (User *U : Order.back()->users()) {
+    if (U == Phi)
+      continue;
+    auto *P = dyn_cast<PHINode>(U);
+    BasicBlock *B = P ? P->getParent() : nullptr;
+    if (!P || L->contains(B) || (B != Exit && B->getSinglePredecessor() != Latch))
+      return "the sum is used inside the loop or not through the exit";
+  }
+  return "";
+}
+
+// The recipe, decided with the facts of the original loop. TermsLimit bounds
+// the magnitude of the terms' sum: the static bound, or what the guard admits.
+IntRecipe planInteger(PHINode *Phi, Loop *L, Value *Start, ArrayRef<Instruction *> Ops,
+                      FactAnalysis &FA, const APInt &TermsLimit, LoopInfo &LI,
+                      DominatorTree &DT, ScalarEvolution &SE) {
+  IntRecipe R;
+  auto *SC = dyn_cast<ConstantFP>(Start);
+  if (!SC || SC->isNegativeZeroValue()) {
+    R.Why = "the start value is not a constant other than -0";
+    return R;
+  }
+  formLCSSA(*L, DT, &LI, &SE);
+  R.Why = integerShape(Phi, L, Ops, R.Order);
+  if (!R.Why.empty())
+    return R;
+  unsigned AccBits = TermsLimit.ugt(int31Max()) ? 64 : 32;
+  for (size_t K = 0; K < R.Order.size(); ++K) {
+    Instruction *I = R.Order[K];
+    unsigned Bits = 32;
+    bool Ok;
+    if (auto *II = dyn_cast<IntrinsicInst>(I)) {
+      Value *X = II->getArgOperand(0), *Y = II->getArgOperand(1);
+      auto M = integerMagnitude(mulFacts(FA.of(X), FA.of(Y)));
+      Ok = M && integerTerm(X, FA, Bits) && integerTerm(Y, FA, Bits);
+      if (Ok && M->ugt(int31Max()))
+        Bits = 64;
+    } else {
+      Value *Acc = K == 0 ? static_cast<Value *>(Phi) : static_cast<Value *>(R.Order[K - 1]);
+      Ok = integerTerm(termOf(I, Acc), FA, Bits);
+    }
+    if (!Ok) {
+      R.Why = "a term is not an integer expression the rewrite can rebuild";
+      return R;
+    }
+    R.TermBits.push_back(Bits);
+    AccBits = std::max(AccBits, Bits);
+  }
+  R.AccBits = AccBits;
+  R.Ok = true;
+  return R;
+}
+
+// The integer value of a floating-point integer expression of the original
+// loop, built before B's insertion point; Map translates the original loop's
+// values to the loop being rewritten (the identity, or a clone's VMap).
+Value *emitInteger(Value *V, IRBuilder<> &B, IntegerType *IT, function_ref<Value *(Value *)> Map) {
+  if (auto *CF = dyn_cast<ConstantFP>(V)) {
+    APSInt R(IT->getBitWidth(), /*isUnsigned=*/false);
+    bool Exact = false;
+    CF->getValueAPF().convertToInteger(R, APFloat::rmTowardZero, &Exact);
+    return ConstantInt::get(IT, R);
+  }
+  auto *I = cast<Instruction>(V);
+  auto Sub = [&](unsigned K) { return emitInteger(I->getOperand(K), B, IT, Map); };
+  switch (I->getOpcode()) {
+  case Instruction::SIToFP:
+    return B.CreateSExtOrTrunc(Map(I->getOperand(0)), IT);
+  case Instruction::UIToFP:
+    return B.CreateZExtOrTrunc(Map(I->getOperand(0)), IT);
+  case Instruction::FPExt:
+    return Sub(0);
+  case Instruction::FNeg:
+    return B.CreateSub(ConstantInt::get(IT, 0), Sub(0), "", false, true);
+  case Instruction::FMul:
+    return B.CreateMul(Sub(0), Sub(1), "", false, true);
+  case Instruction::FAdd:
+    return B.CreateAdd(Sub(0), Sub(1), "", false, true);
+  case Instruction::FSub:
+    return B.CreateSub(Sub(0), Sub(1), "", false, true);
+  case Instruction::Select:
+    return B.CreateSelect(Map(I->getOperand(0)), Sub(1), Sub(2));
+  default:
+    llvm_unreachable("checked by integerTerm");
+  }
+}
+
+// Rewrites the reduction of Phi in L (the original loop, or a clone that Map
+// translates the original into) as R planned it on the original, whose phi is
+// OrigPhi. Returns false, having changed nothing but LCSSA form, when the
+// shape does not hold on L. AfterLoop keeps the block made on each exit edge.
+bool applyInteger(PHINode *Phi, Loop *L, PHINode *OrigPhi, Value *Start, const IntRecipe &R,
+                  ArrayRef<Instruction *> Ops, function_ref<Value *(Value *)> Map, LoopInfo &LI,
+                  DominatorTree &DT, ScalarEvolution &SE,
+                  DenseMap<BasicBlock *, BasicBlock *> &AfterLoop) {
+  formLCSSA(*L, DT, &LI, &SE);
+  SmallVector<Instruction *, 8> Order;
+  if (!integerShape(Phi, L, Ops, Order).empty() || Order.size() != R.Order.size())
+    return false;
+  for (size_t K = 0; K < Order.size(); ++K)
+    if (Order[K] != Map(R.Order[K]))
+      return false;
+  LLVMContext &Ctx = Phi->getContext();
+  Type *FT = Phi->getType();
+  IntegerType *AT = IntegerType::get(Ctx, R.AccBits);
+  BasicBlock *Latch = L->getLoopLatch(), *Exit = L->getExitBlock();
+  Instruction *Last = Order.back();
+
+  // The integer chain, beside the floating-point one.
+  PHINode *IPhi = PHINode::Create(AT, 2, "exact.int", &L->getHeader()->front());
+  IPhi->addIncoming(ConstantInt::get(AT, 0), L->getLoopPreheader());
+  Value *Acc = IPhi;
+  for (size_t K = 0; K < Order.size(); ++K) {
+    Instruction *Orig = R.Order[K];
+    IRBuilder<> B(Order[K]);
+    IntegerType *TT = IntegerType::get(Ctx, R.TermBits[K]);
+    Value *Term;
+    if (auto *II = dyn_cast<IntrinsicInst>(Orig))
+      Term = B.CreateMul(emitInteger(II->getArgOperand(0), B, TT, Map),
+                         emitInteger(II->getArgOperand(1), B, TT, Map), "", false, true);
+    else
+      Term = emitInteger(termOf(Orig, K == 0 ? static_cast<Value *>(OrigPhi)
+                                             : static_cast<Value *>(R.Order[K - 1])),
+                         B, TT, Map);
+    Term = B.CreateSExtOrTrunc(Term, AT);
+    Acc = Orig->getOpcode() == Instruction::FSub
+              ? B.CreateSub(Acc, Term, "exact.int.acc", false, true)
+              : B.CreateAdd(Acc, Term, "exact.int.acc", false, true);
+  }
+  IPhi->addIncoming(Acc, Latch);
+
+  // After the loop: the exact sum, converted once. A start value other than
+  // zero is added in floating point; that addition is exact too.
+  // A dedicated exit (the unversioned loop) takes the conversion itself; the
+  // shared exit of a versioned loop gets a block on the clone's (critical)
+  // exit edge, made once per loop.
+  bool Dedicated = Exit->getSinglePredecessor() == Latch;
+  BasicBlock *Into = Exit;
+  if (!Dedicated) {
+    BasicBlock *&After = AfterLoop[Latch];
+    if (!After)
+      After = SplitEdge(Latch, Exit, &DT, &LI);
+    Into = After;
+  }
+  PHINode *Out = PHINode::Create(AT, 1, "exact.int.out", &Into->front());
+  Out->addIncoming(Acc, Latch);
+  IRBuilder<> E(&*Into->getFirstInsertionPt());
+  Value *Res = E.CreateSIToFP(Out, FT, "exact.int.sum");
+  auto *SC = cast<ConstantFP>(Start);
+  if (!SC->isZero())
+    Res = E.CreateFAdd(SC, Res, "exact.int.sum");
+  // Every use of the sum after the loop is an LCSSA phi. One in the block
+  // that now holds the conversion (the dedicated exit, or the block split onto
+  // the edge, where SplitEdge leaves one per escaping value) is the sum
+  // itself: replace it. One in a shared exit reached from that block takes
+  // the converted sum on that edge.
+  SmallVector<PHINode *, 4> Uses;
+  for (User *U : Last->users())
+    if (U != Phi)
+      Uses.push_back(cast<PHINode>(U));
+  for (PHINode *P : Uses) {
+    if (P->getParent() == Into) {
+      P->replaceAllUsesWith(Res);
+      P->eraseFromParent();
+    } else {
+      for (unsigned In = 0; In < P->getNumIncomingValues(); ++In)
+        if (P->getIncomingValue(In) == Last && P->getIncomingBlock(In) == Into)
+          P->setIncomingValue(In, Res);
+    }
+  }
+  for (User *U : Last->users())
+    if (U != Phi)
+      report_fatal_error("ExactReduce: the integer rewrite left a use of the floating-point sum");
+
+  // The floating-point chain is now dead: remove it and its terms.
+  SmallVector<WeakTrackingVH, 16> Dead;
+  Phi->replaceAllUsesWith(PoisonValue::get(FT));
+  for (auto It = Order.rbegin(); It != Order.rend(); ++It) {
+    for (Value *Op : (*It)->operands())
+      if (isa<Instruction>(Op))
+        Dead.push_back(Op);
+    (*It)->replaceAllUsesWith(PoisonValue::get(FT));
+    (*It)->eraseFromParent();
+  }
+  Phi->eraseFromParent();
+  RecursivelyDeleteTriviallyDeadInstructionsPermissive(Dead);
+  SE.forgetLoop(L);
+  return true;
+}
+
 // ---- the pass -----------------------------------------------------------------------
 
 struct ExactReducePass : PassInfoMixin<ExactReducePass> {
@@ -826,7 +1166,20 @@ struct ExactReducePass : PassInfoMixin<ExactReducePass> {
     Value *Start;
     SmallVector<Instruction *, 8> Ops;
     Decision D;
+    PHINode *Phi = nullptr;
+    IntRecipe R;
   };
+
+  static std::string integerNote(const IntRecipe &R) {
+    if (!Options::get().Integer)
+      return "";
+    if (!R.Ok)
+      return "; kept in floating point: " + R.Why;
+    std::string Note = "; rewritten to an i" + std::to_string(R.AccBits) + " accumulator";
+    if (R.Tier32Trips)
+      Note += ", i32 when the trip count is at most " + std::to_string(R.Tier32Trips);
+    return Note;
+  }
 
   static void license(const SmallVectorImpl<Instruction *> &Ops) {
     for (Instruction *I : Ops) {
@@ -850,7 +1203,7 @@ struct ExactReducePass : PassInfoMixin<ExactReducePass> {
       ChangedCFG |= simplifyLoop(L, &DT, &LI, &SE, &AC, nullptr, /*PreserveLCSSA=*/false);
 
     // Decide everything against the unmodified loops, then apply.
-    SmallVector<SmallVector<Instruction *, 8>, 8> Licenses;
+    SmallVector<Plan, 8> Licenses;
     SmallVector<Plan, 4> Versions;
     for (Loop *L : LI.getLoopsInPreorder()) {
       if (!L->getLoopLatch() || !L->getLoopPreheader())
@@ -874,7 +1227,7 @@ struct ExactReducePass : PassInfoMixin<ExactReducePass> {
           continue;
         }
         if (O.Force) {
-          Licenses.push_back(All);
+          Licenses.push_back({L, RD.getRecurrenceStartValue(), All, Decision{}, Phi, IntRecipe{}});
           report(Head + " licensed forced");
           continue;
         }
@@ -887,10 +1240,34 @@ struct ExactReducePass : PassInfoMixin<ExactReducePass> {
         }
         Decision D = decide(Phi, L, RD, C, SE, FA);
         if (D.What == Decision::Licensed) {
-          Licenses.push_back(C.Ops);
-          report(Head + " licensed " + D.Why);
+          Plan P{L, RD.getRecurrenceStartValue(), C.Ops, D, Phi, IntRecipe{}};
+          if (O.Integer)
+            P.R = planInteger(Phi, L, P.Start, C.Ops, FA,
+                              integerMagnitude(D.TermsBound).value_or(APInt::getAllOnes(Width)),
+                              LI, DT, SE);
+          // A 64-bit recipe whose terms fit 32 bits can still accumulate in
+          // 32 bits on entries short enough: (BTC + 1) * per-iteration bound
+          // <= 2^31 - 1, that is BTC < (2^31 - 1) / bound.
+          if (O.Integer && P.R.Ok && P.R.AccBits == 64 && cannotVersion(L, SE).empty() &&
+              std::all_of(P.R.TermBits.begin(), P.R.TermBits.end(),
+                          [](unsigned B) { return B == 32; }))
+            if (auto M = integerMagnitude(D.PerBound); M && !M->isZero()) {
+              APInt Trips = int31Max().udiv(*M);
+              if (Trips.ugt(1))
+                P.R.Tier32Trips = Trips.getLimitedValue(UINT64_MAX) + uint64_t(O.Tier32Slack);
+            }
+          report(Head + " licensed " + D.Why + integerNote(P.R));
+          Licenses.push_back(P);
         } else if (D.What == Decision::Versioned && O.Version) {
-          Guarded.push_back({{L, RD.getRecurrenceStartValue(), C.Ops, D}, Head});
+          Plan P{L, RD.getRecurrenceStartValue(), C.Ops, D, Phi, IntRecipe{}};
+          // The guard admits terms whose sum is at most 2^(p+G) in magnitude.
+          int Lim = formatOf(Phi->getType()).P + D.G;
+          if (O.Integer)
+            P.R = planInteger(Phi, L, P.Start, C.Ops, FA,
+                              Lim >= 0 ? APInt::getOneBitSet(Width, unsigned(Lim))
+                                       : APInt::getAllOnes(Width),
+                              LI, DT, SE);
+          Guarded.push_back({P, Head});
         } else {
           if (D.What == Decision::Versioned)
             D.Why += " (versioning disabled)";
@@ -900,12 +1277,56 @@ struct ExactReducePass : PassInfoMixin<ExactReducePass> {
       // One clone per loop, guarded by every guarded reduction's condition.
       for (auto &[P, Head] : Guarded) {
         Versions.push_back(P);
-        report(Head + " versioned " + P.D.Why);
+        report(Head + " versioned " + P.D.Why + integerNote(P.R));
       }
     }
 
-    for (auto &Ops : Licenses)
-      license(Ops);
+    DenseMap<BasicBlock *, BasicBlock *> AfterLoop;
+    auto Identity = [](Value *V) { return V; };
+    auto PlansIn = [&](Loop *L) {
+      unsigned N = 0;
+      for (Plan &Q : Licenses)
+        N += Q.L == L;
+      for (Plan &Q : Versions)
+        N += Q.L == L;
+      return N;
+    };
+    for (Plan &P : Licenses) {
+      if (O.Integer && P.R.Ok && P.R.Tier32Trips && PlansIn(P.L) == 1) {
+        ValueToValueMapTy VMap;
+        uint64_t Trips = P.R.Tier32Trips;
+        versionLoop(
+            P.L,
+            [&](IRBuilder<> &B, Value *Count) {
+              return B.CreateICmpULT(B.CreateZExtOrTrunc(Count, B.getInt64Ty()),
+                                     B.getInt64(Trips), "exact.int.fits32");
+            },
+            LI, DT, SE, VMap);
+        auto Map = [&](Value *V) -> Value * {
+          auto It = VMap.find(V);
+          return It != VMap.end() && It->second ? static_cast<Value *>(It->second) : V;
+        };
+        SmallVector<Instruction *, 8> Cloned;
+        for (Instruction *I : P.Ops)
+          Cloned.push_back(cast<Instruction>(VMap[I]));
+        IntRecipe R32 = P.R;
+        R32.AccBits = 32;
+        Loop *CL = LI.getLoopFor(cast<BasicBlock>(VMap[P.L->getHeader()]));
+        if (!CL || !applyInteger(cast<PHINode>(VMap[P.Phi]), CL, P.Phi, P.Start, R32, Cloned, Map,
+                                 LI, DT, SE, AfterLoop))
+          license(Cloned);
+        if (!applyInteger(P.Phi, P.L, P.Phi, P.Start, P.R, P.Ops, Identity, LI, DT, SE, AfterLoop))
+          license(P.Ops);
+        ChangedCFG = true;
+        continue;
+      }
+      if (O.Integer && P.R.Ok &&
+          applyInteger(P.Phi, P.L, P.Phi, P.Start, P.R, P.Ops, Identity, LI, DT, SE, AfterLoop)) {
+        ChangedCFG = true;
+        continue;
+      }
+      license(P.Ops);
+    }
     SmallPtrSet<Loop *, 4> Done;
     for (Plan &P : Versions) {
       if (!Done.insert(P.L).second)
@@ -915,13 +1336,31 @@ struct ExactReducePass : PassInfoMixin<ExactReducePass> {
         if (Q.L == P.L)
           Guards.push_back({Q.Start, Q.D});
       ValueToValueMapTy VMap;
-      versionLoop(P.L, Guards, LI, DT, SE, VMap);
+      versionLoop(
+          P.L,
+          [&](IRBuilder<> &B, Value *Count) {
+            Value *Ok = B.getTrue();
+            for (auto &[Start, D] : Guards)
+              Ok = B.CreateAnd(Ok, buildGuard(B, Start, Count, D));
+            return Ok;
+          },
+          LI, DT, SE, VMap);
       for (Plan &Q : Versions) {
         if (Q.L != P.L)
           continue;
         SmallVector<Instruction *, 8> Cloned;
         for (Instruction *I : Q.Ops)
           Cloned.push_back(cast<Instruction>(VMap[I]));
+        if (O.Integer && Q.R.Ok) {
+          auto Map = [&](Value *V) -> Value * {
+            auto It = VMap.find(V);
+            return It != VMap.end() && It->second ? static_cast<Value *>(It->second) : V;
+          };
+          Loop *CL = LI.getLoopFor(cast<BasicBlock>(VMap[Q.L->getHeader()]));
+          if (CL && applyInteger(cast<PHINode>(VMap[Q.Phi]), CL, Q.Phi, Q.Start, Q.R, Cloned, Map,
+                                 LI, DT, SE, AfterLoop))
+            continue;
+        }
         license(Cloned);
       }
       ChangedCFG = true;

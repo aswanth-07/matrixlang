@@ -1,0 +1,356 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex.fmt)
+ restricted \write18 enabled.
+entering extended mode
+(matrixlang.tex
+LaTeX2e <2025-11-01>
+L3 programming layer <2025-12-24>
+
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/acmart\acmart.c
+ls
+Document Class: acmart 2026/08/16 v2.20 Typesetting articles for the Associatio
+n for Computing Machinery
+
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/xkeyval\xkeyval
+.sty
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/generic/xkeyval\xkeyv
+al.tex
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/generic/xkeyval\xkvut
+ils.tex
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/generic/xkeyval\keyva
+l.tex))))
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/xstring\xstring
+.sty
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/generic/xstring\xstri
+ng.tex))
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.s
+ty)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/amscls\amsart.c
+ls
+Document Class: amsart 2020/05/29 v2.20.6
+
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath
+.sty
+For additional information on amsmath, use the `?' option.
+
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext
+.sty
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.
+sty))
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.
+sty)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.
+sty))
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.f
+d)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amsfon
+ts.sty))
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/microtype\micro
+type.sty
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolb
+ox.sty)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/microtype\micro
+type-pdftex.def)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/microtype\micro
+type.cfg))
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\bookta
+bs.sty)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/refcount\refcou
+nt.sty
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcm
+ds.sty)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\inf
+warerr.sty))
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/totpages\totpag
+es.sty
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/everyshi\everys
+hi.sty))
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/environ\environ
+.sty
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/trimspaces\trim
+spaces.sty))
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/natbib\natbib.s
+ty)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperr
+ef.sty
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvset
+keys.sty)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\
+kvdefinekeys.sty)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\pdf
+escape.sty
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pd
+ftexcmds.sty))
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor
+.sty)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\namere
+f.sty
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/generic/gettitlestrin
+g\gettitlestring.sty
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvopt
+ions.sty)))
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\str
+ingenc.sty)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc
+.def)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intca
+lc.sty)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.
+def)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset
+.sty
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc\bi
+gintcalc.sty)))
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdfte
+x.def
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\
+rerunfilecheck.sty
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/generic/uniquecounter
+\uniquecounter.sty)))
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/hyperxmp\hyperx
+mp.sty
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/ifmtarg\ifmtarg
+.sty)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/base\ifthen.sty
+)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/oberdiek\ifdraf
+t.sty)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifluate
+x.sty))
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphi
+cx.sty
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphi
+cs.sty
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.s
+ty)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\gr
+aphics.cfg)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pd
+ftex.def)))
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.s
+ty
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\co
+lor.cfg)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathco
+lor.ltx))
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geomet
+ry.sty
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.
+sty)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geomet
+ry.cfg))
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/ncctools\manyfo
+ot.sty
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/ncctools\nccfoo
+ts.sty))
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/generic/pdftex\glypht
+ounicode.tex)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/cmap\cmap.sty)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.st
+y<<t1.cmap>>)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/libertine\liber
+tine.sty
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifxetex
+.sty)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/base\textcomp.s
+ty)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.st
+y)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/fontaxes\fontax
+es.sty
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/figureversions\
+figureversions.sty))
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/libertine\LinLi
+bertine_I.tex))
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/inconsolata\zi4
+.sty `inconsolata-zi4' v1.12, 2019/05/17 Text macros for Inconsolata (msharpe))
+
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/newtx\newtxmath
+.sty
+`newtxmath' v1.754, 2024/09/22 Math macros based originally on txfonts (msharpe
+)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/oberdiek\center
+not.sty)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/generic/binhex\binhex
+.tex)
+amsthm NOT loaded
+)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\pifont.s
+ty
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\upzd.fd)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\upsy.fd)
+)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption
+.sty
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption
+3.sty
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption
+-ams-smf.sto)))
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/float\float.sty
+)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/comment\comment
+.sty Excluding comment 'comment') Excluding comment 'CCSXML'
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/fancyhdr\fancyh
+dr.sty) Special comment 'acks'
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/libertine\t1lin
+uxlibertinet-tlf.fd))
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/listings\listin
+gs.sty
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstpat
+ch.sty)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstmis
+c.sty)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/listings\listin
+gs.cfg))
+==> First Aid for listings.sty no longer applied!
+    Expected:
+        2024/09/23 1.10c (Carsten Heinz)
+    but found:
+        2025/11/14 1.11b (Carsten Heinz)
+    so I'm assuming it got fixed.
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/xurl\xurl.sty)
+(generated/contracts.tex) (generated/platforms.tex) (generated/llvm.tex)
+(generated/spread.tex) (generated/repair.tex) (generated/baselines.tex)
+(generated-review/contracts.tex) Excluding comment 'screenonly'
+Include comment 'printonly' Include comment 'anonsuppress'
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3bac
+kend-pdftex.def) (matrixlang.aux)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/newtx\omlnxlmi.
+fd)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/newtx\untxexa.f
+d)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/newtx\lmsntxsy.
+fd)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/newtx\lmxntxexx
+.fd)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/libertine\ot1li
+nuxlibertinet-tlf.fd)<<ot1.cmap>><<oml.cmap>>
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.f
+d)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.f
+d)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/newtx\untxmia.f
+d)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/newtx\untxsym.f
+d)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/newtx\untxsyc.f
+d) (matrixlang.out) (matrixlang.out)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\sup
+p-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\ep
+stopdf-base.sty
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstop
+df-sys.cfg))
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/upquote\upquote
+.sty) Excluding 'CCSXML' comment.
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/libertine\t1lin
+uxbiolinumt-tlf.fd)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-ms
+a.cfg)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-ms
+b.cfg)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/inconsolata\t1z
+i4.fd)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/libertine\ts1li
+nuxlibertinet-tlf.fd)
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\NoCaseChange' on input line 93.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\NoCaseChange' on input line 93.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\NoCaseChange' on input line 93.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\NoCaseChange' on input line 93.
+
+(generated/tab-intro.tex) [1.1{C:/Users/A Aswanth Raj/AppData/Local/MiKTeX/font
+s/map/pdftex/pdftex.map}{C:/Users/A Aswanth Raj/AppData/Local/Programs/MiKTeX/f
+onts/enc/dvips/libertine/lbtn_76gpa5.enc}{C:/Users/A Aswanth Raj/AppData/Local/
+Programs/MiKTeX/fonts/enc/dvips/libertine/lbtn_25tcsq.enc}{C:/Users/A Aswanth R
+aj/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/inconsolata/i4-t1-4.enc}{C:/Us
+ers/A Aswanth Raj/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/libertine/lbtn_
+naooyc.enc}{C:/Users/A Aswanth Raj/AppData/Local/Programs/MiKTeX/fonts/enc/dvip
+s/libertine/lbtn_nh77jq.enc}{C:/Users/A Aswanth Raj/AppData/Local/Programs/MiKT
+eX/fonts/enc/dvips/libertine/lbtn_7grukw.enc}{C:/Users/A Aswanth Raj/AppData/Lo
+cal/Programs/MiKTeX/fonts/enc/dvips/libertine/lbtn_oexx6f.enc}]
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstlan
+g1.sty)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstmis
+c.sty) [2.2] [3.3{C:/Users/A Aswanth Raj/AppData/Local/Programs/MiKTeX/fonts/en
+c/dvips/libertine/lbtn_ncsllp.enc}]
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/latex/libertine\ot1li
+nuxbiolinumt-tlf.fd) [4.4{C:/Users/A Aswanth Raj/AppData/Local/Programs/MiKTeX/
+fonts/enc/dvips/libertine/lbtn_edcawa.enc}{C:/Users/A Aswanth Raj/AppData/Local
+/Programs/MiKTeX/fonts/enc/dvips/libertine/lbtn_kijugd.enc}]
+
+LaTeX Font Warning: Font shape `T1/zi4/m/it' undefined
+(Font)              using `T1/zi4/m/n' instead on input line 343.
+
+[5.5] [6.6] [7.7{C:/Users/A Aswanth Raj/AppData/Local/Programs/MiKTeX/fonts/enc
+/dvips/libertine/lbtn_fygcup.enc}] [8.8] [9.9] [10.10]
+(generated-review/tab-recovery.tex) (generated-review/tab-soundness.tex)
+[11.11] (generated/tab-tightness.tex) (generated/tab-e2e.tex) [12.12]
+(generated/tab-real.tex) [13.13] (generated/tab-mutation.tex) [14.14]
+(generated/tab-llvm-bench.tex) [15.15] (generated/tab-llvm-stress.tex) [16.16 <
+./figures/llvm-routes.pdf>] (generated/tab-llvm-scan.tex) [17.17]
+Underfull \hbox (badness 10000) in paragraph at lines 1156--1176
+ []\T1/LinuxLibertineT-TLF/m/it/10 (+20) Fast-math se-man-tics.[] \T1/LinuxLibe
+rtineT-TLF/m/n/10 (+20) GCC's \T1/zi4/m/it/10 -fassociative-math \T1/LinuxLiber
+tineT-TLF/m/n/10 (+20) re-quires \T1/zi4/m/it/10 -fno-signed-zeros \T1/LinuxLib
+ertineT-TLF/m/n/10 (+20) and
+
+Underfull \vbox (badness 1694) has occurred while \output is active [18.18]
+[19.19] (generated/tab-accuracy.tex) [20.20]
+Underfull \hbox (badness 10000) in paragraph at lines 1319--1323
+[]\T1/LinuxLibertineT-TLF/m/n/8 (+20) Free Soft-ware Foun-da-tion. GCC Man-ual:
+ Op-tions That Con-trol Op-ti-miza-tion (\T1/zi4/m/it/8 -fassociative-math\T1/L
+inuxLibertineT-TLF/m/n/8 (+20) ,
+
+Underfull \vbox (badness 10000) has occurred while \output is active [21.21]
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\se-
+pdfdoc.def)
+(C:\Users\A Aswanth Raj\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\se-
+utf8.def) [22.22] (matrixlang.aux)
+
+LaTeX Font Warning: Some font shapes were not available, defaults substituted.
+
+ )
+(see the transcript file for additional information)<C:/Users/A Aswanth Raj/App
+Data/Local/Programs/MiKTeX/fonts/type1/public/inconsolata/Inconsolata-zi4b.pfb>
+<C:/Users/A Aswanth Raj/AppData/Local/Programs/MiKTeX/fonts/type1/public/incons
+olata/Inconsolata-zi4r.pfb><C:/Users/A Aswanth Raj/AppData/Local/Programs/MiKTe
+X/fonts/type1/public/newtx/LibertineMathMI.pfb><C:/Users/A Aswanth Raj/AppData/
+Local/Programs/MiKTeX/fonts/type1/public/newtx/LibertineMathMI5.pfb><C:/Users/A
+ Aswanth Raj/AppData/Local/Programs/MiKTeX/fonts/type1/public/newtx/LibertineMa
+thMI7.pfb><C:/Users/A Aswanth Raj/AppData/Local/Programs/MiKTeX/fonts/type1/pub
+lic/newtx/LibertineMathRM.pfb><C:/Users/A Aswanth Raj/AppData/Local/Programs/Mi
+KTeX/fonts/type1/public/libertine/LinBiolinumT.pfb><C:/Users/A Aswanth Raj/AppD
+ata/Local/Programs/MiKTeX/fonts/type1/public/libertine/LinBiolinumTB.pfb><C:/Us
+ers/A Aswanth Raj/AppData/Local/Programs/MiKTeX/fonts/type1/public/libertine/Li
+nBiolinumTI.pfb><C:/Users/A Aswanth Raj/AppData/Local/Programs/MiKTeX/fonts/typ
+e1/public/libertine/LinLibertineT.pfb><C:/Users/A Aswanth Raj/AppData/Local/Pro
+grams/MiKTeX/fonts/type1/public/libertine/LinLibertineTB.pfb><C:/Users/A Aswant
+h Raj/AppData/Local/Programs/MiKTeX/fonts/type1/public/libertine/LinLibertineTI
+.pfb><C:/Users/A Aswanth Raj/AppData/Local/Programs/MiKTeX/fonts/type1/public/l
+ibertine/LinLibertineTZ.pfb><C:/Users/A Aswanth Raj/AppData/Local/Programs/MiKT
+eX/fonts/type1/public/newtx/NewTXMI.pfb><C:/Users/A Aswanth Raj/AppData/Local/P
+rograms/MiKTeX/fonts/type1/public/newtx/NewTXMI5.pfb><C:/Users/A Aswanth Raj/Ap
+pData/Local/Programs/MiKTeX/fonts/type1/public/newtx/NewTXMI7.pfb><C:/Users/A A
+swanth Raj/AppData/Local/Programs/MiKTeX/fonts/type1/public/newtx/txexs.pfb><C:
+/Users/A Aswanth Raj/AppData/Local/Programs/MiKTeX/fonts/type1/public/newtx/txm
+iaX.pfb><C:/Users/A Aswanth Raj/AppData/Local/Programs/MiKTeX/fonts/type1/publi
+c/newtx/txsym.pfb><C:/Users/A Aswanth Raj/AppData/Local/Programs/MiKTeX/fonts/t
+ype1/public/newtx/txsys.pfb>
+Output written on matrixlang.pdf (22 pages, 799590 bytes).
+Transcript written on matrixlang.log.

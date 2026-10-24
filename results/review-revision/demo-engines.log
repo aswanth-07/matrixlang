@@ -1,0 +1,2 @@
+54 program(s): 2629 token(s) and 10 frontend diagnostic(s) compared, 51 accepted, 3 rejected
+demo/lexer.js and demo/parser.js agree with the compiler everywhere they were compared.

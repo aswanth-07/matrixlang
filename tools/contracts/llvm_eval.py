@@ -14,6 +14,8 @@ the plugin, and linked with each):
     mutant-force      every add reduction licensed without a proof
     clang-ordered     clang-strict + -mllvm -force-ordered-reductions: the
                       vectorizer may vectorize a reduction only in source order
+    clang-int-rewrite clang-licensed + EXACT_REDUCE_INTEGER=1: ExactReduce
+                      accumulates licensed sums of integers in integers
     int-accumulator   (timed only) the integer kernels rewritten by hand to
                       accumulate in integers, llvm/kernels/intacc.c
 
@@ -67,10 +69,12 @@ CONFIGS = {
     # In-order vector reductions keep the strict bits without any proof. No
     # vector width is forced: a forced width would let LLVM reassociate.
     "clang-ordered": (CLANG, NATIVE + ["-mllvm", "-force-ordered-reductions"], None),
+    # The integer rewrite: licensed sums of integers accumulated in integers.
+    "clang-int-rewrite": (CLANG, NATIVE, {"EXACT_REDUCE_INTEGER": "1"}),
 }
 INT_ACC = "int-accumulator"
 TIMED = ["clang-strict", "clang-licensed", "clang-fast-math", "clang-licensed-sse2",
-         "gcc-strict", "gcc-fast-math", "clang-ordered", INT_ACC]
+         "gcc-strict", "gcc-fast-math", "clang-ordered", "clang-int-rewrite", INT_ACC]
 DECISION = re.compile(r"^(\S+) (\S*) (\S+) (licensed|versioned|declined) (.*)$")
 
 

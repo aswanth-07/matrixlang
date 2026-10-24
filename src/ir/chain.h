@@ -50,5 +50,6 @@ int       chain_declined(void);         /* chains with a refused saving        *
 void chain_explain(FILE *out);
 
 void chain_reset(void);
+void chain_certificate_begin(void);
 
 #endif /* MATRIXLANG_CHAIN_H */

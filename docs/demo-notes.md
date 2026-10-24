@@ -1,5 +1,7 @@
 # Demo notes: five minutes, one-on-one
 
+The October 24, 2026 underflow repair changes the bounded examples below. A general `real(1)` chain now stays in source order under bounded mode. Older recorded diffusion and adapter races predate that repair and do not establish the repaired policy's performance or error guarantees. Prefer current local compiler output when presenting these cases.
+
 You drive; your faculty member watches the screen beside you. The workspace has a **presenter strip** at the bottom: press **→** (or click the arrow) to move to the next step, and it opens the right view, example, contract and race for you. The talking point for each step is in the strip; the notes icon on its right hides it if you prefer to speak from memory. **Ctrl K** opens a command palette that reaches every example, race and action.
 
 ## Before you start (two minutes, once)
@@ -23,9 +25,9 @@ If the service will not start, the page still works from recorded results: every
 | 1 · Opener | 0:00–0:30 | Python's own results, drawn as bits | "Same value, computed two ways, different bits. Python says `(0.1+0.2)+0.3` is not `0.1+(0.2+0.3)`, and rewriting `x * 0` as `0` flips the sign of zero. That is why compilers refuse to reorder floating point, or do it blindly with `-ffast-math`." | The white cells: the bits that changed. The last row overflows to infinity. |
 | 2 · Shapes before code | 0:30–1:00 | Workspace, *Matrix product* | "It is a real compiler: flex, bison, C. It infers every shape and rejects a bad product before generating code." | *Shape check* stage. Optionally pick *Shape mismatch* in the explorer. |
 | 3 · Proved exact | 1:00–1:45 | *Exact integer chain*, strict, Guarantees | "The inputs are declared `int8`. The compiler never sees the values, only the domain, and proves every bracketing is exact, so it reorders 11,120 operations to 556 and certifies the output bit-identical." | The certificate reason ("needs at most 28 of 53 significand bits") and the bit strips: no white cells. |
-| 4 · Bounded | 1:45–2:15 | *Real-valued chain*, bounded | "Over real values the bits may change, so strict refuses. Bounded reorders and states the error bound it keeps." Click **Compare contracts** if there is time. | The amber *bound-preserving* label; white cells only at the end of the fraction. |
+| 4 · Bounded | 1:45–2:15 | *Real-valued chain*, bounded | "A range of real values does not exclude inexact underflow, so bounded mode retains this chain's source order. Algebraic mode can reorder it with a relaxed guarantee." Click **Compare contracts** if there is time. | Strict and bounded retain the source order; algebraic changes the bracketing. |
 | 5 · Race: graph walks | 2:15–3:00 | Race, *Graph walks*, 1 thread | "Same program, same inputs, timed on this laptop. MatrixLang's proved reordering runs in about 1.2 ms against 322 ms for the C you would write, 274 times faster, and every bit is identical. NumPy's default `@` takes 65 ms." Click **Replay**: the bars fill in proportion to real time. | The MatrixLang side finishing first; the *identical bits* chips. |
-| 6 · Race: diffusion | 3:00–3:30 | *Diffusion* | "On real data strict keeps your order. Bounded is about 219 times faster within a certified bound. `multi_dot` is fast too, but its bits differ and it says nothing about it." | Strict lane at about 1×, bounded lane with *within certified bound*, multi_dot with *no guarantee*. |
+| 6 · Race: diffusion | 3:00–3:30 | *Diffusion* | "The recorded bounded timing predates the underflow repair. Run the current compiler to see whether its proof conditions admit this input domain." | The run's provenance and current contract decision. |
 | 7 · Race: overflow trap | 3:30–4:00 | *Overflow trap* | "Here the cheaper order overflows. `multi_dot` takes it and returns infinity. MatrixLang's facts see the overflow coming and keep the finite answer; only the algebraic contract takes the shortcut, and it labels the output relaxed." | multi_dot: *returns +∞ · no warning*. Click its lane: the bit check shows the exponent all ones. |
 | 8 · Results | 4:00–5:00 | Results | "Measured here: faster than what you would write, and across 57,600 output comparisons per contract, not one output certified bit-identical was wrong." | Speedup chart, the bits table, *0 of 147,042*. |
 
@@ -47,7 +49,7 @@ If the service will not start, the page still works from recorded results: every
 
 **"How does it know the values are int8?"** The program declares `input(int8)`; the runtime checks every value against its domain before execution and refuses out-of-domain input. The proof is over the whole domain, not the sampled inputs.
 
-**"What exactly is proved?"** For integer chains: every intermediate of every bracketing fits in binary64's 53 significand bits, so no operation rounds (the exactness theorem). For real data: every bracketing has the same standard worst-case error bound, so reordering keeps it (the bounded contract), provided no intermediate can overflow.
+**"What exactly is proved?"** Exact-chain admission checks that every proper sub-chain fits the significand and each final sum rounds at most once. Bounded admission preserves the standard componentwise bound only when overflow and inexact underflow are excluded. A magnitude limit alone does not establish those premises. The independent chain checker validates numerical obligations conditional on supplied facts, and the tested LLVM integration does not verify the full compiler pipeline.
 
 **"Has the certificate ever been wrong?"** Once, in development: the soundness experiment found a rewrite that relied on an earlier, weaker rewrite. It was fixed, and *Inherited guarantee* in the explorer shows the case. Since then, 0 of 147,042 outputs certified bit-identical differed when executed.
 
@@ -61,8 +63,8 @@ If the service will not start, the page still works from recorded results: every
 | --- | --- | --- | --- | --- | --- |
 | Graph walks | 1.17 ms (strict) | 322 ms | 64.8 ms | 0.52 ms | all identical |
 | Quantized layers | 0.20 ms (strict) | 1.06 ms | 0.40 ms | 0.07 ms | all identical |
-| Diffusion | 1.17 ms (bounded) | 257 ms | 73.2 ms | 0.53 ms | MatrixLang within certified bound; NumPy differs, no statement |
-| Low-rank adapter | 0.022 ms (bounded) | 12.0 ms | 12.7 ms | 0.009 ms | same pattern as diffusion |
+| Diffusion | 1.17 ms (historical bounded build) | 257 ms | 73.2 ms | 0.53 ms | Predates the underflow repair; no renewed bound or performance claim |
+| Low-rank adapter | 0.022 ms (historical bounded build) | 12.0 ms | 12.7 ms | 0.009 ms | Predates the underflow repair; no renewed bound or performance claim |
 | Overflow trap | 0.66 ms (strict keeps order) | 0.67 ms | 3.18 ms | returns ∞ | MatrixLang identical; multi_dot infinite |
 
 Live runs vary by about 10–20% from these; the shape of the result does not change.

@@ -1,0 +1,323 @@
+
+--- Phase 1 -- lexical analysis produces the specified token stream
+  [32mPASS[0m declare.ml --phase1 (exit 0)
+  [32mPASS[0m   ...contains: MATRIX        matrix
+  [32mPASS[0m   ...contains: IDENTIFIER    A
+  [32mPASS[0m   ...contains: LBRACKET      [
+  [32mPASS[0m   ...contains: NUMBER        2
+  [32mPASS[0m   ...contains: COMMA         ,
+  [32mPASS[0m   ...contains: RBRACKET      ]
+  [32mPASS[0m   ...contains: SEMICOLON     ;
+  [32mPASS[0m   ...contains: 16 token(s).
+  [32mPASS[0m   ...contains: Syntax: VALID
+  [32mPASS[0m   ...correctly omits: COMMENT
+
+--- Phase 1 -- precedence decides the parse, not the grammar
+  [32mPASS[0m precedence.ml --tac (exit 0)
+  [32mPASS[0m   ...contains: t1 = B * C
+  [32mPASS[0m   ...contains: t2 = A + t1
+  [32mPASS[0m   ...contains: ACCEPTED
+
+--- Phase 1 -- malformed input is rejected
+  [32mPASS[0m bad.ml --phase1 (exit 1)
+  [32mPASS[0m   ...contains: Syntax: INVALID
+  [32mPASS[0m   ...contains: an identifier may not begin with a digit
+
+--- Phase 1 -- all token classes are recognised
+  [32mPASS[0m scalars.ml --tokens (exit 0)
+  [32mPASS[0m   ...contains: SCALAR        scalar
+  [32mPASS[0m   ...contains: MULTIPLY      *
+  [32mPASS[0m   ...contains: ASSIGN        =
+  [32mPASS[0m   ...contains: LBRACE        {
+  [32mPASS[0m algebra.ml --tokens (exit 0)
+  [32mPASS[0m   ...contains: TRANSPOSE     transpose
+  [32mPASS[0m   ...contains: IDENTITY      identity
+  [32mPASS[0m   ...contains: ZEROS         zeros
+
+--- Phase 2 -- the AST carries inferred shapes
+  [32mPASS[0m multiply.ml --ast (exit 0)
+  [32mPASS[0m   ...contains: BinaryOp * : Matrix<2x4>
+  [32mPASS[0m   ...contains: Identifier A : Matrix<2x3>
+  [32mPASS[0m   ...contains: Identifier B : Matrix<3x4>
+  [32mPASS[0m transpose.ml --ast (exit 0)
+  [32mPASS[0m   ...contains: Transpose : Matrix<3x2>
+
+--- Phase 2 -- the symbol table records rows and columns
+  [32mPASS[0m multiply.ml --symbols (exit 0)
+  [32mPASS[0m   ...contains: Rows
+  [32mPASS[0m   ...contains: Cols
+  [32mPASS[0m   ...contains: 3 symbol(s).
+  [32mPASS[0m scalars.ml --symbols (exit 0)
+  [32mPASS[0m   ...contains: Scalar
+  [32mPASS[0m   ...contains: Matrix
+
+--- Phase 2 -- multiplication requires columns(left) == rows(right)
+  [32mPASS[0m mul_mismatch.ml (exit 1)
+  [32mPASS[0m   ...contains: cannot multiply Matrix<2x3> by Matrix<5x4>
+  [32mPASS[0m   ...contains: columns(left) must equal rows(right)
+  [32mPASS[0m   ...contains: 3 != 5
+
+--- Phase 2 -- addition requires identical shapes
+  [32mPASS[0m add_mismatch.ml (exit 1)
+  [32mPASS[0m   ...contains: matrix addition requires identical dimensions
+  [32mPASS[0m   ...contains: 2x3 against 3x2
+
+--- Phase 2 -- the remaining shape rules
+  [32mPASS[0m bad_shape.ml (exit 1)
+  [32mPASS[0m   ...contains: transpose() expects a matrix, got Scalar
+  [32mPASS[0m   ...contains: cannot combine Matrix<2x2> with Scalar using '+'
+  [32mPASS[0m   ...contains: must be a constant known at compile time
+  [32mPASS[0m   ...contains: must be a whole number, got 2.5
+
+--- Phase 2 -- matrix literals
+  [32mPASS[0m bad_literal.ml (exit 1)
+  [32mPASS[0m   ...contains: row 2 of this matrix literal has 2 entries, expected 3
+  [32mPASS[0m   ...contains: expects Matrix<2x2> but the expression produces Matrix<3x2>
+
+--- Phase 2 -- declaration and name errors
+  [32mPASS[0m undeclared.ml (exit 1)
+  [32mPASS[0m   ...contains: assignment to undeclared variable 'B'
+  [32mPASS[0m   ...contains: use of undeclared variable 'Q'
+  [32mPASS[0m duplicate.ml (exit 1)
+  [32mPASS[0m   ...contains: duplicate declaration of 'A'
+  [32mPASS[0m   ...contains: already declared at line 3
+  [32mPASS[0m syntax.ml (exit 1)
+  [32mPASS[0m   ...contains: syntax error
+  [32mPASS[0m   ...contains: 3 error(s)
+  [32mPASS[0m   ...contains: skipping semantic analysis
+  [32mPASS[0m lexical.ml (exit 1)
+  [32mPASS[0m   ...contains: illegal character '$'
+  [32mPASS[0m   ...contains: malformed number or identifier '12abc'
+
+--- Phase 2 -- three-address code
+  [32mPASS[0m multiply.ml --tac (exit 0)
+  [32mPASS[0m   ...contains: t1 = A * B
+  [32mPASS[0m   ...contains: C = t1
+  [32mPASS[0m   ...contains: print C
+  [32mPASS[0m   ...contains: Matrix<2x4>
+  [32mPASS[0m chain.ml --tac (exit 0)
+  [32mPASS[0m   ...contains: t1 = A * B
+  [32mPASS[0m   ...contains: t2 = t1 + C
+
+--- Phase 3 -- common subexpression elimination
+  [32mPASS[0m cse.ml (exit 0)
+  [32mPASS[0m   ...contains: common subexpr
+  [32mPASS[0m   ...contains: Y = t1
+  [32mPASS[0m   ...contains: Common subexpressions     :      1
+
+--- Phase 3 -- dead code elimination
+  [32mPASS[0m dce.ml (exit 0)
+  [32mPASS[0m   ...contains: dead code
+  [32mPASS[0m   ...contains: (X is never used)
+  [32mPASS[0m   ...contains: (t1 is never used)
+  [32mPASS[0m   ...contains: (A is never used)
+  [32mPASS[0m   ...contains: Dead instructions removed :      4
+
+--- Phase 3 -- matrix-specific optimizations
+  [32mPASS[0m algebra.ml (exit 0)
+  [32mPASS[0m   ...contains: (x * I = x)
+  [32mPASS[0m   ...contains: (I * x = x)
+  [32mPASS[0m   ...contains: (x + 0 = x)
+  [32mPASS[0m   ...contains: (x - 0 = x)
+  [32mPASS[0m   ...contains: (transpose(transpose(x)) = x)
+  [32mPASS[0m   ...contains: (x * 1 = x)
+  [32mPASS[0m   ...contains: Identity operations       :      3
+  [32mPASS[0m   ...contains: Double transposes         :      1
+
+--- Phase 3 -- an identity written as a literal is still an identity
+  [32mPASS[0m literal identity is recognised (exit 0)
+  [32mPASS[0m   ...contains: (x * I = x)
+
+--- Phase 3 -- individual passes can be selected
+  [32mPASS[0m algebra only (exit 0)
+  [32mPASS[0m   ...contains: Dead instructions removed :      0
+  [32mPASS[0m   ...contains: Identity operations       :      3
+
+--- Phase 3 -- target code
+  [32mPASS[0m multiply.ml --target (exit 0)
+  [32mPASS[0m   ...contains: LOAD_MATRIX
+  [32mPASS[0m   ...contains: MATMUL
+  [32mPASS[0m   ...contains: STORE_MATRIX
+  [32mPASS[0m   ...contains: PRINT
+  [32mPASS[0m   ...contains: HALT
+  [32mPASS[0m scalars.ml --target (exit 0)
+  [32mPASS[0m   ...contains: MATSCALE
+  [32mPASS[0m   ...contains: SCALMUL
+  [32mPASS[0m transpose.ml --target (exit 0)
+  [32mPASS[0m   ...contains: TRANSPOSE
+
+--- Phase 3 -- execution produces correct results
+  [32mPASS[0m multiply.ml --run (exit 0)
+  [32mPASS[0m   ...contains: C = Matrix<2x4>
+  [32mPASS[0m   ...contains: 1  2  3 14
+  [32mPASS[0m   ...contains: 4  5  6 32
+  [32mPASS[0m transpose.ml --run (exit 0)
+  [32mPASS[0m   ...contains: At = Matrix<3x2>
+  [32mPASS[0m   ...contains: 14 32
+  [32mPASS[0m   ...contains: 32 77
+  [32mPASS[0m scalars.ml --run (exit 0)
+  [32mPASS[0m   ...contains: product = 1.5
+  [32mPASS[0m   ...contains: 6 12
+  [32mPASS[0m chain.ml --run (exit 0)
+  [32mPASS[0m   ...contains: R = Matrix<2x2>
+  [32mPASS[0m   ...contains: 1 3
+  [32mPASS[0m algebra.ml --run (exit 0)
+  [32mPASS[0m   ...contains: P = Matrix<3x3>
+  [32mPASS[0m   ...contains: V = Matrix<3x3>
+  [32mPASS[0m --trace shows the machine executing (exit 0)
+  [32mPASS[0m   ...contains: [stack
+
+--- Phase 3 -- strict optimization matches tested hexadecimal output
+  [32mPASS[0m identical output with and without the optimizer: examples/valid/chain.ml
+  [32mPASS[0m identical output with and without the optimizer: examples/valid/dimension_boundaries.ml
+  [32mPASS[0m identical output with and without the optimizer: examples/valid/multiply.ml
+  [32mPASS[0m identical output with and without the optimizer: examples/valid/scalars.ml
+  [32mPASS[0m identical output with and without the optimizer: examples/valid/transpose.ml
+  [32mPASS[0m identical output with and without the optimizer: examples/optimize/algebra.ml
+  [32mPASS[0m identical output with and without the optimizer: examples/optimize/chain_order.ml
+  [32mPASS[0m identical output with and without the optimizer: examples/optimize/chain_values.ml
+  [32mPASS[0m identical output with and without the optimizer: examples/optimize/cse.ml
+  [32mPASS[0m identical output with and without the optimizer: examples/optimize/dce.ml
+  [32mPASS[0m identical output with and without the optimizer: examples/optimize/literal_identity.ml
+  [32mPASS[0m identical output with and without the optimizer: examples/optimize/scaled_identity.ml
+
+--- Inputs -- declared domains are checked at compile time and at load
+  [32mPASS[0m unknown domain is rejected (exit 1)
+  [32mPASS[0m   ...contains: unknown value domain 'int9'
+  [32mPASS[0m   ...contains: int(lo,hi)
+  [32mPASS[0m an input matrix must declare its shape (exit 1)
+  [32mPASS[0m   ...contains: needs a declared shape
+  [32mPASS[0m input() is a declaration form, not an expression (exit 1)
+  [32mPASS[0m   ...contains: may only initialise a declaration
+  [32mPASS[0m domain bounds must be ordered (exit 1)
+  [32mPASS[0m   ...contains: needs lo <= hi
+  [32mPASS[0m an input appears in the TAC with its domain (exit 0)
+  [32mPASS[0m   ...contains: A = input(int8)
+  [32mPASS[0m the symbol table lists inputs and their domains (exit 0)
+  [32mPASS[0m   ...contains: integers in [0, 255]
+  [32mPASS[0m values are read from a file, literal syntax allowed (exit 0)
+  [32mPASS[0m   ...contains: 15 22
+  [32mPASS[0m a value outside the domain stops execution (exit 1)
+  [32mPASS[0m   ...contains: entry (2,2) = 300 is outside its declared domain uint8
+  [32mPASS[0m a file with the wrong count is rejected (exit 1)
+  [32mPASS[0m   ...contains: holds 3 number(s); input 'A' needs 4
+  [32mPASS[0m running without values names both ways to supply them (exit 1)
+  [32mPASS[0m   ...contains: --random-inputs SEED
+  [32mPASS[0m --input must name an input (exit 1)
+  [32mPASS[0m   ...contains: not declared with input
+  [32mPASS[0m --input without NAME=FILE is a usage error (exit 2)
+  [32mPASS[0m a seed names the same inputs on every run, and a different seed different ones
+
+--- Contracts -- strict reorders only what it proves exact
+  [32mPASS[0m an int8 chain is proved exact and reordered under strict (exit 0)
+  [32mPASS[0m   ...contains: chain order      : A * B * C  ->  A * (B * C)
+  [32mPASS[0m   ...contains: needs at most 29 of 53 significand bits
+  [32mPASS[0m   ...contains: 1. bit-identical     print(R)
+  [32mPASS[0m a real-valued chain is kept under strict (exit 0)
+  [32mPASS[0m   ...contains: chain kept
+  [32mPASS[0m   ...contains: A is real-valued, so products with it round
+  [32mPASS[0m   ...contains: --fp-algebraic permits it
+  [32mPASS[0m bounded refuses real domains with unexcluded inexact underflow (exit 0)
+  [32mPASS[0m   ...contains: chain kept
+  [32mPASS[0m   ...contains: 1. bit-identical     print(R)
+  [32mPASS[0m 53 bits exactly is still exact (exit 0)
+  [32mPASS[0m   ...contains: needs at most 53 of 53 significand bits
+  [32mPASS[0m a chain whose final sums round once is still bit-identical (exit 0)
+  [32mPASS[0m   ...contains: chain order      : A * B * C  ->  A * (B * C)
+  [32mPASS[0m   ...contains: is correctly rounded under every bracketing
+  [32mPASS[0m   ...contains: 1. bit-identical     print(R)
+  [32mPASS[0m one more step is not provable (exit 0)
+  [32mPASS[0m   ...contains: may need 54 significand bits
+  [32mPASS[0m   ...contains: chain kept
+  [32mPASS[0m the refused bracketing changes bits on a witness; strict output does not
+  [32mPASS[0m a near-maximum input at the threshold keeps every bit under strict reordering
+  [32mPASS[0m a partially provable chain is reordered in its proved segment (exit 0)
+  [32mPASS[0m   ...contains: (A * (B * C)) * D
+  [32mPASS[0m bounded keeps the stronger guarantee where it is free (exit 0)
+  [32mPASS[0m   ...contains: 1. bit-identical     print(R)
+  [32mPASS[0m   ...contains: 2. bound-preserving  print(S)
+  [32mPASS[0m --no-proofs reproduces the unproved strict optimizer (exit 0)
+  [32mPASS[0m   ...contains: proofs are disabled
+  [32mPASS[0m   ...contains: Product chains reordered  :      0
+
+--- Contracts -- IEEE side conditions of identities
+  [32mPASS[0m x * I = x is proved where A cannot hold -0 (exit 0)
+  [32mPASS[0m   ...contains: bit-identical: A is finite and has no -0 entry
+  [32mPASS[0m   ...contains: N may hold -0, which the product turns into +0
+  [32mPASS[0m   ...contains: N may hold -0, and -0 + 0 = +0
+  [32mPASS[0m the bounded contract applies them and labels them (exit 0)
+  [32mPASS[0m   ...contains: 2. bound-preserving  print(Q)
+  [32mPASS[0m   ...contains: 3. bound-preserving  print(V)
+  [32mPASS[0m a proof that reads a weaker rewrite's facts inherits its guarantee (exit 0)
+  [32mPASS[0m   ...contains: 1. bound-preserving  print(R)
+  [32mPASS[0m strict declines the inner rewrite, so the output stays bit-identical (exit 0)
+  [32mPASS[0m   ...contains: 1. bit-identical     print(R)
+  [32mPASS[0m a scaled identity is not a multiplicative unit (exit 0)
+  [32mPASS[0m   ...contains: T = Matrix<3x3>
+
+--- Contracts -- strict output is bit-identical for drawn inputs
+  [32mPASS[0m strict output identical for seeds 1-5: examples/contracts/exact_chain.ml
+  [32mPASS[0m strict output identical for seeds 1-5: examples/contracts/real_chain.ml
+  [32mPASS[0m strict output identical for seeds 1-5: examples/contracts/boundary_exact.ml
+  [32mPASS[0m strict output identical for seeds 1-5: examples/contracts/boundary_inexact.ml
+  [32mPASS[0m strict output identical for seeds 1-5: examples/contracts/boundary_rounded.ml
+  [32mPASS[0m strict output identical for seeds 1-5: examples/contracts/signed_zero.ml
+  [32mPASS[0m strict output identical for seeds 1-5: examples/contracts/mixed.ml
+
+--- Driver
+  [32mPASS[0m oversized dimensions are rejected (exit 1)
+  [32mPASS[0m   ...contains: 4096
+  [32mPASS[0m fractional declaration dimensions are rejected (exit 1)
+  [32mPASS[0m   ...contains: whole numbers
+  [32mPASS[0m non-finite declaration dimensions are rejected before conversion (exit 1)
+  [32mPASS[0m   ...contains: finite
+  [32mPASS[0m non-finite matrix literal token is rejected (exit 1)
+  [32mPASS[0m   ...contains: finite
+  [32mPASS[0m dimension bound accepts both endpoints (exit 0)
+  [32mPASS[0m non-finite source literal is rejected (exit 1)
+  [32mPASS[0m   ...contains: finite
+  [32mPASS[0m --help exits cleanly (exit 0)
+  [32mPASS[0m   ...contains: MatrixLang
+  [32mPASS[0m no input file is a usage error (exit 2)
+  [32mPASS[0m unknown option is a usage error (exit 2)
+  [32mPASS[0m missing file is a usage error (exit 2)
+
+================================================
+  233 passed, 0 failed
+================================================
+15/15 strict fixtures identical; 6 intentional algebraic differences
+
+node is not on PATH, so demo/lexer.js and demo/parser.js were NOT checked against the compiler. Install node, or run `make web`, to check them.
+...............127.0.0.1 - - [24/Oct/2026 09:39:37] "POST /api/compile HTTP/1.1" 429 -
+.127.0.0.1 - - [24/Oct/2026 09:39:38] "POST /api/compile HTTP/1.1" 200 -
+127.0.0.1 - - [24/Oct/2026 09:39:39] "POST /api/compile HTTP/1.1" 200 -
+127.0.0.1 - - [24/Oct/2026 09:39:39] "POST /api/compile HTTP/1.1" 400 -
+.127.0.0.1 - - [24/Oct/2026 09:39:39] "GET /api/health HTTP/1.1" 403 -
+127.0.0.1 - - [24/Oct/2026 09:39:39] "POST /api/compile HTTP/1.1" 403 -
+.127.0.0.1 - - [24/Oct/2026 09:39:39] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [24/Oct/2026 09:39:39] "GET / HTTP/1.1" 200 -
+.127.0.0.1 - - [24/Oct/2026 09:39:39] "POST /api/compile HTTP/1.1" 400 -
+127.0.0.1 - - [24/Oct/2026 09:39:39] "POST /api/compile HTTP/1.1" 400 -
+127.0.0.1 - - [24/Oct/2026 09:39:39] "POST /api/compile HTTP/1.1" 415 -
+.127.0.0.1 - - [24/Oct/2026 09:39:39] "GET /api/health HTTP/1.1" 503 -
+.127.0.0.1 - - [24/Oct/2026 09:39:39] "POST /api/compile HTTP/1.1" 413 -
+127.0.0.1 - - [24/Oct/2026 09:39:39] "POST /api/other HTTP/1.1" 404 -
+.127.0.0.1 - - [24/Oct/2026 09:39:49] "POST /api/race HTTP/1.1" 200 -
+127.0.0.1 - - [24/Oct/2026 09:39:49] "POST /api/race HTTP/1.1" 400 -
+....
+----------------------------------------------------------------------
+Ran 26 tests in 26.640s
+
+OK
+...
+----------------------------------------------------------------------
+Ran 3 tests in 8.500s
+
+OK
+....
+----------------------------------------------------------------------
+Ran 4 tests in 0.785s
+
+OK
+C backend: 48 programs x 3 contracts x 4 builds; 0 required mismatches
+  outputs changed by licensed reductions (simd vs unoptimized): strict 0, bounded 7, algebraic 16

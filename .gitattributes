@@ -24,3 +24,6 @@ Makefile text eol=lf
 *.pptx binary
 *.png  binary
 *.pdf  binary
+
+# Keep compiler and LaTeX stdout intact at wrapped log lines.
+results/review-revision/*.log whitespace=-blank-at-eol

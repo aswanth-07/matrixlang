@@ -58,6 +58,16 @@ long long chain_flops_declined(void) { return declined_total; }
 int       chain_declined(void)       { return declined_chains; }
 int       chain_count(int level)     { return (level >= 0 && level < 3) ? per_level[level] : 0; }
 
+void chain_certificate_begin(void)
+{
+    const char *path = getenv("MATRIXC_CERTIFICATE_JSONL");
+    if (path && *path) {
+        FILE *f = fopen(path, "w");
+        if (!f) { perror(path); exit(1); }
+        fclose(f);
+    }
+}
+
 void chain_explain(FILE *out)
 {
     int i;
@@ -205,6 +215,31 @@ typedef struct {
     ChainCheck check;                   /* the exactness (or range) evidence */
     int  exact;
 } Segment;
+
+/* A numerical obligation record, independent of the human-readable log.
+ * The checker validates mathematics conditional on these operand facts; it
+ * does not validate the compiler's extraction of facts or generated code. */
+static void export_certificate(const Segment *s)
+{
+    const char *path = getenv("MATRIXC_CERTIFICATE_JSONL");
+    FILE *f;
+    int t;
+    if (!path || !*path || s->level == NG_RELAXED) return;
+    f = fopen(path, "a");
+    if (!f) { perror(path); exit(1); }
+    fprintf(f, "{\"schema\":1,\"kind\":\"matrix-chain\",\"format\":\"binary64\","
+               "\"rounding\":\"nearest-even\",\"gradual_underflow\":true,"
+               "\"guarantee\":\"%s\",\"dimensions\":[",
+            s->level == NG_BITWISE ? "bit-identical" : "bound-preserving");
+    for (t = 0; t <= s->m; t++) fprintf(f, "%s%d", t ? "," : "", s->dim[t]);
+    fputs("],\"operands\":[", f);
+    for (t = 0; t < s->m; t++)
+        fprintf(f, "%s{\"grid\":%d,\"magnitude\":\"%a\",\"finite\":%s}",
+                t ? "," : "", s->fact[t].grid, s->fact[t].mag,
+                s->fact[t].finite ? "true" : "false");
+    fprintf(f, "],\"relative_coefficient\":\"%a\"}\n", facts_chain_bound(s->dim, s->m));
+    if (fclose(f)) { perror(path); exit(1); }
+}
 
 static void segment_build(const Chain *c, int i, int j, int use_proofs, Segment *s)
 {
@@ -485,6 +520,7 @@ static int reorder_one(int head, int max_level, int use_proofs)
             char why[640], ops[256];
 
             if (s->m > 2) {
+                export_certificate(s);
                 render_sub(&c, start, 0, s->m - 1, ops, sizeof ops);
                 if (s->level == NG_BITWISE && s->check.rounded)
                     snprintf(why, sizeof why, "%s is correctly rounded under every "
@@ -498,14 +534,14 @@ static int reorder_one(int head, int max_level, int use_proofs)
                 else if (s->level == NG_BOUNDED)
                     snprintf(why, sizeof why, "%s keeps the source-order error bound: "
                              "|error| <= %.3g |A1|...|Ak| under every bracketing, and "
-                             "no intermediate can overflow",
+                             "no intermediate can overflow or incur inexact underflow",
                              ops, facts_chain_bound(s->dim, s->m));
                 else if (!use_proofs)
                     snprintf(why, sizeof why, "%s reordered without a proof "
                              "(--no-proofs)", ops);
                 else
                     snprintf(why, sizeof why, "%s reordered without a proof: neither "
-                             "exactness nor the range condition holds", ops);
+                             "exactness nor the range-and-grid condition holds", ops);
                 proof = tac_intern(why);
                 proofs[nproofs] = proof;
                 proof_level[nproofs++] = s->level;
@@ -582,7 +618,7 @@ static int reorder_one(int head, int max_level, int use_proofs)
                 logf_("                   --fp-bounded permits it: every bracketing "
                       "has the same error bound");
             else if (max_level < NG_RELAXED && whole->level == NG_RELAXED)
-                logf_("                   the range condition fails as well; only "
+                logf_("                   the range-and-grid condition fails as well; only "
                       "--fp-algebraic permits it");
         }
     }

@@ -166,8 +166,11 @@ decides whether a vectorized or parallel reduction may reorder its sums.
 **Bound invariance.** Every bracketing of a chain contracts each inner dimension
 exactly once, so the standard componentwise bound
 (prod over inner dimensions of (1 + gamma_p) - 1) |A1|...|Ak| is the same for
-every bracketing. The bounded contract therefore needs only a range condition:
-no intermediate of any bracketing can overflow.
+every bracketing when the standard relative-error model applies. Bounded
+admission therefore checks finite magnitude bounds, representable product grids
+and accumulated error slack. These exclude overflow and inexact underflow.
+An upper magnitude bound alone is insufficient: `real(1)` admits subnormals.
+Exact subnormal results remain admissible under gradual underflow.
 
 **Segmented chain ordering** (`src/ir/chain.c`). After any source-order prefix
 product, a segment may use its cheapest bracketing if its level is admitted.
@@ -190,8 +193,8 @@ that performs the VM's arithmetic; a product entry is summed from +0 over k
 ascending, written i-k-j, so the C compiler can vectorize across j or run rows
 on threads without changing any entry's order. For each product the facts give
 the weakest level at which its sums may be reordered: bit-identical by the rule
-above, bound-preserving when no partial sum can overflow (every order keeps the
-inner-product bound gamma_d |a|^T |b|), relaxed otherwise. When the contract
+above, bound-preserving when overflow and inexact underflow are excluded (every
+order keeps the inner-product bound gamma_d |a|^T |b|), relaxed otherwise. When the contract
 admits that level and the output has at most four columns, the product is
 written as dot products under `#pragma omp simd reduction(+:acc)`, a standard
 license to reorder exactly that sum. Without OpenMP the pragmas are ignored.

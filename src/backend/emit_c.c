@@ -231,7 +231,7 @@ static const char *reason_of(int level)
 {
     switch (level) {
     case NG_BITWISE: return "every term and partial sum is exact, so every order gives the same bits";
-    case NG_BOUNDED: return "no partial sum can overflow, so every order keeps the inner-product bound";
+    case NG_BOUNDED: return "overflow and inexact underflow are excluded, so every order keeps the inner-product bound";
     default:         return "no fact bounds this product's sums";
     }
 }

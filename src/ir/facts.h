@@ -89,12 +89,13 @@ int facts_chain_exact(const Fact *ops, const int *dim, int k, ChainCheck *why);
  * term and every partial sum short of the whole is exact. */
 int facts_product_reassociable(Fact a, Fact b, int inner);
 
-/* No partial sum of L * R can overflow, in any order of summation: every order
- * keeps the standard inner-product bound gamma_inner |a|^T |b|. */
+/* No partial sum can overflow and no product can incur inexact underflow:
+ * every order keeps the standard inner-product bound gamma_inner |a|^T |b|. */
 int facts_product_range(Fact a, Fact b, int inner);
 
-/* Every operand is finite and no sub-chain product can overflow under any
- * bracketing: the precondition of the bracketing-invariant error bound. */
+/* Every operand is finite; every sub-chain has a representable grid and a
+ * range ceiling with error-factor slack. This excludes overflow and inexact
+ * underflow under every bracketing, including cancellation to tiny values. */
 int facts_chain_range(const Fact *ops, const int *dim, int k, ChainCheck *why);
 
 /* The coefficient c in |computed - exact| <= c |A1||A2|...|Ak|, which is the

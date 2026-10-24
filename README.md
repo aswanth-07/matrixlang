@@ -10,7 +10,7 @@ matrix R = A * B * C;            // 11,120 modeled operations as written, 556 as
 print(R);
 ```
 
-Under the default strict contract the compiler reorders this chain, because every intermediate of every bracketing fits in binary64's 53 significand bits, and certifies `print(R)` as bit-identical. `--emit-c` hands the same program to a C compiler, with an OpenMP reduction clause on exactly the sums the facts prove may be reordered. Over `input(real(1))` the bits would change, and only the bounded contract reorders it, certifying that the source order's worst-case error bound still holds. The pipeline is inspectable end to end: tokens, syntax tree, symbols, shape diagnostics, three-address code, optimization, guarantees, typed stack-machine code, and execution.
+Under the default strict contract the compiler reorders this chain, because every intermediate of every bracketing fits in binary64's 53 significand bits, and certifies `print(R)` as bit-identical. `--emit-c` hands the same program to a C compiler, with an OpenMP reduction clause on exactly the sums the facts prove may be reordered. With larger integer domains such as `input(int32)`, the bounded contract can admit a cheaper order when its range and grid checks hold. A general `input(real(1))` chain stays in source order under bounded mode because a magnitude limit alone cannot exclude inexact underflow. The pipeline is inspectable end to end: tokens, syntax tree, symbols, shape diagnostics, three-address code, optimization, guarantees, typed stack-machine code, and execution.
 
 ## Build and test
 
@@ -49,13 +49,15 @@ bin/matrixc -q --optimize --run --exact-output --random-inputs 7 examples/contra
 
 **Input domains.** `matrix A[r,c] = input(DOMAIN);` and `scalar s = input(DOMAIN);` declare run-time inputs. Domains: `bool`, `uint8`, `int8`, `uint16`, `int16`, `int32`, `int(lo,hi)`, `real` (any finite value), `real(B)` and `real(lo,hi)`. Values come from `--input NAME=FILE` or `--random-inputs SEED` and are checked against the domain before execution; integer and non-negative domains store `-0` as `+0`. That check is what makes the optimizer's facts sound.
 
-**How rewrites are proved.** A grid–magnitude analysis tracks, for every value, a power of two that divides every entry, a magnitude bound, finiteness and the possibility of `-0`. A matrix chain is reordered under strict only when every proper sub-chain's magnitude bound fits in 53 bits above its grid and the whole chain's final sums round at most once; every bracketing, with any order of summation, then returns the correctly rounded product (the correctly-rounded-chain theorem). For `int(0,m)` chains `100x2 * 2x100 * 100x2` that admits m up to 35,697, and at 35,698 there are inputs on which the bracketings differ. Under bounded, any bracketing is admitted when no intermediate can overflow, because the standard componentwise error bound of a chain is the same for every bracketing (the invariance theorem). Identity and zero rewrites carry IEEE side conditions: `A * I = A` needs `A` finite and free of `-0`, `x + 0 = x` needs `x` free of `-0`, and so on. [docs/design.md](docs/design.md#numerical-contracts) has the details.
+**How rewrites are proved.** A grid–magnitude analysis tracks, for every value, a power of two that divides every entry, a magnitude bound, finiteness and the possibility of `-0`. A matrix chain is reordered under strict only when every proper sub-chain's magnitude bound fits in 53 bits above its grid and the whole chain's final sums round at most once; every bracketing, with any order of summation, then returns the correctly rounded product (the correctly-rounded-chain theorem). For `int(0,m)` chains `100x2 * 2x100 * 100x2` that admits m up to 35,697, and at 35,698 there are inputs on which the bracketings differ. Under bounded, the compiler checks finite magnitudes, representable product grids and accumulated error slack to exclude overflow and inexact underflow. The standard componentwise bound is invariant under bracketing only under these premises. Exact subnormal results remain allowed under gradual underflow. Identity and zero rewrites carry IEEE side conditions: `A * I = A` needs `A` finite and free of `-0`, `x + 0 = x` needs `x` free of `-0`, and so on. [docs/design.md](docs/design.md#numerical-contracts) has the details.
 
 **Certificates.** `--certificate` prints, for every `print`, the weakest guarantee among the rewrites that reach it and the reasons. A rewrite inherits the weakest guarantee of the definitions its proof read, so a proof that relies on a weaker rewrite's facts cannot certify more than that rewrite. `--no-proofs` disables the analysis and reproduces the earlier strict optimizer for comparison. `--exact-output` prints hexadecimal values, which distinguish every binary64 value including `-0`.
 
+`MATRIXC_CERTIFICATE_JSONL` exports applied chain obligations for independent replay by `tools/check_chain_certificate.py` using exact rational arithmetic. This checks the numerical obligations conditional on supplied facts; it does not verify fact extraction or emitted code. Keeping an unchanged source program in bounded mode does not establish that the source satisfies the relative-error model.
+
 The cost model counts `m*p*(2*n-1)` scalar operations per product and ignores movement, allocation and the VM's initial accumulator additions. It does not predict runtime; the runtime study compiles the emitted C with GCC.
 
-**C output.** `--emit-c FILE` writes the (optimized) program as C11 and `--dump-inputs FILE` writes its checked inputs. Every sum keeps the VM's order except products whose order of summation the contract leaves free (proved order-independent under strict, overflow-free under bounded), which carry `#pragma omp simd reduction(+:acc)`; `--no-license` keeps the VM's order everywhere. `tools/check_emit_c.py` (part of `make test`) requires GCC's build of the emitted C to print the VM's bits.
+**C output.** `--emit-c FILE` writes the (optimized) program as C11 and `--dump-inputs FILE` writes its checked inputs. Every sum keeps the VM's order except products whose order of summation the contract leaves free (proved order-independent under strict, with overflow and inexact underflow excluded under bounded), which carry `#pragma omp simd reduction(+:acc)`; `--no-license` keeps the VM's order everywhere. `tools/check_emit_c.py` (part of `make test`) requires GCC's build of the emitted C to print the VM's bits.
 
 ```bash
 bin/matrixc -q --optimize --random-inputs 1 --emit-c walks.c --dump-inputs walks.bin examples/kernels/walks.ml
@@ -80,16 +82,18 @@ The language has static dimensions, scalar and matrix values, mutable variables,
 
 ## Paper and reproducible study
 
-**[Exact, Bounded, or Relaxed: Proving Which Floating-Point Guarantee a Compiler Rewrite Keeps](paper/matrixlang.pdf)** ([anonymous build](paper/anonymous.pdf))
+**[Proof-Guided Floating-Point Optimization: Exact Reassociation, Error Bounds, and Compiler Certificates](paper/matrixlang.pdf)** ([anonymous build](paper/anonymous.pdf))
 
-Authors: **A Aswanth Raj**, **Dr. RANJITHKUMAR S**, School of Computer Science and Engineering, VIT Vellore, India.
+Authors: **A Aswanth Raj**, **Dr. Ranjithkumar S**, School of Computer Science and Engineering, VIT Vellore, India.
+
+The October 24, 2026 revision repairs bounded admission under inexact underflow, adds independent numerical certificate replay, and states the LLVM proof boundary explicitly. Both manuscript builds have 22 pages including references. The [revision notes](paper/review-response.md), [self-contained manuscript package](paper/delivery-review/README.md), and [eight-slide presentation](paper/presentation-updated/MatrixLang-Simple-8-Slides.pptx) accompany the research artifact.
 
 The manuscript, formatted for ACM TACO, proves the theorems above and measures nine questions: on generated, domain-typed workloads, on application kernels over generated and real data (Cora, MNIST), on two machines with GCC and Clang, and in LLVM:
 
-- **Recovery** (15,000 programs): strict with proofs recovers 83.6% of the algebraic saving on `int8` data with bit-identical output; bounded recovers all of it wherever values are bounded.
+- **Recovery** (15,000 programs): strict with proofs recovers 83.6% of the algebraic saving on `int8` data with bit-identical output. After the underflow repair, bounded recovery is 43.7% on `real(1)` and 82.9% on mixed domains; the integer-domain rows are unchanged.
 - **Soundness** (57,600 executions per contract): no output certified bit-identical differed from the unoptimized program. This check found one unsound certificate in an earlier version, now fixed.
 - **Tightness**: on four chain families the compiler's threshold equals the theorem's closed form; one step above it (two for the four-operand chain, where a parity argument rules out one) there are inputs on which the refused bracketing prints different bits, and no input at or below it differs.
-- **Production compiler**: compiled to C and by GCC, proved reorderings make the kernels 278× (graph walks) and 4.98× (quantized layers) faster with identical bits, and the bounded contract 469× and 277× on real-valued kernels within the source order's error bound; `-ffast-math` gains at most 1.13×. Hand-written reductions licensed by a certificate run 1.23–6.54× faster with identical bits, and a certified OpenMP reduction gives one result for 1–24 threads.
+- **Production compiler**: compiled to C and by GCC, proved reorderings make the kernels 278× (graph walks) and 4.98× (quantized layers) faster with identical bits. Hand-written reductions licensed by a certificate run 1.23–6.54× faster with identical bits, and a certified OpenMP reduction gives one result for 1–24 threads. Earlier bounded real-domain timings remain historical measurements; they do not establish performance or error guarantees for the repaired admission policy.
 - **Test adequacy**: small-integer tests cannot notice a compiler that reorders without proof, and no random or domain-bound input notices a 54-bit threshold; witnesses built at the threshold kill it. Nine of ten side-condition mutants are killed.
 - **Accuracy** (protocol recorded before the run, 2,700 real-valued chains): the cheaper bracketing is more accurate than source order (median error ratio 0.941, Holm p = 4.6×10⁻¹¹).
 - **Real data and a second machine**:
@@ -98,6 +102,9 @@ The manuscript, formatted for ACM TACO, proves the theorems above and measures n
 - **LLVM** (`llvm/`): ExactReduce derives the facts from integer conversions in C.
   - Strict Clang runs nine integer reductions over MNIST, Cora and generated data 5.09–9.71× faster (95–102% of `-ffast-math`), and keeps the strict bits on all 784 adversarial inputs. `-ffast-math` changes 14 of them, and a mutant that admits one bit more changes 10.
   - In four existing code bases the pass guards 23 of 109 reductions. CPython's `audioop` runs up to 8× faster and returns all 404 results unchanged.
+  - Integer accumulation on M1 under WSL reaches a median 102% of the speed of hand-written integer code across the measured kernels. Kernel-module compilation time grows by 29%, and text size by 40%.
+  - The proof covers regrouping the same terms. LLVM's `reassoc` permission is broader, so the tested LLVM 18 integration is not an end-to-end verified compiler.
+- **Independent replay**: exact rational arithmetic checks 262 applied chain obligations from 221 example/generated programs, conditional on the recorded operand facts.
 
 ```bash
 make contracts           # repeat every measurement into results/contracts/
@@ -137,6 +144,6 @@ make test-demo    # local service, compiler integration and recorded-example rep
 
 ## Limitations
 
-The language is straight-line and statically shaped. Exactness proofs apply to integer and dyadic data, not general reals. The bounded contract promises the standard-model bound and does not cover gradual underflow. Workloads are generated or written for the study, not drawn from applications; runtime results come from one machine with one compiler. The C backend checks the VM's arithmetic independently but shares its front end and optimizer. Numerical checks do not cover exception flags, NaN payloads or alternate rounding modes.
+The language is straight-line and statically shaped. Exactness proofs apply to integer and dyadic data, not general reals. Bounded reassociation requires explicit overflow and underflow premises; exact subnormals are allowed, while inexact underflow is excluded conservatively. Runtime experiments use selected generated and real-data workloads on two machines with GCC and Clang. They do not establish general workload coverage. The numerical checker trusts supplied facts, and the C backend shares the front end and optimizer with the VM. Numerical checks do not cover exception flags, NaN payloads or alternate rounding modes.
 
 The [MIT license](LICENSE) covers code and original artifacts. Use [CITATION.cff](CITATION.cff) for citation metadata. [CONTRIBUTING.md](CONTRIBUTING.md) describes verification, and [CHANGELOG.md](CHANGELOG.md) records changes.

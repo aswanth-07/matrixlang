@@ -426,6 +426,10 @@ int facts_product_range(Fact a, Fact b, int inner)
     double m;
 
     if (!a.finite || !b.finite) return 0;
+    if (inner <= 0 || inner * UNIT_ROUNDOFF >= 0.5) return 0;
+    /* A magnitude ceiling excludes overflow, not inexact underflow. A
+     * product on the representable grid is either normal or exact when tiny. */
+    if (a.mag != 0.0 && b.mag != 0.0 && a.grid + b.grid < -1074) return 0;
     m = mul_up(mul_up(a.mag, b.mag), (double)inner);
     return m <= ldexp(1.0, 1020);
 }
@@ -438,6 +442,11 @@ int facts_chain_range(const Fact *ops, const int *dim, int k, ChainCheck *why)
 
     if (!why) why = &local;
     check_init(why);
+
+    /* Reserve a factor of two for accumulated relative error. */
+    for (t = 1; t < k; t++)
+        if (dim[t] <= 0 || dim[t] * UNIT_ROUNDOFF >= 0.5) return why->ok = 0;
+    if (!(facts_chain_bound(dim, k) < 1.0)) return why->ok = 0;
 
     for (t = 0; t < k; t++)
         if (!ops[t].finite) {
@@ -453,7 +462,7 @@ int facts_chain_range(const Fact *ops, const int *dim, int k, ChainCheck *why)
             sub_chain(ops, dim, a, b, &m, &g);
             if (m == 0.0) continue;
             if (g < why->min_grid) why->min_grid = g;
-            if (!(m <= limit)) {
+            if (g < -1074 || !(m <= limit)) {
                 if (why->ok) { why->first = a; why->last = b; }
                 why->ok = 0;
             }

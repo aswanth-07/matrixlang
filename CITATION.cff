@@ -6,20 +6,20 @@ authors:
   - family-names: "Aswanth Raj"
     given-names: "A"
     affiliation: "School of Computer Science and Engineering, VIT Vellore"
-  - family-names: "RANJITHKUMAR"
+  - family-names: "Ranjithkumar"
     given-names: "S"
     affiliation: "School of Computer Science and Engineering, VIT Vellore"
 repository-code: "https://github.com/aswanth-07/matrixlang"
 license: MIT
 abstract: >-
-  A compiler for a small matrix language whose types carry matrix shapes.
-  Because every shape is known at compile time, the compiler can compute the
-  arithmetic cost of a program before running it and choose the bracketing of a
-  matrix product chain. The repository carries the compiler, a program
-  generator, a five-profile eight-configuration cost study, explicit strict and
-  algebraic numerical contracts, independent chain checks, a technical manuscript,
-  teaching exercises, and a web demonstration. No classroom effectiveness or
-  runtime speedup is claimed.
+  A compiler for a statically shaped matrix language with strict, bounded and
+  algebraic numerical contracts. Grid and magnitude facts guide matrix-chain
+  reassociation and reduction licenses. A separate rational-arithmetic checker
+  replays numerical chain obligations conditional on supplied facts. ExactReduce
+  applies related integer facts to selected reductions in LLVM 18. The artifact
+  includes experiments, raw results, a technical manuscript, teaching exercises
+  and a web demonstration. The manuscript states the numerical premises and the
+  tested compiler integration's limits. No classroom effectiveness is claimed.
 keywords:
   - compiler construction
   - computing education
@@ -28,12 +28,12 @@ keywords:
   - code optimization
 preferred-citation:
   type: report
-  title: "Exact, Bounded, or Relaxed: Proving Which Floating-Point Guarantee a Compiler Rewrite Keeps"
+  title: "Proof-Guided Floating-Point Optimization: Exact Reassociation, Error Bounds, and Compiler Certificates"
   authors:
     - family-names: "Aswanth Raj"
       given-names: "A"
       affiliation: "School of Computer Science and Engineering, VIT Vellore"
-    - family-names: "RANJITHKUMAR"
+    - family-names: "Ranjithkumar"
       given-names: "S"
       affiliation: "School of Computer Science and Engineering, VIT Vellore"
   year: 2026

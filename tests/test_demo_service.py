@@ -45,10 +45,9 @@ class CompilerAdapterTests(unittest.TestCase):
                 self.assertTrue(any(error["phase"] == phase for error in result["diagnostics"]))
 
     def test_contracts_have_distinct_costs(self):
-        # Real-valued products round, so only the bounded and algebraic
-        # contracts may reorder this chain.
-        source = ("matrix A[100,2]=input(real(1)); matrix B[2,100]=input(real(1)); "
-                  "matrix C[100,2]=input(real(1)); matrix R=A*B*C; print(R);")
+        # Large integer products may round, but their grid excludes underflow.
+        source = ("matrix A[100,2]=input(int32); matrix B[2,100]=input(int32); "
+                  "matrix C[100,2]=input(int32); matrix R=A*B*C; print(R);")
         strict, bounded, algebraic = [demo.compile_source(source, mode) for mode in demo.CONTRACTS]
         self.assertEqual(strict["metrics"]["after"], 69800)
         self.assertEqual(bounded["metrics"]["after"], 1396)

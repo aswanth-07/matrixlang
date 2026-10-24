@@ -10,7 +10,7 @@ from demo_service import CONTRACTS, DEFAULT_SEED, ROOT, binary_path, compile_sou
 EXAMPLES = [
     ("multiply", "Matrix product", "Infer a result shape and execute a matrix product.", "examples/valid/multiply.ml", "check"),
     ("exact", "Exact integer chain", "Reorder an int8 chain under the strict contract, proved bit-identical from its input domains.", "examples/demo/exact_chain.ml", "guarantees"),
-    ("real", "Real-valued chain", "Keep the source order under strict; reorder under bounded with a certified error bound.", "examples/demo/real_chain.ml", "guarantees"),
+    ("real", "Real-valued chain", "Keep the source order under strict and bounded: real(1) does not exclude inexact underflow. Algebraic mode may reorder.", "examples/demo/real_chain.ml", "guarantees"),
     ("outputs", "Per-output guarantees", "Certify two outputs of one program at different guarantee levels.", "examples/demo/two_outputs.ml", "guarantees"),
     ("unbounded", "Unbounded reals", "Reorder only under algebraic, where no error bound is kept, and certify the output as relaxed.", "examples/demo/unbounded_chain.ml", "guarantees"),
     ("numerics", "Signed zero", "Remove a zero product only where the contract permits -0 to become +0.", "examples/demo/signed_zero.ml", "guarantees"),
